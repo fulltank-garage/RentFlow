@@ -511,6 +511,20 @@ func (RentFlowStorefrontPage) TableName() string {
 	return "rentflow_storefront_pages"
 }
 
+type RentFlowStorefrontBlockImage struct {
+	ID        string    `gorm:"primaryKey;size:80" json:"id"`
+	TenantID  string    `gorm:"size:50;index;not null" json:"tenantId"`
+	FileName  string    `gorm:"size:180" json:"fileName,omitempty"`
+	MimeType  string    `gorm:"size:80;not null" json:"-"`
+	Blob      []byte    `gorm:"type:bytea;not null" json:"-"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+func (RentFlowStorefrontBlockImage) TableName() string {
+	return "rentflow_storefront_block_images"
+}
+
 type RentFlowPlatformInvoice struct {
 	ID            string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID      string         `gorm:"size:50;index;not null" json:"tenantId"`

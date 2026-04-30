@@ -1,13 +1,16 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"rentflow-api/config"
 )
 
 const (
@@ -28,6 +31,7 @@ const (
 	RentFlowRealtimeEventAvailabilityChange = "availability.changed"
 	RentFlowRealtimeEventSupportChanged     = "support.changed"
 	RentFlowRealtimeEventTenantUpdated      = "tenant.updated"
+	rentFlowRealtimeRedisChannel            = "rentflow:realtime:events"
 )
 
 type RentFlowRealtimeEvent struct {
@@ -38,6 +42,7 @@ type RentFlowRealtimeEvent struct {
 	EntityID  string      `json:"entityId,omitempty"`
 	Data      interface{} `json:"data,omitempty"`
 	CreatedAt time.Time   `json:"createdAt"`
+	SourceID  string      `json:"sourceId,omitempty"`
 }
 
 type RentFlowRealtimeClientFilter struct {
@@ -64,6 +69,7 @@ var (
 	rentFlowRealtime = &rentFlowRealtimeHub{
 		clients: make(map[*rentFlowRealtimeClient]struct{}),
 	}
+	rentFlowRealtimeNodeID   = NewID("node")
 	rentFlowRealtimeUpgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -73,6 +79,38 @@ var (
 	}
 )
 
+func StartRentFlowRealtimeRedisBridge(ctx context.Context) {
+	if config.RDB == nil {
+		log.Println("Realtime ใช้โหมดในเครื่อง เพราะ Redis ยังไม่ได้เชื่อมต่อ")
+		return
+	}
+
+	pubsub := config.RDB.Subscribe(ctx, rentFlowRealtimeRedisChannel)
+	if _, err := pubsub.Receive(ctx); err != nil {
+		log.Println("เริ่ม Redis Pub/Sub สำหรับ realtime ไม่สำเร็จ:", err)
+		_ = pubsub.Close()
+		return
+	}
+
+	log.Println("Realtime เชื่อมกับ Redis Pub/Sub แล้ว")
+
+	go func() {
+		defer pubsub.Close()
+		channel := pubsub.Channel()
+		for message := range channel {
+			var event RentFlowRealtimeEvent
+			if err := json.Unmarshal([]byte(message.Payload), &event); err != nil {
+				log.Println("อ่านข้อความ realtime จาก Redis ไม่สำเร็จ:", err)
+				continue
+			}
+			if event.SourceID == rentFlowRealtimeNodeID {
+				continue
+			}
+			rentFlowRealtime.broadcast(event)
+		}
+	}()
+}
+
 func RentFlowPublishRealtime(event RentFlowRealtimeEvent) {
 	if strings.TrimSpace(event.Type) == "" {
 		return
@@ -80,7 +118,22 @@ func RentFlowPublishRealtime(event RentFlowRealtimeEvent) {
 	if event.CreatedAt.IsZero() {
 		event.CreatedAt = time.Now()
 	}
+	if strings.TrimSpace(event.SourceID) == "" {
+		event.SourceID = rentFlowRealtimeNodeID
+	}
 	rentFlowRealtime.broadcast(event)
+
+	if config.RDB == nil {
+		return
+	}
+	payload, err := json.Marshal(event)
+	if err != nil {
+		log.Println("แปลงข้อความ realtime สำหรับ Redis ไม่สำเร็จ:", err)
+		return
+	}
+	if err := config.RDB.Publish(config.Ctx, rentFlowRealtimeRedisChannel, payload).Err(); err != nil {
+		log.Println("ส่งข้อความ realtime ไป Redis ไม่สำเร็จ:", err)
+	}
 }
 
 func RentFlowServeRealtime(w http.ResponseWriter, r *http.Request, filter RentFlowRealtimeClientFilter) error {

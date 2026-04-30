@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -115,13 +116,14 @@ func rentFlowDecodeDataURLImage(source string) ([]byte, string, error) {
 	if !strings.Contains(meta, ";base64") {
 		return nil, "", errors.New("รูปภาพต้องอยู่ในรูปแบบ base64")
 	}
+	declaredMimeType := strings.TrimPrefix(strings.Split(strings.TrimPrefix(meta, "data:"), ";")[0], " ")
 
 	decoded, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
 		return nil, "", errors.New("ไม่สามารถอ่านข้อมูลรูปภาพได้")
 	}
 
-	return rentFlowValidateImageBlob(decoded)
+	return rentFlowValidateImageBlob(decoded, declaredMimeType, "")
 }
 
 func rentFlowFetchRemoteImage(source string) ([]byte, string, error) {
@@ -152,10 +154,59 @@ func rentFlowFetchRemoteImage(source string) ([]byte, string, error) {
 		return nil, "", errors.New("ไม่สามารถอ่านรูปภาพได้")
 	}
 
-	return rentFlowValidateImageBlob(blob)
+	return rentFlowValidateImageBlob(blob, response.Header.Get("Content-Type"), parsed.Path)
 }
 
-func rentFlowValidateImageBlob(blob []byte) ([]byte, string, error) {
+func rentFlowNormalizeImageMimeType(value string) string {
+	mimeType := strings.ToLower(strings.TrimSpace(strings.Split(value, ";")[0]))
+	if mimeType == "image/jpg" {
+		return "image/jpeg"
+	}
+	return mimeType
+}
+
+func rentFlowMimeTypeFromImageExtension(fileName string) string {
+	switch strings.ToLower(filepath.Ext(fileName)) {
+	case ".jpg", ".jpeg":
+		return "image/jpeg"
+	case ".png":
+		return "image/png"
+	case ".webp":
+		return "image/webp"
+	case ".gif":
+		return "image/gif"
+	default:
+		return ""
+	}
+}
+
+func rentFlowLooksLikeImageMimeType(blob []byte, mimeType string) bool {
+	switch rentFlowNormalizeImageMimeType(mimeType) {
+	case "image/jpeg":
+		return len(blob) >= 3 && blob[0] == 0xff && blob[1] == 0xd8 && blob[2] == 0xff
+	case "image/png":
+		return len(blob) >= 8 &&
+			blob[0] == 0x89 &&
+			blob[1] == 0x50 &&
+			blob[2] == 0x4e &&
+			blob[3] == 0x47 &&
+			blob[4] == 0x0d &&
+			blob[5] == 0x0a &&
+			blob[6] == 0x1a &&
+			blob[7] == 0x0a
+	case "image/webp":
+		return len(blob) >= 12 &&
+			string(blob[0:4]) == "RIFF" &&
+			string(blob[8:12]) == "WEBP"
+	case "image/gif":
+		return len(blob) >= 6 &&
+			(string(blob[0:6]) == "GIF87a" || string(blob[0:6]) == "GIF89a")
+	default:
+		return false
+	}
+}
+
+func rentFlowValidateImageBlob(blob []byte, hints ...string) ([]byte, string, error) {
 	if len(blob) == 0 {
 		return nil, "", errors.New("ไฟล์รูปภาพว่างเปล่า")
 	}
@@ -163,12 +214,25 @@ func rentFlowValidateImageBlob(blob []byte) ([]byte, string, error) {
 		return nil, "", errors.New("ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5MB")
 	}
 
-	mimeType := http.DetectContentType(blob)
-	if _, ok := rentFlowAllowedImageTypes[mimeType]; !ok {
-		return nil, "", errors.New("รองรับเฉพาะไฟล์ JPG, PNG, WEBP หรือ GIF")
+	detectedMimeType := rentFlowNormalizeImageMimeType(http.DetectContentType(blob))
+	if _, ok := rentFlowAllowedImageTypes[detectedMimeType]; ok {
+		return blob, detectedMimeType, nil
 	}
 
-	return blob, mimeType, nil
+	for _, hint := range hints {
+		candidates := []string{
+			rentFlowNormalizeImageMimeType(hint),
+			rentFlowMimeTypeFromImageExtension(hint),
+		}
+		for _, candidate := range candidates {
+			if _, ok := rentFlowAllowedImageTypes[candidate]; ok &&
+				rentFlowLooksLikeImageMimeType(blob, candidate) {
+				return blob, candidate, nil
+			}
+		}
+	}
+
+	return nil, "", errors.New("รองรับเฉพาะไฟล์ JPG, PNG, WEBP หรือ GIF")
 }
 
 func rentFlowImageBlobFromSource(raw *string) ([]byte, string, error) {
@@ -204,7 +268,7 @@ func rentFlowImageBlobFromUpload(fileHeader *multipart.FileHeader) ([]byte, stri
 		return nil, "", errors.New("ไม่สามารถอ่านไฟล์รูปภาพได้")
 	}
 
-	return rentFlowValidateImageBlob(blob)
+	return rentFlowValidateImageBlob(blob, fileHeader.Header.Get("Content-Type"), fileHeader.Filename)
 }
 
 func rentFlowSendImageBlob(c *gin.Context, mimeType string, blob []byte) {

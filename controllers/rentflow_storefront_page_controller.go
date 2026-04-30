@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -54,6 +55,73 @@ func RentFlowPartnerUpdateStorefrontPage(c *gin.Context) {
 		return
 	}
 	rentFlowUpsertStorefrontPage(c, "tenant", tenant.ID)
+}
+
+func RentFlowPartnerUploadStorefrontBlockImage(c *gin.Context) {
+	tenant, ok := rentFlowRequireOwnerTenant(c)
+	if !ok {
+		return
+	}
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		rentFlowError(c, http.StatusBadRequest, "ข้อมูลรูปภาพไม่ถูกต้อง")
+		return
+	}
+	files := rentFlowUploadedImageFiles(form)
+	if len(files) == 0 {
+		rentFlowError(c, http.StatusBadRequest, "กรุณาเลือกรูปภาพ")
+		return
+	}
+
+	blob, mimeType, err := rentFlowImageBlobFromUpload(files[0])
+	if err != nil {
+		rentFlowError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	image := models.RentFlowStorefrontBlockImage{
+		ID:       services.NewID("sfbimg"),
+		TenantID: tenant.ID,
+		FileName: filepath.Base(strings.TrimSpace(files[0].Filename)),
+		MimeType: mimeType,
+		Blob:     blob,
+	}
+	if err := config.DB.Create(&image).Error; err != nil {
+		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถบันทึกรูปภาพได้")
+		return
+	}
+
+	rentFlowAudit(c, tenant.ID, "storefront_block_image.upload", "storefront_block_image", image.ID, "")
+	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowRealtimeEventTenantUpdated)
+	rentFlowSuccess(c, http.StatusOK, "อัปโหลดรูปภาพสำเร็จ", rentFlowStorefrontBlockImageResponse(tenant, image))
+}
+
+func RentFlowGetStorefrontBlockImage(c *gin.Context) {
+	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
+	imageID := strings.TrimSpace(c.Param("imageId"))
+	if slug == "" || imageID == "" {
+		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปภาพ")
+		return
+	}
+
+	var tenant models.RentFlowTenant
+	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
+		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปภาพ")
+		return
+	}
+
+	var image models.RentFlowStorefrontBlockImage
+	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, imageID).First(&image).Error; err != nil {
+		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปภาพ")
+		return
+	}
+	if len(image.Blob) == 0 || strings.TrimSpace(image.MimeType) == "" {
+		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปภาพ")
+		return
+	}
+
+	rentFlowSendImageBlob(c, image.MimeType, image.Blob)
 }
 
 func RentFlowAdminGetStorefrontPage(c *gin.Context) {
@@ -205,5 +273,25 @@ func rentFlowStorefrontPageResponse(item models.RentFlowStorefrontPage) gin.H {
 		"publishedAt": item.PublishedAt,
 		"createdAt":   item.CreatedAt,
 		"updatedAt":   item.UpdatedAt,
+	}
+}
+
+func rentFlowStorefrontBlockImageURL(tenant *models.RentFlowTenant, imageID string) string {
+	if tenant == nil || tenant.DomainSlug == "" || strings.TrimSpace(imageID) == "" {
+		return ""
+	}
+	return "/tenants/" + tenant.DomainSlug + "/storefront-images/" + imageID
+}
+
+func rentFlowStorefrontBlockImageResponse(tenant *models.RentFlowTenant, image models.RentFlowStorefrontBlockImage) gin.H {
+	return gin.H{
+		"id":        image.ID,
+		"tenantId":  image.TenantID,
+		"imageUrl":  rentFlowStorefrontBlockImageURL(tenant, image.ID),
+		"fileName":  image.FileName,
+		"mimeType":  image.MimeType,
+		"size":      len(image.Blob),
+		"createdAt": image.CreatedAt,
+		"updatedAt": image.UpdatedAt,
 	}
 }

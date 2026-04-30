@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"rentflow-api/config"
-	"rentflow-api/models"
 	"rentflow-api/routes"
 	"rentflow-api/services"
 )
@@ -18,7 +17,6 @@ func main() {
 	}
 
 	config.ConnectDatabase()
-	db := config.DB
 
 	config.ConnectRedis()
 	if config.RDB == nil {
@@ -26,10 +24,8 @@ func main() {
 	} else {
 		log.Println("Redis เชื่อมต่อแล้ว")
 	}
+	services.StartRentFlowRealtimeRedisBridge(config.Ctx)
 
-	if err := models.SeedRentFlowData(db); err != nil {
-		log.Fatal("เตรียมข้อมูลเริ่มต้นของ RentFlow ไม่สำเร็จ: ", err)
-	}
 	services.EnsureRentFlowPlatformAdmin()
 	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
 
