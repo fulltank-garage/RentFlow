@@ -38,6 +38,13 @@ func rentFlowTenantPromoImageURL(tenant models.RentFlowTenant) string {
 	return "/tenants/" + url.PathEscape(tenant.DomainSlug) + "/promo-image?v=" + url.QueryEscape(tenant.UpdatedAt.UTC().Format(time.RFC3339Nano))
 }
 
+func rentFlowTenantLineOAQRCodeURL(tenant models.RentFlowTenant) string {
+	if len(tenant.LineOAQRBlob) == 0 || strings.TrimSpace(tenant.LineOAQRMimeType) == "" {
+		return ""
+	}
+	return "/tenants/" + url.PathEscape(tenant.DomainSlug) + "/line-oa-qr?v=" + url.QueryEscape(tenant.UpdatedAt.UTC().Format(time.RFC3339Nano))
+}
+
 func rentFlowTenantPromoImageURLByImage(tenant models.RentFlowTenant, image models.RentFlowTenantPromoImage) string {
 	if len(image.Blob) == 0 || strings.TrimSpace(image.MimeType) == "" {
 		return ""

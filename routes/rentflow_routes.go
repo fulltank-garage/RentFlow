@@ -19,6 +19,7 @@ func RegisterRentFlowRoutes(r *gin.Engine) {
 	r.GET("/users/:userId/avatar", controllers.RentFlowGetUserAvatar)
 	r.GET("/tenants/:tenantSlug/logo", controllers.RentFlowGetTenantLogo)
 	r.GET("/tenants/:tenantSlug/promo-image", controllers.RentFlowGetTenantPromoImage)
+	r.GET("/tenants/:tenantSlug/line-oa-qr", controllers.RentFlowGetTenantLineOAQRCode)
 	r.GET("/tenants/:tenantSlug/promo-images/:imageId", controllers.RentFlowGetTenantPromoImageByID)
 	r.GET("/tenants/:tenantSlug/storefront-images/:imageId", controllers.RentFlowGetStorefrontBlockImage)
 	r.GET("/platform/settings/public", controllers.RentFlowGetPublicPlatformSettings)

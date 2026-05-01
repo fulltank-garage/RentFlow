@@ -74,9 +74,12 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		ShopName         string    `json:"shopName"`
 		DomainSlug       string    `json:"domainSlug"`
 		ChatThresholdTHB int64     `json:"chatThresholdTHB"`
+		ContactPhone     string    `json:"contactPhone"`
+		FacebookPageURL  string    `json:"facebookPageUrl"`
 		LogoURL          *string   `json:"logoUrl"`
 		PromoImageURL    *string   `json:"promoImageUrl"`
 		PromoImageURLs   *[]string `json:"promoImageUrls"`
+		LineOAQRCodeURL  *string   `json:"lineOaQrCodeUrl"`
 		ClearPromoImages bool      `json:"clearPromoImages"`
 	}
 
@@ -84,10 +87,13 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 	var logoMimeType string
 	var promoImageBlob []byte
 	var promoImageMimeType string
+	var lineOAQRBlob []byte
+	var lineOAQRMimeType string
 	var promoImages []rentFlowUploadedPromoImage
 	logoProvided := false
 	promoImageProvided := false
 	promoImagesProvided := false
+	lineOAQRProvided := false
 	clearPromoImages := false
 
 	contentType := strings.ToLower(c.GetHeader("Content-Type"))
@@ -98,6 +104,8 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		payload.ShopName = c.PostForm("shopName")
 		payload.DomainSlug = c.PostForm("domainSlug")
 		payload.ChatThresholdTHB = rentFlowParseThreshold(c.PostForm("chatThresholdTHB"))
+		payload.ContactPhone = c.PostForm("contactPhone")
+		payload.FacebookPageURL = c.PostForm("facebookPageUrl")
 		clearPromoImages = strings.EqualFold(strings.TrimSpace(c.PostForm("clearPromoImages")), "true")
 
 		if value, exists := c.GetPostForm("logoUrl"); exists {
@@ -173,6 +181,27 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 			promoImageBlob = promoImages[0].Blob
 			promoImageMimeType = promoImages[0].MimeType
 		}
+		if value, exists := c.GetPostForm("lineOaQrCodeUrl"); exists {
+			payload.LineOAQRCodeURL = &value
+			lineOAQRProvided = true
+			var err error
+			lineOAQRBlob, lineOAQRMimeType, err = rentFlowImageBlobFromSource(&value)
+			if err != nil {
+				rentFlowError(c, http.StatusBadRequest, "QR Code LINE OA ไม่ถูกต้อง")
+				return
+			}
+		}
+		if fileHeader, err := c.FormFile("lineOaQrCode"); err == nil {
+			lineOAQRProvided = true
+			lineOAQRBlob, lineOAQRMimeType, err = rentFlowImageBlobFromUpload(fileHeader)
+			if err != nil {
+				rentFlowError(c, http.StatusBadRequest, err.Error())
+				return
+			}
+		} else if !errors.Is(err, http.ErrMissingFile) {
+			rentFlowError(c, http.StatusBadRequest, "QR Code LINE OA ไม่ถูกต้อง")
+			return
+		}
 	} else if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลร้านไม่ถูกต้อง")
 		return
@@ -183,6 +212,8 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 	shopName := strings.TrimSpace(payload.ShopName)
 	domainSlug := rentFlowNormalizeDomainSlug(payload.DomainSlug)
 	chatThresholdTHB := payload.ChatThresholdTHB
+	contactPhone := rentFlowNormalizePhone(payload.ContactPhone)
+	facebookPageURL := rentFlowNormalizeExternalURL(payload.FacebookPageURL)
 	if chatThresholdTHB < 0 {
 		chatThresholdTHB = 0
 	}
@@ -207,6 +238,12 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		promoImageBlob, promoImageMimeType, err = rentFlowImageBlobFromSource(payload.PromoImageURL)
 		if err != nil {
 			rentFlowError(c, http.StatusBadRequest, "รูปโปรโมชันไม่ถูกต้อง")
+			return
+		}
+		lineOAQRProvided = payload.LineOAQRCodeURL != nil
+		lineOAQRBlob, lineOAQRMimeType, err = rentFlowImageBlobFromSource(payload.LineOAQRCodeURL)
+		if err != nil {
+			rentFlowError(c, http.StatusBadRequest, "QR Code LINE OA ไม่ถูกต้อง")
 			return
 		}
 		if payload.PromoImageURLs != nil {
@@ -276,6 +313,10 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 			LogoBlob:           logoBlob,
 			PromoImageMimeType: promoImageMimeType,
 			PromoImageBlob:     promoImageBlob,
+			ContactPhone:       contactPhone,
+			FacebookPageURL:    facebookPageURL,
+			LineOAQRMimeType:   lineOAQRMimeType,
+			LineOAQRBlob:       lineOAQRBlob,
 			Status:             "active",
 			BookingMode:        "payment",
 			ChatThresholdTHB:   chatThresholdTHB,
@@ -312,6 +353,8 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		"shop_name":          shopName,
 		"domain_slug":        domainSlug,
 		"public_domain":      publicDomain,
+		"contact_phone":      contactPhone,
+		"facebook_page_url":  facebookPageURL,
 		"status":             "active",
 		"chat_threshold_thb": chatThresholdTHB,
 		"updated_at":         now,
@@ -333,6 +376,10 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		updates["promo_image_mime_type"] = ""
 		updates["promo_image_blob"] = []byte{}
 	}
+	if lineOAQRProvided {
+		updates["line_oaqr_mime_type"] = lineOAQRMimeType
+		updates["line_oaqr_blob"] = lineOAQRBlob
+	}
 
 	if err := config.DB.Model(&models.RentFlowTenant{}).
 		Where("id = ?", existing.ID).
@@ -347,6 +394,8 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 	existing.ShopName = shopName
 	existing.DomainSlug = domainSlug
 	existing.PublicDomain = publicDomain
+	existing.ContactPhone = contactPhone
+	existing.FacebookPageURL = facebookPageURL
 	existing.Status = "active"
 	existing.ChatThresholdTHB = chatThresholdTHB
 	existing.UpdatedAt = now
@@ -366,6 +415,10 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 	} else if clearPromoImages {
 		existing.PromoImageMimeType = ""
 		existing.PromoImageBlob = nil
+	}
+	if lineOAQRProvided {
+		existing.LineOAQRMimeType = lineOAQRMimeType
+		existing.LineOAQRBlob = lineOAQRBlob
 	}
 	if promoImagesProvided {
 		if err := rentFlowReplaceTenantPromoImages(existing.ID, promoImages); err != nil {
@@ -659,6 +712,20 @@ func rentFlowRootDomain() string {
 	return rootDomain
 }
 
+func rentFlowNormalizeExternalURL(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return ""
+	}
+	if parsed, err := url.Parse(value); err == nil && parsed.Scheme != "" && parsed.Host != "" {
+		return parsed.String()
+	}
+	if strings.Contains(value, ".") {
+		return "https://" + strings.TrimLeft(value, "/")
+	}
+	return value
+}
+
 func rentFlowNormalizeTenantHost(value string) string {
 	value = strings.TrimSpace(strings.ToLower(value))
 	if value == "" {
@@ -736,6 +803,9 @@ func rentFlowPublicTenantResponse(tenant models.RentFlowTenant) gin.H {
 		"logoUrl":          rentFlowTenantLogoURL(tenant),
 		"promoImageUrl":    promoImageUrl,
 		"promoImageUrls":   promoImageUrls,
+		"contactPhone":     tenant.ContactPhone,
+		"facebookPageUrl":  tenant.FacebookPageURL,
+		"lineOaQrCodeUrl":  rentFlowTenantLineOAQRCodeURL(tenant),
 		"status":           tenant.Status,
 		"bookingMode":      rentFlowNormalizeBookingMode(tenant.BookingMode),
 		"chatThresholdTHB": tenant.ChatThresholdTHB,
@@ -795,6 +865,27 @@ func RentFlowGetTenantPromoImage(c *gin.Context) {
 	}
 
 	rentFlowSendImageBlob(c, tenant.PromoImageMimeType, tenant.PromoImageBlob)
+}
+
+func RentFlowGetTenantLineOAQRCode(c *gin.Context) {
+	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
+	if slug == "" {
+		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
+		return
+	}
+
+	var tenant models.RentFlowTenant
+	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
+		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
+		return
+	}
+
+	if len(tenant.LineOAQRBlob) == 0 || strings.TrimSpace(tenant.LineOAQRMimeType) == "" {
+		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
+		return
+	}
+
+	rentFlowSendImageBlob(c, tenant.LineOAQRMimeType, tenant.LineOAQRBlob)
 }
 
 func RentFlowGetTenantPromoImageByID(c *gin.Context) {

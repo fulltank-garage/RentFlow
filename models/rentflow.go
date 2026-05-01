@@ -48,6 +48,11 @@ type RentFlowTenant struct {
 	PromoImageURL      string         `gorm:"-" json:"promoImageUrl,omitempty"`
 	PromoImageMimeType string         `gorm:"size:80" json:"-"`
 	PromoImageBlob     []byte         `gorm:"type:bytea" json:"-"`
+	ContactPhone       string         `gorm:"size:40" json:"contactPhone,omitempty"`
+	FacebookPageURL    string         `gorm:"size:500" json:"facebookPageUrl,omitempty"`
+	LineOAQRCodeURL    string         `gorm:"-" json:"lineOaQrCodeUrl,omitempty"`
+	LineOAQRMimeType   string         `gorm:"size:80" json:"-"`
+	LineOAQRBlob       []byte         `gorm:"type:bytea" json:"-"`
 	Status             string         `gorm:"size:30;index;not null;default:active" json:"status"`
 	BookingMode        string         `gorm:"size:30;not null;default:payment" json:"bookingMode"`
 	ChatThresholdTHB   int64          `gorm:"not null;default:0" json:"chatThresholdTHB"`
