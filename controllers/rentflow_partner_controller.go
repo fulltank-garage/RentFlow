@@ -86,7 +86,7 @@ func RentFlowPartnerDashboard(c *gin.Context) {
 		return
 	}
 
-	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลแดชบอร์ดสำเร็จ", rentFlowBuildPartnerDashboard(c, tenant, cars, branches, bookings, payments, reviews))
+	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลแดชบอร์ดสำเร็จ", rentFlowBuildPartnerDashboard(tenant, cars, branches, bookings, payments, reviews))
 }
 
 func RentFlowPartnerGetCars(c *gin.Context) {
@@ -109,7 +109,7 @@ func RentFlowPartnerGetCars(c *gin.Context) {
 
 	items := make([]gin.H, 0, len(cars))
 	for _, car := range cars {
-		items = append(items, rentFlowPartnerCarResponse(c, tenant, car, imageURLs[car.ID]))
+		items = append(items, rentFlowPartnerCarResponse(tenant, car, imageURLs[car.ID]))
 	}
 
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลรถสำเร็จ", gin.H{
@@ -142,7 +142,7 @@ func RentFlowPartnerCreateCar(c *gin.Context) {
 	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
 	rentFlowPublishCarRealtime(tenant.ID, car.ID, services.RentFlowRealtimeEventCarChanged)
 
-	rentFlowSuccess(c, http.StatusCreated, "เพิ่มรถสำเร็จ", rentFlowPartnerCarResponse(c, tenant, car, nil))
+	rentFlowSuccess(c, http.StatusCreated, "เพิ่มรถสำเร็จ", rentFlowPartnerCarResponse(tenant, car, nil))
 }
 
 func RentFlowPartnerUpdateCar(c *gin.Context) {
@@ -217,7 +217,7 @@ func RentFlowPartnerUpdateCar(c *gin.Context) {
 	if statusChanged {
 		rentFlowPublishCarStatusRealtime(tenant.ID, existing)
 	}
-	rentFlowSuccess(c, http.StatusOK, "บันทึกข้อมูลรถสำเร็จ", rentFlowPartnerCarResponse(c, tenant, existing, imageURLs[existing.ID]))
+	rentFlowSuccess(c, http.StatusOK, "บันทึกข้อมูลรถสำเร็จ", rentFlowPartnerCarResponse(tenant, existing, imageURLs[existing.ID]))
 }
 
 func RentFlowPartnerDeleteCar(c *gin.Context) {
@@ -698,7 +698,7 @@ func rentFlowNormalizeCarStatus(status string) string {
 	}
 }
 
-func rentFlowPartnerCarResponse(c *gin.Context, tenant *models.RentFlowTenant, car models.RentFlowCar, images []string) gin.H {
+func rentFlowPartnerCarResponse(tenant *models.RentFlowTenant, car models.RentFlowCar, images []string) gin.H {
 	primaryImage := ""
 	if len(images) > 0 {
 		primaryImage = images[0]
@@ -747,7 +747,7 @@ func rentFlowPartnerCarResponse(c *gin.Context, tenant *models.RentFlowTenant, c
 	}
 }
 
-func rentFlowBuildPartnerDashboard(c *gin.Context, tenant *models.RentFlowTenant, cars []models.RentFlowCar, branches []models.RentFlowBranch, bookings []models.RentFlowBooking, payments []models.RentFlowPayment, reviews []models.RentFlowReview) gin.H {
+func rentFlowBuildPartnerDashboard(tenant *models.RentFlowTenant, cars []models.RentFlowCar, branches []models.RentFlowBranch, bookings []models.RentFlowBooking, payments []models.RentFlowPayment, reviews []models.RentFlowReview) gin.H {
 	carNameByID := make(map[string]string, len(cars))
 	fleetStatus := map[string]int{"available": 0, "rented": 0, "maintenance": 0, "hidden": 0}
 	for _, car := range cars {

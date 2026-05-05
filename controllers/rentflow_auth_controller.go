@@ -27,6 +27,16 @@ type rentFlowGooglePayload struct {
 	} `json:"user"`
 }
 
+func rentFlowAuthPayload(user models.RentFlowUser, sessionToken string) gin.H {
+	payload := gin.H{
+		"user": rentFlowUserResponse(user),
+	}
+	if !rentFlowCookieSecure() {
+		payload["sessionToken"] = sessionToken
+	}
+	return payload
+}
+
 func RentFlowAuthWithGoogle(c *gin.Context) {
 	var payload rentFlowGooglePayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
@@ -137,9 +147,7 @@ func RentFlowAuthWithGoogle(c *gin.Context) {
 		_ = config.DB.Create(&notification).Error
 	}
 
-	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบสำเร็จ", gin.H{
-		"user": rentFlowUserResponse(user),
-	})
+	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบสำเร็จ", rentFlowAuthPayload(user, sessionToken))
 }
 
 func RentFlowRegister(c *gin.Context) {
@@ -216,9 +224,7 @@ func RentFlowRegister(c *gin.Context) {
 	rentFlowRecordSessionAudit(c, user, "register")
 	rentFlowCreateNotification("", &user.ID, user.Email, "ยินดีต้อนรับสู่ RentFlow", "บัญชีของคุณพร้อมใช้งานแล้ว")
 
-	rentFlowSuccess(c, http.StatusCreated, "สมัครสมาชิกสำเร็จ", gin.H{
-		"user": rentFlowUserResponse(user),
-	})
+	rentFlowSuccess(c, http.StatusCreated, "สมัครสมาชิกสำเร็จ", rentFlowAuthPayload(user, sessionToken))
 }
 
 func RentFlowLogin(c *gin.Context) {
@@ -284,10 +290,9 @@ func RentFlowLogin(c *gin.Context) {
 		"updated_at":           time.Now(),
 	}).Error
 	rentFlowRecordSessionAudit(c, user, "login")
-	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบสำเร็จ", gin.H{
-		"user":               rentFlowUserResponse(user),
-		"mustChangePassword": user.MustChangePassword,
-	})
+	authPayload := rentFlowAuthPayload(user, sessionToken)
+	authPayload["mustChangePassword"] = user.MustChangePassword
+	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบสำเร็จ", authPayload)
 }
 
 func RentFlowForgotPassword(c *gin.Context) {

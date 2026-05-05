@@ -421,7 +421,7 @@ func RentFlowPartnerGetReports(c *gin.Context) {
 	_ = config.DB.Where("tenant_id = ?", tenant.ID).Find(&payments).Error
 	_ = config.DB.Where("tenant_id = ?", tenant.ID).Find(&reviews).Error
 
-	rentFlowSuccess(c, http.StatusOK, "ดึงรายงานสำเร็จ", rentFlowBuildPartnerDashboard(c, tenant, cars, branches, bookings, payments, reviews))
+	rentFlowSuccess(c, http.StatusOK, "ดึงรายงานสำเร็จ", rentFlowBuildPartnerDashboard(tenant, cars, branches, bookings, payments, reviews))
 }
 
 func RentFlowPartnerExportReports(c *gin.Context) {
