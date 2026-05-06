@@ -318,7 +318,7 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 			LineOAQRMimeType:   lineOAQRMimeType,
 			LineOAQRBlob:       lineOAQRBlob,
 			Status:             "active",
-			BookingMode:        "payment",
+			BookingMode:        "chat",
 			ChatThresholdTHB:   chatThresholdTHB,
 			Plan:               "starter",
 		}
@@ -363,7 +363,7 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		updates["plan"] = "starter"
 	}
 	if existing.BookingMode == "" {
-		updates["booking_mode"] = "payment"
+		updates["booking_mode"] = "chat"
 	}
 	if logoProvided {
 		updates["logo_mime_type"] = logoMimeType
@@ -403,7 +403,7 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		existing.Plan = "starter"
 	}
 	if existing.BookingMode == "" {
-		existing.BookingMode = "payment"
+		existing.BookingMode = "chat"
 	}
 	if logoProvided {
 		existing.LogoMimeType = logoMimeType

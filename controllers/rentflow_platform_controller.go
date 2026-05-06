@@ -22,6 +22,7 @@ type rentFlowPlatformTenantItem struct {
 	ShopName          string    `json:"shopName"`
 	OwnerName         string    `json:"ownerName"`
 	OwnerEmail        string    `json:"ownerEmail"`
+	LogoURL           string    `json:"logoUrl"`
 	DomainSlug        string    `json:"domainSlug"`
 	PublicDomain      string    `json:"publicDomain"`
 	Status            string    `json:"status"`
@@ -218,7 +219,7 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 		DomainSlug:   domainSlug,
 		PublicDomain: publicDomain,
 		Status:       status,
-		BookingMode:  "payment",
+		BookingMode:  "chat",
 		Plan:         plan,
 	}
 	member := models.RentFlowTenantMember{
@@ -1014,6 +1015,7 @@ func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
 			ShopName:          tenant.ShopName,
 			OwnerName:         ownerName,
 			OwnerEmail:        tenant.OwnerEmail,
+			LogoURL:           rentFlowTenantLogoURL(tenant),
 			DomainSlug:        tenant.DomainSlug,
 			PublicDomain:      tenant.PublicDomain,
 			Status:            tenant.Status,

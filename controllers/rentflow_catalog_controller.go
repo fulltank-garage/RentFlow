@@ -721,10 +721,10 @@ func RentFlowGetUnavailableDates(c *gin.Context) {
 
 func rentFlowNormalizeBookingMode(mode string) string {
 	switch strings.TrimSpace(strings.ToLower(mode)) {
-	case "chat", "chat_first", "line", "line_chat":
-		return "chat"
-	default:
+	case "payment", "system", "system_payment":
 		return "payment"
+	default:
+		return "chat"
 	}
 }
 
