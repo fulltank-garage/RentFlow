@@ -49,6 +49,24 @@ func RentFlowResolveTenant(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลร้านสำเร็จ", rentFlowPublicTenantResponse(*tenant))
 }
 
+func RentFlowListPublicTenants(c *gin.Context) {
+	tenants, err := rentFlowMarketplaceTenants()
+	if err != nil {
+		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลร้านได้")
+		return
+	}
+
+	items := make([]gin.H, 0, len(tenants))
+	for _, tenant := range tenants {
+		items = append(items, rentFlowPublicTenantResponse(tenant))
+	}
+
+	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลร้านสำเร็จ", gin.H{
+		"items": items,
+		"total": len(items),
+	})
+}
+
 func RentFlowGetMyTenant(c *gin.Context) {
 	tenant, err := rentFlowCurrentUserTenant(c)
 	if err != nil {
