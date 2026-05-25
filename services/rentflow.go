@@ -28,6 +28,8 @@ const (
 	RentFlowAppStorefront            = "storefront"
 	RentFlowAppPartner               = "partner"
 	RentFlowAppAdmin                 = "admin"
+	RentFlowActorUser                = "user"
+	RentFlowActorPlatformAdmin       = "platform_admin"
 	rentFlowSessionPrefix            = "rentflow:session:"
 	rentFlowCachePrefix              = "rentflow:cache:"
 	defaultSessionTTL                = 7 * 24 * time.Hour
@@ -67,12 +69,16 @@ func RentFlowSessionCookieNames() []string {
 }
 
 type RentFlowSession struct {
-	UserID    string    `json:"userId"`
-	UserEmail string    `json:"userEmail"`
-	App       string    `json:"app,omitempty"`
-	IP        string    `json:"ip,omitempty"`
-	UserAgent string    `json:"userAgent,omitempty"`
-	ExpiresAt time.Time `json:"expiresAt"`
+	UserID        string    `json:"userId"`
+	UserEmail     string    `json:"userEmail"`
+	ActorType     string    `json:"actorType,omitempty"`
+	AdminUsername string    `json:"adminUsername,omitempty"`
+	AdminEmail    string    `json:"adminEmail,omitempty"`
+	AdminName     string    `json:"adminName,omitempty"`
+	App           string    `json:"app,omitempty"`
+	IP            string    `json:"ip,omitempty"`
+	UserAgent     string    `json:"userAgent,omitempty"`
+	ExpiresAt     time.Time `json:"expiresAt"`
 }
 
 type memorySessionEntry struct {

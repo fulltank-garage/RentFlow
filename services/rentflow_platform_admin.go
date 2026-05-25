@@ -1,15 +1,22 @@
 package services
 
 import (
-	"errors"
+	"crypto/subtle"
 	"log"
 	"os"
 	"strings"
 
-	"gorm.io/gorm"
 	"rentflow-api/config"
 	"rentflow-api/models"
 )
+
+type RentFlowPlatformAdminIdentity struct {
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Name      string `json:"name"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+}
 
 func RentFlowPlatformAdminEmail() string {
 	return strings.TrimSpace(strings.ToLower(os.Getenv("RENTFLOW_SUPER_ADMIN_EMAIL")))
@@ -21,6 +28,72 @@ func RentFlowPlatformAdminUsername() string {
 
 func RentFlowPlatformAdminPassword() string {
 	return strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_PASSWORD"))
+}
+
+func RentFlowPlatformAdminIdentityFromEnv() (RentFlowPlatformAdminIdentity, bool) {
+	email := RentFlowPlatformAdminEmail()
+	username := RentFlowPlatformAdminUsername()
+	if username == "" {
+		username = email
+	}
+	if email == "" {
+		email = username
+	}
+
+	firstName := strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_FIRST_NAME"))
+	if firstName == "" {
+		firstName = "Platform"
+	}
+	lastName := strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_LAST_NAME"))
+	if lastName == "" {
+		lastName = "Admin"
+	}
+	name := strings.TrimSpace(firstName + " " + lastName)
+
+	identity := RentFlowPlatformAdminIdentity{
+		Username:  username,
+		Email:     email,
+		Name:      name,
+		FirstName: firstName,
+		LastName:  lastName,
+	}
+	return identity, username != "" || email != ""
+}
+
+func ValidateRentFlowPlatformAdminCredentials(username, password string) (RentFlowPlatformAdminIdentity, bool) {
+	identity, configured := RentFlowPlatformAdminIdentityFromEnv()
+	adminPassword := RentFlowPlatformAdminPassword()
+	if !configured || adminPassword == "" {
+		return RentFlowPlatformAdminIdentity{}, false
+	}
+
+	normalizedUsername := strings.TrimSpace(strings.ToLower(username))
+	usernameMatches := (identity.Email != "" && normalizedUsername == identity.Email) ||
+		(identity.Username != "" && normalizedUsername == identity.Username)
+	passwordMatches := subtle.ConstantTimeCompare([]byte(strings.TrimSpace(password)), []byte(adminPassword)) == 1
+	if !usernameMatches || !passwordMatches {
+		return RentFlowPlatformAdminIdentity{}, false
+	}
+	return identity, true
+}
+
+func IsRentFlowPlatformAdminSession(session *RentFlowSession) bool {
+	if session == nil {
+		return false
+	}
+	if RentFlowNormalizeAppName(session.App) != RentFlowAppAdmin || session.ActorType != RentFlowActorPlatformAdmin {
+		return false
+	}
+
+	identity, configured := RentFlowPlatformAdminIdentityFromEnv()
+	if !configured {
+		return false
+	}
+
+	sessionEmail := strings.TrimSpace(strings.ToLower(session.AdminEmail))
+	sessionUsername := strings.TrimSpace(strings.ToLower(session.AdminUsername))
+	return (identity.Email != "" && sessionEmail == identity.Email) ||
+		(identity.Username != "" && sessionUsername == identity.Username)
 }
 
 func IsRentFlowPlatformAdmin(user *models.RentFlowUser) bool {
@@ -67,91 +140,11 @@ func RentFlowPlatformAdminConfigured() bool {
 }
 
 func EnsureRentFlowPlatformAdmin() {
-	if _, err := EnsureRentFlowPlatformAdminUser(); err != nil {
-		log.Println(err)
+	if _, ok := RentFlowPlatformAdminIdentityFromEnv(); !ok {
+		log.Println("ยังไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_EMAIL หรือ RENTFLOW_SUPER_ADMIN_USERNAME")
+		return
 	}
-}
-
-func EnsureRentFlowPlatformAdminUser() (*models.RentFlowUser, error) {
-	if config.DB == nil {
-		return nil, errors.New("ยังไม่ได้เชื่อมต่อฐานข้อมูลสำหรับผู้ดูแลระบบกลาง")
+	if RentFlowPlatformAdminPassword() == "" {
+		log.Println("ยังไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_PASSWORD")
 	}
-
-	email := RentFlowPlatformAdminEmail()
-	username := RentFlowPlatformAdminUsername()
-	password := RentFlowPlatformAdminPassword()
-
-	if email == "" && username == "" {
-		return nil, errors.New("ยังไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_EMAIL หรือ RENTFLOW_SUPER_ADMIN_USERNAME")
-	}
-
-	if username == "" {
-		username = email
-	}
-	if email == "" {
-		email = username
-	}
-
-	firstName := strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_FIRST_NAME"))
-	if firstName == "" {
-		firstName = "Platform"
-	}
-	lastName := strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_LAST_NAME"))
-	if lastName == "" {
-		lastName = "Admin"
-	}
-	name := strings.TrimSpace(firstName + " " + lastName)
-
-	var user models.RentFlowUser
-	err := config.DB.Where("username = ? OR email = ?", username, email).First(&user).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, errors.New("ตรวจสอบบัญชีผู้ดูแลระบบกลางไม่สำเร็จ: " + err.Error())
-	}
-
-	updates := map[string]interface{}{
-		"username":   username,
-		"email":      email,
-		"first_name": firstName,
-		"last_name":  lastName,
-		"name":       name,
-	}
-
-	if password != "" {
-		hash, hashErr := HashPasswordIfNeeded(password)
-		if hashErr != nil {
-			return nil, errors.New("สร้างรหัสผ่านผู้ดูแลระบบกลางไม่สำเร็จ: " + hashErr.Error())
-		}
-		updates["password_hash"] = hash
-	}
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		if password == "" {
-			return nil, errors.New("ยังไม่ได้สร้างผู้ดูแลระบบกลาง เพราะไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_PASSWORD")
-		}
-
-		user = models.RentFlowUser{
-			ID:           NewID("usr"),
-			Username:     username,
-			Email:        email,
-			FirstName:    firstName,
-			LastName:     lastName,
-			Name:         name,
-			PasswordHash: updates["password_hash"].(string),
-		}
-		if createErr := config.DB.Create(&user).Error; createErr != nil {
-			return nil, errors.New("สร้างผู้ดูแลระบบกลางไม่สำเร็จ: " + createErr.Error())
-		}
-		log.Println("สร้างผู้ดูแลระบบกลางแล้ว")
-		return &user, nil
-	}
-
-	if updateErr := config.DB.Model(&models.RentFlowUser{}).Where("id = ?", user.ID).Updates(updates).Error; updateErr != nil {
-		return nil, errors.New("อัปเดตผู้ดูแลระบบกลางไม่สำเร็จ: " + updateErr.Error())
-	}
-	user.Username = username
-	user.Email = email
-	user.FirstName = firstName
-	user.LastName = lastName
-	user.Name = name
-	return &user, nil
 }

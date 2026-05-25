@@ -947,12 +947,13 @@ func rentFlowPartnerPaymentResponse(payment models.RentFlowPayment, booking mode
 }
 
 func rentFlowAudit(c *gin.Context, tenantID, action, entity, entityID, detail string) {
-	user, _ := middleware.CurrentRentFlowUser(c)
+	actorID := rentFlowCurrentActorID(c)
+	actorEmail := rentFlowCurrentActorEmail(c)
 	log := models.RentFlowAuditLog{
 		ID:         services.NewID("aud"),
 		TenantID:   tenantID,
-		ActorID:    user.ID,
-		ActorEmail: user.Email,
+		ActorID:    actorID,
+		ActorEmail: actorEmail,
 		Action:     action,
 		Entity:     entity,
 		EntityID:   entityID,
@@ -964,6 +965,9 @@ func rentFlowAudit(c *gin.Context, tenantID, action, entity, entityID, detail st
 }
 
 func rentFlowRequirePlatformAdmin(c *gin.Context) bool {
+	if _, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+		return true
+	}
 	user, ok := middleware.CurrentRentFlowUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
@@ -974,4 +978,24 @@ func rentFlowRequirePlatformAdmin(c *gin.Context) bool {
 		return false
 	}
 	return true
+}
+
+func rentFlowCurrentActorID(c *gin.Context) string {
+	if user, ok := middleware.CurrentRentFlowUser(c); ok {
+		return user.ID
+	}
+	if _, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+		return "platform_admin"
+	}
+	return ""
+}
+
+func rentFlowCurrentActorEmail(c *gin.Context) string {
+	if user, ok := middleware.CurrentRentFlowUser(c); ok {
+		return user.Email
+	}
+	if admin, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+		return admin.AdminEmail
+	}
+	return ""
 }

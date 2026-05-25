@@ -28,6 +28,9 @@ func RentFlowRealtimeSocket(c *gin.Context) {
 
 	switch app {
 	case services.RentFlowAppAdmin:
+		if _, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+			break
+		}
 		user, ok := middleware.CurrentRentFlowUser(c)
 		if !ok || !services.IsRentFlowPlatformAdmin(user) {
 			rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบผู้ดูแลก่อน")

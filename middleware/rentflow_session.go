@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	rentFlowSessionKey = "rentflow.session"
-	rentFlowUserKey    = "rentflow.user"
+	rentFlowSessionKey       = "rentflow.session"
+	rentFlowUserKey          = "rentflow.user"
+	rentFlowPlatformAdminKey = "rentflow.platformAdmin"
 )
 
 func AttachRentFlowSession() gin.HandlerFunc {
@@ -32,6 +33,13 @@ func AttachRentFlowSession() gin.HandlerFunc {
 
 		session, err := services.GetSession(config.Ctx, token)
 		if err != nil || session == nil {
+			c.Next()
+			return
+		}
+
+		if services.IsRentFlowPlatformAdminSession(session) {
+			c.Set(rentFlowSessionKey, *session)
+			c.Set(rentFlowPlatformAdminKey, *session)
 			c.Next()
 			return
 		}
@@ -84,15 +92,20 @@ func rentFlowSessionCookieNameFromRequest(c *gin.Context) string {
 
 func RequireRentFlowSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if _, ok := c.Get(rentFlowUserKey); !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"success": false,
-				"message": "กรุณาเข้าสู่ระบบก่อน",
-			})
-			c.Abort()
+		if _, ok := c.Get(rentFlowUserKey); ok {
+			c.Next()
 			return
 		}
-		c.Next()
+		if _, ok := c.Get(rentFlowPlatformAdminKey); ok {
+			c.Next()
+			return
+		}
+
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"message": "กรุณาเข้าสู่ระบบก่อน",
+		})
+		c.Abort()
 	}
 }
 
@@ -107,4 +120,17 @@ func CurrentRentFlowUser(c *gin.Context) (*models.RentFlowUser, bool) {
 		return nil, false
 	}
 	return &user, true
+}
+
+func CurrentRentFlowPlatformAdmin(c *gin.Context) (*services.RentFlowSession, bool) {
+	value, ok := c.Get(rentFlowPlatformAdminKey)
+	if !ok {
+		return nil, false
+	}
+
+	session, ok := value.(services.RentFlowSession)
+	if !ok || !services.IsRentFlowPlatformAdminSession(&session) {
+		return nil, false
+	}
+	return &session, true
 }

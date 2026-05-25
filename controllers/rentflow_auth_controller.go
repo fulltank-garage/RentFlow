@@ -363,6 +363,12 @@ func RentFlowGetMe(c *gin.Context) {
 func RentFlowLogout(c *gin.Context) {
 	if user, ok := middleware.CurrentRentFlowUser(c); ok {
 		rentFlowRecordSessionAudit(c, *user, "logout")
+	} else if admin, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+		rentFlowRecordAdminSessionAudit(c, services.RentFlowPlatformAdminIdentity{
+			Username: admin.AdminUsername,
+			Email:    admin.AdminEmail,
+			Name:     admin.AdminName,
+		}, "logout")
 	}
 	token := rentFlowSessionTokenFromRequest(c)
 	if token != "" {
@@ -552,6 +558,22 @@ func rentFlowRecordSessionAudit(c *gin.Context, user models.RentFlowUser, action
 		UserID:    user.ID,
 		UserEmail: user.Email,
 		App:       rentFlowAppFromRequest(c),
+		Action:    strings.TrimSpace(strings.ToLower(action)),
+		IP:        c.ClientIP(),
+		UserAgent: c.Request.UserAgent(),
+	}
+	_ = config.DB.Create(&audit).Error
+}
+
+func rentFlowRecordAdminSessionAudit(c *gin.Context, identity services.RentFlowPlatformAdminIdentity, action string) {
+	if config.DB == nil {
+		return
+	}
+	audit := models.RentFlowSessionAudit{
+		ID:        services.NewID("ses"),
+		UserID:    "platform_admin",
+		UserEmail: identity.Email,
+		App:       services.RentFlowAppAdmin,
 		Action:    strings.TrimSpace(strings.ToLower(action)),
 		IP:        c.ClientIP(),
 		UserAgent: c.Request.UserAgent(),

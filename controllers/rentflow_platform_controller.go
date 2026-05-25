@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"crypto/subtle"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -57,7 +56,19 @@ func RentFlowAdminGetMe(c *gin.Context) {
 		return
 	}
 
-	user, _ := middleware.CurrentRentFlowUser(c)
+	if admin, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+		rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลผู้ดูแลระบบสำเร็จ", gin.H{
+			"user":  rentFlowPlatformAdminUserResponse(admin),
+			"hosts": rentFlowPlatformHosts(),
+		})
+		return
+	}
+
+	user, ok := middleware.CurrentRentFlowUser(c)
+	if !ok {
+		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบผู้ดูแลก่อน")
+		return
+	}
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลผู้ดูแลระบบสำเร็จ", gin.H{
 		"user": gin.H{
 			"id":        user.ID,
@@ -81,37 +92,29 @@ func RentFlowAdminLogin(c *gin.Context) {
 		return
 	}
 
-	username := strings.TrimSpace(strings.ToLower(payload.Username))
-	password := strings.TrimSpace(payload.Password)
-	adminEmail := services.RentFlowPlatformAdminEmail()
-	adminUsername := services.RentFlowPlatformAdminUsername()
-	adminPassword := services.RentFlowPlatformAdminPassword()
-
-	if (adminEmail == "" && adminUsername == "") || adminPassword == "" {
-		rentFlowError(c, http.StatusInternalServerError, "ยังไม่ได้ตั้งค่าบัญชีผู้ดูแลระบบกลาง")
-		return
-	}
-
-	usernameMatches := (adminEmail != "" && username == adminEmail) ||
-		(adminUsername != "" && username == adminUsername)
-	passwordMatches := subtle.ConstantTimeCompare([]byte(password), []byte(adminPassword)) == 1
-	if !usernameMatches || !passwordMatches {
+	identity, valid := services.ValidateRentFlowPlatformAdminCredentials(payload.Username, payload.Password)
+	if !valid {
+		if !services.RentFlowPlatformAdminConfigured() || services.RentFlowPlatformAdminPassword() == "" {
+			rentFlowError(c, http.StatusInternalServerError, "ยังไม่ได้ตั้งค่าบัญชีผู้ดูแลระบบกลาง")
+			return
+		}
 		rentFlowError(c, http.StatusUnauthorized, "ชื่อผู้ใช้หรือรหัสผ่านผู้ดูแลไม่ถูกต้อง")
 		return
 	}
 
-	user, err := services.EnsureRentFlowPlatformAdminUser()
-	if err != nil {
-		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถเตรียมบัญชีผู้ดูแลระบบกลางได้")
+	if strings.TrimSpace(identity.Username) == "" && strings.TrimSpace(identity.Email) == "" {
+		rentFlowError(c, http.StatusInternalServerError, "ยังไม่ได้ตั้งค่าบัญชีผู้ดูแลระบบกลาง")
 		return
 	}
 
 	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowSession{
-		UserID:    user.ID,
-		UserEmail: user.Email,
-		App:       services.RentFlowAppAdmin,
-		IP:        c.ClientIP(),
-		UserAgent: c.Request.UserAgent(),
+		ActorType:     services.RentFlowActorPlatformAdmin,
+		AdminUsername: identity.Username,
+		AdminEmail:    identity.Email,
+		AdminName:     identity.Name,
+		App:           services.RentFlowAppAdmin,
+		IP:            c.ClientIP(),
+		UserAgent:     c.Request.UserAgent(),
 	}, 7*24*time.Hour)
 	if err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถสร้างเซสชันผู้ดูแลได้")
@@ -119,17 +122,39 @@ func RentFlowAdminLogin(c *gin.Context) {
 	}
 
 	setRentFlowSessionCookie(c, sessionToken)
-	rentFlowRecordSessionAudit(c, *user, "login")
+	rentFlowRecordAdminSessionAudit(c, identity, "login")
 	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบผู้ดูแลสำเร็จ", gin.H{
-		"user": gin.H{
-			"id":        user.ID,
-			"username":  user.Username,
-			"email":     user.Email,
-			"name":      user.Name,
-			"firstName": user.FirstName,
-			"lastName":  user.LastName,
-		},
+		"user": rentFlowPlatformAdminIdentityResponse(identity),
 	})
+}
+
+func rentFlowPlatformAdminIdentityResponse(identity services.RentFlowPlatformAdminIdentity) gin.H {
+	return gin.H{
+		"id":        "platform_admin",
+		"username":  identity.Username,
+		"email":     identity.Email,
+		"name":      identity.Name,
+		"firstName": identity.FirstName,
+		"lastName":  identity.LastName,
+	}
+}
+
+func rentFlowPlatformAdminUserResponse(session *services.RentFlowSession) gin.H {
+	name := strings.TrimSpace(session.AdminName)
+	if name == "" {
+		name = strings.TrimSpace(session.AdminUsername)
+	}
+	if name == "" {
+		name = strings.TrimSpace(session.AdminEmail)
+	}
+	return gin.H{
+		"id":        "platform_admin",
+		"username":  session.AdminUsername,
+		"email":     session.AdminEmail,
+		"name":      name,
+		"firstName": "",
+		"lastName":  "",
+	}
 }
 
 func RentFlowAdminGetOverview(c *gin.Context) {
@@ -463,7 +488,7 @@ func RentFlowAdminUpdateInvoiceStatus(c *gin.Context) {
 		return
 	}
 
-	user, _ := middleware.CurrentRentFlowUser(c)
+	paidBy := rentFlowCurrentActorID(c)
 	now := time.Now()
 	paidAmount := payload.PaidAmount
 	if paidAmount <= 0 && status == "paid" {
@@ -478,7 +503,7 @@ func RentFlowAdminUpdateInvoiceStatus(c *gin.Context) {
 	}
 	if status == "paid" {
 		updates["paid_at"] = &now
-		updates["paid_by"] = user.ID
+		updates["paid_by"] = paidBy
 	} else {
 		updates["paid_at"] = nil
 		updates["paid_by"] = ""
