@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Divider,
   LinearProgress,
   Stack,
@@ -16,6 +15,7 @@ import {
 import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealtimeRefresh";
 import { dashboardService } from "@/src/services/dashboard/dashboard.service";
 import type { PartnerDashboard } from "@/src/services/dashboard/dashboard.types";
+import { PartnerDashboardSkeleton } from "@/src/components/partner/PartnerLoadingSkeletons";
 
 function formatTHB(value: number) {
   return `${new Intl.NumberFormat("th-TH", {
@@ -144,16 +144,7 @@ export default function PartnerDashboardPage() {
   }, [reloadTick]);
 
   if (loading) {
-    return (
-      <Box className="grid min-h-[60vh] place-items-center">
-        <Stack spacing={2} className="items-center">
-          <CircularProgress />
-          <Typography className="text-sm text-slate-500">
-            กำลังโหลดข้อมูลร้าน...
-          </Typography>
-        </Stack>
-      </Box>
-    );
+    return <PartnerDashboardSkeleton />;
   }
 
   if (error || !dashboard) {

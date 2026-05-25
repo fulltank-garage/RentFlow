@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Divider,
   Stack,
   Typography,
@@ -20,6 +19,7 @@ import type {
   PartnerAiAssistant,
   PartnerAiMetric,
 } from "@/src/services/ai/ai.types";
+import { PartnerDashboardSkeleton } from "./PartnerLoadingSkeletons";
 
 function toneBg(tone: PartnerAiMetric["tone"] | PartnerAiAlert["tone"]) {
   if (tone === "success") return "bg-emerald-50 text-emerald-900 border-emerald-200";
@@ -78,11 +78,7 @@ export default function PartnerAiPage() {
   }, []);
 
   if (loading) {
-    return (
-      <Box className="grid min-h-[50vh] place-items-center">
-        <CircularProgress />
-      </Box>
-    );
+    return <PartnerDashboardSkeleton />;
   }
 
   return (

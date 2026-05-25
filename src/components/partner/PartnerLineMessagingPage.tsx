@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Collapse,
   Divider,
   LinearProgress,
@@ -20,6 +19,7 @@ import {
 
 import { lineService } from "@/src/services/line/line.service";
 import type { PartnerLineConnection } from "@/src/services/line/line.types";
+import { PartnerFormSkeleton } from "./PartnerLoadingSkeletons";
 
 type Snack = {
   open: boolean;
@@ -306,13 +306,7 @@ export function PartnerLineMessagingPage() {
   }
 
   if (loading) {
-    return (
-      <Card elevation={0} className="partner-card rounded-[30px]!">
-        <CardContent className="grid min-h-[420px] place-items-center">
-          <CircularProgress />
-        </CardContent>
-      </Card>
-    );
+    return <PartnerFormSkeleton />;
   }
 
   return (

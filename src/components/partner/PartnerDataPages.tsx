@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -44,6 +43,7 @@ import { promotionsService } from "@/src/services/promotions/promotions.service"
 import type { PartnerPromotion } from "@/src/services/promotions/promotions.types";
 import { reportsService } from "@/src/services/reports/reports.service";
 import type { PartnerRealtimeEventType } from "@/src/services/realtime/realtime.types";
+import { PartnerListSkeleton } from "./PartnerLoadingSkeletons";
 
 type Snack = {
   open: boolean;
@@ -265,13 +265,7 @@ function SectionHeader({
 }
 
 function LoadingCard() {
-  return (
-    <Card elevation={0} className="partner-card rounded-[30px]!">
-      <CardContent className="grid min-h-72 place-items-center">
-        <CircularProgress />
-      </CardContent>
-    </Card>
-  );
+  return <PartnerListSkeleton rows={4} />;
 }
 
 function EmptyState({ label }: { label: string }) {

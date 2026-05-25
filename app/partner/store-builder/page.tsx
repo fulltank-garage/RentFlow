@@ -9,7 +9,6 @@ import {
   CardContent,
   Chip,
   Collapse,
-  CircularProgress,
   Snackbar,
   Stack,
   Typography,
@@ -23,6 +22,7 @@ import {
   DEFAULT_STOREFRONT_THEME,
   cloneDefaultStorefrontBlocks,
 } from "@/src/constants/storefront-defaults";
+import { PartnerGridCardsSkeleton } from "@/src/components/partner/PartnerLoadingSkeletons";
 import { tenantService } from "@/src/services/tenant/tenant.service";
 import type { PartnerTenant } from "@/src/services/tenant/tenant.types";
 
@@ -793,13 +793,7 @@ export default function Page() {
       </Box>
 
       {loading ? (
-        <Card elevation={0} className="partner-card rounded-[34px]!">
-          <CardContent>
-            <Box className="flex min-h-[320px] items-center justify-center">
-              <CircularProgress />
-            </Box>
-          </CardContent>
-        </Card>
+        <PartnerGridCardsSkeleton count={4} columns="md:grid-cols-2" />
       ) : (
         <Box className="grid gap-4">
           <StorefrontTemplatePicker

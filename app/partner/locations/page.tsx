@@ -25,6 +25,7 @@ import type {
   PartnerBranch,
   PartnerBranchPayload,
 } from "@/src/services/branches/branches.types";
+import { PartnerListRowsSkeleton } from "@/src/components/partner/PartnerLoadingSkeletons";
 
 type BranchType = NonNullable<PartnerBranch["type"]>;
 type BranchForm = PartnerBranchPayload;
@@ -316,9 +317,7 @@ export default function PartnerLocationsPage() {
       <Card elevation={0} className="partner-card rounded-[30px]!">
         <CardContent className="p-0!">
           {loading ? (
-            <Box className="grid min-h-72 place-items-center">
-              <CircularProgress />
-            </Box>
+            <PartnerListRowsSkeleton rows={4} />
           ) : filteredBranches.length === 0 ? (
             <Box className="partner-empty">
               <Box>

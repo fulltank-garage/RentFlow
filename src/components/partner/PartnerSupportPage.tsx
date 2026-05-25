@@ -22,6 +22,7 @@ import type {
   PartnerSupportOwner,
   PartnerSupportTicket,
 } from "@/src/services/support/support.types";
+import { PartnerListRowsSkeleton } from "./PartnerLoadingSkeletons";
 
 type Snack = {
   open: boolean;
@@ -296,9 +297,7 @@ export function PartnerSupportPage() {
               </Stack>
 
               {loading ? (
-                <Box className="grid min-h-80 place-items-center text-sm text-slate-500">
-                  กำลังโหลดเคส...
-                </Box>
+                <PartnerListRowsSkeleton rows={4} />
               ) : filteredTickets.length === 0 ? (
                 <Box className="partner-empty">
                   <Box>

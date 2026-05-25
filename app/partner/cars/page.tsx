@@ -27,6 +27,7 @@ import type {
   PartnerCarStatus,
 } from "@/src/services/cars/cars.types";
 import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealtimeRefresh";
+import { PartnerCarRowsSkeleton } from "@/src/components/partner/PartnerLoadingSkeletons";
 
 type CarForm = PartnerCarPayload;
 
@@ -402,9 +403,7 @@ export default function PartnerCarsPage() {
       <Card elevation={0} className="partner-card rounded-[30px]!">
         <CardContent className="p-0!">
           {loading ? (
-            <Box className="grid min-h-72 place-items-center">
-              <CircularProgress />
-            </Box>
+            <PartnerCarRowsSkeleton />
           ) : filteredCars.length === 0 ? (
             <Box className="partner-empty">
               <Box>
