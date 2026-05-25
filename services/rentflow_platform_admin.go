@@ -19,6 +19,10 @@ func RentFlowPlatformAdminUsername() string {
 	return strings.TrimSpace(strings.ToLower(os.Getenv("RENTFLOW_SUPER_ADMIN_USERNAME")))
 }
 
+func RentFlowPlatformAdminPassword() string {
+	return strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_PASSWORD"))
+}
+
 func IsRentFlowPlatformAdmin(user *models.RentFlowUser) bool {
 	if user == nil {
 		return false
@@ -63,16 +67,22 @@ func RentFlowPlatformAdminConfigured() bool {
 }
 
 func EnsureRentFlowPlatformAdmin() {
+	if _, err := EnsureRentFlowPlatformAdminUser(); err != nil {
+		log.Println(err)
+	}
+}
+
+func EnsureRentFlowPlatformAdminUser() (*models.RentFlowUser, error) {
 	if config.DB == nil {
-		return
+		return nil, errors.New("ยังไม่ได้เชื่อมต่อฐานข้อมูลสำหรับผู้ดูแลระบบกลาง")
 	}
 
 	email := RentFlowPlatformAdminEmail()
 	username := RentFlowPlatformAdminUsername()
-	password := strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_PASSWORD"))
+	password := RentFlowPlatformAdminPassword()
 
 	if email == "" && username == "" {
-		return
+		return nil, errors.New("ยังไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_EMAIL หรือ RENTFLOW_SUPER_ADMIN_USERNAME")
 	}
 
 	if username == "" {
@@ -95,8 +105,7 @@ func EnsureRentFlowPlatformAdmin() {
 	var user models.RentFlowUser
 	err := config.DB.Where("username = ? OR email = ?", username, email).First(&user).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		log.Println("ตรวจสอบบัญชีผู้ดูแลระบบกลางไม่สำเร็จ:", err)
-		return
+		return nil, errors.New("ตรวจสอบบัญชีผู้ดูแลระบบกลางไม่สำเร็จ: " + err.Error())
 	}
 
 	updates := map[string]interface{}{
@@ -110,16 +119,14 @@ func EnsureRentFlowPlatformAdmin() {
 	if password != "" {
 		hash, hashErr := HashPasswordIfNeeded(password)
 		if hashErr != nil {
-			log.Println("สร้างรหัสผ่านผู้ดูแลระบบกลางไม่สำเร็จ:", hashErr)
-			return
+			return nil, errors.New("สร้างรหัสผ่านผู้ดูแลระบบกลางไม่สำเร็จ: " + hashErr.Error())
 		}
 		updates["password_hash"] = hash
 	}
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		if password == "" {
-			log.Println("ยังไม่ได้สร้างผู้ดูแลระบบกลาง เพราะไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_PASSWORD")
-			return
+			return nil, errors.New("ยังไม่ได้สร้างผู้ดูแลระบบกลาง เพราะไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_PASSWORD")
 		}
 
 		user = models.RentFlowUser{
@@ -132,14 +139,19 @@ func EnsureRentFlowPlatformAdmin() {
 			PasswordHash: updates["password_hash"].(string),
 		}
 		if createErr := config.DB.Create(&user).Error; createErr != nil {
-			log.Println("สร้างผู้ดูแลระบบกลางไม่สำเร็จ:", createErr)
-			return
+			return nil, errors.New("สร้างผู้ดูแลระบบกลางไม่สำเร็จ: " + createErr.Error())
 		}
 		log.Println("สร้างผู้ดูแลระบบกลางแล้ว")
-		return
+		return &user, nil
 	}
 
 	if updateErr := config.DB.Model(&models.RentFlowUser{}).Where("id = ?", user.ID).Updates(updates).Error; updateErr != nil {
-		log.Println("อัปเดตผู้ดูแลระบบกลางไม่สำเร็จ:", updateErr)
+		return nil, errors.New("อัปเดตผู้ดูแลระบบกลางไม่สำเร็จ: " + updateErr.Error())
 	}
+	user.Username = username
+	user.Email = email
+	user.FirstName = firstName
+	user.LastName = lastName
+	user.Name = name
+	return &user, nil
 }

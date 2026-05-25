@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"crypto/subtle"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -67,6 +68,67 @@ func RentFlowAdminGetMe(c *gin.Context) {
 			"lastName":  user.LastName,
 		},
 		"hosts": rentFlowPlatformHosts(),
+	})
+}
+
+func RentFlowAdminLogin(c *gin.Context) {
+	var payload struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		rentFlowError(c, http.StatusBadRequest, "ข้อมูลเข้าสู่ระบบผู้ดูแลไม่ถูกต้อง")
+		return
+	}
+
+	username := strings.TrimSpace(strings.ToLower(payload.Username))
+	password := strings.TrimSpace(payload.Password)
+	adminEmail := services.RentFlowPlatformAdminEmail()
+	adminUsername := services.RentFlowPlatformAdminUsername()
+	adminPassword := services.RentFlowPlatformAdminPassword()
+
+	if (adminEmail == "" && adminUsername == "") || adminPassword == "" {
+		rentFlowError(c, http.StatusInternalServerError, "ยังไม่ได้ตั้งค่าบัญชีผู้ดูแลระบบกลาง")
+		return
+	}
+
+	usernameMatches := (adminEmail != "" && username == adminEmail) ||
+		(adminUsername != "" && username == adminUsername)
+	passwordMatches := subtle.ConstantTimeCompare([]byte(password), []byte(adminPassword)) == 1
+	if !usernameMatches || !passwordMatches {
+		rentFlowError(c, http.StatusUnauthorized, "ชื่อผู้ใช้หรือรหัสผ่านผู้ดูแลไม่ถูกต้อง")
+		return
+	}
+
+	user, err := services.EnsureRentFlowPlatformAdminUser()
+	if err != nil {
+		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถเตรียมบัญชีผู้ดูแลระบบกลางได้")
+		return
+	}
+
+	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowSession{
+		UserID:    user.ID,
+		UserEmail: user.Email,
+		App:       services.RentFlowAppAdmin,
+		IP:        c.ClientIP(),
+		UserAgent: c.Request.UserAgent(),
+	}, 7*24*time.Hour)
+	if err != nil {
+		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถสร้างเซสชันผู้ดูแลได้")
+		return
+	}
+
+	setRentFlowSessionCookie(c, sessionToken)
+	rentFlowRecordSessionAudit(c, *user, "login")
+	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบผู้ดูแลสำเร็จ", gin.H{
+		"user": gin.H{
+			"id":        user.ID,
+			"username":  user.Username,
+			"email":     user.Email,
+			"name":      user.Name,
+			"firstName": user.FirstName,
+			"lastName":  user.LastName,
+		},
 	})
 }
 
@@ -160,6 +222,10 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 
 	if len(username) < 3 || len(strings.TrimSpace(payload.Password)) < 8 || len(firstName) < 2 || len(lastName) < 2 || shopName == "" {
 		rentFlowError(c, http.StatusBadRequest, "กรุณากรอกข้อมูลเจ้าของร้านให้ครบถ้วน")
+		return
+	}
+	if message := rentFlowValidatePartnerUsername(username); message != "" {
+		rentFlowError(c, http.StatusBadRequest, message)
 		return
 	}
 	if message := rentFlowValidateDomainSlug(domainSlug); message != "" {
@@ -273,6 +339,22 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 		},
 		"user": rentFlowUserResponse(user),
 	})
+}
+
+func rentFlowValidatePartnerUsername(username string) string {
+	if len(username) < 3 || len(username) > 32 {
+		return "ชื่อผู้ใช้ต้องมีความยาว 3-32 ตัวอักษร"
+	}
+	if strings.Contains(username, "@") {
+		return "ชื่อผู้ใช้ต้องไม่อยู่ในรูปแบบอีเมล"
+	}
+	for _, char := range username {
+		if (char >= 'a' && char <= 'z') || (char >= '0' && char <= '9') || char == '_' || char == '-' || char == '.' {
+			continue
+		}
+		return "ชื่อผู้ใช้ใช้ได้เฉพาะ a-z, 0-9, จุด, ขีดกลาง และขีดล่าง"
+	}
+	return ""
 }
 
 func RentFlowAdminListDomains(c *gin.Context) {

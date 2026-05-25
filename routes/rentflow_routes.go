@@ -15,6 +15,7 @@ func RegisterRentFlowRoutes(r *gin.Engine) {
 	r.POST("/auth/forgot-password", controllers.RentFlowForgotPassword)
 	r.GET("/auth/me", controllers.RentFlowGetMe)
 	r.POST("/auth/logout", controllers.RentFlowLogout)
+	r.POST("/platform/auth/login", controllers.RentFlowAdminLogin)
 	r.GET("/tenants", controllers.RentFlowListPublicTenants)
 	r.GET("/tenants/resolve", controllers.RentFlowResolveTenant)
 	r.GET("/users/:userId/avatar", controllers.RentFlowGetUserAvatar)
