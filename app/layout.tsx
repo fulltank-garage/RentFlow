@@ -13,6 +13,11 @@ const notoSansThai = Noto_Sans_Thai({
 export const metadata: Metadata = {
   title: "RentFlow ศูนย์จัดการระบบ",
   description: "หลังบ้านสำหรับดูแลระบบกลาง ร้านเช่ารถ โดเมน แผน และความปลอดภัย",
+  icons: {
+    icon: "/RentFlow.svg",
+    shortcut: "/RentFlow.svg",
+    apple: "/RentFlow.svg",
+  },
 };
 
 export default function RootLayout({

@@ -60,13 +60,13 @@ export default function AdminSidebar({
         }}
       >
         <Stack direction="row" spacing={1.5} alignItems="center" className="min-w-0">
-          <Box className="grid h-[42px] w-[42px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-transparent shadow-none">
+          <Box className="grid h-[42px] w-[42px] shrink-0 place-items-center bg-transparent shadow-none">
             <Image
               src="/RentFlow.svg"
               alt="RentFlow"
               width={42}
               height={42}
-              className="h-full w-full object-contain"
+              className="h-[86%] w-[86%] object-contain"
             />
           </Box>
           <Box className="min-w-0">
