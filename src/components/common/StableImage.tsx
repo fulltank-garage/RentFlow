@@ -15,7 +15,12 @@ type StableImageProps = {
 };
 
 function isRentFlowApiImage(src: string) {
-  return /^https?:\/\//i.test(src) || src.startsWith("/cars/") || src.startsWith("/tenants/");
+  return (
+    /^https?:\/\//i.test(src) ||
+    src.startsWith("/api/rentflow-asset/") ||
+    src.startsWith("/cars/") ||
+    src.startsWith("/tenants/")
+  );
 }
 
 export default function StableImage({

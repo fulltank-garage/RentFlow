@@ -723,11 +723,6 @@ export default function useBooking() {
         return;
       }
 
-      if (showChatBooking && !hasChatChannel) {
-        setError("ร้านนี้ยังไม่ได้ตั้งค่าช่องทางแชทสำหรับการจอง");
-        return;
-      }
-
       if (!car.isAvailable || isDateAvailable === false) {
         setError("รถคันนี้มีการจองแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
         return;
@@ -827,8 +822,6 @@ export default function useBooking() {
       endDT,
       locationOk,
       canSubmit,
-      showChatBooking,
-      hasChatChannel,
       isDateAvailable,
       merchantBranchesEnabled,
       pickupDate,

@@ -243,7 +243,7 @@ export default function BookingForm({
             </Box>
             {!hasChatChannel ? (
               <Typography className="mt-3 text-xs text-amber-800">
-                ร้านนี้ยังไม่ได้ตั้งค่าช่องทางแชทสำหรับรับคำขอจอง
+                ร้านนี้ยังไม่ได้ตั้งค่าปุ่มเปิดแชท ลูกค้ายังส่งคำขอจองให้ร้านติดต่อกลับได้
               </Typography>
             ) : null}
           </Box>

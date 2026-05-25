@@ -24,6 +24,15 @@ function apiImageRemotePattern() {
 
 const nextConfig: NextConfig = {
   images: {
+    localPatterns: [
+      {
+        pathname: "/api/rentflow-asset/**",
+      },
+      {
+        pathname: "/**",
+        search: "",
+      },
+    ],
     remotePatterns: [
       apiImageRemotePattern(),
       {
