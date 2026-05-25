@@ -6,10 +6,13 @@ import {
   writeStoreProfile,
   type PartnerStoreProfile,
 } from "@/src/lib/partner-store";
+import {
+  PARTNER_DEFAULT_BROWSER_ICON,
+  getPartnerBrowserIcon,
+  getPartnerBrowserIconVersion,
+  getPartnerBrowserTitle,
+} from "@/src/lib/partner-browser-identity";
 import { tenantService } from "@/src/services/tenant/tenant.service";
-
-const FALLBACK_TITLE = "RentFlow ศูนย์จัดการร้าน";
-const FALLBACK_ICON = "/RentFlow.svg";
 
 function withCacheVersion(url: string, version?: string) {
   if (!version || url.startsWith("data:") || url.startsWith("blob:")) {
@@ -40,14 +43,26 @@ function upsertIconLink(rel: string, href: string) {
 }
 
 function applyPartnerIdentity(profile: PartnerStoreProfile | null) {
-  const shopName = profile?.shopName?.trim();
-  const title = shopName ? `${shopName} ศูนย์จัดการร้าน` : FALLBACK_TITLE;
+  const title = getPartnerBrowserTitle(profile);
   const icon = withCacheVersion(
-    profile?.logoUrl?.trim() || FALLBACK_ICON,
-    profile?.updatedAt
+    getPartnerBrowserIcon(profile),
+    getPartnerBrowserIconVersion(profile)
   );
 
   document.title = title;
+  document
+    .querySelectorAll<HTMLLinkElement>(
+      'link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]'
+    )
+    .forEach((link) => {
+      if (
+        link.href.includes(PARTNER_DEFAULT_BROWSER_ICON) ||
+        link.href.includes("/partner-icon") ||
+        link.dataset.rentflowPartnerIcon === "true"
+      ) {
+        link.href = icon;
+      }
+    });
   upsertIconLink("icon", icon);
   upsertIconLink("shortcut icon", icon);
   upsertIconLink("apple-touch-icon", icon);
