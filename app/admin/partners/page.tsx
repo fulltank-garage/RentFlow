@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   MenuItem,
   Snackbar,
   Stack,
@@ -22,6 +21,7 @@ import type {
   PlatformTenant,
   PlatformTenantStatus,
 } from "@/src/services/partners/partners.types";
+import { AdminListRowsSkeleton } from "@/src/components/admin/AdminLoadingSkeletons";
 
 const initialForm: CreatePartnerPayload = {
   username: "",
@@ -362,8 +362,8 @@ export default function PartnersPage() {
       <Card elevation={0} className="admin-card rounded-[2rem]!">
         <CardContent className="p-0!">
           {loading ? (
-            <Box className="grid min-h-72 place-items-center">
-              <CircularProgress />
+            <Box className="p-5">
+              <AdminListRowsSkeleton rows={5} />
             </Box>
           ) : partners.length === 0 ? (
             <Box className="admin-empty m-5">

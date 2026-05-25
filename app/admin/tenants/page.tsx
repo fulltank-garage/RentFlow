@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Divider,
   Drawer,
   MenuItem,
@@ -22,6 +21,7 @@ import { domainsService } from "@/src/services/domains/domains.service";
 import type { PlatformDomain } from "@/src/services/domains/domains.types";
 import { tenantsService } from "@/src/services/tenants/tenants.service";
 import type { PlatformTenant } from "@/src/services/tenants/tenants.types";
+import { AdminTenantCardsSkeleton } from "@/src/components/admin/AdminLoadingSkeletons";
 
 function tenantStatusLabel(status: PlatformTenant["status"]) {
   const map: Record<PlatformTenant["status"], string> = {
@@ -293,9 +293,7 @@ export default function TenantsPage() {
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {loading ? (
-        <Box className="admin-surface grid min-h-72 place-items-center rounded-[32px]">
-          <CircularProgress />
-        </Box>
+        <AdminTenantCardsSkeleton />
       ) : tenants.length === 0 ? (
         <Box className="admin-empty">
           <Typography className="text-sm text-slate-500">

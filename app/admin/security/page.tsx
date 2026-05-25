@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Divider,
   MenuItem,
   Stack,
@@ -18,6 +17,7 @@ import {
 import { useAdminRealtimeRefresh } from "@/src/hooks/realtime/useAdminRealtimeRefresh";
 import { securityService } from "@/src/services/security/security.service";
 import type { PlatformSecurity } from "@/src/services/security/security.types";
+import { AdminListSkeleton } from "@/src/components/admin/AdminLoadingSkeletons";
 
 function statusLabel(status: string) {
   const map: Record<string, string> = {
@@ -169,9 +169,7 @@ export default function SecurityPage() {
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {loading ? (
-        <Box className="admin-surface grid min-h-72 place-items-center rounded-[32px]">
-          <CircularProgress />
-        </Box>
+        <AdminListSkeleton rows={5} />
       ) : security ? (
         <>
           <Box className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">

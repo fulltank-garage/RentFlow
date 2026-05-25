@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Divider,
   LinearProgress,
   Stack,
@@ -17,6 +16,7 @@ import { useAdminRealtimeRefresh } from "@/src/hooks/realtime/useAdminRealtimeRe
 import { overviewService } from "@/src/services/overview/overview.service";
 import type { PlatformOverview } from "@/src/services/overview/overview.types";
 import type { PlatformTenant } from "@/src/services/partners/partners.types";
+import { AdminDashboardSkeleton } from "@/src/components/admin/AdminLoadingSkeletons";
 
 function formatTHB(value?: number) {
   return `${new Intl.NumberFormat("th-TH", {
@@ -132,9 +132,7 @@ export default function AdminDashboardPage() {
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {loading ? (
-        <Box className="admin-card grid min-h-72 place-items-center rounded-[32px]">
-          <CircularProgress />
-        </Box>
+        <AdminDashboardSkeleton />
       ) : overview ? (
         <>
           <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

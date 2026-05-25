@@ -8,13 +8,13 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Stack,
   Typography,
 } from "@mui/material";
 import { useAdminRealtimeRefresh } from "@/src/hooks/realtime/useAdminRealtimeRefresh";
 import { billingService } from "@/src/services/billing/billing.service";
 import type { PlatformBilling } from "@/src/services/billing/billing.types";
+import { AdminListSkeleton } from "@/src/components/admin/AdminLoadingSkeletons";
 
 function formatTHB(value?: number) {
   return `${new Intl.NumberFormat("th-TH", {
@@ -117,9 +117,7 @@ export default function BillingPage() {
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {loading ? (
-        <Box className="admin-surface grid min-h-72 place-items-center rounded-[32px]">
-          <CircularProgress />
-        </Box>
+        <AdminListSkeleton rows={5} />
       ) : billing ? (
         <>
           <Box className="grid gap-4 md:grid-cols-3">

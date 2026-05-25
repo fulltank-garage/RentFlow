@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   CardContent,
-  CircularProgress,
   Divider,
   MenuItem,
   Snackbar,
@@ -21,6 +20,7 @@ import type {
   StorefrontBlock,
   StorefrontPage,
 } from "@/src/services/storefront/storefront.types";
+import { AdminFormBodySkeleton } from "@/src/components/admin/AdminLoadingSkeletons";
 
 const emptyBlock: StorefrontBlock = {
   type: "announcement",
@@ -131,9 +131,7 @@ export default function StoreBuilderPage() {
       <Card elevation={0} className="admin-card rounded-3xl!">
         <CardContent className="grid gap-5">
           {loading ? (
-            <Box className="grid min-h-72 place-items-center">
-              <CircularProgress />
-            </Box>
+            <AdminFormBodySkeleton />
           ) : (
             <>
               <Box className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">

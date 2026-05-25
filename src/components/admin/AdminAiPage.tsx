@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Divider,
   Stack,
   Typography,
@@ -24,6 +23,7 @@ import type {
   PlatformAiAssistant,
   PlatformAiMetric,
 } from "@/src/services/ai/ai.types";
+import { AdminDashboardSkeleton } from "./AdminLoadingSkeletons";
 
 function toneBg(tone: PlatformAiMetric["tone"] | PlatformAiAlert["tone"]) {
   if (tone === "success") return "bg-emerald-50 text-emerald-900 border-emerald-200";
@@ -83,8 +83,14 @@ export default function AdminAiPage() {
 
   if (loading) {
     return (
-      <Box className="grid min-h-[50vh] place-items-center">
-        <CircularProgress />
+      <Box className="admin-page">
+        <Box className="admin-page-header">
+          <Typography className="admin-page-title">ผู้ช่วย AI</Typography>
+          <Typography className="admin-page-subtitle">
+            กำลังโหลดสรุปภาพรวมและสัญญาณที่ควรจับตา
+          </Typography>
+        </Box>
+        <AdminDashboardSkeleton />
       </Box>
     );
   }

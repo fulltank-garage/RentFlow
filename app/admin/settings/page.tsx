@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
   Snackbar,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -117,7 +118,13 @@ export default function AdminSettingsPage() {
       <Card elevation={0} className="admin-card rounded-[34px]!">
         <CardContent className="grid gap-6 p-6! lg:grid-cols-[1.2fr_0.8fr]">
           <Box className="admin-surface-soft overflow-hidden rounded-[30px]">
-            {promoImageUrl ? (
+            {loading ? (
+              <Skeleton
+                variant="rounded"
+                height={340}
+                sx={{ borderRadius: 7.5, bgcolor: "rgba(148, 163, 184, 0.18)" }}
+              />
+            ) : promoImageUrl ? (
               <Box
                 component="img"
                 src={promoImageUrl}
@@ -135,12 +142,37 @@ export default function AdminSettingsPage() {
 
           <Stack spacing={2.5} className="justify-center">
             <Box>
-              <Typography className="text-xl font-black text-slate-950">
-                รูปโปรโมชันสำหรับ URL รวม
-              </Typography>
-              <Typography className="mt-2 text-sm leading-6 text-slate-500">
-                ใช้สำหรับหน้าแรกแบบ marketplace รวมทุกร้าน เช่น โปรโมชันแพลตฟอร์ม แคมเปญกลาง หรือภาพประชาสัมพันธ์
-              </Typography>
+              {loading ? (
+                <Stack spacing={1.5}>
+                  <Skeleton
+                    variant="rounded"
+                    width="56%"
+                    height={26}
+                    sx={{ borderRadius: 999, bgcolor: "rgba(148, 163, 184, 0.22)" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width="92%"
+                    height={16}
+                    sx={{ borderRadius: 999, bgcolor: "rgba(148, 163, 184, 0.18)" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width="76%"
+                    height={16}
+                    sx={{ borderRadius: 999, bgcolor: "rgba(148, 163, 184, 0.18)" }}
+                  />
+                </Stack>
+              ) : (
+                <>
+                  <Typography className="text-xl font-black text-slate-950">
+                    รูปโปรโมชันสำหรับ URL รวม
+                  </Typography>
+                  <Typography className="mt-2 text-sm leading-6 text-slate-500">
+                    ใช้สำหรับหน้าแรกแบบ marketplace รวมทุกร้าน เช่น โปรโมชันแพลตฟอร์ม แคมเปญกลาง หรือภาพประชาสัมพันธ์
+                  </Typography>
+                </>
+              )}
             </Box>
 
             <input
