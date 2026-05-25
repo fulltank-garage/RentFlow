@@ -6,7 +6,8 @@ import { readClientCookie } from "@/src/lib/client-cookie";
 const AUTH_TOKEN_STORAGE_KEY = "rf_session_token_v1";
 
 const api = axios.create({
-  baseURL: getRentFlowApiBaseUrl(),
+  baseURL:
+    typeof window !== "undefined" ? "/api/rentflow" : getRentFlowApiBaseUrl(),
   timeout: 30000,
   withCredentials: true,
   headers: {
@@ -17,7 +18,8 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const headers = AxiosHeaders.from(config.headers);
-  config.baseURL = getRentFlowApiBaseUrl();
+  config.baseURL =
+    typeof window !== "undefined" ? "/api/rentflow" : getRentFlowApiBaseUrl();
 
   if (typeof FormData !== "undefined" && config.data instanceof FormData) {
     headers.delete("Content-Type");
