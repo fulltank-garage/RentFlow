@@ -54,11 +54,11 @@ function MobileMenuGlyph({ open }: { open: boolean }) {
 function RentFlowLogoMark({ size = 42 }: { size?: number }) {
   return (
     <Box
-      className="grid shrink-0 place-items-center overflow-hidden rounded-full bg-white"
+      className="grid shrink-0 place-items-center overflow-hidden rounded-full bg-transparent"
       sx={{
         width: size,
         height: size,
-        boxShadow: "0 10px 28px rgba(15,23,42,0.12)",
+        boxShadow: "none",
       }}
     >
       <Image
@@ -66,7 +66,7 @@ function RentFlowLogoMark({ size = 42 }: { size?: number }) {
         alt="RentFlow"
         width={size}
         height={size}
-        className="h-[78%] w-[78%] object-contain"
+        className="h-full w-full object-contain"
       />
     </Box>
   );
