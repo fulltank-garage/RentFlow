@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -59,8 +60,14 @@ export default function AdminSidebar({
         }}
       >
         <Stack direction="row" spacing={1.5} alignItems="center" className="min-w-0">
-          <Box className="grid h-[42px] w-[42px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-[var(--rf-admin-blue-deep)] text-sm font-black tracking-[-0.05em] text-white shadow-[0_10px_28px_rgba(15,23,42,0.14)]">
-            RF
+          <Box className="grid h-[42px] w-[42px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-white shadow-[0_10px_28px_rgba(15,23,42,0.12)]">
+            <Image
+              src="/RentFlow.svg"
+              alt="RentFlow"
+              width={42}
+              height={42}
+              className="h-[78%] w-[78%] object-contain"
+            />
           </Box>
           <Box className="min-w-0">
             <Typography className="truncate text-[1.02rem] font-extrabold tracking-[-0.03em] text-slate-950">

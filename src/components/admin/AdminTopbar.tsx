@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   AppBar,
-  Avatar,
   Box,
   Button,
   Chip,
@@ -46,6 +46,27 @@ function MobileMenuGlyph({ open }: { open: boolean }) {
           transition:
             "transform .42s cubic-bezier(0.22, 1, 0.36, 1), background-color .28s ease",
         }}
+      />
+    </Box>
+  );
+}
+
+function RentFlowLogoMark({ size = 42 }: { size?: number }) {
+  return (
+    <Box
+      className="grid shrink-0 place-items-center overflow-hidden rounded-full bg-white"
+      sx={{
+        width: size,
+        height: size,
+        boxShadow: "0 10px 28px rgba(15,23,42,0.12)",
+      }}
+    >
+      <Image
+        src="/RentFlow.svg"
+        alt="RentFlow"
+        width={size}
+        height={size}
+        className="h-[78%] w-[78%] object-contain"
       />
     </Box>
   );
@@ -109,19 +130,7 @@ export default function AdminTopbar({
                 }}
               >
                 <Stack direction="row" spacing={1.5} alignItems="center">
-                  <Avatar
-                    alt="โปรไฟล์ผู้ดูแลระบบ"
-                    sx={{
-                      width: 42,
-                      height: 42,
-                      bgcolor: "var(--rf-admin-blue-deep)",
-                      border: "2px solid rgba(255,255,255,0.82)",
-                      boxShadow: "0 10px 28px rgba(15,23,42,0.14)",
-                      fontWeight: 900,
-                    }}
-                  >
-                    RF
-                  </Avatar>
+                  <RentFlowLogoMark />
 
                   <Box className="hidden text-left md:block">
                     <Typography className="text-sm font-bold text-slate-950">
@@ -197,19 +206,7 @@ export default function AdminTopbar({
 
         <Box sx={{ px: 2, py: 3 }}>
           <Stack direction="row" spacing={1.5} alignItems="center">
-            <Avatar
-              alt="โปรไฟล์ผู้ดูแลระบบ"
-              sx={{
-                width: 46,
-                height: 46,
-                bgcolor: "var(--rf-admin-blue-deep)",
-                border: "2px solid rgba(255,255,255,0.82)",
-                boxShadow: "0 10px 28px rgba(15,23,42,0.14)",
-                fontWeight: 900,
-              }}
-            >
-              RF
-            </Avatar>
+            <RentFlowLogoMark size={46} />
 
             <Box sx={{ minWidth: 0 }}>
               <Box
