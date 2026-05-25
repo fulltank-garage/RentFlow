@@ -3,6 +3,17 @@ import axios from "axios";
 import type { ApiResponse } from "../types/types";
 
 export function getAdminApiBaseUrl() {
+  if (typeof window !== "undefined") {
+    return "/api/rentflow";
+  }
+
+  return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(
+    /\/$/,
+    ""
+  );
+}
+
+export function getAdminAssetBaseUrl() {
   return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(
     /\/$/,
     ""
@@ -24,7 +35,10 @@ export function resolveAdminAssetUrl(value?: string | null) {
     return rawValue;
   }
 
-  return new URL(rawValue.startsWith("/") ? rawValue : `/${rawValue}`, getAdminApiBaseUrl()).toString();
+  return new URL(
+    rawValue.startsWith("/") ? rawValue : `/${rawValue}`,
+    getAdminAssetBaseUrl()
+  ).toString();
 }
 
 const adminApiClient = axios.create({
