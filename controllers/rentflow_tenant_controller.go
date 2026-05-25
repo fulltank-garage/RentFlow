@@ -597,7 +597,7 @@ func rentFlowIsMarketplaceRequest(c *gin.Context) bool {
 	}
 
 	host := rentFlowNormalizeTenantHost(rentFlowTenantIdentityFromRequest(c))
-	return host != "" && host == rentFlowRootDomain()
+	return rentFlowIsRootMarketplaceHost(host)
 }
 
 func rentFlowMarketplaceTenants() ([]models.RentFlowTenant, error) {
@@ -712,6 +712,12 @@ func rentFlowRootDomain() string {
 	return rootDomain
 }
 
+func rentFlowIsRootMarketplaceHost(host string) bool {
+	host = rentFlowNormalizeTenantHost(host)
+	rootDomain := rentFlowRootDomain()
+	return host != "" && (host == rootDomain || host == "www."+rootDomain)
+}
+
 func rentFlowNormalizeExternalURL(value string) string {
 	value = strings.TrimSpace(value)
 	if value == "" {
@@ -763,7 +769,7 @@ func rentFlowSlugFromTenantIdentity(value string) string {
 	}
 
 	rootDomain := rentFlowRootDomain()
-	if host == rootDomain {
+	if rentFlowIsRootMarketplaceHost(host) {
 		return ""
 	}
 	if strings.HasSuffix(host, ".localhost") {
