@@ -21,13 +21,15 @@ const theme = createTheme({
   },
   typography: {
     fontFamily:
-      '"IBM Plex Sans Thai", "Noto Sans Thai", "Sarabun", ui-sans-serif, system-ui, sans-serif',
+      "var(--font-english), var(--font-thai), ui-sans-serif, system-ui, sans-serif",
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
           backgroundColor: "#f8fafc",
+          fontFamily:
+            "var(--font-english), var(--font-thai), ui-sans-serif, system-ui, sans-serif",
         },
       },
     },
