@@ -83,12 +83,12 @@ const theme = createTheme({
         fontSize: 16,
         body1: {
             fontSize: "var(--rf-type-body)",
-            lineHeight: 1.65,
+            lineHeight: 1.47,
             letterSpacing: "-0.01em",
         },
         body2: {
             fontSize: "var(--rf-type-body-sm)",
-            lineHeight: 1.55,
+            lineHeight: 1.43,
             letterSpacing: "-0.01em",
         },
         subtitle1: {
@@ -105,7 +105,7 @@ const theme = createTheme({
         },
         button: {
             fontSize: "var(--rf-type-button-sm)",
-            fontWeight: 700,
+            fontWeight: 600,
             lineHeight: 1.2,
             letterSpacing: "-0.01em",
         },

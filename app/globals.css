@@ -22,26 +22,26 @@
   --rf-apple-hover-media-scale: 1.012;
   --rf-booking-step-current: #4f46e5;
   --rf-booking-step-complete: oklch(72.3% 0.219 149.579);
-  --rf-type-announce: clamp(0.84rem, 0.81rem + 0.16vw, 0.93rem);
-  --rf-type-body: clamp(0.97rem, 0.95rem + 0.16vw, 1.04rem);
-  --rf-type-body-sm: clamp(0.89rem, 0.86rem + 0.12vw, 0.95rem);
-  --rf-type-label: clamp(0.72rem, 0.69rem + 0.14vw, 0.8rem);
-  --rf-type-subtitle-sm: clamp(0.96rem, 0.93rem + 0.18vw, 1.04rem);
-  --rf-type-subtitle-lg: clamp(1.08rem, 0.99rem + 0.6vw, 1.46rem);
-  --rf-type-auth-title: clamp(1.95rem, 1.78rem + 0.92vw, 2.45rem);
-  --rf-type-section-title: clamp(2.3rem, 1.82rem + 2.2vw, 3.65rem);
-  --rf-type-page-title: clamp(2.5rem, 1.95rem + 2.8vw, 4.2rem);
-  --rf-type-tenant-title: clamp(1.85rem, 1.45rem + 1.7vw, 2.8rem);
-  --rf-type-hero-title: clamp(2.45rem, 1.78rem + 3.2vw, 4.15rem);
-  --rf-type-hero-card-title: clamp(2rem, 1.5rem + 1.9vw, 3.25rem);
-  --rf-type-hero-subtitle: clamp(1.1rem, 0.98rem + 0.72vw, 1.5rem);
-  --rf-type-card-title: clamp(1.12rem, 1rem + 0.62vw, 1.45rem);
-  --rf-type-card-title-lg: clamp(1.45rem, 1.22rem + 1vw, 1.95rem);
-  --rf-type-price: clamp(1.55rem, 1.3rem + 1.15vw, 2.2rem);
-  --rf-type-nav-brand: clamp(0.84rem, 0.81rem + 0.15vw, 0.93rem);
-  --rf-type-nav-caption: clamp(0.67rem, 0.64rem + 0.12vw, 0.74rem);
-  --rf-type-nav-link: clamp(0.9rem, 0.88rem + 0.12vw, 0.98rem);
-  --rf-type-button-sm: clamp(0.84rem, 0.82rem + 0.12vw, 0.9rem);
+  --rf-type-announce: clamp(0.8125rem, 0.78rem + 0.12vw, 0.875rem);
+  --rf-type-body: clamp(1rem, 0.98rem + 0.12vw, 1.0625rem);
+  --rf-type-body-sm: clamp(0.875rem, 0.84rem + 0.12vw, 0.9375rem);
+  --rf-type-label: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+  --rf-type-subtitle-sm: clamp(1rem, 0.96rem + 0.16vw, 1.0625rem);
+  --rf-type-subtitle-lg: clamp(1.1875rem, 1.02rem + 0.42vw, 1.3125rem);
+  --rf-type-auth-title: clamp(1.75rem, 1.45rem + 1.1vw, 2.5rem);
+  --rf-type-section-title: clamp(2.5rem, 1.72rem + 2.45vw, 3.5rem);
+  --rf-type-page-title: clamp(2.75rem, 1.95rem + 2.8vw, 4rem);
+  --rf-type-tenant-title: clamp(1.75rem, 1.36rem + 1.3vw, 2.75rem);
+  --rf-type-hero-title: clamp(2.5rem, 1.62rem + 3vw, 4rem);
+  --rf-type-hero-card-title: clamp(2rem, 1.4rem + 2vw, 3.5rem);
+  --rf-type-hero-subtitle: clamp(1.1875rem, 1.04rem + 0.48vw, 1.5rem);
+  --rf-type-card-title: clamp(1.3125rem, 1.12rem + 0.56vw, 1.75rem);
+  --rf-type-card-title-lg: clamp(1.75rem, 1.35rem + 1.1vw, 2.5rem);
+  --rf-type-price: clamp(2rem, 1.5rem + 1.45vw, 3rem);
+  --rf-type-nav-brand: clamp(0.875rem, 0.84rem + 0.12vw, 1rem);
+  --rf-type-nav-caption: clamp(0.6875rem, 0.66rem + 0.08vw, 0.75rem);
+  --rf-type-nav-link: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+  --rf-type-button-sm: clamp(0.875rem, 0.84rem + 0.12vw, 1.0625rem);
 }
 
 * {
@@ -49,7 +49,7 @@
 }
 
 html {
-  font-size: 15px;
+  font-size: 16px;
   scroll-behavior: smooth;
   background: var(--rf-apple-bg);
   overflow-x: clip;
@@ -134,15 +134,15 @@ a {
 .apple-heading {
   color: var(--rf-apple-ink);
   font-weight: 800 !important;
-  letter-spacing: -0.055em !important;
-  line-height: 0.98 !important;
+  letter-spacing: -0.048em !important;
+  line-height: 1.02 !important;
 }
 
 .apple-subtitle {
   color: var(--rf-apple-muted);
-  letter-spacing: -0.018em;
+  letter-spacing: -0.016em;
   font-size: var(--rf-type-subtitle-lg);
-  line-height: 1.45 !important;
+  line-height: 1.381 !important;
 }
 
 .apple-page .text-xs,
@@ -171,7 +171,7 @@ a {
 
 .apple-page .text-xl,
 .apple-page [class*="text-xl!"] {
-  font-size: clamp(1.24rem, 1.08rem + 0.72vw, 1.58rem) !important;
+  font-size: clamp(1.3125rem, 1.12rem + 0.56vw, 1.75rem) !important;
   line-height: 1.2 !important;
 }
 
@@ -183,19 +183,19 @@ a {
 
 .apple-page .text-3xl,
 .apple-page [class*="text-3xl!"] {
-  font-size: clamp(1.75rem, 1.48rem + 1.2vw, 2.4rem) !important;
+  font-size: clamp(1.75rem, 1.36rem + 1.2vw, 2.5rem) !important;
   line-height: 1.1 !important;
 }
 
 .apple-page .text-4xl,
 .apple-page [class*="text-4xl!"] {
-  font-size: clamp(2.2rem, 1.8rem + 1.9vw, 3.15rem) !important;
+  font-size: clamp(2.5rem, 1.9rem + 1.8vw, 3rem) !important;
   line-height: 1.04 !important;
 }
 
 .apple-page .text-5xl,
 .apple-page [class*="text-5xl!"] {
-  font-size: clamp(2.5rem, 2rem + 2.2vw, 3.6rem) !important;
+  font-size: clamp(3rem, 2.1rem + 2.4vw, 3.5rem) !important;
   line-height: 1.02 !important;
 }
 
@@ -246,17 +246,17 @@ a {
 
 .apple-hero-card-title {
   font-size: var(--rf-type-hero-card-title) !important;
-  line-height: 1.02 !important;
+  line-height: 1.04 !important;
 }
 
 .apple-card-title {
   font-size: var(--rf-type-card-title) !important;
-  line-height: 1.2 !important;
+  line-height: 1.143 !important;
 }
 
 .apple-card-title-lg {
   font-size: var(--rf-type-card-title-lg) !important;
-  line-height: 1.12 !important;
+  line-height: 1.1 !important;
 }
 
 .apple-price-text {
@@ -271,7 +271,7 @@ a {
 
 .apple-body-copy {
   font-size: var(--rf-type-body) !important;
-  line-height: 1.65 !important;
+  line-height: 1.47 !important;
 }
 
 .apple-body-sm {
@@ -559,24 +559,8 @@ a {
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 15.5px;
-  }
-
   .apple-display-title {
     white-space: nowrap;
-  }
-}
-
-@media (min-width: 1024px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-@media (min-width: 1440px) {
-  html {
-    font-size: 16.25px;
   }
 }
 
