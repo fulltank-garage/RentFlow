@@ -30,7 +30,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "var(--font-thai), 'Noto Sans Thai', system-ui, sans-serif",
+    fontFamily: "var(--font-english), var(--font-thai), system-ui, sans-serif",
     h1: {
       fontSize: "clamp(2rem, 1.32rem + 2vw, 3.45rem)",
       fontWeight: 800,
@@ -88,7 +88,7 @@ const theme = createTheme({
         body: {
           backgroundColor: "#ffffff",
           fontFamily:
-            "var(--font-thai), 'Noto Sans Thai', system-ui, sans-serif",
+            "var(--font-english), var(--font-thai), system-ui, sans-serif",
         },
       },
     },

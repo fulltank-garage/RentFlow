@@ -34,7 +34,7 @@ body {
   min-height: 100vh;
   background: var(--rf-partner-bg) !important;
   color: var(--rf-partner-ink);
-  font-family: var(--font-thai), "Noto Sans Thai", ui-sans-serif, system-ui,
+  font-family: var(--font-english), var(--font-thai), ui-sans-serif, system-ui,
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
@@ -46,11 +46,11 @@ a {
 }
 
 .font-thai {
-  font-family: var(--font-thai), "Noto Sans Thai", system-ui, sans-serif;
+  font-family: var(--font-english), var(--font-thai), system-ui, sans-serif;
 }
 
 .font-latin {
-  font-family: var(--font-thai), "Noto Sans Thai", system-ui, sans-serif;
+  font-family: var(--font-english), system-ui, sans-serif;
 }
 
 .partner-shell {
@@ -388,7 +388,7 @@ a {
 .MuiInputBase-root,
 .MuiButton-root,
 .MuiChip-root {
-  font-family: var(--font-thai), "Noto Sans Thai", system-ui, sans-serif !important;
+  font-family: var(--font-english), var(--font-thai), system-ui, sans-serif !important;
 }
 
 @media (max-width: 640px) {
