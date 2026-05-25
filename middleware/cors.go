@@ -65,7 +65,7 @@ func isRentFlowSubdomainOrigin(origin string) bool {
 	host := strings.Trim(strings.ToLower(parsed.Hostname()), ".")
 	rootDomain := strings.Trim(strings.ToLower(os.Getenv("RENTFLOW_ROOT_DOMAIN")), ". ")
 	if rootDomain == "" {
-		rootDomain = "rentflow.com"
+		rootDomain = "rentflowcar.xyz"
 	}
 
 	return parsed.Scheme == "https" && (host == rootDomain || strings.HasSuffix(host, "."+rootDomain))

@@ -707,7 +707,7 @@ func rentFlowPublicDomain(slug string) string {
 func rentFlowRootDomain() string {
 	rootDomain := strings.Trim(strings.ToLower(os.Getenv("RENTFLOW_ROOT_DOMAIN")), ". ")
 	if rootDomain == "" {
-		rootDomain = "rentflow.com"
+		rootDomain = "rentflowcar.xyz"
 	}
 	return rootDomain
 }
