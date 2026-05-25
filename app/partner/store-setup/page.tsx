@@ -362,15 +362,15 @@ export default function StoreSetupPage() {
                     }
                     : {}),
             });
-            const nextLogoUrl = tenant.logoUrl || currentLogoUrl || "";
+            const nextLogoUrl = tenant.logoUrl || "";
             const nextLineOaQrCodeUrl =
-                tenant.lineOaQrCodeUrl || currentLineOaQrCodeUrl || "";
+                tenant.lineOaQrCodeUrl || "";
             const nextPromoImageUrls =
                 tenant.promoImageUrls?.length
                     ? tenant.promoImageUrls
                     : tenant.promoImageUrl
                       ? [tenant.promoImageUrl]
-                      : currentPromoImageUrls;
+                      : [];
             writeStoreProfile({
                 tenantId: tenant.id,
                 shopName: tenant.shopName,
