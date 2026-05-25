@@ -1,4 +1,4 @@
-const DEFAULT_ROOT_DOMAIN = "rentflow.com";
+const DEFAULT_ROOT_DOMAIN = "rentflowcar.xyz";
 export type RentFlowSiteMode = "marketplace" | "storefront";
 export type RentFlowRequestScope = {
   host?: string;
@@ -21,7 +21,7 @@ function normalizeHost(value?: string) {
   }
 }
 
-function getRentFlowRootDomain() {
+export function getRentFlowRootDomain() {
   return normalizeHost(
     process.env.NEXT_PUBLIC_RENTFLOW_ROOT_DOMAIN || DEFAULT_ROOT_DOMAIN
   );
