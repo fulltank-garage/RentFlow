@@ -5,6 +5,7 @@ import { Box, Container } from "@mui/material";
 import PartnerSidebar from "./PartnerSidebar";
 import PartnerTopbar from "./PartnerTopbar";
 import FloatingAiLauncher from "./FloatingAiLauncher";
+import PartnerBrowserIdentity from "./PartnerBrowserIdentity";
 
 type Props = {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ export default function PartnerDashboardLayout({
 
   return (
     <Box className="relative min-h-screen overflow-hidden bg-[var(--rf-partner-bg)] text-slate-950">
+      <PartnerBrowserIdentity />
       <PartnerTopbar onOpenMobile={openMobile} drawerWidth={drawerWidth} />
       <PartnerSidebar
         mobileOpen={mobileOpen}
