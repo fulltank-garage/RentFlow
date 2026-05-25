@@ -54,6 +54,10 @@ export function isRentFlowMarketplaceHost(host = getRentFlowTenantHost()) {
     return true;
   }
 
+  if (rootDomain && normalizedHost === `www.${rootDomain}`) {
+    return true;
+  }
+
   if (
     normalizedHost === "localhost" ||
     normalizedHost === "127.0.0.1" ||
