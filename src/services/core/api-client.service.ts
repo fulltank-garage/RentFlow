@@ -15,6 +15,16 @@ function trimTrailingSlash(value: string) {
 }
 
 export function getPartnerApiBaseUrl() {
+  if (typeof window !== "undefined") {
+    return "/api/rentflow";
+  }
+
+  return trimTrailingSlash(
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+  );
+}
+
+export function getPartnerAssetBaseUrl() {
   return trimTrailingSlash(
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
   );
@@ -37,7 +47,7 @@ export function resolvePartnerAssetUrl(value?: string | null) {
 
   return new URL(
     rawValue.startsWith("/") ? rawValue : `/${rawValue}`,
-    getPartnerApiBaseUrl()
+    getPartnerAssetBaseUrl()
   ).toString();
 }
 
