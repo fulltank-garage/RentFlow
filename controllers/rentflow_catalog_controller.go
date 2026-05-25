@@ -867,6 +867,7 @@ type rentFlowCarImageRef struct {
 	CarID     string
 	TenantID  string
 	SortOrder int
+	UpdatedAt time.Time
 }
 
 func rentFlowCarImageURLs(c *gin.Context, tenant *models.RentFlowTenant, cars []models.RentFlowCar) (map[string][]string, error) {
@@ -898,7 +899,7 @@ func rentFlowCarImageURLsForTenants(c *gin.Context, tenantMap map[string]models.
 	var images []rentFlowCarImageRef
 	if err := config.DB.
 		Model(&models.RentFlowCarImage{}).
-		Select("id, car_id, tenant_id, sort_order").
+		Select("id, car_id, tenant_id, sort_order, updated_at").
 		Where("tenant_id IN ? AND car_id IN ?", tenantIDs, carIDs).
 		Order("tenant_id ASC, car_id ASC, sort_order ASC").
 		Find(&images).Error; err != nil {
@@ -907,18 +908,25 @@ func rentFlowCarImageURLsForTenants(c *gin.Context, tenantMap map[string]models.
 
 	for _, image := range images {
 		tenant := tenantMap[image.TenantID]
-		result[image.CarID] = append(result[image.CarID], rentFlowCarImageURL(c, &tenant, image.CarID, image.ID))
+		result[image.CarID] = append(result[image.CarID], rentFlowCarImageURL(c, &tenant, image.CarID, image.ID, image.UpdatedAt))
 	}
 
 	return result, nil
 }
 
-func rentFlowCarImageURL(_ *gin.Context, tenant *models.RentFlowTenant, carID, imageID string) string {
+func rentFlowCarImageURL(_ *gin.Context, tenant *models.RentFlowTenant, carID, imageID string, updatedAt time.Time) string {
 	imagePath := "/cars/" + url.PathEscape(carID) + "/images/" + url.PathEscape(imageID)
-	if tenant == nil || tenant.DomainSlug == "" {
-		return imagePath
+	params := url.Values{}
+	if tenant != nil && tenant.DomainSlug != "" {
+		params.Set("tenant", tenant.DomainSlug)
 	}
-	return imagePath + "?tenant=" + url.QueryEscape(tenant.DomainSlug)
+	if !updatedAt.IsZero() {
+		params.Set("v", updatedAt.UTC().Format(time.RFC3339Nano))
+	}
+	if encoded := params.Encode(); encoded != "" {
+		return imagePath + "?" + encoded
+	}
+	return imagePath
 }
 
 func rentFlowUploadedImageFiles(form *multipart.Form) []*multipart.FileHeader {
@@ -992,7 +1000,7 @@ func rentFlowCarImageResponse(c *gin.Context, tenant *models.RentFlowTenant, ima
 		"id":        image.ID,
 		"tenantId":  image.TenantID,
 		"carId":     image.CarID,
-		"imageUrl":  rentFlowCarImageURL(c, tenant, image.CarID, image.ID),
+		"imageUrl":  rentFlowCarImageURL(c, tenant, image.CarID, image.ID, image.UpdatedAt),
 		"sortOrder": image.SortOrder,
 		"fileName":  image.FileName,
 		"mimeType":  image.MimeType,
@@ -1003,7 +1011,5 @@ func rentFlowCarImageResponse(c *gin.Context, tenant *models.RentFlowTenant, ima
 }
 
 func rentFlowSendCarImage(c *gin.Context, image models.RentFlowCarImage) {
-	c.Header("Cache-Control", "public, max-age=3600")
-	c.Header("X-Content-Type-Options", "nosniff")
-	c.Data(http.StatusOK, image.MimeType, image.ImageBlob)
+	rentFlowSendImageBlob(c, image.MimeType, image.ImageBlob)
 }

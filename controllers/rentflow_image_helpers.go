@@ -278,8 +278,24 @@ func rentFlowImageBlobFromUpload(fileHeader *multipart.FileHeader) ([]byte, stri
 	return rentFlowValidateImageBlob(blob, fileHeader.Header.Get("Content-Type"), fileHeader.Filename)
 }
 
+func rentFlowImageETag(c *gin.Context, blob []byte) string {
+	version := strings.TrimSpace(c.Query("v"))
+	if version == "" {
+		version = strconv.Itoa(len(blob))
+	}
+	version = strings.NewReplacer(`"`, "", `\`, "", " ", "-").Replace(version)
+	return `W/"rf-image-` + strconv.Itoa(len(blob)) + `-` + version + `"`
+}
+
 func rentFlowSendImageBlob(c *gin.Context, mimeType string, blob []byte) {
-	c.Header("Cache-Control", "public, max-age=3600")
+	etag := rentFlowImageETag(c, blob)
+	c.Header("Cache-Control", "public, max-age=31536000, immutable")
+	c.Header("ETag", etag)
+	c.Header("Content-Length", strconv.Itoa(len(blob)))
 	c.Header("X-Content-Type-Options", "nosniff")
+	if c.GetHeader("If-None-Match") == etag {
+		c.Status(http.StatusNotModified)
+		return
+	}
 	c.Data(http.StatusOK, mimeType, blob)
 }
