@@ -14,7 +14,7 @@ import type { BuilderImagePayload } from "@/src/components/home/StorefrontBlocks
 import ShopRecommendationsSection from "@/src/components/shops/ShopRecommendationsSection";
 import { formatTHB } from "@/src/constants/money";
 import { useCatalogDirectory } from "@/src/hooks/catalog/useCatalogDirectory";
-import { buildShopSummaries } from "@/src/lib/shop-directory";
+import { buildShopSummariesFromTenants } from "@/src/lib/shop-directory";
 import type { CarType } from "@/src/services/cars/cars.types";
 import { platformApi } from "@/src/services/platform/platform.service";
 import type { PlatformPublicSettings } from "@/src/services/platform/platform.types";
@@ -47,6 +47,9 @@ export default function HomePage({
     useCatalogDirectory(undefined, initialHost);
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(initialTenantProfile);
+  const [marketplaceTenants, setMarketplaceTenants] = React.useState<
+    TenantProfile[]
+  >([]);
   const [platformSettings, setPlatformSettings] =
     React.useState<PlatformPublicSettings | null>(null);
   const [storefrontPage, setStorefrontPage] =
@@ -78,6 +81,28 @@ export default function HomePage({
       cancelled = true;
     };
   }, [initialTenantProfile, siteMode]);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    if (siteMode !== "marketplace") {
+      setMarketplaceTenants([]);
+      return;
+    }
+
+    tenantApi
+      .listTenants()
+      .then((res) => {
+        if (!cancelled) setMarketplaceTenants(res.data.items);
+      })
+      .catch(() => {
+        if (!cancelled) setMarketplaceTenants([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [siteMode]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -179,8 +204,8 @@ export default function HomePage({
     return cars.slice(0, 6);
   }, [cars]);
   const recommendedShops = React.useMemo(() => {
-    return buildShopSummaries(cars).slice(0, 12);
-  }, [cars]);
+    return buildShopSummariesFromTenants(marketplaceTenants, cars).slice(0, 12);
+  }, [cars, marketplaceTenants]);
   const heroImages = React.useMemo(() => {
     if (siteMode === "storefront") {
       const images = tenantProfile?.promoImageUrls?.length

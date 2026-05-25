@@ -27,4 +27,20 @@ export const tenantApi = {
       data: normalizeTenantProfile(res.data.data),
     };
   },
+
+  async listTenants() {
+    const res = await api.get<
+      ApiResponse<{ items: TenantProfile[]; total: number }>
+    >("/tenants", {
+      params: { marketplace: "true" },
+    });
+
+    return {
+      ...res.data,
+      data: {
+        items: (res.data.data.items || []).map(normalizeTenantProfile),
+        total: res.data.data.total || 0,
+      },
+    };
+  },
 };
