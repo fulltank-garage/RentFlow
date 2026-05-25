@@ -103,6 +103,8 @@ export default function ShopRecommendationsSection({
                     component="img"
                     src={shop.logoUrl}
                     alt={shop.name}
+                    loading="lazy"
+                    decoding="async"
                     onError={() => handleLogoError(shop.key)}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                   />

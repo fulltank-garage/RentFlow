@@ -52,6 +52,8 @@ export default function CarCard({ car, showShop = false }: Props) {
           component="img"
           src={car.imageUrl || car.image || "/RentFlow.png"}
           alt={car.name}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
         />
         {isBooked ? (

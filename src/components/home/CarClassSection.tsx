@@ -131,6 +131,8 @@ export default function CarClassSection({
                       src={classImage}
                       alt=""
                       aria-hidden
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 h-full w-full object-contain transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                     />
                     <Box className="absolute left-5 top-5">

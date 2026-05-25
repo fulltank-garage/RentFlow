@@ -31,13 +31,38 @@ async function proxyRentFlowAsset(
   }
 
   const targetUrl = buildAssetUrl(path, request.url);
+  const headers = new Headers({
+    Accept: request.headers.get("accept") || "*/*",
+  });
+  const ifNoneMatch = request.headers.get("if-none-match");
+  if (ifNoneMatch) {
+    headers.set("If-None-Match", ifNoneMatch);
+  }
+
   const upstream = await fetch(targetUrl, {
     cache: "no-store",
-    headers: {
-      Accept: request.headers.get("accept") || "*/*",
-    },
+    headers,
     method: method === "HEAD" ? "GET" : "GET",
   });
+
+  const responseHeaders = new Headers();
+  const contentType = upstream.headers.get("content-type");
+  const cacheControl = upstream.headers.get("cache-control");
+  const etag = upstream.headers.get("etag");
+  const contentLength = upstream.headers.get("content-length");
+
+  if (contentType) responseHeaders.set("content-type", contentType);
+  responseHeaders.set(
+    "cache-control",
+    cacheControl || "public, max-age=31536000, immutable"
+  );
+  if (etag) responseHeaders.set("etag", etag);
+  if (contentLength) responseHeaders.set("content-length", contentLength);
+  responseHeaders.set("x-content-type-options", "nosniff");
+
+  if (upstream.status === 304) {
+    return new NextResponse(null, { status: 304, headers: responseHeaders });
+  }
 
   if (!upstream.ok) {
     return NextResponse.json(
@@ -46,22 +71,13 @@ async function proxyRentFlowAsset(
     );
   }
 
-  const headers = new Headers();
-  const contentType = upstream.headers.get("content-type");
-  const cacheControl = upstream.headers.get("cache-control");
-
-  if (contentType) headers.set("content-type", contentType);
-  headers.set("cache-control", cacheControl || "public, max-age=60");
-
   if (method === "HEAD") {
-    const contentLength = upstream.headers.get("content-length");
-    if (contentLength) headers.set("content-length", contentLength);
-    return new NextResponse(null, { status: 200, headers });
+    return new NextResponse(null, { status: 200, headers: responseHeaders });
   }
 
   return new NextResponse(upstream.body, {
     status: 200,
-    headers,
+    headers: responseHeaders,
   });
 }
 

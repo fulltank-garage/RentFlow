@@ -87,9 +87,11 @@ export default function HeroSection({
   React.useEffect(() => {
     if (!heroImages.length) return;
 
-    heroImages.forEach((src) => {
-      if (loadedHeroImages.includes(src)) return;
+    const activeSrc = heroImages[heroIndex];
+    const nextSrc = heroImages[(heroIndex + 1) % heroImages.length];
 
+    [activeSrc, nextSrc].filter(Boolean).forEach((src) => {
+      if (loadedHeroImages.includes(src)) return;
       const image = new window.Image();
       image.src = src;
       image.onload = () => {
@@ -98,7 +100,7 @@ export default function HeroSection({
         );
       };
     });
-  }, [heroImages, loadedHeroImages]);
+  }, [heroImages, heroIndex, loadedHeroImages]);
 
   React.useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -244,26 +246,15 @@ export default function HeroSection({
         <Box className="mt-10 grid gap-5">
           <Box className="apple-card relative aspect-[16/9] min-h-0 overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,1),rgba(248,249,251,0.98)_48%,rgba(229,232,238,0.94))]">
             {heroImages.length ? (
-              heroImages.map((src, i) => {
-                const active = i === heroIndex;
-
-                return (
-                  <Box
-                    key={src}
-                    className={[
-                      "absolute inset-0 transition-all duration-700",
-                      active
-                        ? "scale-100 opacity-100"
-                        : "scale-[1.02] opacity-0",
-                    ].join(" ")}
-                    sx={{
-                      backgroundImage: `url(${src})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                );
-              })
+              <Box
+                key={heroImages[heroIndex]}
+                className="absolute inset-0 scale-100 opacity-100 transition-all duration-700"
+                sx={{
+                  backgroundImage: `url(${heroImages[heroIndex]})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
             ) : (
               <>
                 <Box className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,1),rgba(248,249,251,0.98)_48%,rgba(229,232,238,0.94))]" />
