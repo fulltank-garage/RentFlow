@@ -32,52 +32,52 @@ const theme = createTheme({
   typography: {
     fontFamily: "var(--font-english), var(--font-thai), system-ui, sans-serif",
     h1: {
-      fontSize: "clamp(2rem, 1.32rem + 2vw, 3.45rem)",
+      fontSize: "var(--rf-type-page-title)",
       fontWeight: 800,
-      lineHeight: 1.02,
-      letterSpacing: "-0.05em",
-    },
-    h2: {
-      fontSize: "clamp(1.6rem, 1.18rem + 1vw, 2.5rem)",
-      fontWeight: 800,
-      lineHeight: 1.05,
+      lineHeight: 1.071,
       letterSpacing: "-0.045em",
     },
-    h3: {
-      fontSize: "clamp(1.32rem, 1.12rem + 0.55vw, 1.78rem)",
+    h2: {
+      fontSize: "var(--rf-type-section-title)",
       fontWeight: 800,
       lineHeight: 1.1,
-      letterSpacing: "-0.035em",
+      letterSpacing: "-0.04em",
     },
-    h4: {
-      fontSize: "clamp(1.18rem, 1.04rem + 0.45vw, 1.5rem)",
+    h3: {
+      fontSize: "var(--rf-type-card-title)",
       fontWeight: 800,
-      lineHeight: 1.15,
+      lineHeight: 1.143,
       letterSpacing: "-0.03em",
     },
-    h5: {
-      fontSize: "clamp(1.05rem, 0.98rem + 0.18vw, 1.18rem)",
+    h4: {
+      fontSize: "clamp(1.1875rem, 1.02rem + 0.42vw, 1.3125rem)",
       fontWeight: 800,
-      lineHeight: 1.2,
+      lineHeight: 1.19,
+      letterSpacing: "-0.025em",
+    },
+    h5: {
+      fontSize: "var(--rf-type-body)",
+      fontWeight: 800,
+      lineHeight: 1.235,
       letterSpacing: "-0.02em",
     },
     h6: {
-      fontSize: "clamp(1rem, 0.94rem + 0.16vw, 1.08rem)",
+      fontSize: "var(--rf-type-body-sm)",
       fontWeight: 700,
-      lineHeight: 1.25,
+      lineHeight: 1.286,
       letterSpacing: "-0.015em",
     },
     body1: {
-      fontSize: "clamp(0.96rem, 0.93rem + 0.12vw, 1.02rem)",
-      lineHeight: 1.75,
+      fontSize: "var(--rf-type-body)",
+      lineHeight: 1.47,
     },
     body2: {
-      fontSize: "clamp(0.88rem, 0.86rem + 0.08vw, 0.94rem)",
-      lineHeight: 1.7,
+      fontSize: "var(--rf-type-body-sm)",
+      lineHeight: 1.43,
     },
     button: {
-      fontSize: "clamp(0.92rem, 0.9rem + 0.06vw, 0.98rem)",
-      fontWeight: 700,
+      fontSize: "var(--rf-type-button)",
+      fontWeight: 600,
       letterSpacing: "-0.02em",
       textTransform: "none",
     },
@@ -128,7 +128,7 @@ const theme = createTheme({
           borderRadius: 22,
         },
         input: {
-          fontSize: "clamp(0.92rem, 0.9rem + 0.08vw, 0.98rem)",
+          fontSize: "var(--rf-type-body)",
         },
       },
     },
