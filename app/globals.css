@@ -16,6 +16,14 @@
   --rf-admin-rose: #f43f5e;
   --rf-admin-orange: #f97316;
   --rf-admin-chip: #eef1f5;
+  --rf-type-label: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+  --rf-type-body-sm: clamp(0.875rem, 0.84rem + 0.12vw, 0.9375rem);
+  --rf-type-body: clamp(1rem, 0.98rem + 0.12vw, 1.0625rem);
+  --rf-type-button: clamp(0.875rem, 0.84rem + 0.12vw, 1.0625rem);
+  --rf-type-card-title: clamp(1.3125rem, 1.12rem + 0.56vw, 1.75rem);
+  --rf-type-section-title: clamp(2rem, 1.45rem + 1.7vw, 2.5rem);
+  --rf-type-page-title: clamp(2.5rem, 1.72rem + 2.45vw, 3.5rem);
+  --rf-type-login-title: clamp(2rem, 1.3rem + 2.25vw, 3.5rem);
 
   --rf-partner-bg: var(--rf-admin-bg);
   --rf-partner-ink: var(--rf-admin-ink);
@@ -139,7 +147,7 @@ a {
   border: 0;
   box-shadow: none;
   color: var(--rf-admin-muted);
-  font-size: clamp(0.72rem, 0.7rem + 0.12vw, 0.8rem);
+  font-size: var(--rf-type-label);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -147,50 +155,50 @@ a {
 .admin-page-title,
 .partner-page-title {
   max-width: 74rem;
-  font-size: clamp(1.9rem, 1.25rem + 1.65vw, 3.4rem) !important;
+  font-size: var(--rf-type-page-title) !important;
   font-weight: 800 !important;
-  line-height: 1.05 !important;
-  letter-spacing: -0.05em !important;
+  line-height: 1.071 !important;
+  letter-spacing: -0.045em !important;
   color: var(--rf-admin-ink) !important;
 }
 
 .admin-login-title {
-  font-size: clamp(1.85rem, 1.05rem + 2.15vw, 3.2rem) !important;
-  line-height: 1.04 !important;
+  font-size: var(--rf-type-login-title) !important;
+  line-height: 1.071 !important;
   text-wrap: balance;
 }
 
 .admin-page-subtitle,
 .partner-page-subtitle {
   max-width: 68rem;
-  font-size: clamp(0.96rem, 0.9rem + 0.18vw, 1.08rem) !important;
-  line-height: 1.8 !important;
+  font-size: var(--rf-type-body) !important;
+  line-height: 1.47 !important;
   color: var(--rf-admin-muted) !important;
 }
 
 .admin-section-title,
 .partner-section-title {
-  font-size: clamp(1.15rem, 1.05rem + 0.4vw, 1.5rem) !important;
+  font-size: var(--rf-type-card-title) !important;
   font-weight: 750 !important;
-  line-height: 1.15 !important;
-  letter-spacing: -0.035em !important;
+  line-height: 1.143 !important;
+  letter-spacing: -0.03em !important;
   color: var(--rf-admin-ink) !important;
 }
 
 .admin-section-subtitle,
 .partner-section-subtitle {
-  font-size: clamp(0.9rem, 0.87rem + 0.1vw, 0.98rem) !important;
+  font-size: var(--rf-type-body-sm) !important;
   font-weight: 400 !important;
-  line-height: 1.75 !important;
+  line-height: 1.47 !important;
   color: var(--rf-admin-muted) !important;
 }
 
 .admin-stat-value,
 .partner-stat-value {
-  font-size: clamp(1.7rem, 1.2rem + 1.15vw, 2.8rem) !important;
+  font-size: clamp(2rem, 1.5rem + 1.45vw, 3rem) !important;
   font-weight: 800 !important;
-  line-height: 1 !important;
-  letter-spacing: -0.05em !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.045em !important;
 }
 
 .admin-scrollbar,
@@ -471,11 +479,6 @@ a {
     letter-spacing: -0.04em !important;
   }
 
-  .admin-login-title {
-    font-size: clamp(1.55rem, 1rem + 4.1vw, 2.2rem) !important;
-    line-height: 1.08 !important;
-  }
-
   .MuiButton-root {
     min-height: 2.75rem;
   }
@@ -511,20 +514,14 @@ a {
 
   .admin-page-title,
   .partner-page-title {
-    font-size: clamp(1.65rem, 1.25rem + 2.8vw, 2.15rem) !important;
     line-height: 1.1 !important;
     letter-spacing: -0.035em !important;
-  }
-
-  .admin-login-title {
-    font-size: clamp(1.55rem, 1rem + 4.1vw, 2.2rem) !important;
-    line-height: 1.08 !important;
   }
 
   .admin-page-subtitle,
   .partner-page-subtitle,
   .admin-section-subtitle,
   .partner-section-subtitle {
-    line-height: 1.65 !important;
+    line-height: 1.47 !important;
   }
 }

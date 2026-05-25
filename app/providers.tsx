@@ -22,6 +22,39 @@ const theme = createTheme({
   typography: {
     fontFamily:
       "var(--font-english), var(--font-thai), ui-sans-serif, system-ui, sans-serif",
+    h1: {
+      fontSize: "var(--rf-type-page-title)",
+      fontWeight: 800,
+      lineHeight: 1.071,
+      letterSpacing: "-0.045em",
+    },
+    h2: {
+      fontSize: "var(--rf-type-section-title)",
+      fontWeight: 800,
+      lineHeight: 1.1,
+      letterSpacing: "-0.04em",
+    },
+    h3: {
+      fontSize: "var(--rf-type-card-title)",
+      fontWeight: 800,
+      lineHeight: 1.143,
+      letterSpacing: "-0.03em",
+    },
+    body1: {
+      fontSize: "var(--rf-type-body)",
+      lineHeight: 1.47,
+    },
+    body2: {
+      fontSize: "var(--rf-type-body-sm)",
+      lineHeight: 1.43,
+    },
+    button: {
+      fontSize: "var(--rf-type-button)",
+      fontWeight: 600,
+      lineHeight: 1.2,
+      letterSpacing: "-0.02em",
+      textTransform: "none",
+    },
   },
   components: {
     MuiCssBaseline: {
