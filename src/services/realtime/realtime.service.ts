@@ -1,6 +1,5 @@
 "use client";
 
-import { getAdminApiBaseUrl } from "@/src/services/core/api-client.service";
 import type { AdminRealtimeEvent } from "./realtime.types";
 
 type SubscribeOptions = {
@@ -10,7 +9,10 @@ type SubscribeOptions = {
 };
 
 function adminRealtimeUrl() {
-  const url = new URL(getAdminApiBaseUrl());
+  const apiOrigin =
+    process.env.NEXT_PUBLIC_API_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "http://localhost:8080");
+  const url = new URL(apiOrigin);
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   url.pathname = "/ws/realtime";
   url.search = "";
