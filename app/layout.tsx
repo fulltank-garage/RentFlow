@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = tenant?.shopName
     ? `${tenant.shopName} - เช่ารถง่าย แค่ปลายนิ้ว`
     : "RentFlow - เช่ารถง่าย แค่ปลายนิ้ว";
-  const icon = tenant?.logoUrl || "/RentFlow.svg";
+  const icon = "/tenant-icon";
 
   return {
     title,
