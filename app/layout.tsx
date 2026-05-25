@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans, Noto_Sans_Thai } from "next/font/google";
+import { Noto_Sans_Thai, Roboto } from "next/font/google";
 import "./globals.css";
 
 import Providers from "./providers";
@@ -19,10 +19,10 @@ const notoThai = Noto_Sans_Thai({
   display: "swap",
 });
 
-const notoSans = Noto_Sans({
+const roboto = Roboto({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-latin",
+  variable: "--font-english",
   display: "swap",
 });
 
@@ -59,7 +59,7 @@ export default async function RootLayout({
     <html
       lang="th"
       data-scroll-behavior="smooth"
-      className={`${notoThai.variable} ${notoSans.variable}`}
+      className={`${notoThai.variable} ${roboto.variable}`}
     >
       <body className="font-thai">
         <Providers>

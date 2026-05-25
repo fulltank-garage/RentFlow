@@ -321,7 +321,7 @@ export default function BookingReceiptCard({
     }
 
     const fontFamily =
-      '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Noto Sans Thai", sans-serif';
+      '"Roboto", "Noto Sans Thai", sans-serif';
     const pageX = 100;
     const pageY = 80;
     const pageWidth = 1400;

@@ -79,7 +79,7 @@ const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: "var(--font-thai), var(--font-latin), system-ui, sans-serif",
+        fontFamily: "var(--font-english), var(--font-thai), system-ui, sans-serif",
         fontSize: 16,
         body1: {
             fontSize: "var(--rf-type-body)",

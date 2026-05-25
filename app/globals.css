@@ -60,9 +60,8 @@ body {
   min-height: 100vh;
   background: var(--rf-apple-bg);
   color: var(--rf-apple-ink);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", var(--font-thai), var(--font-latin), ui-sans-serif,
-    system-ui, sans-serif;
+  font-family: var(--font-english), var(--font-thai), ui-sans-serif, system-ui,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
   overflow-x: clip;
@@ -78,13 +77,11 @@ a {
 }
 
 .font-thai {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", var(--font-thai), var(--font-latin), system-ui, sans-serif;
+  font-family: var(--font-english), var(--font-thai), system-ui, sans-serif;
 }
 
 .font-latin {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", var(--font-latin), system-ui, sans-serif;
+  font-family: var(--font-english), system-ui, sans-serif;
 }
 
 .apple-page {
