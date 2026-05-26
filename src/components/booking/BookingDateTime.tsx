@@ -149,7 +149,7 @@ function CalendarMonth({
               className={[
                 "relative min-h-12",
                 isInRange && day.inMonth && !isUnavailable
-                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-10 before:-translate-y-1/2 before:bg-sky-100"
+                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-sky-100"
                   : "",
               ].join(" ")}
             >
@@ -159,7 +159,7 @@ function CalendarMonth({
                 onClick={() => onSelectDate(day.key)}
                 className={[
                   "relative z-10 h-full min-h-12 w-full rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500/35",
+                  "focus:outline-none",
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
                     ? "border-sky-300 bg-white text-slate-900 shadow-[inset_0_0_0_3px_rgba(186,230,253,0.75)]"
