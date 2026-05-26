@@ -45,7 +45,7 @@ export default function BookingSummaryCard({
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
-      className="apple-card self-start lg:sticky lg:top-12 lg:col-span-5 lg:h-[calc(100svh-96px)]"
+      className="apple-card self-start lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-128px)]"
     >
       <CardContent className="p-4! sm:p-5! lg:flex lg:h-full lg:flex-col">
         <Typography className="apple-card-title font-semibold text-slate-900">
