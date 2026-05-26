@@ -319,7 +319,7 @@ export default function BookingDateTime({
           className="rounded-full!"
           sx={{ minWidth: 96, textTransform: "none" }}
         >
-          ก่อนหน้า
+          เดือนก่อนหน้า
         </Button>
         <Button
           type="button"
@@ -328,7 +328,7 @@ export default function BookingDateTime({
           className="rounded-full!"
           sx={{ minWidth: 96, textTransform: "none" }}
         >
-          ถัดไป
+          เดือนถัดไป
         </Button>
       </Box>
 
