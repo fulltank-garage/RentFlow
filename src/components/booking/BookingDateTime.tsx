@@ -286,7 +286,26 @@ export default function BookingDateTime({
         </Box>
       </Box>
 
-      <Box className="mt-5 flex items-center justify-between gap-3">
+      <Box className="mt-5 grid gap-5 xl:grid-cols-2">
+        {[visibleMonth, addMonths(visibleMonth, 1)].map((monthDate) => (
+          <CalendarMonth
+            key={`${monthDate.getFullYear()}-${monthDate.getMonth()}`}
+            monthDate={monthDate}
+            todayKey={todayKey}
+            pickupDate={pickupDate}
+            returnDate={returnDate}
+            unavailableSet={unavailableSet}
+            onSelectDate={handleSelectDate}
+            className={
+              monthDate.getMonth() === addMonths(visibleMonth, 1).getMonth()
+                ? "hidden xl:block"
+                : undefined
+            }
+          />
+        ))}
+      </Box>
+
+      <Box className="mt-5 flex items-center justify-end gap-2">
         <Button
           type="button"
           variant="outlined"
@@ -305,25 +324,6 @@ export default function BookingDateTime({
         >
           ถัดไป
         </Button>
-      </Box>
-
-      <Box className="mt-5 grid gap-5 xl:grid-cols-2">
-        {[visibleMonth, addMonths(visibleMonth, 1)].map((monthDate) => (
-          <CalendarMonth
-            key={`${monthDate.getFullYear()}-${monthDate.getMonth()}`}
-            monthDate={monthDate}
-            todayKey={todayKey}
-            pickupDate={pickupDate}
-            returnDate={returnDate}
-            unavailableSet={unavailableSet}
-            onSelectDate={handleSelectDate}
-            className={
-              monthDate.getMonth() === addMonths(visibleMonth, 1).getMonth()
-                ? "hidden xl:block"
-                : undefined
-            }
-          />
-        ))}
       </Box>
 
       <Box className="mt-5 grid gap-4 sm:grid-cols-2">
