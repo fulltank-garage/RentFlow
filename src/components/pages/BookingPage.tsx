@@ -115,7 +115,6 @@ export default function BookingPage() {
                   showChatBooking={booking.showChatBooking}
                   forceChatBooking={booking.forceChatBooking}
                   hasChatChannel={booking.hasChatChannel}
-                  chatHref={booking.chatHref}
                   carAvailable={booking.carAvailable}
                   checkingAvailability={booking.checkingAvailability}
                   availabilityMessage={booking.availabilityMessage}

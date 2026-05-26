@@ -53,7 +53,6 @@ type Props = {
   showChatBooking: boolean;
   forceChatBooking: boolean;
   hasChatChannel: boolean;
-  chatHref: string;
   carAvailable: boolean;
   checkingAvailability: boolean;
   availabilityMessage: string | null;
@@ -103,7 +102,6 @@ export default function BookingForm({
   showChatBooking,
   forceChatBooking,
   hasChatChannel,
-  chatHref,
   carAvailable,
   checkingAvailability,
   availabilityMessage,
@@ -210,21 +208,18 @@ export default function BookingForm({
                 </Typography>
                 <Typography className="mt-1 text-xs text-amber-800">
                   {forceChatBooking
-                    ? "ระบบจะบันทึกคำขอจองไว้ก่อน แล้วให้ร้านติดต่อยืนยันรายละเอียดกับคุณ"
+                    ? "ระบบจะบันทึกคำขอจองและคัดลอกสรุปการจองให้ก่อนเปิดแชท"
                     : "ต่อรองราคา/ขอเงื่อนไขพิเศษ หรือประเมินค่าส่งเพิ่มเติมได้"}
                 </Typography>
                 <Typography className="apple-label-text mt-2 text-amber-700">
-                  * ระบบจะส่งรายละเอียดการจองแบบย่อให้แอดมินอัตโนมัติ
+                  * เมื่อ Messenger เปิดขึ้น ให้วางข้อความสรุปที่คัดลอกไว้แล้วส่งให้ร้านได้ทันที
                 </Typography>
               </Box>
 
               <Button
-                component="a"
-                href={chatHref}
-                target="_blank"
-                rel="noreferrer"
+                type="submit"
                 variant="contained"
-                disabled={!hasChatChannel}
+                disabled={!canSubmit || loading || checkingAvailability || !carAvailable || !hasChatChannel}
                 className="rounded-xl! font-semibold!"
                 sx={{
                   textTransform: "none",
@@ -238,7 +233,11 @@ export default function BookingForm({
                   py: 1.25,
                 }}
               >
-                {forceChatBooking ? "จองผ่านแชท" : "จองผ่านแชท (แนะนำ)"}
+                {loading
+                  ? "กำลังเตรียมแชท..."
+                  : forceChatBooking
+                    ? "จองผ่านแชท"
+                    : "จองผ่านแชท (แนะนำ)"}
               </Button>
             </Box>
             {!hasChatChannel ? (

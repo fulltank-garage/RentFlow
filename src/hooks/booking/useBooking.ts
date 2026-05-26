@@ -12,7 +12,11 @@ import { availabilityApi } from "@/src/services/availability/availability.servic
 import { branchesApi } from "@/src/services/branches/branches.service";
 import { OTHER_OPTION } from "@/src/constants/booking.constants";
 import { parseDateTime, diffDaysCeil } from "@/src/utils/booking/booking.date";
-import { buildChatHref, buildChatMessage } from "@/src/utils/booking/booking.format";
+import {
+  buildChatHref,
+  buildChatMessage,
+  copyChatMessage,
+} from "@/src/utils/booking/booking.format";
 import {
   calcAddonsTotal,
   getSelectedAddonTitles,
@@ -731,6 +735,14 @@ export default function useBooking() {
       if (!canSubmit) return;
 
       setLoading(true);
+      const pendingChatWindow =
+        forceChatBooking && typeof window !== "undefined" && hasChatChannel
+          ? window.open("about:blank", "_blank")
+          : null;
+      if (pendingChatWindow) {
+        pendingChatWindow.opener = null;
+      }
+
       try {
         const availabilityRes = await availabilityApi.check(
           {
@@ -744,6 +756,9 @@ export default function useBooking() {
         );
 
         if (!availabilityRes.data?.available) {
+          if (pendingChatWindow) {
+            pendingChatWindow.close();
+          }
           setError("รถคันนี้มีการจองแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
           return;
         }
@@ -774,6 +789,26 @@ export default function useBooking() {
         });
 
         const booking = res.data;
+        const bookingChatMessage = buildChatMessage({
+          bookingCode: booking.bookingCode,
+          shopName: car.shopName,
+          carName: car.name,
+          carId: car.id,
+          finalPickupPoint,
+          pickupDate,
+          pickupTime,
+          finalReturnPoint,
+          returnDate,
+          returnTime,
+          days: booking.totalDays || days,
+          addonTitles: selectedAddonTitles,
+          subtotal: booking.subtotal,
+          discount: booking.discount,
+          extraCharge: booking.extraCharge,
+          amount: booking.totalAmount,
+          fullName: fullName.trim(),
+          phone: phone.trim(),
+        });
         const commonQuery =
           `bookingId=${encodeURIComponent(booking.bookingCode)}` +
           `&bookingRef=${encodeURIComponent(booking.id)}` +
@@ -797,6 +832,20 @@ export default function useBooking() {
           `&addons=${encodeURIComponent(JSON.stringify(selectedAddonIds))}`;
 
         if (forceChatBooking) {
+          await copyChatMessage(bookingChatMessage);
+          const channelUrl =
+            car.lineOfficialAccount?.chatUrl || car.lineOfficialAccount?.shareUrl || "";
+          const nextChatHref = buildChatHref(channelUrl, bookingChatMessage);
+          if (nextChatHref) {
+            if (pendingChatWindow) {
+              pendingChatWindow.location.href = nextChatHref;
+            } else if (typeof window !== "undefined") {
+              window.open(nextChatHref, "_blank", "noopener,noreferrer");
+            }
+          } else if (pendingChatWindow) {
+            pendingChatWindow.close();
+          }
+
           navigateBookingFlow(
             router,
             `/booking/success?${commonQuery}&bookingMode=chat`,
@@ -811,6 +860,9 @@ export default function useBooking() {
           "replace"
         );
       } catch (err: unknown) {
+        if (pendingChatWindow) {
+          pendingChatWindow.close();
+        }
         setError(getErrorMessage(err, "ไม่สามารถสร้างรายการจองได้"));
       } finally {
         setLoading(false);
@@ -828,6 +880,7 @@ export default function useBooking() {
       pickupTime,
       returnDate,
       returnTime,
+      days,
       selectedAddonIds,
       addonOptions,
       fullName,
@@ -839,6 +892,7 @@ export default function useBooking() {
       finalPickupPoint,
       finalReturnPoint,
       forceChatBooking,
+      hasChatChannel,
       router,
     ]
   );
