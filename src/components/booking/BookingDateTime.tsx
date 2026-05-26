@@ -239,7 +239,7 @@ export default function BookingDateTime({
     (dateKey: string) => {
       if (unavailableSet.has(dateKey) || dateKey < todayKey) return;
 
-      if (!pickupDate || returnDate || dateKey === pickupDate) {
+      if (!pickupDate) {
         setPickupDate(dateKey);
         setReturnDate("");
         return;
@@ -248,6 +248,16 @@ export default function BookingDateTime({
       if (dateKey < pickupDate) {
         setPickupDate(dateKey);
         setReturnDate("");
+        return;
+      }
+
+      if (dateKey === pickupDate) {
+        if (returnDate) {
+          setReturnDate("");
+          return;
+        }
+
+        setReturnDate(dateKey);
         return;
       }
 
