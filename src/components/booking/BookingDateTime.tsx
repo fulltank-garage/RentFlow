@@ -162,7 +162,7 @@ function CalendarMonth({
                   "focus:outline-none focus:ring-2 focus:ring-blue-500/35",
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
-                    ? "border-sky-300 bg-white text-slate-900 ring-2 ring-sky-200"
+                    ? "border-sky-300 bg-white text-slate-900 shadow-[inset_0_0_0_3px_rgba(186,230,253,0.75)]"
                     : isInRange && day.inMonth && !isUnavailable
                       ? "rounded-none border-transparent bg-sky-100 text-slate-700"
                     : "border-transparent bg-white",
