@@ -164,7 +164,10 @@ function CalendarMonth({
                 disabled={disabled}
                 onClick={() => onSelectDate(day.key)}
                 className={[
-                  "relative z-10 h-full min-h-12 w-full rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
+                  "relative z-10 h-full min-h-12 rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
+                  isSelected && pickupDate && returnDate
+                    ? "mx-1 w-[calc(100%-0.5rem)]"
+                    : "w-full",
                   "focus:outline-none focus:ring-2 focus:ring-blue-500/35",
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
