@@ -274,7 +274,7 @@ export default function BookingDateTime({
         : "เลือกวันรับรถก่อน แล้วเลือกวันคืนรถ";
 
   return (
-    <Box className="rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_18px_44px_rgba(15,23,42,0.06)] sm:p-5">
+    <Box className="rounded-[28px] border border-slate-200 bg-white px-4 pt-4 pb-0 shadow-[0_18px_44px_rgba(15,23,42,0.06)]">
       <Box className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <Box>
           <Typography className="apple-card-title font-semibold text-slate-900">
