@@ -149,13 +149,13 @@ function CalendarMonth({
               className={[
                 "relative min-h-12",
                 isInRange && day.inMonth && !isUnavailable
-                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-10 before:-translate-y-1/2 before:bg-sky-100/80"
+                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-10 before:-translate-y-1/2 before:bg-sky-100"
                   : "",
                 isPickup && returnDate
-                  ? "before:absolute before:inset-y-1 before:left-0 before:right-[-1px] before:bg-sky-100/80"
+                  ? "before:absolute before:inset-y-1 before:left-1/2 before:right-0 before:bg-sky-100"
                   : "",
                 isReturn && pickupDate
-                  ? "before:absolute before:inset-y-1 before:left-[-1px] before:right-0 before:bg-sky-100/80"
+                  ? "before:absolute before:inset-y-1 before:left-0 before:right-1/2 before:bg-sky-100"
                   : "",
               ].join(" ")}
             >
@@ -170,7 +170,7 @@ function CalendarMonth({
                   isSelected
                     ? "border-sky-300 bg-white text-slate-900 ring-2 ring-sky-200"
                     : isInRange && day.inMonth && !isUnavailable
-                      ? "rounded-none border-transparent bg-sky-100/80 text-slate-700"
+                      ? "rounded-none border-transparent bg-sky-100 text-slate-700"
                     : "border-transparent bg-white",
                   isUnavailable && day.inMonth
                     ? "border-red-100 bg-red-50 text-red-700"
