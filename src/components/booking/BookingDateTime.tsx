@@ -147,15 +147,15 @@ function CalendarMonth({
             <Box
               key={day.key}
               className={[
-                "relative flex min-h-12 items-stretch overflow-hidden",
+                "relative min-h-12",
                 isInRange && day.inMonth && !isUnavailable
-                  ? "before:absolute before:inset-x-0 before:top-1/2 before:z-0 before:h-8 before:-translate-y-1/2 before:bg-sky-100"
+                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-sky-100"
                   : "",
                 isPickup && returnDate
-                  ? "before:absolute before:top-1/2 before:right-0 before:z-0 before:h-8 before:w-1/2 before:-translate-y-1/2 before:bg-sky-100"
+                  ? "before:absolute before:top-1/2 before:right-0 before:h-8 before:w-1/2 before:-translate-y-1/2 before:bg-sky-100"
                   : "",
                 isReturn && pickupDate
-                  ? "before:absolute before:top-1/2 before:left-0 before:z-0 before:h-8 before:w-1/2 before:-translate-y-1/2 before:bg-sky-100"
+                  ? "before:absolute before:top-1/2 before:left-0 before:h-8 before:w-1/2 before:-translate-y-1/2 before:bg-sky-100"
                   : "",
               ].join(" ")}
             >
@@ -164,9 +164,8 @@ function CalendarMonth({
                 disabled={disabled}
                 onClick={() => onSelectDate(day.key)}
                 className={[
-                  "relative z-10 h-full min-h-12 rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
+                  "relative z-10 h-full min-h-12 w-full rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
                   "focus:outline-none",
-                  isSelected ? "mx-auto w-[calc(100%-10px)]" : "w-full",
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
                     ? "border-sky-300 bg-white text-slate-900 shadow-[inset_0_0_0_3px_rgba(186,230,253,0.75)]"
