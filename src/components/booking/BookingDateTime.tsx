@@ -151,6 +151,12 @@ function CalendarMonth({
                 isInRange && day.inMonth && !isUnavailable
                   ? "before:absolute before:inset-x-0 before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-sky-100"
                   : "",
+                isPickup && returnDate
+                  ? "before:absolute before:top-1/2 before:right-0 before:h-8 before:w-1/2 before:-translate-y-1/2 before:bg-sky-100"
+                  : "",
+                isReturn && pickupDate
+                  ? "before:absolute before:top-1/2 before:left-0 before:h-8 before:w-1/2 before:-translate-y-1/2 before:bg-sky-100"
+                  : "",
               ].join(" ")}
             >
               <button
