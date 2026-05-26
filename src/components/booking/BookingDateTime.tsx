@@ -151,12 +151,6 @@ function CalendarMonth({
                 isInRange && day.inMonth && !isUnavailable
                   ? "before:absolute before:inset-x-0 before:top-1/2 before:h-10 before:-translate-y-1/2 before:bg-sky-100"
                   : "",
-                isPickup && returnDate
-                  ? "before:absolute before:inset-y-1 before:left-1/2 before:right-0 before:bg-sky-100"
-                  : "",
-                isReturn && pickupDate
-                  ? "before:absolute before:inset-y-1 before:left-0 before:right-1/2 before:bg-sky-100"
-                  : "",
               ].join(" ")}
             >
               <button
@@ -164,10 +158,7 @@ function CalendarMonth({
                 disabled={disabled}
                 onClick={() => onSelectDate(day.key)}
                 className={[
-                  "relative z-10 h-full min-h-12 rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
-                  isSelected && pickupDate && returnDate
-                    ? "mx-1 w-[calc(100%-0.5rem)]"
-                    : "w-full",
+                  "relative z-10 h-full min-h-12 w-full rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
                   "focus:outline-none focus:ring-2 focus:ring-blue-500/35",
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
