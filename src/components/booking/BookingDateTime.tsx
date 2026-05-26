@@ -15,7 +15,6 @@ type Props = {
   setReturnTime: (value: string) => void;
   timeInvalid: boolean;
   unavailableDates: string[];
-  loadingUnavailableDates: boolean;
 };
 
 type CalendarDay = {
@@ -217,7 +216,6 @@ export default function BookingDateTime({
   setReturnTime,
   timeInvalid,
   unavailableDates,
-  loadingUnavailableDates,
 }: Props) {
   const todayKey = React.useMemo(() => toDateKey(new Date()), []);
   const unavailableSet = React.useMemo(
@@ -279,19 +277,6 @@ export default function BookingDateTime({
           <Typography className="apple-label-text mt-1 text-slate-500">
             {rangeLabel}
           </Typography>
-        </Box>
-        <Box className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-            ว่าง
-          </span>
-          <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
-            ไม่ว่าง
-          </span>
-          {loadingUnavailableDates ? (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
-              กำลังอัปเดต
-            </span>
-          ) : null}
         </Box>
       </Box>
 
