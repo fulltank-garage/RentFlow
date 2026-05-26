@@ -194,10 +194,6 @@ export default function useBooking() {
   );
 
   React.useEffect(() => {
-    if (pickupDate && !returnDate) setReturnDate(pickupDate);
-  }, [pickupDate, returnDate]);
-
-  React.useEffect(() => {
     const today = getTodayLocalDate();
 
     if (pickupDate && pickupDate < today) {
