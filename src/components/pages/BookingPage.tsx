@@ -43,7 +43,7 @@ export default function BookingPage() {
             </Typography>
           </Box>
 
-          <Box className="mt-10 grid gap-5 lg:grid-cols-12 lg:gap-6">
+          <Box className="mt-10 grid gap-5 lg:grid-cols-12 lg:items-start lg:gap-6">
             <BookingSummaryCard
               car={booking.car}
               carId={booking.carId}
