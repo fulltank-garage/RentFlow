@@ -141,6 +141,7 @@ function CalendarMonth({
             Boolean(pickupDate && returnDate) &&
             isBetween(day.key, pickupDate, returnDate);
           const isSelected = isPickup || isReturn;
+          const hasRange = Boolean(pickupDate && returnDate);
           const disabled = isPast || isUnavailable || !day.inMonth;
 
           return (
@@ -152,10 +153,10 @@ function CalendarMonth({
                   ? "before:absolute before:inset-x-0 before:top-1/2 before:h-12 before:-translate-y-1/2 before:bg-blue-100"
                   : "",
                 isPickup && returnDate
-                  ? "before:absolute before:left-1/2 before:right-0 before:top-1/2 before:h-12 before:-translate-y-1/2 before:bg-blue-100"
+                  ? "before:absolute before:inset-y-0 before:left-0 before:right-[-1px] before:bg-blue-100"
                   : "",
                 isReturn && pickupDate
-                  ? "before:absolute before:left-0 before:right-1/2 before:top-1/2 before:h-12 before:-translate-y-1/2 before:bg-blue-100"
+                  ? "before:absolute before:inset-y-0 before:left-[-1px] before:right-0 before:bg-blue-100"
                   : "",
               ].join(" ")}
             >
@@ -168,7 +169,11 @@ function CalendarMonth({
                   "focus:outline-none focus:ring-2 focus:ring-blue-500/35",
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
-                    ? "border-blue-300 bg-white text-slate-900 ring-2 ring-blue-200"
+                    ? [
+                        "border-blue-300 bg-white text-slate-900 ring-2 ring-blue-200",
+                        hasRange && isPickup ? "rounded-r-none" : "",
+                        hasRange && isReturn ? "rounded-l-none" : "",
+                      ].join(" ")
                     : isInRange && day.inMonth && !isUnavailable
                       ? "rounded-none border-transparent bg-blue-100 text-slate-700"
                     : "border-transparent bg-white",
