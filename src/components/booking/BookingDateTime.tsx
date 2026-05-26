@@ -141,7 +141,6 @@ function CalendarMonth({
             Boolean(pickupDate && returnDate) &&
             isBetween(day.key, pickupDate, returnDate);
           const isSelected = isPickup || isReturn;
-          const hasRange = Boolean(pickupDate && returnDate);
           const disabled = isPast || isUnavailable || !day.inMonth;
 
           return (
@@ -150,13 +149,13 @@ function CalendarMonth({
               className={[
                 "relative min-h-12",
                 isInRange && day.inMonth && !isUnavailable
-                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-12 before:-translate-y-1/2 before:bg-blue-100"
+                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-10 before:-translate-y-1/2 before:bg-sky-100/80"
                   : "",
                 isPickup && returnDate
-                  ? "before:absolute before:inset-y-0 before:left-0 before:right-[-1px] before:bg-blue-100"
+                  ? "before:absolute before:inset-y-1 before:left-0 before:right-[-1px] before:bg-sky-100/80"
                   : "",
                 isReturn && pickupDate
-                  ? "before:absolute before:inset-y-0 before:left-[-1px] before:right-0 before:bg-blue-100"
+                  ? "before:absolute before:inset-y-1 before:left-[-1px] before:right-0 before:bg-sky-100/80"
                   : "",
               ].join(" ")}
             >
@@ -169,13 +168,9 @@ function CalendarMonth({
                   "focus:outline-none focus:ring-2 focus:ring-blue-500/35",
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
-                    ? [
-                        "border-blue-300 bg-white text-slate-900 ring-2 ring-blue-200",
-                        hasRange && isPickup ? "rounded-r-none" : "",
-                        hasRange && isReturn ? "rounded-l-none" : "",
-                      ].join(" ")
+                    ? "border-sky-300 bg-white text-slate-900 ring-2 ring-sky-200"
                     : isInRange && day.inMonth && !isUnavailable
-                      ? "rounded-none border-transparent bg-blue-100 text-slate-700"
+                      ? "rounded-none border-transparent bg-sky-100/80 text-slate-700"
                     : "border-transparent bg-white",
                   isUnavailable && day.inMonth
                     ? "border-red-100 bg-red-50 text-red-700"
