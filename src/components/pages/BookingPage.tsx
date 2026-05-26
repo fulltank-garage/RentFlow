@@ -105,6 +105,8 @@ export default function BookingPage() {
                   setReturnDate={booking.setReturnDate}
                   returnTime={booking.returnTime}
                   setReturnTime={booking.setReturnTime}
+                  unavailableDates={booking.unavailableDates}
+                  loadingUnavailableDates={booking.loadingUnavailableDates}
                   addonOptions={booking.addonOptions}
                   selectedAddonIds={booking.selectedAddonIds}
                   addonsTotal={booking.addonsTotal}

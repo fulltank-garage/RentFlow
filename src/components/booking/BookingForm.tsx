@@ -40,6 +40,8 @@ type Props = {
   setReturnDate: (value: string) => void;
   returnTime: string;
   setReturnTime: (value: string) => void;
+  unavailableDates: string[];
+  loadingUnavailableDates: boolean;
 
   addonOptions: StorefrontAddon[];
   selectedAddonIds: string[];
@@ -92,6 +94,8 @@ export default function BookingForm({
   setReturnDate,
   returnTime,
   setReturnTime,
+  unavailableDates,
+  loadingUnavailableDates,
   addonOptions,
   selectedAddonIds,
   addonsTotal,
@@ -163,6 +167,8 @@ export default function BookingForm({
         returnTime={returnTime}
         setReturnTime={setReturnTime}
         timeInvalid={timeInvalid}
+        unavailableDates={unavailableDates}
+        loadingUnavailableDates={loadingUnavailableDates}
       />
 
       <Divider className="border-slate-200!" />

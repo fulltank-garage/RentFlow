@@ -299,6 +299,9 @@ export default function useBooking() {
   const [isDateAvailable, setIsDateAvailable] = React.useState<boolean | null>(
     null
   );
+  const [unavailableDates, setUnavailableDates] = React.useState<string[]>([]);
+  const [loadingUnavailableDates, setLoadingUnavailableDates] =
+    React.useState(false);
 
   const isCarAvailable = React.useMemo(() => {
     if (!car?.isAvailable) return false;
@@ -579,6 +582,43 @@ export default function useBooking() {
     effectiveTenantSlug,
     timeInvalid,
   ]);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function loadUnavailableDates() {
+      if (!car?.id) {
+        setUnavailableDates([]);
+        setLoadingUnavailableDates(false);
+        return;
+      }
+
+      try {
+        setLoadingUnavailableDates(true);
+        const res = await availabilityApi.getUnavailableDates(car.id, {
+          tenantSlug: effectiveTenantSlug,
+        });
+
+        if (cancelled) return;
+
+        setUnavailableDates(Array.isArray(res.data) ? res.data : []);
+      } catch {
+        if (!cancelled) {
+          setUnavailableDates([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingUnavailableDates(false);
+        }
+      }
+    }
+
+    loadUnavailableDates();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [car?.id, carReloadTick, effectiveTenantSlug]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -934,6 +974,8 @@ export default function useBooking() {
     setReturnDate,
     returnTime,
     setReturnTime,
+    unavailableDates,
+    loadingUnavailableDates,
     addonOptions,
     selectedAddonIds,
     handleAddonChange,
