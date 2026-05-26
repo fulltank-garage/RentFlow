@@ -122,7 +122,7 @@ function CalendarMonth({
         {THAI_MONTHS[monthDate.getMonth()]} {monthDate.getFullYear() + 543}
       </Typography>
 
-      <Box className="grid grid-cols-7 gap-1">
+      <Box className="grid grid-cols-7 gap-x-0 gap-y-1">
         {WEEKDAYS.map((day) => (
           <Typography
             key={day}
@@ -149,13 +149,13 @@ function CalendarMonth({
               className={[
                 "relative min-h-12",
                 isInRange && day.inMonth && !isUnavailable
-                  ? "before:absolute before:inset-x-[-2px] before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-blue-100"
+                  ? "before:absolute before:inset-x-0 before:top-1/2 before:h-12 before:-translate-y-1/2 before:bg-blue-100"
                   : "",
                 isPickup && returnDate
-                  ? "before:absolute before:left-1/2 before:right-[-2px] before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-blue-100"
+                  ? "before:absolute before:left-1/2 before:right-0 before:top-1/2 before:h-12 before:-translate-y-1/2 before:bg-blue-100"
                   : "",
                 isReturn && pickupDate
-                  ? "before:absolute before:left-[-2px] before:right-1/2 before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-blue-100"
+                  ? "before:absolute before:left-0 before:right-1/2 before:top-1/2 before:h-12 before:-translate-y-1/2 before:bg-blue-100"
                   : "",
               ].join(" ")}
             >
@@ -169,6 +169,8 @@ function CalendarMonth({
                   day.inMonth ? "text-slate-900" : "text-transparent",
                   isSelected
                     ? "border-blue-300 bg-white text-slate-900 ring-2 ring-blue-200"
+                    : isInRange && day.inMonth && !isUnavailable
+                      ? "rounded-none border-transparent bg-blue-100 text-slate-700"
                     : "border-transparent bg-white",
                   isUnavailable && day.inMonth
                     ? "border-red-100 bg-red-50 text-red-700"
