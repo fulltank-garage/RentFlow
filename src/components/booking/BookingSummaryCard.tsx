@@ -45,9 +45,9 @@ export default function BookingSummaryCard({
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
-      className="apple-card self-start lg:sticky lg:top-24 lg:col-span-5"
+      className="apple-card self-start lg:sticky lg:top-6 lg:col-span-5 lg:h-[calc(100svh-48px)]"
     >
-      <CardContent className="p-4! sm:p-5!">
+      <CardContent className="p-4! sm:p-5! lg:flex lg:h-full lg:flex-col">
         <Typography className="apple-card-title font-semibold text-slate-900">
           สรุปการจอง
         </Typography>
@@ -76,9 +76,9 @@ export default function BookingSummaryCard({
             </Link>
           </Box>
         ) : (
-          <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4! sm:p-5!">
+          <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4! sm:p-5! lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
             <StableImage
-              className="aspect-4/3 rounded-[18px]"
+              className="aspect-4/3 rounded-[18px] lg:h-[clamp(180px,28svh,300px)] lg:shrink-0 lg:aspect-auto"
               src={car.image || "/RentFlow.png"}
               alt={car.name}
               sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
@@ -96,7 +96,7 @@ export default function BookingSummaryCard({
               </Box>
             </Box>
 
-            <Box className="apple-body-sm mb-2! mt-4 space-y-2">
+            <Box className="apple-body-sm mb-2! mt-4 space-y-2 lg:min-h-0 lg:overflow-y-auto lg:pr-1">
               <Box className="flex items-center justify-between">
                 <Typography className="text-slate-600">ราคา/วัน</Typography>
                 <Typography className="font-semibold text-slate-900">
