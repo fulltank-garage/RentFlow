@@ -105,6 +105,7 @@ function CalendarMonth({
   returnDate,
   unavailableSet,
   onSelectDate,
+  className,
 }: {
   monthDate: Date;
   todayKey: string;
@@ -112,11 +113,12 @@ function CalendarMonth({
   returnDate: string;
   unavailableSet: Set<string>;
   onSelectDate: (dateKey: string) => void;
+  className?: string;
 }) {
   const days = React.useMemo(() => buildCalendarDays(monthDate), [monthDate]);
 
   return (
-    <Box className="min-w-0">
+    <Box className={["min-w-0", className].filter(Boolean).join(" ")}>
       <Typography className="apple-body-sm mb-3 text-center font-semibold text-slate-900">
         {THAI_MONTHS[monthDate.getMonth()]} {monthDate.getFullYear() + 543}
       </Typography>
@@ -139,52 +141,63 @@ function CalendarMonth({
           const isInRange =
             Boolean(pickupDate && returnDate) &&
             isBetween(day.key, pickupDate, returnDate);
+          const isSelected = isPickup || isReturn;
           const disabled = isPast || isUnavailable || !day.inMonth;
 
           return (
-            <button
+            <Box
               key={day.key}
-              type="button"
-              disabled={disabled}
-              onClick={() => onSelectDate(day.key)}
               className={[
-                "relative min-h-12 rounded-2xl border px-1 py-2 text-center transition-all duration-200",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500/40",
-                day.inMonth ? "text-slate-900" : "text-transparent",
-                isInRange && !isUnavailable
-                  ? "border-blue-100 bg-blue-50"
-                  : "border-transparent bg-white",
-                isPickup || isReturn
-                  ? "border-blue-600 bg-blue-600 text-white shadow-[0_12px_26px_rgba(37,99,235,0.22)]"
+                "relative min-h-12",
+                isInRange && day.inMonth && !isUnavailable
+                  ? "before:absolute before:inset-x-[-2px] before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-blue-100"
                   : "",
-                isUnavailable && day.inMonth
-                  ? "border-red-100 bg-red-50 text-red-700"
+                isPickup && returnDate
+                  ? "before:absolute before:left-1/2 before:right-[-2px] before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-blue-100"
                   : "",
-                isPast && day.inMonth ? "bg-slate-50 text-slate-300" : "",
-                disabled ? "cursor-not-allowed" : "hover:scale-[1.015] hover:bg-slate-50",
+                isReturn && pickupDate
+                  ? "before:absolute before:left-[-2px] before:right-1/2 before:top-1/2 before:h-8 before:-translate-y-1/2 before:bg-blue-100"
+                  : "",
               ].join(" ")}
-              aria-label={`${day.date.getDate()} ${THAI_MONTHS[day.date.getMonth()]} ${
-                isUnavailable ? "ไม่ว่าง" : "ว่าง"
-              }`}
             >
-              <span className="block text-sm font-semibold">{day.date.getDate()}</span>
-              {day.inMonth ? (
-                <span
-                  className={[
-                    "mt-1 block text-[10px] font-semibold",
-                    isPickup || isReturn
-                      ? "text-white/90"
-                      : isUnavailable
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => onSelectDate(day.key)}
+                className={[
+                  "relative z-10 h-full min-h-12 w-full rounded-2xl border px-1 py-2 text-center transition-colors duration-200",
+                  "focus:outline-none focus:ring-2 focus:ring-blue-500/35",
+                  day.inMonth ? "text-slate-900" : "text-transparent",
+                  isSelected
+                    ? "border-blue-300 bg-white text-slate-900 ring-2 ring-blue-200"
+                    : "border-transparent bg-white",
+                  isUnavailable && day.inMonth
+                    ? "border-red-100 bg-red-50 text-red-700"
+                    : "",
+                  isPast && day.inMonth ? "bg-slate-50 text-slate-300" : "",
+                  disabled ? "cursor-not-allowed" : "hover:border-slate-200 hover:bg-slate-50",
+                ].join(" ")}
+                aria-label={`${day.date.getDate()} ${THAI_MONTHS[day.date.getMonth()]} ${
+                  isUnavailable ? "ไม่ว่าง" : "ว่าง"
+                }`}
+              >
+                <span className="block text-sm font-semibold">{day.date.getDate()}</span>
+                {day.inMonth ? (
+                  <span
+                    className={[
+                      "mt-1 block text-[10px] font-semibold",
+                      isUnavailable
                         ? "text-red-600"
                         : isPast
                           ? "text-slate-300"
                           : "text-emerald-600",
-                  ].join(" ")}
-                >
-                  {isUnavailable ? "ไม่ว่าง" : isPast ? "-" : "ว่าง"}
-                </span>
-              ) : null}
-            </button>
+                    ].join(" ")}
+                  >
+                    {isUnavailable ? "ไม่ว่าง" : isPast ? "-" : "ว่าง"}
+                  </span>
+                ) : null}
+              </button>
+            </Box>
           );
         })}
       </Box>
@@ -226,7 +239,7 @@ export default function BookingDateTime({
     (dateKey: string) => {
       if (unavailableSet.has(dateKey) || dateKey < todayKey) return;
 
-      if (!pickupDate || (pickupDate && returnDate)) {
+      if (!pickupDate || returnDate || dateKey === pickupDate) {
         setPickupDate(dateKey);
         setReturnDate("");
         return;
@@ -313,6 +326,11 @@ export default function BookingDateTime({
             returnDate={returnDate}
             unavailableSet={unavailableSet}
             onSelectDate={handleSelectDate}
+            className={
+              monthDate.getMonth() === addMonths(visibleMonth, 1).getMonth()
+                ? "hidden xl:block"
+                : undefined
+            }
           />
         ))}
       </Box>
