@@ -11,7 +11,9 @@ import {
 import BookingPageSkeleton from "@/src/components/booking/BookingPageSkeleton";
 import BookingFlowScreen from "@/src/components/booking/BookingFlowScreen";
 import BookingFlowSteps from "@/src/components/booking/BookingFlowSteps";
-import BookingSummaryCard from "@/src/components/booking/BookingSummaryCard";
+import BookingSummaryCard, {
+  BookingMobileCarCard,
+} from "@/src/components/booking/BookingSummaryCard";
 import BookingForm from "@/src/components/booking/BookingForm";
 import useBooking from "@/src/hooks/booking/useBooking";
 
@@ -45,6 +47,8 @@ export default function BookingPage() {
           </Box>
 
           <Box className="mt-10 grid gap-5 lg:grid-cols-12 lg:items-start lg:gap-6">
+            <BookingMobileCarCard car={booking.car} />
+
             <BookingSummaryCard
               car={booking.car}
               carId={booking.carId}
@@ -71,7 +75,7 @@ export default function BookingPage() {
             <Card
               elevation={0}
               sx={{ boxShadow: "none" }}
-              className="apple-card order-1 sm:order-none lg:col-span-7"
+              className="apple-card order-2 sm:order-none lg:col-span-7"
             >
               <CardContent className="p-4!">
                 <Typography className="text-base font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">

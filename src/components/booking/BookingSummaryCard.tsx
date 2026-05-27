@@ -34,6 +34,36 @@ type Props = {
   carAvailable?: boolean;
 };
 
+export function BookingMobileCarCard({ car }: { car?: Car | null }) {
+  if (!car) {
+    return null;
+  }
+
+  return (
+    <Card
+      elevation={0}
+      sx={{ boxShadow: "none" }}
+      className="apple-card order-1 sm:hidden"
+    >
+      <CardContent className="p-4!">
+        <Typography className="apple-card-title font-semibold text-slate-900">
+          จองรถคันนี้
+        </Typography>
+
+        <Divider className="my-4! border-black/10!" />
+
+        <StableImage
+          className="aspect-4/3 rounded-[18px] bg-[var(--rf-apple-surface-soft)]"
+          src={car.image || "/RentFlow.png"}
+          alt={car.name}
+          sizes="100vw"
+          imageClassName="object-contain"
+        />
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function BookingSummaryCard({
   car,
   carId,
@@ -62,12 +92,11 @@ export default function BookingSummaryCard({
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
-      className="apple-card order-2 self-start sm:order-none lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-88px)]"
+      className="apple-card order-3 self-start sm:order-none lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-88px)]"
     >
       <CardContent className="p-4! sm:p-5! lg:flex lg:h-full lg:flex-col">
         <Typography className="apple-card-title font-semibold text-slate-900">
-          <span className="sm:hidden">จองรถคันนี้</span>
-          <span className="hidden sm:inline">สรุปการจอง</span>
+          สรุปการจอง
         </Typography>
         <Typography className="apple-label-text mt-1 text-slate-500">
           ตรวจสอบรถ จุดรับ-คืน และยอดรวมก่อนชำระเงิน
@@ -95,19 +124,21 @@ export default function BookingSummaryCard({
           </Box>
         ) : (
           <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4! sm:p-5! lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-            <StableImage
-              className="aspect-4/3 rounded-[18px] lg:h-[clamp(120px,20svh,220px)] lg:shrink-0 lg:aspect-auto"
-              src={car.image || "/RentFlow.png"}
-              alt={car.name}
-              sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
-              imageClassName="object-contain"
-            />
+            <Box className="hidden sm:block">
+              <StableImage
+                className="aspect-4/3 rounded-[18px] lg:h-[clamp(120px,20svh,220px)] lg:shrink-0 lg:aspect-auto"
+                src={car.image || "/RentFlow.png"}
+                alt={car.name}
+                sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
+                imageClassName="object-contain"
+              />
 
-            <Box className="mt-3 flex items-start justify-between gap-3">
-              <Box className="min-w-0">
-                <Typography className="apple-card-title truncate font-semibold text-slate-900">
-                  {car.name}
-                </Typography>
+              <Box className="mt-3 flex items-start justify-between gap-3">
+                <Box className="min-w-0">
+                  <Typography className="apple-card-title truncate font-semibold text-slate-900">
+                    {car.name}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
 
