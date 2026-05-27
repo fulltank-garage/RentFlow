@@ -82,7 +82,7 @@ export default function BookingSummaryCard({
               src={car.image || "/RentFlow.png"}
               alt={car.name}
               sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
-              imageClassName="object-cover"
+              imageClassName="object-contain"
             />
 
             <Box className="mt-3 flex items-start justify-between gap-3">
