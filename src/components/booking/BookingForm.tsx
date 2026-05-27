@@ -7,6 +7,7 @@ import BookingAddons from "./BookingAddons";
 import type { StorefrontAddon } from "@/src/services/addons/addons.types";
 
 type Props = {
+  formId?: string;
   fieldSX: object;
   error: string | null;
   setError: (value: string | null) => void;
@@ -63,6 +64,7 @@ type Props = {
 };
 
 export default function BookingForm({
+  formId,
   fieldSX,
   error,
   setError,
@@ -112,7 +114,7 @@ export default function BookingForm({
   carExists,
 }: Props) {
   return (
-    <Box component="form" onSubmit={onSubmit} className="grid gap-4">
+    <Box id={formId} component="form" onSubmit={onSubmit} className="grid gap-4">
       <Box className="grid gap-4 sm:grid-cols-2">
         <TextField
           id="booking-full-name"
@@ -193,7 +195,7 @@ export default function BookingForm({
         <Alert severity="warning">{availabilityMessage}</Alert>
       ) : null}
 
-      <Box className="mt-6 space-y-4">
+      <Box className="mt-6 hidden space-y-4 sm:block">
         {showChatBooking ? (
           <Box
             className="rounded-2xl border border-amber-200 bg-amber-50 p-4"

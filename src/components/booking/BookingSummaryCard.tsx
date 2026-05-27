@@ -24,6 +24,14 @@ type Props = {
     total: number;
   } | null;
   amount: number;
+  formId?: string;
+  showChatBooking?: boolean;
+  forceChatBooking?: boolean;
+  hasChatChannel?: boolean;
+  canSubmit?: boolean;
+  loading?: boolean;
+  checkingAvailability?: boolean;
+  carAvailable?: boolean;
 };
 
 export default function BookingSummaryCard({
@@ -39,16 +47,27 @@ export default function BookingSummaryCard({
   addonsTotal,
   pricing,
   amount,
+  formId,
+  showChatBooking = false,
+  forceChatBooking = false,
+  hasChatChannel = true,
+  canSubmit = false,
+  loading = false,
+  checkingAvailability = false,
+  carAvailable = true,
 }: Props) {
+  const submitDisabled = !canSubmit || loading || checkingAvailability || !carAvailable;
+
   return (
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
-      className="apple-card self-start lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-88px)]"
+      className="apple-card order-2 self-start sm:order-none lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-88px)]"
     >
       <CardContent className="p-4! sm:p-5! lg:flex lg:h-full lg:flex-col">
         <Typography className="apple-card-title font-semibold text-slate-900">
-          สรุปการจอง
+          <span className="sm:hidden">จองรถคันนี้</span>
+          <span className="hidden sm:inline">สรุปการจอง</span>
         </Typography>
         <Typography className="apple-label-text mt-1 text-slate-500">
           ตรวจสอบรถ จุดรับ-คืน และยอดรวมก่อนชำระเงิน
@@ -178,6 +197,99 @@ export default function BookingSummaryCard({
             </Box>
           </Box>
         )}
+
+        {car ? (
+          <Box className="mt-4 space-y-3 sm:hidden">
+            {showChatBooking ? (
+              <Box
+                className="rounded-2xl border border-amber-200 bg-amber-50 p-4"
+                sx={{
+                  backgroundImage:
+                    "radial-gradient(520px 160px at 18% 0%, rgba(251,191,36,0.22), transparent 60%)",
+                }}
+              >
+                <Typography className="text-sm font-bold text-amber-900">
+                  {forceChatBooking
+                    ? "ร้านนี้รับจองผ่านแชทก่อน"
+                    : "ยอดรวมค่อนข้างสูง — แนะนำจองผ่านแชท"}
+                </Typography>
+                <Typography className="mt-1 text-xs text-amber-800">
+                  {forceChatBooking
+                    ? "ระบบจะบันทึกคำขอจองและคัดลอกสรุปการจองให้ก่อนเปิดแชท"
+                    : "ต่อรองราคา/ขอเงื่อนไขพิเศษ หรือประเมินค่าส่งเพิ่มเติมได้"}
+                </Typography>
+                <Typography className="apple-label-text mt-2 text-amber-700">
+                  * เมื่อ Messenger เปิดขึ้น ให้วางข้อความสรุปที่คัดลอกไว้แล้วส่งให้ร้านได้ทันที
+                </Typography>
+
+                <Button
+                  type="submit"
+                  form={formId}
+                  variant="contained"
+                  disabled={submitDisabled || !hasChatChannel}
+                  className="mt-4 w-full rounded-xl! font-semibold!"
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#f59e0b",
+                    boxShadow: "none",
+                    "&:hover": {
+                      backgroundColor: "#d97706",
+                      boxShadow: "none",
+                    },
+                    py: 1.25,
+                  }}
+                >
+                  {loading
+                    ? "กำลังเตรียมแชท..."
+                    : forceChatBooking
+                      ? "จองผ่านแชท"
+                      : "จองผ่านแชท (แนะนำ)"}
+                </Button>
+                {!hasChatChannel ? (
+                  <Typography className="mt-3 text-xs text-amber-800">
+                    ร้านนี้ยังไม่ได้ตั้งค่าปุ่มเปิดแชท ลูกค้ายังส่งคำขอจองให้ร้านติดต่อกลับได้
+                  </Typography>
+                ) : null}
+              </Box>
+            ) : null}
+
+            <Button
+              type="submit"
+              form={formId}
+              variant="contained"
+              disabled={submitDisabled}
+              className="w-full rounded-xl! px-6! py-3! font-semibold!"
+              sx={{
+                textTransform: "none",
+                backgroundColor: "#059669",
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#047857",
+                  boxShadow: "none",
+                },
+                "&:disabled": {
+                  backgroundColor: "#e5e7eb",
+                  color: "#9ca3af",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              {checkingAvailability
+                ? "กำลังตรวจสอบสถานะรถ..."
+                : loading
+                  ? forceChatBooking
+                    ? "กำลังส่งคำขอจอง..."
+                    : "กำลังไปหน้าชำระเงิน..."
+                  : forceChatBooking
+                    ? "จองผ่านแชท"
+                    : "จองและไปชำระเงินทันที"}
+            </Button>
+
+            <Typography className="text-xs text-slate-500">
+              * เลือกข้อมูลให้ถูกต้องก่อนดำเนินการต่อ
+            </Typography>
+          </Box>
+        ) : null}
       </CardContent>
     </Card>
   );

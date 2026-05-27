@@ -17,6 +17,7 @@ import useBooking from "@/src/hooks/booking/useBooking";
 
 export default function BookingPage() {
   const booking = useBooking();
+  const bookingFormId = "booking-request-form";
 
   if (!booking.ready) {
     return <BookingPageSkeleton />;
@@ -57,12 +58,20 @@ export default function BookingPage() {
               addonsTotal={booking.addonsTotal}
               pricing={booking.pricing}
               amount={booking.amount}
+              formId={bookingFormId}
+              showChatBooking={booking.showChatBooking}
+              forceChatBooking={booking.forceChatBooking}
+              hasChatChannel={booking.hasChatChannel}
+              canSubmit={booking.canSubmit}
+              loading={booking.loading}
+              checkingAvailability={booking.checkingAvailability}
+              carAvailable={booking.carAvailable}
             />
 
             <Card
               elevation={0}
               sx={{ boxShadow: "none" }}
-              className="apple-card lg:col-span-7"
+              className="apple-card order-1 sm:order-none lg:col-span-7"
             >
               <CardContent className="p-4!">
                 <Typography className="text-base font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
@@ -75,6 +84,7 @@ export default function BookingPage() {
                 <Divider className="my-5! border-black/10!" />
 
                 <BookingForm
+                  formId={bookingFormId}
                   fieldSX={booking.fieldSX}
                   error={booking.error}
                   setError={booking.setError}
