@@ -14,7 +14,7 @@ import BookingFlowStepsSkeleton from "@/src/components/booking/BookingFlowStepsS
 function HeaderSkeleton() {
   return (
     <>
-      <BookingFlowStepsSkeleton className="mb-8" />
+      <BookingFlowStepsSkeleton mode="chat" className="mb-8" />
 
       <Box className="mx-auto max-w-3xl text-center">
         <Skeleton

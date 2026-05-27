@@ -1,19 +1,37 @@
 "use client";
 
 import { Box, Skeleton } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
+
+type BookingFlowStepsSkeletonMode = "payment" | "chat";
+
+function buildTrackColumns({
+  stepCount,
+  circleSize,
+  connectorWidth,
+}: {
+  stepCount: number;
+  circleSize: number;
+  connectorWidth: number;
+}) {
+  return Array.from({ length: stepCount }, (_, index) =>
+    index === stepCount - 1
+      ? `${circleSize}px`
+      : `${circleSize}px ${connectorWidth}px`
+  ).join(" ");
+}
 
 export default function BookingFlowStepsSkeleton({
   className = "",
+  mode = "payment",
 }: {
   className?: string;
+  mode?: BookingFlowStepsSkeletonMode;
 }) {
-  const isMobile = useMediaQuery("(max-width: 767px)");
-  const CIRCLE_SIZE = isMobile ? 42 : 50;
-  const CONNECTOR_WIDTH = isMobile ? 44 : 92;
-  const TRACK_COLUMNS = Array.from({ length: 4 }, (_, index) =>
-    index === 3 ? `${CIRCLE_SIZE}px` : `${CIRCLE_SIZE}px ${CONNECTOR_WIDTH}px`
-  ).join(" ");
+  const stepCount = mode === "chat" ? 2 : 4;
+  const mobileCircleSize = 42;
+  const desktopCircleSize = 50;
+  const mobileConnectorWidth = mode === "chat" ? 110 : 44;
+  const desktopConnectorWidth = mode === "chat" ? 220 : 92;
 
   return (
     <Box
@@ -24,15 +42,29 @@ export default function BookingFlowStepsSkeleton({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: TRACK_COLUMNS,
-              gridTemplateRows: `${CIRCLE_SIZE}px auto`,
+              gridTemplateColumns: {
+                xs: buildTrackColumns({
+                  stepCount,
+                  circleSize: mobileCircleSize,
+                  connectorWidth: mobileConnectorWidth,
+                }),
+                md: buildTrackColumns({
+                  stepCount,
+                  circleSize: desktopCircleSize,
+                  connectorWidth: desktopConnectorWidth,
+                }),
+              },
+              gridTemplateRows: {
+                xs: `${mobileCircleSize}px auto`,
+                md: `${desktopCircleSize}px auto`,
+              },
               alignItems: "center",
               justifyItems: "center",
               justifyContent: "center",
-              rowGap: isMobile ? "10px" : "12px",
+              rowGap: { xs: "10px", md: "12px" },
             }}
           >
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: stepCount }).map((_, index) => (
             <Box
               key={`booking-flow-step-skeleton-${index}`}
               sx={{ display: "contents" }}
@@ -41,13 +73,13 @@ export default function BookingFlowStepsSkeleton({
                 variant="circular"
                 animation="wave"
                 sx={{
-                  width: CIRCLE_SIZE,
-                  height: CIRCLE_SIZE,
+                  width: { xs: mobileCircleSize, md: desktopCircleSize },
+                  height: { xs: mobileCircleSize, md: desktopCircleSize },
                   gridColumn: index * 2 + 1,
                   gridRow: 1,
                 }}
               />
-              {index !== 3 ? (
+              {index !== stepCount - 1 ? (
                 <Skeleton
                   variant="rectangular"
                   animation="wave"
@@ -57,7 +89,7 @@ export default function BookingFlowStepsSkeleton({
                     justifySelf: "stretch",
                     width: "calc(100% + 8px)",
                     ml: "-4px",
-                    height: isMobile ? 8 : 10,
+                    height: { xs: 8, md: 10 },
                     borderRadius: 0,
                   }}
                 />
@@ -66,8 +98,8 @@ export default function BookingFlowStepsSkeleton({
                 variant="text"
                 animation="wave"
                 sx={{
-                  width: isMobile ? CIRCLE_SIZE + 32 : 120,
-                  height: isMobile ? 18 : 20,
+                  width: { xs: mobileCircleSize + 36, md: 120 },
+                  height: { xs: 18, md: 20 },
                   borderRadius: "8px",
                   transform: "none",
                   gridColumn: index * 2 + 1,
