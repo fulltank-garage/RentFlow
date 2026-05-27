@@ -61,7 +61,7 @@ function CarCardSkeleton() {
       </Box>
 
       <CardContent className="p-5! sm:p-6!">
-        <Box className="space-y-1.5">
+        <Box className="space-y-2.5">
           <Skeleton
             variant="text"
             animation="wave"

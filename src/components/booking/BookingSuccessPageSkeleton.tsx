@@ -60,7 +60,7 @@ export default function BookingSuccessPageSkeleton() {
                 transform: "none",
               }}
             />
-            <Box className="mt-3 flex flex-col gap-1.5">
+            <Box className="mt-4 flex flex-col gap-2.5">
               <Skeleton
                 variant="text"
                 animation="wave"
@@ -100,7 +100,7 @@ export default function BookingSuccessPageSkeleton() {
                     transform: "none",
                   }}
                 />
-                <Box className="mt-3 flex flex-col gap-1.5">
+                <Box className="mt-4 flex flex-col gap-2.5">
                   <Skeleton
                     variant="text"
                     animation="wave"

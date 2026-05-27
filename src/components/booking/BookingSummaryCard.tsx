@@ -92,7 +92,7 @@ export default function BookingSummaryCard({
               </Box>
             </Box>
 
-            <Box className="apple-body-sm mb-2! mt-4 space-y-2 lg:min-h-0 lg:space-y-1.5">
+            <Box className="apple-body-sm mb-2! mt-4 space-y-2 lg:min-h-0">
               <Box className="flex items-center justify-between">
                 <Typography className="text-slate-600">ราคา/วัน</Typography>
                 <Typography className="font-semibold text-slate-900">

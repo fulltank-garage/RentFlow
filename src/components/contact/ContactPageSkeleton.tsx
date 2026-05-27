@@ -122,7 +122,7 @@ function ContactInfoSkeleton() {
             className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
           >
             <Box className="flex flex-wrap items-start justify-between gap-3">
-              <Box className="space-y-1">
+              <Box className="space-y-2">
                 <Skeleton
                   variant="text"
                   animation="wave"
@@ -179,7 +179,7 @@ function ContactInfoSkeleton() {
             transform: "none",
           }}
         />
-        <Box className="mt-1.5 space-y-1.5">
+        <Box className="mt-2.5 space-y-2.5">
           <Skeleton
             variant="text"
             animation="wave"
@@ -272,7 +272,7 @@ function ContactPreparationSkeleton() {
               transform: "none",
             }}
           />
-          <Box className="mt-2 space-y-1.5">
+          <Box className="mt-3 space-y-2.5">
             <Skeleton
               variant="text"
               animation="wave"

@@ -97,7 +97,7 @@ export default function AuthSkeletonLayout({
                 sx={{ width: "100%", height: 56, borderRadius: "18px" }}
               />
 
-              <Box className="space-y-1.5">
+              <Box className="space-y-2.5">
                 <Skeleton
                   variant="rounded"
                   animation="wave"
@@ -117,7 +117,7 @@ export default function AuthSkeletonLayout({
               </Box>
 
               {isRegister || isForgotPassword ? (
-                <Box className="space-y-1.5">
+                <Box className="space-y-2.5">
                   <Skeleton
                     variant="rounded"
                     animation="wave"
@@ -138,7 +138,7 @@ export default function AuthSkeletonLayout({
               ) : null}
 
               {isForgotPassword ? (
-                <Box className="space-y-1.5">
+                <Box className="space-y-2.5">
                   <Skeleton
                     variant="rounded"
                     animation="wave"

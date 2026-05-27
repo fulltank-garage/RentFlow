@@ -127,7 +127,7 @@ function ContentSectionSkeleton({
         }}
       />
 
-      <Box className="mt-2 flex flex-col gap-1.5">
+      <Box className="mt-3 flex flex-col gap-2.5">
         {Array.from({ length: lines }).map((_, i) => (
           <Skeleton
             key={i}
@@ -168,7 +168,7 @@ export default function PrivacyPageSkeleton() {
                   transform: "none",
                 }}
               />
-              <Box className="mt-2 flex flex-col gap-1.5">
+              <Box className="mt-3 flex flex-col gap-2.5">
                 <Skeleton
                   variant="text"
                   animation="wave"

@@ -283,7 +283,7 @@ function SummaryCardSkeleton() {
             />
           </Box>
 
-          <Box className="space-y-1.5">
+          <Box className="space-y-2.5">
             {Array.from({ length: 2 }).map((_, i) => (
               <Box key={i} className="flex items-start justify-between gap-3">
                 <Skeleton
@@ -348,7 +348,7 @@ function SummaryCardSkeleton() {
           }}
         />
 
-        <Box className="mt-4 flex flex-col gap-1.5">
+        <Box className="mt-4 flex flex-col gap-2.5">
           <Skeleton
             variant="text"
             animation="wave"
@@ -440,7 +440,7 @@ function PaymentFormSkeleton() {
             transform: "none",
           }}
         />
-        <Box className="mt-2 flex flex-col gap-1.5">
+        <Box className="mt-3 flex flex-col gap-2.5">
           <Skeleton
             variant="text"
             animation="wave"
@@ -476,7 +476,7 @@ function PaymentFormSkeleton() {
         />
       </Box>
 
-      <Box className="mt-4 flex flex-col gap-1.5">
+      <Box className="mt-4 flex flex-col gap-2.5">
         <Skeleton
           variant="text"
           animation="wave"

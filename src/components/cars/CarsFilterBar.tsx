@@ -55,7 +55,7 @@ export default function CarsFilterBar({
 
   return (
     <Box className="apple-card mt-8 p-4 sm:p-5">
-      <Box className="mb-4 flex flex-col gap-1">
+      <Box className="mb-4 flex flex-col gap-2">
         <Box className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
           ค้นหาและกรองรถ
         </Box>

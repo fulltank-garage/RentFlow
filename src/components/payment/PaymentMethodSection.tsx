@@ -71,7 +71,7 @@ export default function PaymentMethodSection({
       <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
         {method === "promptpay" ? (
           <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <Box className="flex flex-col gap-1.5">
+            <Box className="flex flex-col gap-2.5">
               <Typography className="apple-card-title font-semibold text-slate-900">
                 สแกนเพื่อชำระเงิน
               </Typography>
@@ -165,7 +165,7 @@ export default function PaymentMethodSection({
         {method === "transfer" ? (
           <Box className="grid gap-4">
             <Box className="rounded-[18px] bg-white p-4">
-              <Box className="flex flex-col gap-1.5">
+              <Box className="flex flex-col gap-2.5">
                 <Typography className="apple-card-title font-semibold text-slate-900">
                   โอนเข้าบัญชี
                 </Typography>

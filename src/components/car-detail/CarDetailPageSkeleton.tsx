@@ -26,7 +26,7 @@ function HeroSkeleton() {
 function SummaryCardSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover p-5 lg:col-span-5">
-      <Box className="flex flex-col gap-1.5">
+      <Box className="flex flex-col gap-2.5">
         <Skeleton
           variant="text"
           animation="wave"
@@ -64,7 +64,7 @@ function SummaryCardSkeleton() {
       <Box className="my-5 h-px bg-black/10" />
 
       <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-5">
-        <Box className="flex flex-col gap-1.5">
+        <Box className="flex flex-col gap-2.5">
           <Skeleton
             variant="text"
             animation="wave"
@@ -119,7 +119,7 @@ function SummaryCardSkeleton() {
 function OverviewSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover p-5">
-      <Box className="flex flex-col gap-1.5">
+      <Box className="flex flex-col gap-2.5">
         <Skeleton
           variant="text"
           animation="wave"
@@ -168,7 +168,7 @@ function OverviewSkeleton() {
 function IncludedCardSkeleton() {
   return (
     <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
-      <Box className="flex flex-col gap-1.5">
+      <Box className="flex flex-col gap-2.5">
         <Skeleton
           variant="text"
           animation="wave"

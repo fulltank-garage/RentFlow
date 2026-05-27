@@ -117,7 +117,7 @@ function FilterInputSkeleton() {
 function CarsFilterBarSkeleton() {
     return (
         <Box className="apple-card apple-card-no-hover mt-8 p-4 sm:p-5">
-            <Box className="mb-4 flex flex-col gap-1">
+            <Box className="mb-4 flex flex-col gap-2">
                 <Skeleton
                     variant="text"
                     animation="wave"
@@ -269,7 +269,7 @@ function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
 
             <CardContent className="p-5! sm:p-6!">
                 <Box className="flex items-start justify-between gap-3">
-                    <Box className="min-w-0 w-full space-y-1.5">
+                    <Box className="min-w-0 w-full space-y-2.5">
                         <Typography className="truncate text-lg font-semibold text-slate-900">
                             <Skeleton
                                 variant="text"

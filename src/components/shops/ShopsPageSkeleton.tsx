@@ -89,7 +89,7 @@ function ShopCardSkeleton() {
           }}
         />
 
-        <Box className="absolute bottom-4 left-4 right-4 space-y-1.5">
+        <Box className="absolute bottom-4 left-4 right-4 space-y-2.5">
           <Skeleton
             variant="text"
             animation="wave"

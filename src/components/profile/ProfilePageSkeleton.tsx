@@ -40,7 +40,7 @@ function HeadingSkeleton() {
 function FieldSkeleton() {
   return (
     <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5 md:py-4.5">
-      <Box className="space-y-1.5">
+      <Box className="space-y-2.5">
       <Skeleton
         variant="text"
         animation="wave"
@@ -77,7 +77,7 @@ function AvatarFieldSkeleton() {
             sx={{ width: 64, height: 64, flexShrink: 0 }}
           />
 
-          <Box className="min-w-0 flex-1 space-y-1.5">
+          <Box className="min-w-0 flex-1 space-y-2.5">
             <Skeleton
               variant="text"
               animation="wave"

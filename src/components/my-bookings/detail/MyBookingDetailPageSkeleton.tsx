@@ -167,7 +167,7 @@ function SectionCardSkeleton({
         {Array.from({ length: rows }).map((_, index) => (
           <Box
             key={`detail-section-row-${columns}-${index}`}
-            className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4 space-y-1.5"
+            className="space-y-2.5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4"
           >
             <Skeleton
               variant="text"
@@ -363,7 +363,7 @@ function HelpCardSkeleton() {
         }}
       />
       <Divider className="my-4! border-black/10!" />
-      <Box className="space-y-1.5">
+      <Box className="space-y-2.5">
         <Skeleton
           variant="text"
           animation="wave"

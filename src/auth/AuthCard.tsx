@@ -296,7 +296,7 @@ export default function AuthCard({
               </Button>
 
               {!isRegister && forgotPasswordHref ? (
-                <Box className="flex items-center justify-center gap-0.5 text-sm text-[var(--rf-apple-muted)]">
+                <Box className="flex items-center justify-center gap-1.5 text-sm text-[var(--rf-apple-muted)]">
                   <span>มีปัญหาในการเข้าสู่ระบบ?</span>
                   <Link
                     href={forgotPasswordHref}

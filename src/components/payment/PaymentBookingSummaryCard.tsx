@@ -196,7 +196,7 @@ export default function PaymentBookingSummaryCard({
                     รวมอยู่ในยอดชำระของรายการนี้แล้ว
                   </Typography>
 
-                  <Box className="space-y-1">
+                  <Box className="space-y-2">
                     {addonIds.map((addonId) => {
                       const addon = addonOptions.find((item) => item.id === addonId);
                       if (!addon) return null;

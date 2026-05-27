@@ -137,7 +137,7 @@ export default function MyBookingDetailPage() {
 
                 <Box className="flex flex-wrap items-center gap-2">
                   <StatusChip s={local.status} />
-                  <Box className="flex flex-col gap-1 text-left">
+                  <Box className="flex flex-col gap-2 text-left">
                     <Typography className="text-sm text-[var(--rf-apple-muted)]">
                       วันรับรถ:{" "}
                       <span className="font-semibold text-[var(--rf-apple-ink)]">

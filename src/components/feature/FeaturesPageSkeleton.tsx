@@ -11,7 +11,7 @@ function SectionHeadingSkeleton({
   descWidth: number | string;
 }) {
   return (
-    <Box className="flex flex-col gap-1.5">
+    <Box className="flex flex-col gap-2.5">
       <Skeleton
         variant="text"
         animation="wave"
@@ -91,7 +91,7 @@ function HeroBadgesSkeleton() {
 function FeatureCardSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover p-5">
-      <Box className="min-w-0 space-y-1.5">
+      <Box className="min-w-0 space-y-2.5">
           <Skeleton
             variant="text"
             animation="wave"
@@ -142,7 +142,7 @@ function StepCardSkeleton() {
           }}
         />
 
-        <Box className="min-w-0 flex-1 space-y-1.5">
+        <Box className="min-w-0 flex-1 space-y-2.5">
           <Skeleton
             variant="text"
             animation="wave"
@@ -182,7 +182,7 @@ function StepCardSkeleton() {
 function TrustCardSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover p-5">
-      <Box className="space-y-1.5">
+      <Box className="space-y-2.5">
         <Skeleton
           variant="text"
           animation="wave"
@@ -221,7 +221,7 @@ function TrustCardSkeleton() {
 function CTASectionSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover mt-10 p-5">
-      <Box className="space-y-1.5">
+      <Box className="space-y-2.5">
         <Skeleton
           variant="text"
           animation="wave"

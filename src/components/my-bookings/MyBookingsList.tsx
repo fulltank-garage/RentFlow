@@ -49,7 +49,7 @@ export default function MyBookingsList({ data, onReset }: Props) {
                 <span className="text-[var(--rf-apple-muted)]">{b.id}</span>
               </Typography>
 
-              <Box className="mt-1 flex flex-col gap-1">
+              <Box className="mt-2 flex flex-col gap-2">
                 <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
                   วันรับรถ:{" "}
                   <span className="font-semibold text-[var(--rf-apple-ink)]">

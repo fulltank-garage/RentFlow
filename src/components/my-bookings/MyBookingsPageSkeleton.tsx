@@ -63,7 +63,7 @@ function BookingItemSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover p-4">
       <Box className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <Box className="min-w-0 flex-1 space-y-1.5">
+        <Box className="min-w-0 flex-1 space-y-2.5">
           <Skeleton
             variant="text"
             animation="wave"

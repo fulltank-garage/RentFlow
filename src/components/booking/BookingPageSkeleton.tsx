@@ -48,7 +48,7 @@ function HeaderSkeleton() {
 
 function SummaryTopSkeleton() {
   return (
-    <Box className="space-y-1.5">
+    <Box className="space-y-2.5">
       <Skeleton
         variant="text"
         animation="wave"
@@ -111,7 +111,7 @@ function SummaryRowSkeleton({
           transform: "none",
         }}
       />
-      <Box className="flex flex-col items-end gap-1">
+      <Box className="flex flex-col items-end gap-2">
         <Skeleton
           variant="text"
           animation="wave"
@@ -155,7 +155,7 @@ function SummarySkeleton() {
         <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4!">
           <SummaryImageSkeleton />
 
-          <Box className="mt-3 space-y-1.5">
+          <Box className="mt-4 space-y-2.5">
             <Skeleton
               variant="text"
               animation="wave"
@@ -223,7 +223,7 @@ function CheckboxRowSkeleton() {
       />
 
       <Box className="flex w-full items-start justify-between gap-3">
-        <Box className="min-w-0 flex-1 space-y-1">
+        <Box className="min-w-0 flex-1 space-y-2">
           <Skeleton
             variant="text"
             animation="wave"
@@ -272,7 +272,7 @@ function ChatSuggestSkeleton() {
       }}
     >
       <Box className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Box className="min-w-0 flex-1 space-y-1.5">
+        <Box className="min-w-0 flex-1 space-y-2.5">
           <Skeleton
             variant="text"
             animation="wave"
@@ -430,7 +430,7 @@ function FormSkeleton() {
             />
 
             <Box className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <Box className="space-y-1.5">
+              <Box className="space-y-2.5">
                 <CheckboxRowSkeleton />
                 <CheckboxRowSkeleton />
                 <CheckboxRowSkeleton />
