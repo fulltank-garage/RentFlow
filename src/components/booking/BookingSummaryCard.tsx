@@ -60,7 +60,7 @@ export function BookingMobileCarCard({ car }: { car?: Car | null }) {
           imageClassName="object-contain"
         />
 
-        <Typography className="apple-card-title mt-4 truncate font-semibold text-slate-900">
+        <Typography className="apple-card-title mt-5 truncate font-semibold text-slate-900">
           {car.name}
         </Typography>
       </CardContent>
@@ -137,7 +137,7 @@ export default function BookingSummaryCard({
                 imageClassName="object-contain"
               />
 
-              <Box className="mt-3 flex items-start justify-between gap-3">
+              <Box className="mt-5 flex items-start justify-between gap-3">
                 <Box className="min-w-0">
                   <Typography className="apple-card-title truncate font-semibold text-slate-900">
                     {car.name}
