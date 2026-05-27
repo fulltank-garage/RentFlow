@@ -28,7 +28,7 @@ export default function CarCard({ car, showShop = false }: Props) {
   const carHref = `/cars/${encodeURIComponent(car.id)}${tenantQuery}`;
   const bookingHref = `/booking?carId=${encodeURIComponent(car.id)}${
     car.domainSlug ? `&tenant=${encodeURIComponent(car.domainSlug)}` : ""
-  }`;
+  }&bookingMode=${car.bookingMode === "payment" ? "payment" : "chat"}`;
   const shopHref = car.domainSlug
     ? getRentFlowStorefrontHref(car.domainSlug)
     : "";

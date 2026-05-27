@@ -498,10 +498,14 @@ function FormSkeleton() {
   );
 }
 
-export default function BookingPageSkeleton() {
+export default function BookingPageSkeleton({
+  mode,
+}: {
+  mode?: BookingSkeletonMode;
+}) {
   const params = useSearchParams();
   const skeletonMode: BookingSkeletonMode =
-    params.get("bookingMode") === "payment" ? "payment" : "chat";
+    mode || (params.get("bookingMode") === "payment" ? "payment" : "chat");
 
   return (
     <Box className="apple-page">

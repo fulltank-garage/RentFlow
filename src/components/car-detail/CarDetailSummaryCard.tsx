@@ -28,6 +28,7 @@ type Props = {
     unitCount?: number;
     availableUnits?: number;
     domainSlug?: string;
+    bookingMode?: string;
   };
 };
 
@@ -105,6 +106,8 @@ export default function CarDetailSummaryCard({ detail }: Props) {
                       detail.domainSlug
                         ? `&tenant=${encodeURIComponent(detail.domainSlug)}`
                         : ""
+                    }&bookingMode=${
+                      detail.bookingMode === "payment" ? "payment" : "chat"
                     }`
                   )
                 : undefined

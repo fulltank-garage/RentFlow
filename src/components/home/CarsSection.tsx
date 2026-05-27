@@ -108,7 +108,9 @@ export default function CarsSection({ cars, formatTHB }: Props) {
 
                 <Button
                   component={Link}
-                  href={`/booking?carId=${c.id}`}
+                  href={`/booking?carId=${c.id}&bookingMode=${
+                    c.bookingMode === "payment" ? "payment" : "chat"
+                  }`}
                   variant="contained"
                   fullWidth
                   className="rounded-full! font-semibold!"
