@@ -1088,7 +1088,7 @@ export function PartnerSettingsProductionPage() {
               <Stack divider={<Divider />}>
                 {domains.map((item) => (
                   <Box key={item.id} className="py-3">
-                    <Stack spacing={1}>
+                    <Stack spacing={1.5}>
                       <Typography className="font-bold text-slate-950">{item.domain}</Typography>
                       <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                         <Chip

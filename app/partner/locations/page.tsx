@@ -446,7 +446,7 @@ export default function PartnerLocationsPage() {
               <TextField label="ค่าบริการเพิ่ม" type="number" value={form.extraFee} onChange={(e) => updateForm("extraFee", Number(e.target.value))} fullWidth />
               <Card elevation={0} className="partner-card rounded-[28px]!">
                 <CardContent>
-                  <Stack spacing={1}>
+                  <Stack spacing={1.5}>
                     <FormControlLabel
                       control={<Switch checked={form.isActive} onChange={(e) => updateForm("isActive", e.target.checked)} />}
                       label="เปิดใช้งานสาขานี้"

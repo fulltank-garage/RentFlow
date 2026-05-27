@@ -387,7 +387,7 @@ export function PartnerLineMessagingPage() {
               </Box>
             </Stack>
 
-            <Stack spacing={1.25} className="w-full lg:max-w-xs">
+            <Stack spacing={1.75} className="w-full lg:max-w-xs">
               <Button
                 variant="contained"
                 onClick={verifyConnection}

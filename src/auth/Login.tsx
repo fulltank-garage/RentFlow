@@ -176,7 +176,7 @@ export default function Login() {
               />
             </Box>
 
-            <Stack spacing={1} className="items-center text-center">
+            <Stack spacing={1.5} className="items-center text-center">
               <Typography className="partner-section-title">
                 เข้าสู่ระบบศูนย์จัดการร้าน
               </Typography>
