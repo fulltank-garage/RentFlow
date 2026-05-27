@@ -670,7 +670,9 @@ export default function useBooking() {
   ]);
 
   const showChatBooking =
-    (forceChatBooking || (chatThresholdTHB > 0 && amount >= chatThresholdTHB)) &&
+    !forceChatBooking &&
+    chatThresholdTHB > 0 &&
+    amount >= chatThresholdTHB &&
     isCarAvailable;
   const selectedAddonTitles = React.useMemo(
     () => getSelectedAddonTitles(addonOptions, selectedAddonIds),
