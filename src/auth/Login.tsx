@@ -148,7 +148,7 @@ export default function Login() {
               />
             </Box>
 
-            <Stack spacing={1} className="items-center text-center">
+            <Stack spacing={1.5} className="items-center text-center">
               <Typography className="admin-section-title">
                 เข้าสู่ระบบผู้ดูแล
               </Typography>

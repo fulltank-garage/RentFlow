@@ -262,7 +262,7 @@ export default function BillingPage() {
                           ) : null}
                         </Stack>
                       </Box>
-                      <Stack spacing={1} className="md:items-end">
+                      <Stack spacing={1.5} className="md:items-end">
                         <Typography className="font-black text-slate-950">
                           {formatTHB(invoice.amount)}
                         </Typography>

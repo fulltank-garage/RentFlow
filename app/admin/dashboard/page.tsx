@@ -246,7 +246,7 @@ export default function AdminDashboardPage() {
 
                 <Divider className="my-5! border-slate-200!" />
 
-                <Stack spacing={1.25}>
+                <Stack spacing={1.75}>
                   {overview.recentDomains.length === 0 ? (
                     <Typography className="text-sm text-slate-500">
                       ยังไม่มีโดเมนในระบบ
