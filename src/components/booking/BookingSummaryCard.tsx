@@ -59,6 +59,10 @@ export function BookingMobileCarCard({ car }: { car?: Car | null }) {
           sizes="100vw"
           imageClassName="object-contain"
         />
+
+        <Typography className="apple-card-title mt-4 truncate font-semibold text-slate-900">
+          {car.name}
+        </Typography>
       </CardContent>
     </Card>
   );
@@ -124,9 +128,9 @@ export default function BookingSummaryCard({
           </Box>
         ) : (
           <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4! sm:p-5! lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-            <Box className="hidden sm:block">
+            <Box>
               <StableImage
-                className="aspect-4/3 rounded-[18px] lg:h-[clamp(120px,20svh,220px)] lg:shrink-0 lg:aspect-auto"
+                className="aspect-4/3 rounded-[18px] sm:aspect-4/3 lg:h-[clamp(120px,20svh,220px)] lg:shrink-0 lg:aspect-auto"
                 src={car.image || "/RentFlow.png"}
                 alt={car.name}
                 sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
