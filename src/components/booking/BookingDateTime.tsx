@@ -135,8 +135,8 @@ function CalendarMonth({
         {days.map((day) => {
           const isPast = day.key < todayKey;
           const isUnavailable = unavailableSet.has(day.key);
-          const isPickup = day.key === pickupDate;
-          const isReturn = day.key === returnDate;
+          const isPickup = day.inMonth && day.key === pickupDate;
+          const isReturn = day.inMonth && day.key === returnDate;
           const isInRange =
             Boolean(pickupDate && returnDate) &&
             isBetween(day.key, pickupDate, returnDate);
