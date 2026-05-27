@@ -5,7 +5,6 @@ import { Box, Button, Card, CardContent, Divider, Typography } from "@mui/materi
 import type { Car } from "@/src/services/cars/cars.types";
 import { formatTHB } from "@/src/constants/money";
 import StableImage from "@/src/components/common/StableImage";
-import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 
 type Props = {
   car?: Car | null;
@@ -89,9 +88,6 @@ export default function BookingSummaryCard({
               <Box className="min-w-0">
                 <Typography className="apple-card-title truncate font-semibold text-slate-900">
                   {car.name}
-                </Typography>
-                <Typography className="apple-label-text mt-1 text-slate-600">
-                  {getCarTypeLabel(car.type)} • {car.seats} ที่นั่ง • {car.transmission} • {car.fuel}
                 </Typography>
               </Box>
             </Box>
