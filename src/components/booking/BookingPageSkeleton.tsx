@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Box,
   Card,
@@ -11,10 +12,12 @@ import {
 } from "@mui/material";
 import BookingFlowStepsSkeleton from "@/src/components/booking/BookingFlowStepsSkeleton";
 
-function HeaderSkeleton() {
+type BookingSkeletonMode = "payment" | "chat";
+
+function HeaderSkeleton({ mode }: { mode: BookingSkeletonMode }) {
   return (
     <>
-      <BookingFlowStepsSkeleton mode="chat" className="mb-8" />
+      <BookingFlowStepsSkeleton mode={mode} className="mb-8" />
 
       <Box className="mx-auto max-w-3xl text-center">
         <Skeleton
@@ -496,10 +499,14 @@ function FormSkeleton() {
 }
 
 export default function BookingPageSkeleton() {
+  const params = useSearchParams();
+  const skeletonMode: BookingSkeletonMode =
+    params.get("bookingMode") === "payment" ? "payment" : "chat";
+
   return (
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
-        <HeaderSkeleton />
+        <HeaderSkeleton mode={skeletonMode} />
 
         <Box className="mt-10 grid gap-6 lg:grid-cols-12">
           <SummarySkeleton />

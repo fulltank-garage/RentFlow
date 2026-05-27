@@ -1,7 +1,6 @@
 "use client";
 
 import { Box, Typography } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 export type BookingFlowStepKey =
   | "car"
@@ -28,6 +27,22 @@ const COMPLETE_COLOR = "var(--rf-booking-step-complete)";
 const PENDING_BORDER = "#ececec";
 const PENDING_TEXT = "#111827";
 
+function buildTrackColumns({
+  stepCount,
+  circleSize,
+  connectorWidth,
+}: {
+  stepCount: number;
+  circleSize: number;
+  connectorWidth: number;
+}) {
+  return Array.from({ length: stepCount }, (_, index) =>
+    index === stepCount - 1
+      ? `${circleSize}px`
+      : `${circleSize}px ${connectorWidth}px`
+  ).join(" ");
+}
+
 export default function BookingFlowSteps({
   currentStep,
   mode = "chat",
@@ -37,7 +52,6 @@ export default function BookingFlowSteps({
   mode?: BookingFlowMode;
   className?: string;
 }) {
-  const isMobile = useMediaQuery("(max-width: 767px)");
   const steps = mode === "chat" ? CHAT_FLOW_STEPS : PAYMENT_FLOW_STEPS;
   const currentIndex = Math.max(
     0,
@@ -45,16 +59,10 @@ export default function BookingFlowSteps({
       ? steps.length - 1
       : steps.findIndex((step) => step.key === currentStep)
   );
-  const CIRCLE_SIZE = isMobile ? 42 : 50;
-  const CONNECTOR_WIDTH =
-    mode === "chat" ? (isMobile ? 110 : 220) : isMobile ? 44 : 92;
-  const TRACK_COLUMNS = steps
-    .map((_, index) =>
-      index === steps.length - 1
-        ? `${CIRCLE_SIZE}px`
-        : `${CIRCLE_SIZE}px ${CONNECTOR_WIDTH}px`
-    )
-    .join(" ");
+  const mobileCircleSize = 42;
+  const desktopCircleSize = 50;
+  const mobileConnectorWidth = mode === "chat" ? 110 : 44;
+  const desktopConnectorWidth = mode === "chat" ? 220 : 92;
 
   return (
     <Box
@@ -66,12 +74,26 @@ export default function BookingFlowSteps({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: TRACK_COLUMNS,
-              gridTemplateRows: `${CIRCLE_SIZE}px auto`,
+              gridTemplateColumns: {
+                xs: buildTrackColumns({
+                  stepCount: steps.length,
+                  circleSize: mobileCircleSize,
+                  connectorWidth: mobileConnectorWidth,
+                }),
+                md: buildTrackColumns({
+                  stepCount: steps.length,
+                  circleSize: desktopCircleSize,
+                  connectorWidth: desktopConnectorWidth,
+                }),
+              },
+              gridTemplateRows: {
+                xs: `${mobileCircleSize}px auto`,
+                md: `${desktopCircleSize}px auto`,
+              },
               alignItems: "center",
               justifyItems: "center",
               justifyContent: "center",
-              rowGap: isMobile ? "10px" : "12px",
+              rowGap: { xs: "10px", md: "12px" },
             }}
           >
             {steps.map((step, index) => {
@@ -119,9 +141,9 @@ export default function BookingFlowSteps({
                     className="relative z-[1] flex items-center justify-center rounded-full border font-semibold leading-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                     sx={{
                       ...circleStyle,
-                      width: CIRCLE_SIZE,
-                      height: CIRCLE_SIZE,
-                      fontSize: isMobile ? "1.3rem" : "1.55rem",
+                      width: { xs: mobileCircleSize, md: desktopCircleSize },
+                      height: { xs: mobileCircleSize, md: desktopCircleSize },
+                      fontSize: { xs: "1.3rem", md: "1.55rem" },
                       gridColumn: circleColumn,
                       gridRow: 1,
                     }}
@@ -136,7 +158,7 @@ export default function BookingFlowSteps({
                         gridColumn: connectorColumn,
                         gridRow: 1,
                         justifySelf: "stretch",
-                        height: isMobile ? "8px" : "10px",
+                        height: { xs: "8px", md: "10px" },
                         width: "calc(100% + 8px)",
                         ml: "-4px",
                         ...connectorStyle,
@@ -150,9 +172,12 @@ export default function BookingFlowSteps({
                       gridColumn: circleColumn,
                       gridRow: 2,
                       justifySelf: "center",
-                      width: isMobile ? CIRCLE_SIZE + 36 : "max-content",
-                      maxWidth: isMobile ? CIRCLE_SIZE + 36 : 180,
-                      fontSize: isMobile ? 13 : 17,
+                      width: {
+                        xs: mobileCircleSize + 36,
+                        md: "max-content",
+                      },
+                      maxWidth: { xs: mobileCircleSize + 36, md: 180 },
+                      fontSize: { xs: 13, md: 17 },
                       lineHeight: 1.2,
                     }}
                   >
