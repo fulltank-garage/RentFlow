@@ -252,12 +252,8 @@ export default function BookingDateTime({
       }
 
       if (dateKey === pickupDate) {
-        if (returnDate) {
-          setReturnDate("");
-          return;
-        }
-
-        setReturnDate(dateKey);
+        setPickupDate("");
+        setReturnDate("");
         return;
       }
 
@@ -269,7 +265,7 @@ export default function BookingDateTime({
 
       setReturnDate(dateKey);
     },
-    [pickupDate, returnDate, setPickupDate, setReturnDate, todayKey, unavailableSet]
+    [pickupDate, setPickupDate, setReturnDate, todayKey, unavailableSet]
   );
 
   const rangeLabel =
