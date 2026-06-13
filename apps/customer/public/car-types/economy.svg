@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">รถประหยัด</title>
+  <desc id="desc">ภาพวาดรถขนาดประหยัดด้านข้าง ไม่มีลายน้ำ</desc>
+  <defs>
+    <linearGradient id="body" x1="150" x2="1050" y1="300" y2="460" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#101010"/>
+      <stop offset=".42" stop-color="#4d4d4d"/>
+      <stop offset=".72" stop-color="#191919"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-20%" width="120%" height="150%">
+      <feDropShadow dx="0" dy="24" stdDeviation="15" flood-color="#0f172a" flood-opacity=".12"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="720" fill="#fff"/>
+  <ellipse cx="604" cy="519" rx="390" ry="16" fill="#111827" opacity=".12"/>
+  <g filter="url(#shadow)">
+    <path d="M168 436c12-55 42-91 91-109l75-25c54-70 125-105 212-105h120c86 0 158 34 216 103l89 22c48 12 78 46 92 101l8 30H169c-9 0-13-7-1-17z" fill="url(#body)"/>
+    <path d="M366 303c46-54 105-81 176-81h115c72 0 134 27 184 81H366z" fill="#080808"/>
+    <path d="M401 296c38-38 83-57 136-58l-25 58H401zM575 238h75c50 2 95 21 135 58H548l27-58z" fill="#1f2937"/>
+    <path d="M245 380c147 29 306 42 478 39 105-2 196-10 272-25" stroke="#f8fafc" stroke-width="15" stroke-linecap="round" opacity=".34"/>
+    <path d="M305 447c0-62 50-112 112-112s112 50 112 112H305zM783 447c0-62 50-112 112-112s112 50 112 112H783z" fill="#050505"/>
+    <circle cx="417" cy="447" r="70" fill="#09090b"/>
+    <circle cx="417" cy="447" r="50" fill="#fff"/>
+    <circle cx="417" cy="447" r="33" fill="#e5e7eb"/>
+    <circle cx="417" cy="447" r="12" fill="#111827"/>
+    <g stroke="#111827" stroke-width="5" stroke-linecap="round">
+      <path d="M417 414v66M384 447h66M394 424l46 46M440 424l-46 46"/>
+    </g>
+    <circle cx="895" cy="447" r="70" fill="#09090b"/>
+    <circle cx="895" cy="447" r="50" fill="#fff"/>
+    <circle cx="895" cy="447" r="33" fill="#e5e7eb"/>
+    <circle cx="895" cy="447" r="12" fill="#111827"/>
+    <g stroke="#111827" stroke-width="5" stroke-linecap="round">
+      <path d="M895 414v66M862 447h66M872 424l46 46M918 424l-46 46"/>
+    </g>
+    <path d="M162 405h81c20 0 35 18 31 38l-5 21h-94c-19 0-30-19-22-36l9-23z" fill="#f8fafc" opacity=".88"/>
+    <path d="M991 349c42 16 70 42 84 79l8 22H963c3-43 12-77 28-101z" fill="#f8fafc" opacity=".88"/>
+    <path d="M279 353h66M748 353h76" stroke="#e5e7eb" stroke-width="13" stroke-linecap="round" opacity=".56"/>
+    <path d="M216 338l54-43M986 322l48 25" stroke="#f59e0b" stroke-width="9" stroke-linecap="round"/>
+  </g>
+</svg>
