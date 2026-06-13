@@ -1,0 +1,7 @@
+# Local verification caches
+.npm-cache/
+.go-cache/
+
+# App build outputs and dependencies
+node_modules/
+.next/
