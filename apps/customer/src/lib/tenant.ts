@@ -32,6 +32,13 @@ function getRentFlowRootLabel() {
   return rootDomain.split(".")[0] || "rentflow";
 }
 
+function getRentFlowMarketplaceHosts() {
+  return (process.env.NEXT_PUBLIC_RENTFLOW_MARKETPLACE_HOSTS || "")
+    .split(",")
+    .map((host) => normalizeHost(host))
+    .filter(Boolean);
+}
+
 export function getRentFlowTenantHost() {
   if (typeof window !== "undefined") {
     return normalizeHost(window.location.host);
@@ -48,6 +55,10 @@ export function isRentFlowMarketplaceHost(host = getRentFlowTenantHost()) {
 
   if (!normalizedHost) {
     return !fallbackTenant;
+  }
+
+  if (getRentFlowMarketplaceHosts().includes(normalizedHost)) {
+    return true;
   }
 
   if (normalizedHost === rootDomain) {
