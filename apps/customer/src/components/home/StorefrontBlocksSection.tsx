@@ -95,14 +95,14 @@ function getBlockToneStyle(
   tone: StorefrontBlock["tone"],
   theme?: StorefrontTheme
 ) {
-  const primaryColor = theme?.primaryColor || "#2563eb";
-  const accentColor = theme?.accentColor || "#0f172a";
-  const surfaceColor = theme?.surfaceColor || "#f8fafc";
+  const primaryColor = theme?.primaryColor || "var(--rf-brand)";
+  const accentColor = theme?.accentColor || "var(--rf-ink)";
+  const surfaceColor = theme?.surfaceColor || "var(--rf-surface-soft)";
 
   if (tone === "highlight") {
     return {
       background:
-        surfaceColor === "#ffffff"
+        surfaceColor === "var(--rf-surface)"
           ? "var(--rf-apple-surface)"
           : surfaceColor,
       color: accentColor,
@@ -113,8 +113,8 @@ function getBlockToneStyle(
 
   if (tone === "dark") {
     return {
-      background: `linear-gradient(135deg, ${accentColor}, #111827)`,
-      color: "#ffffff",
+      background: `linear-gradient(135deg, ${accentColor}, var(--navy-soft))`,
+      color: "var(--white)",
       mutedColor: "rgba(255,255,255,0.72)",
       buttonColor: primaryColor,
     };
@@ -139,13 +139,13 @@ function getBlockToneStyle(
 
 function getBlockCardClass(type?: StorefrontBlock["type"]) {
   if (type === "hero") {
-    return "rounded-[44px]! bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.2),transparent_34%),linear-gradient(135deg,#0f172a,#111827_46%,#020617)]";
+    return "rounded-[44px]! bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.2),transparent_34%),linear-gradient(135deg,var(--rf-ink),var(--navy-soft)_46%,var(--navy-deep))]";
   }
   if (type === "promo" || type === "announcement") {
     return "rounded-[38px]! bg-[linear-gradient(145deg,#fff7ed,#ffffff_58%,#eff6ff)]";
   }
   if (type === "steps") {
-    return "rounded-[36px]! bg-[linear-gradient(145deg,#f5f5f7,#ffffff_64%)]";
+    return "rounded-[36px]! bg-[linear-gradient(145deg,var(--rf-surface-soft),var(--rf-surface)_64%)]";
   }
   if (type === "testimonial") {
     return "rounded-[36px]! bg-[linear-gradient(145deg,#ffffff,#f8fafc)]";
@@ -154,7 +154,7 @@ function getBlockCardClass(type?: StorefrontBlock["type"]) {
     return "rounded-[32px]! bg-[linear-gradient(145deg,#f8fafc,#ffffff)]";
   }
   if (type === "cta") {
-    return "rounded-[44px]! bg-[linear-gradient(135deg,#020617,#111827)]";
+    return "rounded-[44px]! bg-[linear-gradient(135deg,var(--navy-deep),var(--navy-soft))]";
   }
   return "rounded-[34px]! bg-white";
 }
@@ -167,7 +167,7 @@ function getBlockBackground(
     return "linear-gradient(145deg, #fff7ed, #ffffff 58%, #eff6ff)";
   }
   if (type === "steps") {
-    return "linear-gradient(145deg, #f5f5f7, #ffffff 64%)";
+    return "linear-gradient(145deg, var(--rf-surface-soft), var(--rf-surface) 64%)";
   }
   if (type === "testimonial") {
     return "linear-gradient(145deg, #ffffff, #f8fafc)";

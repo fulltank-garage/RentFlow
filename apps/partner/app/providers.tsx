@@ -5,28 +5,38 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 
+const muiColors = {
+  primaryNavy: "#011027",
+  primaryGreen: "#58a847",
+  white: "#fefefe",
+  softWhite: "#f9fafb",
+  lightGray: "#f3f1ef",
+  grayDark: "#878e99",
+  danger: "#f43f5e",
+};
+
 const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#0f172a",
+      main: muiColors.primaryNavy,
     },
     secondary: {
-      main: "#2563eb",
+      main: muiColors.primaryGreen,
     },
     background: {
-      default: "#ffffff",
-      paper: "#ffffff",
+      default: muiColors.softWhite,
+      paper: muiColors.white,
     },
     text: {
-      primary: "#0f172a",
-      secondary: "#667085",
+      primary: muiColors.primaryNavy,
+      secondary: muiColors.grayDark,
     },
     success: {
-      main: "#22c55e",
+      main: muiColors.primaryGreen,
     },
     error: {
-      main: "#f43f5e",
+      main: muiColors.danger,
     },
   },
   typography: {
@@ -86,7 +96,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: "#ffffff",
+          backgroundColor: muiColors.softWhite,
           fontFamily:
             "var(--font-english), var(--font-thai), system-ui, sans-serif",
         },
@@ -139,8 +149,8 @@ const theme = createTheme({
           fontWeight: 800,
           minHeight: 46,
           border: 0,
-          backgroundColor: "#eef1f5",
-          color: "#667085",
+          backgroundColor: muiColors.lightGray,
+          color: muiColors.grayDark,
         },
         label: {
           paddingLeft: 14,

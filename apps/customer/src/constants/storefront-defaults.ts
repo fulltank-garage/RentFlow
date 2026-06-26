@@ -4,9 +4,9 @@ import type {
 } from "@/src/services/storefront/storefront.types";
 
 export const DEFAULT_STOREFRONT_THEME: StorefrontTheme = {
-  primaryColor: "#0b5cff",
-  accentColor: "#111827",
-  surfaceColor: "#f5f5f7",
+  primaryColor: "var(--primary-green)",
+  accentColor: "var(--primary-navy)",
+  surfaceColor: "var(--soft-white)",
 };
 
 export const DEFAULT_STOREFRONT_BLOCKS: StorefrontBlock[] = [

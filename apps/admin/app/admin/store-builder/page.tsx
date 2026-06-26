@@ -34,9 +34,9 @@ const emptyBlock: StorefrontBlock = {
 };
 
 const emptyTheme: NonNullable<StorefrontPage["theme"]> = {
-  primaryColor: "#2563eb",
-  accentColor: "#0f172a",
-  surfaceColor: "#f8fafc",
+  primaryColor: "var(--primary-green)",
+  accentColor: "var(--primary-navy)",
+  surfaceColor: "var(--soft-white)",
 };
 
 function toneLabel(tone?: StorefrontBlock["tone"]) {
@@ -311,13 +311,13 @@ export default function StoreBuilderPage() {
                       sx={{
                         backgroundColor:
                           block.tone === "highlight"
-                            ? theme.surfaceColor || "#f8fafc"
+                            ? theme.surfaceColor || "var(--rf-surface-soft)"
                             : block.tone === "dark"
-                              ? theme.accentColor || "#0f172a"
+                              ? theme.accentColor || "var(--rf-ink)"
                               : block.tone === "success"
-                                ? "#ecfdf5"
-                                : "#ffffff",
-                        color: block.tone === "dark" ? "#ffffff" : theme.accentColor || "#0f172a",
+                                ? "color-mix(in srgb, var(--rf-brand) 12%, var(--rf-surface))"
+                                : "var(--rf-surface)",
+                        color: block.tone === "dark" ? "var(--white)" : theme.accentColor || "var(--rf-ink)",
                         border:
                           block.tone === "default"
                             ? "1px solid rgba(15, 23, 42, 0.08)"

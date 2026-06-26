@@ -16,7 +16,7 @@ function AiSparkle() {
       <defs>
         <linearGradient id="partner-ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#38bdf8" />
-          <stop offset="38%" stopColor="#22c55e" />
+          <stop offset="38%" stopColor="var(--rf-brand)" />
           <stop offset="70%" stopColor="#a855f7" />
           <stop offset="100%" stopColor="#f97316" />
         </linearGradient>

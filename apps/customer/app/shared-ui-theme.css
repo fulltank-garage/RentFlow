@@ -1,0 +1,1238 @@
+:root {
+  --primary-navy: #011027;
+  --secondary-navy: #01122c;
+  --navy-deep: #010b1c;
+  --navy-soft: #111e30;
+  --navy-gray: #283b55;
+
+  --primary-green: #58a847;
+  --secondary-green: #51a242;
+  --green-dark: #50a041;
+  --green-muted: #4f7f64;
+
+  --white: #fefefe;
+  --off-white: #f9f9fa;
+  --soft-white: #f9fafb;
+  --light-gray: #f3f1ef;
+  --section-gray: #f7f8f9;
+
+  --gray: #c9cdcb;
+  --gray-dark: #878e99;
+
+  --accent-gold: #f0b008;
+
+  --rf-page-bg: var(--soft-white);
+  --rf-surface: var(--white);
+  --rf-surface-soft: var(--section-gray);
+  --rf-ink: var(--primary-navy);
+  --rf-muted: var(--gray-dark);
+  --rf-line: color-mix(in srgb, var(--navy-gray) 18%, transparent);
+  --rf-line-strong: color-mix(in srgb, var(--navy-gray) 28%, transparent);
+  --rf-brand: var(--primary-green);
+  --rf-brand-hover: var(--secondary-green);
+  --rf-brand-dark: var(--green-dark);
+  --rf-chip: var(--light-gray);
+  --rf-danger: #f43f5e;
+  --rf-warning: var(--accent-gold);
+  --rf-shadow: 0 0 0 1px color-mix(in srgb, var(--navy-gray) 8%, transparent),
+    0 14px 40px color-mix(in srgb, var(--primary-navy) 10%, transparent);
+  --rf-shadow-soft: 0 0 0 1px color-mix(in srgb, var(--navy-gray) 6%, transparent),
+    0 10px 30px color-mix(in srgb, var(--primary-navy) 8%, transparent);
+
+  --rf-admin-bg: var(--rf-page-bg);
+  --rf-admin-ink: var(--rf-ink);
+  --rf-admin-muted: var(--rf-muted);
+  --rf-admin-line: var(--rf-line);
+  --rf-admin-line-strong: var(--rf-line-strong);
+  --rf-admin-card: var(--rf-surface);
+  --rf-admin-card-soft: var(--rf-surface-soft);
+  --rf-admin-shadow: none;
+  --rf-admin-shadow-soft: none;
+  --rf-admin-blue: var(--primary-navy);
+  --rf-admin-blue-deep: var(--navy-deep);
+  --rf-admin-green: var(--rf-brand);
+  --rf-admin-rose: var(--rf-danger);
+  --rf-admin-orange: var(--rf-warning);
+  --rf-admin-chip: var(--rf-chip);
+
+  --rf-partner-bg: var(--rf-admin-bg);
+  --rf-partner-ink: var(--rf-admin-ink);
+  --rf-partner-muted: var(--rf-admin-muted);
+  --rf-partner-line: var(--rf-admin-line);
+  --rf-partner-line-strong: var(--rf-admin-line-strong);
+  --rf-partner-card: var(--rf-admin-card);
+  --rf-partner-card-strong: var(--rf-admin-card);
+  --rf-partner-card-soft: var(--rf-admin-card-soft);
+  --rf-partner-shadow: var(--rf-admin-shadow);
+  --rf-partner-shadow-soft: var(--rf-admin-shadow-soft);
+  --rf-partner-blue: var(--rf-admin-blue);
+  --rf-partner-blue-deep: var(--rf-admin-blue-deep);
+  --rf-partner-green: var(--rf-admin-green);
+  --rf-partner-rose: var(--rf-admin-rose);
+  --rf-partner-orange: var(--rf-admin-orange);
+  --rf-partner-chip: var(--rf-admin-chip);
+
+  --rf-apple-bg: var(--rf-page-bg);
+  --rf-apple-surface: var(--rf-surface);
+  --rf-apple-surface-soft: var(--rf-surface-soft);
+  --rf-apple-ink: var(--rf-ink);
+  --rf-apple-muted: var(--rf-muted);
+  --rf-apple-blue: var(--rf-brand);
+  --rf-apple-blue-hover: var(--rf-brand-hover);
+  --rf-apple-border: var(--rf-line);
+  --rf-apple-border-strong: var(--rf-line-strong);
+  --rf-apple-shadow: var(--rf-shadow);
+  --rf-apple-shadow-soft: var(--rf-shadow-soft);
+  --rf-apple-card-radius: 24px;
+  --rf-apple-card-radius-sm: 18px;
+  --rf-apple-hover-duration: 920ms;
+  --rf-apple-hover-ease: cubic-bezier(0.18, 0.9, 0.22, 1);
+  --rf-apple-hover-scale: 1.006;
+  --rf-apple-hover-media-scale: 1.012;
+
+  --rf-booking-step-current: var(--primary-green);
+  --rf-booking-step-complete: var(--green-dark);
+
+  --rf-type-announce: clamp(0.8125rem, 0.78rem + 0.12vw, 0.875rem);
+  --rf-type-body: clamp(1rem, 0.98rem + 0.12vw, 1.0625rem);
+  --rf-type-body-sm: clamp(0.875rem, 0.84rem + 0.12vw, 0.9375rem);
+  --rf-type-label: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+  --rf-type-subtitle-sm: clamp(1rem, 0.96rem + 0.16vw, 1.0625rem);
+  --rf-type-subtitle-lg: clamp(1.1875rem, 1.02rem + 0.42vw, 1.3125rem);
+  --rf-type-auth-title: clamp(1.75rem, 1.45rem + 1.1vw, 2.5rem);
+  --rf-type-section-title: clamp(2.5rem, 1.72rem + 2.45vw, 3.5rem);
+  --rf-type-page-title: clamp(2.75rem, 1.95rem + 2.8vw, 4rem);
+  --rf-type-tenant-title: clamp(1.75rem, 1.36rem + 1.3vw, 2.75rem);
+  --rf-type-hero-title: clamp(2.5rem, 1.62rem + 3vw, 4rem);
+  --rf-type-hero-card-title: clamp(2rem, 1.4rem + 2vw, 3.5rem);
+  --rf-type-hero-subtitle: clamp(1.1875rem, 1.04rem + 0.48vw, 1.5rem);
+  --rf-type-card-title: clamp(1.3125rem, 1.12rem + 0.56vw, 1.75rem);
+  --rf-type-card-title-lg: clamp(1.75rem, 1.35rem + 1.1vw, 2.5rem);
+  --rf-type-price: clamp(2rem, 1.5rem + 1.45vw, 3rem);
+  --rf-type-nav-brand: clamp(0.875rem, 0.84rem + 0.12vw, 1rem);
+  --rf-type-nav-caption: clamp(0.6875rem, 0.66rem + 0.08vw, 0.75rem);
+  --rf-type-nav-link: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+  --rf-type-button: clamp(0.875rem, 0.84rem + 0.12vw, 1.0625rem);
+  --rf-type-button-sm: var(--rf-type-button);
+  --rf-type-login-title: clamp(2rem, 1.3rem + 2.25vw, 3.5rem);
+}
+
+.rf-page {
+  min-height: 100vh;
+  background: var(--rf-page-bg);
+  color: var(--rf-ink);
+}
+
+.rf-surface {
+  background: var(--rf-surface) !important;
+  border: 1px solid var(--rf-line) !important;
+  box-shadow: var(--rf-shadow-soft) !important;
+}
+
+.rf-surface-soft {
+  background: var(--rf-surface-soft) !important;
+  border: 1px solid var(--rf-line) !important;
+  box-shadow: var(--rf-shadow-soft) !important;
+}
+
+.rf-card {
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--rf-surface);
+  border: 1px solid var(--rf-line);
+  box-shadow: var(--rf-shadow-soft);
+}
+
+.rf-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--rf-chip);
+  color: var(--rf-muted);
+  font-size: var(--rf-type-label);
+  font-weight: 700;
+}
+
+.rf-button-primary {
+  border-radius: 999px;
+  background: var(--rf-brand);
+  color: var(--white);
+  font-weight: 800;
+}
+
+.rf-button-primary:hover {
+  background: var(--rf-brand-hover);
+}
+
+.rf-page-title {
+  color: var(--rf-ink);
+  font-size: var(--rf-type-page-title);
+  font-weight: 800;
+  line-height: 1.071;
+}
+
+.rf-section-title {
+  color: var(--rf-ink);
+  font-size: var(--rf-type-card-title);
+  font-weight: 750;
+  line-height: 1.143;
+}
+
+.rf-muted {
+  color: var(--rf-muted);
+}
+
+
+/* Shared app UI primitives */
+.admin-shell,
+.partner-shell {
+  background: var(--rf-surface);
+  border: 1px solid var(--rf-admin-line);
+  box-shadow: var(--rf-admin-shadow-soft);
+}
+
+.admin-card,
+.partner-card,
+.ios-panel,
+.ios-glass {
+  background: var(--rf-admin-card) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.admin-page .MuiCard-root {
+  background: var(--rf-admin-card) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow) !important;
+}
+
+.admin-surface {
+  background: var(--rf-admin-card) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow-soft) !important;
+}
+
+.admin-surface-soft {
+  background: var(--rf-admin-card-soft) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow-soft) !important;
+}
+
+.admin-card-soft,
+.partner-card-soft,
+.ios-chip {
+  background: var(--rf-admin-card-soft) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow-soft) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.admin-page,
+.partner-page {
+  display: grid;
+  gap: clamp(1.15rem, 1.55vw, 1.75rem);
+  width: 100%;
+}
+
+.admin-page-header,
+.partner-page-header {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  gap: clamp(0.65rem, 0.8vw, 0.9rem);
+  margin-bottom: clamp(0.2rem, 0.5vw, 0.45rem);
+}
+
+.admin-page-kicker,
+.partner-page-kicker {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  background: var(--rf-admin-chip);
+  border: 0;
+  box-shadow: none;
+  color: var(--rf-admin-muted);
+  font-size: var(--rf-type-label);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.admin-page-title,
+.partner-page-title {
+  max-width: 74rem;
+  font-size: var(--rf-type-page-title) !important;
+  font-weight: 800 !important;
+  line-height: 1.071 !important;
+  letter-spacing: -0.045em !important;
+  color: var(--rf-admin-ink) !important;
+}
+
+.admin-login-title {
+  font-size: var(--rf-type-login-title) !important;
+  line-height: 1.071 !important;
+  text-wrap: balance;
+}
+
+.admin-page-subtitle,
+.partner-page-subtitle {
+  max-width: 68rem;
+  font-size: var(--rf-type-body) !important;
+  line-height: 1.47 !important;
+  color: var(--rf-admin-muted) !important;
+}
+
+.admin-section-title,
+.partner-section-title {
+  font-size: var(--rf-type-card-title) !important;
+  font-weight: 750 !important;
+  line-height: 1.143 !important;
+  letter-spacing: -0.03em !important;
+  color: var(--rf-admin-ink) !important;
+}
+
+.admin-section-subtitle,
+.partner-section-subtitle {
+  font-size: var(--rf-type-body-sm) !important;
+  font-weight: 400 !important;
+  line-height: 1.47 !important;
+  color: var(--rf-admin-muted) !important;
+}
+
+.admin-stat-value,
+.partner-stat-value {
+  font-size: clamp(2rem, 1.5rem + 1.45vw, 3rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.045em !important;
+}
+
+.admin-scrollbar,
+.partner-scrollbar,
+.ios-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}
+
+.admin-scrollbar::-webkit-scrollbar,
+.partner-scrollbar::-webkit-scrollbar,
+.ios-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-track,
+.partner-scrollbar::-webkit-scrollbar-track,
+.ios-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb,
+.partner-scrollbar::-webkit-scrollbar-thumb,
+.ios-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.4);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.admin-empty,
+.partner-empty {
+  display: grid;
+  min-height: 14rem;
+  place-items: center;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 2rem;
+  background: var(--rf-surface-soft);
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  color: var(--rf-admin-muted);
+}
+
+.admin-chip,
+.admin-status-pill,
+.partner-chip,
+.partner-status-pill {
+  display: inline-flex !important;
+  max-width: 100% !important;
+  min-height: clamp(2.05rem, 1.95rem + 0.22vw, 2.35rem) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--rf-admin-chip) !important;
+  color: var(--rf-admin-muted) !important;
+  box-shadow: none !important;
+  padding-inline: clamp(0.85rem, 1.4vw, 1.2rem) !important;
+  white-space: nowrap !important;
+}
+
+.admin-chip .MuiChip-label,
+.admin-status-pill .MuiChip-label,
+.partner-chip .MuiChip-label,
+.partner-status-pill .MuiChip-label {
+  padding-inline: 0 !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+
+.admin-chip-green,
+.partner-chip-green {
+  background: var(--rf-admin-green) !important;
+  color: var(--white) !important;
+}
+
+.admin-chip-rose,
+.partner-chip-rose {
+  background: var(--rf-admin-rose) !important;
+  color: var(--white) !important;
+}
+
+.admin-chip-blue,
+.partner-chip-blue {
+  background: var(--rf-admin-blue) !important;
+  color: var(--white) !important;
+}
+
+.admin-chip-orange,
+.partner-chip-orange {
+  background: var(--rf-admin-orange) !important;
+  color: var(--white) !important;
+}
+
+.admin-chip-dark,
+.partner-chip-dark {
+  background: var(--rf-admin-blue-deep) !important;
+  color: var(--white) !important;
+}
+
+.admin-floating-hint,
+.partner-floating-hint {
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: var(--rf-surface);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.12);
+}
+
+.MuiCard-root {
+  background-color: var(--rf-admin-card) !important;
+  border-color: var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: hidden;
+}
+
+.MuiButton-root {
+  border-radius: 999px !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  min-height: 2.85rem;
+  box-shadow: none !important;
+}
+
+.MuiButton-containedPrimary,
+.MuiButton-contained {
+  background-color: var(--rf-admin-blue-deep) !important;
+  color: var(--white) !important;
+}
+
+.MuiButton-outlined {
+  border-color: var(--rf-admin-line-strong) !important;
+  background: var(--rf-surface) !important;
+  color: var(--rf-admin-ink) !important;
+}
+
+.MuiButton-colorError {
+  background-color: var(--rf-admin-rose) !important;
+  color: var(--white) !important;
+  border-color: transparent !important;
+}
+
+.MuiChip-root {
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  border: 0 !important;
+  background: var(--rf-admin-chip) !important;
+  color: var(--rf-admin-muted) !important;
+  min-height: 2.85rem !important;
+  box-shadow: none !important;
+  white-space: nowrap !important;
+}
+
+.MuiChip-root .MuiChip-label {
+  padding-inline: 1.1rem !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+
+.MuiChip-root.admin-chip,
+.MuiChip-root.admin-status-pill,
+.MuiChip-root.partner-chip,
+.MuiChip-root.partner-status-pill {
+  background: var(--rf-admin-chip) !important;
+  color: var(--rf-admin-muted) !important;
+  border: 0 !important;
+}
+
+.MuiChip-root.admin-chip-green,
+.MuiChip-root.partner-chip-green {
+  background: var(--rf-admin-green) !important;
+  color: var(--white) !important;
+}
+
+.MuiChip-root.admin-chip-rose,
+.MuiChip-root.partner-chip-rose {
+  background: var(--rf-admin-rose) !important;
+  color: var(--white) !important;
+}
+
+.MuiChip-root.admin-chip-blue,
+.MuiChip-root.partner-chip-blue {
+  background: var(--rf-admin-blue) !important;
+  color: var(--white) !important;
+}
+
+.MuiChip-root.admin-chip-orange,
+.MuiChip-root.partner-chip-orange {
+  background: var(--rf-admin-orange) !important;
+  color: var(--white) !important;
+}
+
+.MuiChip-root.admin-chip-dark,
+.MuiChip-root.partner-chip-dark {
+  background: var(--rf-admin-blue-deep) !important;
+  color: var(--white) !important;
+}
+
+.MuiAlert-root {
+  border-radius: 20px !important;
+}
+
+.MuiAlert-icon {
+  display: none !important;
+}
+
+.MuiDrawer-paper,
+.MuiAppBar-root {
+  border: 0 !important;
+  box-shadow: var(--rf-admin-shadow-soft) !important;
+}
+
+.MuiOutlinedInput-root {
+  border-radius: 22px !important;
+  background: var(--rf-surface) !important;
+  min-height: 2.85rem !important;
+}
+
+.MuiTextField-root,
+.MuiFormControl-root,
+.MuiInputBase-root,
+.MuiButton-root {
+  min-width: 0 !important;
+}
+
+.MuiOutlinedInput-root .MuiInputBase-input,
+.MuiOutlinedInput-root .MuiSelect-select {
+  min-height: 1.2rem !important;
+  padding-top: 0.8rem !important;
+  padding-bottom: 0.8rem !important;
+}
+
+.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: var(--rf-admin-line-strong) !important;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(100, 116, 139, 0.32) !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(15, 23, 42, 0.72) !important;
+}
+
+.MuiInputLabel-root {
+  color: var(--rf-admin-muted) !important;
+}
+
+.MuiSelect-icon,
+.MuiAlert-icon {
+  display: none !important;
+}
+
+.MuiDivider-root {
+  border-color: rgba(226, 232, 240, 0.82) !important;
+}
+
+.MuiTypography-root,
+.MuiInputBase-root,
+.MuiButton-root,
+.MuiChip-root {
+  font-family: var(--font-english), var(--font-thai), system-ui, sans-serif !important;
+}
+
+@media (max-width: 1024px) {
+  .admin-page,
+  .partner-page {
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-page-title,
+  .partner-page-title {
+    letter-spacing: -0.04em !important;
+  }
+
+  .MuiButton-root {
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-content-container,
+  .partner-content-container {
+    padding-inline: 1rem !important;
+  }
+
+  .admin-card,
+  .partner-card,
+  .MuiCard-root {
+    border-radius: 26px !important;
+  }
+
+  .admin-page,
+  .partner-page {
+    gap: 1rem;
+  }
+
+  .admin-page-header,
+  .partner-page-header {
+    gap: 0.55rem;
+    margin-bottom: 0;
+  }
+
+  .admin-page-header-with-action,
+  .partner-page-header-with-action {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-page-title,
+  .partner-page-title {
+    line-height: 1.1 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  .admin-page-subtitle,
+  .partner-page-subtitle,
+  .admin-section-subtitle,
+  .partner-section-subtitle {
+    line-height: 1.47 !important;
+  }
+}
+
+
+.admin-content-container,
+.partner-content-container {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 2vw, 2rem) !important;
+}
+
+.admin-page-header-with-action,
+.partner-page-header-with-action {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  column-gap: clamp(1rem, 2vw, 1.75rem);
+}
+
+.admin-header-action,
+.admin-toolbar,
+.partner-header-action,
+.partner-toolbar {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+  flex-wrap: wrap;
+}
+
+.admin-header-action,
+.partner-header-action {
+  width: auto;
+}
+
+.admin-toolbar > *,
+.admin-header-action > *,
+.partner-toolbar > *,
+.partner-header-action > * {
+  min-width: 0;
+}
+
+/* Shared customer storefront UI primitives */
+.apple-page {
+  min-height: 100vh;
+  background: var(--rf-apple-bg);
+  color: var(--rf-apple-ink);
+}
+
+.apple-section {
+  padding-top: 56px;
+  padding-bottom: clamp(48px, 7vw, 88px);
+}
+
+.apple-card {
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--rf-apple-card-radius) !important;
+  background: var(--rf-apple-surface);
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+  backface-visibility: hidden;
+  transform: scale3d(1, 1, 1);
+  transform-origin: center center;
+  transition:
+    transform var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
+  will-change: transform;
+}
+
+.apple-card:hover {
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  );
+}
+
+.apple-card-muted {
+  border: 0;
+  border-radius: var(--rf-apple-card-radius);
+  background: var(--rf-apple-surface-soft);
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+}
+
+.apple-card-no-hover:hover {
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+  transform: scale3d(1, 1, 1);
+}
+
+.apple-heading {
+  color: var(--rf-apple-ink);
+  font-weight: 800 !important;
+  letter-spacing: -0.048em !important;
+  line-height: 1.02 !important;
+}
+
+.apple-subtitle {
+  color: var(--rf-apple-muted);
+  letter-spacing: -0.016em;
+  font-size: var(--rf-type-subtitle-lg);
+  line-height: 1.381 !important;
+}
+
+.apple-page .text-xs,
+.apple-page [class*="text-xs!"] {
+  font-size: var(--rf-type-label) !important;
+  line-height: 1.45 !important;
+}
+
+.apple-page .text-sm,
+.apple-page [class*="text-sm!"] {
+  font-size: var(--rf-type-body-sm) !important;
+  line-height: 1.55 !important;
+}
+
+.apple-page .text-base,
+.apple-page [class*="text-base!"] {
+  font-size: var(--rf-type-body) !important;
+  line-height: 1.6 !important;
+}
+
+.apple-page .text-lg,
+.apple-page [class*="text-lg!"] {
+  font-size: var(--rf-type-card-title) !important;
+  line-height: 1.3 !important;
+}
+
+.apple-page .text-xl,
+.apple-page [class*="text-xl!"] {
+  font-size: clamp(1.3125rem, 1.12rem + 0.56vw, 1.75rem) !important;
+  line-height: 1.2 !important;
+}
+
+.apple-page .text-2xl,
+.apple-page [class*="text-2xl!"] {
+  font-size: var(--rf-type-card-title-lg) !important;
+  line-height: 1.14 !important;
+}
+
+.apple-page .text-3xl,
+.apple-page [class*="text-3xl!"] {
+  font-size: clamp(1.75rem, 1.36rem + 1.2vw, 2.5rem) !important;
+  line-height: 1.1 !important;
+}
+
+.apple-page .text-4xl,
+.apple-page [class*="text-4xl!"] {
+  font-size: clamp(2.5rem, 1.9rem + 1.8vw, 3rem) !important;
+  line-height: 1.04 !important;
+}
+
+.apple-page .text-5xl,
+.apple-page [class*="text-5xl!"] {
+  font-size: clamp(3rem, 2.1rem + 2.4vw, 3.5rem) !important;
+  line-height: 1.02 !important;
+}
+
+.apple-page [class*="text-[11px]"] {
+  font-size: var(--rf-type-label) !important;
+  line-height: 1.45 !important;
+}
+
+.apple-page [class*="text-[12px]"],
+.apple-page [class*="text-[13px]"] {
+  font-size: var(--rf-type-body-sm) !important;
+  line-height: 1.5 !important;
+}
+
+.apple-subtitle.text-sm {
+  font-size: var(--rf-type-subtitle-sm) !important;
+}
+
+.apple-subtitle.text-lg {
+  font-size: var(--rf-type-subtitle-lg) !important;
+}
+
+.apple-page-title {
+  font-size: var(--rf-type-page-title) !important;
+}
+
+.apple-section-title {
+  font-size: var(--rf-type-section-title) !important;
+}
+
+.apple-auth-title {
+  font-size: var(--rf-type-auth-title) !important;
+}
+
+.apple-display-title {
+  font-size: var(--rf-type-hero-title) !important;
+}
+
+.apple-tenant-title {
+  font-size: var(--rf-type-tenant-title) !important;
+  line-height: 1.05 !important;
+}
+
+.apple-hero-subtitle {
+  font-size: var(--rf-type-hero-subtitle) !important;
+  line-height: 1.35 !important;
+}
+
+.apple-hero-card-title {
+  font-size: var(--rf-type-hero-card-title) !important;
+  line-height: 1.04 !important;
+}
+
+.apple-card-title {
+  font-size: var(--rf-type-card-title) !important;
+  line-height: 1.143 !important;
+}
+
+.apple-card-title-lg {
+  font-size: var(--rf-type-card-title-lg) !important;
+  line-height: 1.1 !important;
+}
+
+.apple-price-text {
+  font-size: var(--rf-type-price) !important;
+  line-height: 1.05 !important;
+}
+
+.apple-announcement-text {
+  font-size: var(--rf-type-announce) !important;
+  line-height: 1.45 !important;
+}
+
+.apple-body-copy {
+  font-size: var(--rf-type-body) !important;
+  line-height: 1.47 !important;
+}
+
+.apple-body-sm {
+  font-size: var(--rf-type-body-sm) !important;
+  line-height: 1.55 !important;
+}
+
+.apple-label-text {
+  font-size: var(--rf-type-label) !important;
+  letter-spacing: 0.08em !important;
+}
+
+.apple-nav-brand {
+  font-size: var(--rf-type-nav-brand) !important;
+}
+
+.apple-nav-caption {
+  font-size: var(--rf-type-nav-caption) !important;
+}
+
+.apple-nav-link {
+  font-size: var(--rf-type-nav-link) !important;
+}
+
+.apple-button-copy {
+  font-size: var(--rf-type-button-sm) !important;
+}
+
+.apple-section-intro {
+  margin-inline: auto;
+  display: flex;
+  max-width: 48rem;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+}
+
+.apple-shelf {
+  gap: 1.25rem;
+}
+
+.apple-shelf::-webkit-scrollbar {
+  display: none;
+}
+
+.apple-pill {
+  display: inline-flex;
+  min-height: 2.2rem;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  border: 0 !important;
+  border-radius: 999px;
+  background: #eef1f5 !important;
+  box-shadow: none !important;
+  white-space: nowrap;
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+
+.apple-pill.MuiChip-outlined,
+.apple-pill.MuiChip-filled {
+  border: 0 !important;
+  background: #eef1f5 !important;
+  box-shadow: none !important;
+}
+
+.apple-pill .MuiChip-label {
+  padding-left: 0.9rem !important;
+  padding-right: 0.9rem !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+
+.apple-blue-link {
+  color: var(--rf-apple-blue);
+  font-weight: 600;
+  transition:
+    color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    opacity var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
+}
+
+.apple-blue-link:hover {
+  color: var(--rf-apple-blue-hover);
+}
+
+.apple-page .MuiButton-root {
+  border-radius: 999px !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+  font-size: var(--rf-type-button-sm) !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+  transform: scale3d(1, 1, 1);
+  transform-origin: center center;
+  transition:
+    background-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    border-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    opacity var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    transform var(--rf-apple-hover-duration) var(--rf-apple-hover-ease) !important;
+}
+
+.apple-page .MuiButton-root:not(.Mui-disabled):hover {
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  );
+}
+
+.apple-page [class*="hover:scale"][class*="transition"],
+.apple-page [class*="group-hover:scale"][class*="transition"] {
+  transition-duration: var(--rf-apple-hover-duration) !important;
+  transition-timing-function: var(--rf-apple-hover-ease) !important;
+}
+
+.apple-page [class*="hover:bg"],
+.apple-page [class*="hover:text"],
+.apple-page [class*="hover:border"],
+.apple-page [class*="hover:shadow"],
+.apple-page [class*="hover:opacity"],
+.apple-page [class*="hover:underline"] {
+  transition-property:
+    background-color,
+    border-color,
+    color,
+    box-shadow,
+    text-decoration-color,
+    opacity,
+    transform !important;
+  transition-duration: var(--rf-apple-hover-duration) !important;
+  transition-timing-function: var(--rf-apple-hover-ease) !important;
+}
+
+.apple-page [class*="hover:scale"]:hover {
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  ) !important;
+}
+
+.apple-page .group:hover [class*="group-hover:scale"] {
+  transform: scale(var(--rf-apple-hover-media-scale)) !important;
+}
+
+.apple-page .MuiButton-contained:not(.Mui-disabled) {
+  background-color: var(--rf-apple-blue) !important;
+  color: var(--white) !important;
+}
+
+.apple-page .MuiButton-contained,
+.apple-page .MuiButton-outlined {
+  min-height: 46px !important;
+  padding-top: 0.7rem !important;
+  padding-bottom: 0.7rem !important;
+}
+
+.apple-page .MuiButton-contained:not(.Mui-disabled):hover {
+  background-color: var(--rf-apple-blue-hover) !important;
+}
+
+.apple-page .MuiButton-contained.Mui-disabled {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: rgba(0, 0, 0, 0.32) !important;
+}
+
+.apple-page .MuiButton-outlined {
+  border-color: var(--rf-apple-border-strong) !important;
+  color: var(--rf-apple-ink) !important;
+  background-color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.apple-page .MuiButton-outlined:hover {
+  border-color: rgba(0, 0, 0, 0.28) !important;
+  background-color: var(--white) !important;
+}
+
+.apple-page .MuiCard-root {
+  border-radius: var(--rf-apple-card-radius) !important;
+}
+
+.apple-page .MuiIconButton-root,
+.apple-page .MuiChip-root {
+  transition:
+    background-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    border-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    transform var(--rf-apple-hover-duration) var(--rf-apple-hover-ease) !important;
+}
+
+.apple-page .MuiIconButton-root:not(.Mui-disabled):hover,
+.apple-page .MuiChip-clickable:not(.Mui-disabled):hover {
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  );
+}
+
+.apple-page .MuiCard-root:not(.apple-card) {
+  border-color: var(--rf-apple-border) !important;
+  background-color: var(--rf-apple-surface) !important;
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+}
+
+.apple-page .MuiPaper-root {
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+}
+
+.apple-page .MuiPaper-root.MuiAppBar-root,
+.apple-page .MuiPaper-root.MuiDrawer-paper,
+.apple-page .MuiPaper-root.MuiMenu-paper,
+.apple-page .MuiPaper-root.MuiDialog-paper,
+.apple-page .MuiPaper-root.MuiSnackbarContent-root {
+  box-shadow: initial !important;
+}
+
+.apple-page .MuiAppBar-root {
+  z-index: 1320 !important;
+}
+
+.rentflow-select-menu-paper {
+  margin-top: 8px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+}
+
+.apple-page [class*="rounded-[24px]"][class*="bg-white"],
+.apple-page [class*="rounded-[26px]"][class*="bg-white"],
+.apple-page [class*="rounded-[30px]"][class*="bg-white"],
+.apple-page [class*="rounded-[34px]"][class*="bg-white"],
+.apple-page [class*="rounded-[24px]"][class*="bg-[var(--rf-apple-surface-soft)]"],
+.apple-page [class*="rounded-[26px]"][class*="bg-[var(--rf-apple-surface-soft)]"],
+.apple-page [class*="rounded-[30px]"][class*="bg-[var(--rf-apple-surface-soft)]"],
+.apple-page [class*="rounded-[34px]"][class*="bg-[var(--rf-apple-surface-soft)]"] {
+  box-shadow: var(--rf-apple-shadow-soft);
+}
+
+.apple-page .MuiChip-root {
+  border-radius: 999px !important;
+  font-weight: 650 !important;
+  max-width: 100%;
+}
+
+.apple-page .MuiOutlinedInput-root {
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.78);
+  font-size: var(--rf-type-body);
+  transition:
+    background-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
+}
+
+.apple-page .MuiOutlinedInput-notchedOutline {
+  border-color: var(--rf-apple-border) !important;
+  transition:
+    border-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
+}
+
+.apple-page .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--rf-apple-border-strong) !important;
+}
+
+.apple-page .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--rf-apple-blue) !important;
+  border-width: 1.5px !important;
+}
+
+.apple-page .MuiSkeleton-root {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.apple-page .MuiSkeleton-wave::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  ) !important;
+}
+
+@media (min-width: 768px) {
+  .apple-display-title {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --rf-apple-card-radius: 28px;
+    --rf-apple-card-radius-sm: 22px;
+    --rf-apple-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03),
+      0 8px 18px rgba(0, 0, 0, 0.06);
+    --rf-apple-shadow-soft: 0 0 0 1px rgba(0, 0, 0, 0.028),
+      0 6px 16px rgba(0, 0, 0, 0.055);
+  }
+
+  .apple-page .MuiContainer-root {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .apple-section {
+    padding-top: 40px;
+    padding-bottom: 56px;
+  }
+
+  .apple-section-intro {
+    max-width: 26rem;
+    gap: 0.85rem;
+  }
+
+  .apple-shelf {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    margin-inline: -0.5rem;
+    padding: 0.45rem 0.5rem 1rem;
+    scroll-padding-inline: 0.5rem;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .apple-shelf > * {
+    flex: 0 0 min(84vw, 21rem);
+    scroll-snap-align: start;
+  }
+
+  .apple-shelf-wide > * {
+    flex-basis: min(90vw, 26rem);
+  }
+
+  .apple-shelf-compact > * {
+    flex-basis: min(72vw, 17rem);
+  }
+
+  .apple-heading {
+    letter-spacing: -0.05em !important;
+    text-wrap: balance;
+  }
+
+  .apple-subtitle {
+    text-wrap: balance;
+  }
+
+  .apple-nav-link {
+    font-size: 0.92rem !important;
+  }
+
+  .apple-page .MuiButton-root {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apple-card,
+  .apple-card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+

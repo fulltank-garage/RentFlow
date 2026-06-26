@@ -25,7 +25,7 @@ const CHAT_FLOW_STEPS: Array<{ key: BookingFlowStepKey; label: string }> = [
 const CURRENT_COLOR = "var(--rf-booking-step-current)";
 const COMPLETE_COLOR = "var(--rf-booking-step-complete)";
 const PENDING_BORDER = "#ececec";
-const PENDING_TEXT = "#111827";
+const PENDING_TEXT = "var(--rf-ink)";
 
 function buildTrackColumns({
   stepCount,

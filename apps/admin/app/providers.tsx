@@ -5,15 +5,21 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 
+const muiColors = {
+  primaryNavy: "#011027",
+  white: "#fefefe",
+  softWhite: "#f9fafb",
+};
+
 const theme = createTheme({
   palette: {
     mode: "light",
     background: {
-      default: "#f8fafc",
-      paper: "#ffffff",
+      default: muiColors.softWhite,
+      paper: muiColors.white,
     },
     primary: {
-      main: "#0f172a",
+      main: muiColors.primaryNavy,
     },
   },
   shape: {
@@ -60,7 +66,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: "#f8fafc",
+          backgroundColor: muiColors.softWhite,
           fontFamily:
             "var(--font-english), var(--font-thai), ui-sans-serif, system-ui, sans-serif",
         },
