@@ -20,7 +20,7 @@ export default function CarDetailHero({ image, name, isAvailable = true, status 
       <Box className="apple-card relative overflow-hidden">
         <StableImage
           className="aspect-[16/10] min-h-[260px]"
-          src={image || "/RentFlow.png"}
+          src={image || "/RentFlowCar.png"}
           alt={name}
           priority
           sizes="(min-width: 1200px) 58vw, 100vw"

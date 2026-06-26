@@ -124,7 +124,7 @@ export default function AdminDashboardPage() {
       <Box className="admin-page-header">
         <Typography className="admin-page-title">ภาพรวมระบบ</Typography>
         <Typography className="admin-page-subtitle">
-          ควบคุม RentFlow ทุก tenant ในที่เดียว ตรวจสอบร้านใหม่ โดเมน รายได้
+          ควบคุม RentFlowCar ทุก tenant ในที่เดียว ตรวจสอบร้านใหม่ โดเมน รายได้
           และสถานะการใช้งานของแต่ละร้านจากข้อมูลล่าสุด
         </Typography>
       </Box>

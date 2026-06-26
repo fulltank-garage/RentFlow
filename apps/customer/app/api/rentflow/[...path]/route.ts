@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRentFlowApiBaseUrl } from "@/src/lib/runtime-api-url";
+import { getRentFlowCarApiBaseUrl } from "@/src/lib/runtime-api-url";
 
 type RouteContext = {
   params: Promise<{ path?: string[] }>;
@@ -43,9 +43,9 @@ function appendSetCookie(response: NextResponse, upstream: Response) {
   });
 }
 
-async function proxyRentFlowApi(request: NextRequest, context: RouteContext) {
+async function proxyRentFlowCarApi(request: NextRequest, context: RouteContext) {
   const { path = [] } = await context.params;
-  const apiBaseUrl = getRentFlowApiBaseUrl();
+  const apiBaseUrl = getRentFlowCarApiBaseUrl();
   const targetUrl = new URL(path.join("/"), `${apiBaseUrl}/`);
   targetUrl.search = request.nextUrl.search;
 
@@ -82,25 +82,25 @@ async function proxyRentFlowApi(request: NextRequest, context: RouteContext) {
 }
 
 export async function GET(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowApi(request, context);
+  return proxyRentFlowCarApi(request, context);
 }
 
 export async function HEAD(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowApi(request, context);
+  return proxyRentFlowCarApi(request, context);
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowApi(request, context);
+  return proxyRentFlowCarApi(request, context);
 }
 
 export async function PUT(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowApi(request, context);
+  return proxyRentFlowCarApi(request, context);
 }
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowApi(request, context);
+  return proxyRentFlowCarApi(request, context);
 }
 
 export async function DELETE(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowApi(request, context);
+  return proxyRentFlowCarApi(request, context);
 }

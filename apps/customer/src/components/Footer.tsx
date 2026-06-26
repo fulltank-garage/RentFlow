@@ -5,12 +5,12 @@ import Link from "next/link";
 import { Box, Container, Typography, Stack, Divider } from "@mui/material";
 
 import { NAV } from "@/src/constants/navigation";
-import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { tenantApi } from "@/src/services/tenant/tenant.service";
 import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
 const BRAND = {
-  name: "RentFlow",
+  name: "RentFlowCar",
   tagline:
     "ระบบเช่ารถออนไลน์ จองง่าย ราคารวมชัดเจน ไม่มีค่าใช้จ่ายแอบแฝง พร้อมบริการช่วยเหลือ 24/7",
 };
@@ -61,7 +61,7 @@ export default function Footer({
   initialTenantProfile = null,
 }: FooterProps) {
   const year = new Date().getFullYear();
-  const siteMode = useRentFlowSiteMode(initialHost);
+  const siteMode = useRentFlowCarSiteMode(initialHost);
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(initialTenantProfile);
 
@@ -96,7 +96,7 @@ export default function Footer({
       ? tenantProfile.logoUrl
       : siteMode === "storefront"
         ? ""
-        : "/RentFlow.png";
+        : "/RentFlowCar.png";
   const brandTagline =
     siteMode === "storefront" && tenantProfile?.shopName
       ? `จองรถกับ ${tenantProfile.shopName} ได้ง่าย พร้อมดูข้อมูลรถและสาขาของร้านในที่เดียว`
@@ -110,7 +110,7 @@ export default function Footer({
         : "ติดต่อ";
   const contactText =
     siteMode === "marketplace"
-      ? "ถ้าสนใจเช่าแพลตฟอร์มให้บริการเช่ารถยนต์ออนไลน์ สามารถติดต่อทีม RentFlow ได้ที่นี่"
+      ? "ถ้าสนใจเช่าแพลตฟอร์มให้บริการเช่ารถยนต์ออนไลน์ สามารถติดต่อทีม RentFlowCar ได้ที่นี่"
       : "ติดต่อร้านเพื่อสอบถามข้อมูลรถ สาขา และเงื่อนไขการเช่าเพิ่มเติม";
   const contactPhone =
     siteMode === "storefront" ? tenantProfile?.contactPhone || "" : CONTACT.phone;

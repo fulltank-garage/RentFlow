@@ -1,11 +1,11 @@
 import type { ApiResponse } from "../types/types";
 
-export class RentFlowApiError extends Error {
+export class RentFlowCarApiError extends Error {
   status: number;
 
   constructor(message: string, status: number) {
     super(message);
-    this.name = "RentFlowApiError";
+    this.name = "RentFlowCarApiError";
     this.status = status;
   }
 }
@@ -71,7 +71,7 @@ export async function requestPartner<T>(
   if (!isFormData && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-  headers.set("X-RentFlow-App", "partner");
+  headers.set("X-RentFlowCar-App", "partner");
 
   const response = await fetch(`${getPartnerApiBaseUrl()}${path}`, {
     ...init,
@@ -84,7 +84,7 @@ export async function requestPartner<T>(
     | null;
 
   if (!response.ok) {
-    throw new RentFlowApiError(
+    throw new RentFlowCarApiError(
       payload?.message || "ไม่สามารถเชื่อมต่อ API ได้",
       response.status
     );

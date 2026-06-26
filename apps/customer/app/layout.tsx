@@ -8,8 +8,8 @@ import Footer from "@/src/components/Footer";
 import CookieBanner from "@/src/components/common/CookieBanner";
 import FloatingAiChat from "@/src/components/ai/FloatingAiChat";
 import {
-  getInitialRentFlowTenantProfile,
-  getRentFlowRequestHost,
+  getInitialRentFlowCarTenantProfile,
+  getRentFlowCarRequestHost,
 } from "@/src/lib/server-tenant";
 
 const notoThai = Noto_Sans_Thai({
@@ -27,17 +27,17 @@ const roboto = Roboto({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const host = await getRentFlowRequestHost();
-  const tenant = await getInitialRentFlowTenantProfile(host);
+  const host = await getRentFlowCarRequestHost();
+  const tenant = await getInitialRentFlowCarTenantProfile(host);
   const title = tenant?.shopName
     ? `${tenant.shopName} - เช่ารถง่าย แค่ปลายนิ้ว`
-    : "RentFlow - เช่ารถง่าย แค่ปลายนิ้ว";
+    : "RentFlowCar - เช่ารถง่าย แค่ปลายนิ้ว";
   const icon = "/tenant-icon";
 
   return {
     title,
     description: tenant?.shopName
-      ? `เช่ารถกับ ${tenant.shopName} ผ่าน RentFlow`
+      ? `เช่ารถกับ ${tenant.shopName} ผ่าน RentFlowCar`
       : "เช่ารถง่าย แค่ปลายนิ้ว",
     icons: {
       icon,
@@ -52,8 +52,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const host = await getRentFlowRequestHost();
-  const initialTenantProfile = await getInitialRentFlowTenantProfile(host);
+  const host = await getRentFlowCarRequestHost();
+  const initialTenantProfile = await getInitialRentFlowCarTenantProfile(host);
 
   return (
     <html

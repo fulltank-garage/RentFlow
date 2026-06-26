@@ -10,33 +10,33 @@ import (
 	"rentflow-api/services"
 )
 
-func RentFlowRealtimeSocket(c *gin.Context) {
-	app := services.RentFlowNormalizeAppName(firstNonBlank(
+func RentFlowCarRealtimeSocket(c *gin.Context) {
+	app := services.RentFlowCarNormalizeAppName(firstNonBlank(
 		c.Query("app"),
-		c.GetHeader(services.RentFlowAppHeaderName),
+		c.GetHeader(services.RentFlowCarAppHeaderName),
 	))
 
-	filter := services.RentFlowRealtimeClientFilter{
+	filter := services.RentFlowCarRealtimeClientFilter{
 		App:         app,
 		Marketplace: rentFlowIsMarketplaceRequest(c),
 	}
 
-	if user, ok := middleware.CurrentRentFlowUser(c); ok {
+	if user, ok := middleware.CurrentRentFlowCarUser(c); ok {
 		filter.UserID = user.ID
 		filter.UserEmail = user.Email
 	}
 
 	switch app {
-	case services.RentFlowAppAdmin:
-		if _, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+	case services.RentFlowCarAppAdmin:
+		if _, ok := middleware.CurrentRentFlowCarPlatformAdmin(c); ok {
 			break
 		}
-		user, ok := middleware.CurrentRentFlowUser(c)
-		if !ok || !services.IsRentFlowPlatformAdmin(user) {
+		user, ok := middleware.CurrentRentFlowCarUser(c)
+		if !ok || !services.IsRentFlowCarPlatformAdmin(user) {
 			rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบผู้ดูแลก่อน")
 			return
 		}
-	case services.RentFlowAppPartner:
+	case services.RentFlowCarAppPartner:
 		tenant, err := rentFlowCurrentUserTenant(c)
 		if err != nil {
 			rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบ Partner ก่อน")
@@ -49,7 +49,7 @@ func RentFlowRealtimeSocket(c *gin.Context) {
 		}
 	}
 
-	if err := services.RentFlowServeRealtime(c.Writer, c.Request, filter); err != nil {
+	if err := services.RentFlowCarServeRealtime(c.Writer, c.Request, filter); err != nil {
 		return
 	}
 }
@@ -63,12 +63,12 @@ func firstNonBlank(values ...string) string {
 	return ""
 }
 
-func rentFlowPublishBookingRealtime(eventType string, booking models.RentFlowBooking) {
+func rentFlowPublishBookingRealtime(eventType string, booking models.RentFlowCarBooking) {
 	userID := ""
 	if booking.UserID != nil {
 		userID = *booking.UserID
 	}
-	services.RentFlowPublishRealtime(services.RentFlowRealtimeEvent{
+	services.RentFlowCarPublishRealtime(services.RentFlowCarRealtimeEvent{
 		Type:      eventType,
 		TenantID:  booking.TenantID,
 		UserID:    userID,
@@ -81,11 +81,11 @@ func rentFlowPublishBookingRealtime(eventType string, booking models.RentFlowBoo
 			"status":      booking.Status,
 		},
 	})
-	rentFlowPublishCarRealtime(booking.TenantID, booking.CarID, services.RentFlowRealtimeEventAvailabilityChange)
+	rentFlowPublishCarRealtime(booking.TenantID, booking.CarID, services.RentFlowCarRealtimeEventAvailabilityChange)
 }
 
-func rentFlowPublishPaymentRealtime(eventType string, payment models.RentFlowPayment) {
-	services.RentFlowPublishRealtime(services.RentFlowRealtimeEvent{
+func rentFlowPublishPaymentRealtime(eventType string, payment models.RentFlowCarPayment) {
+	services.RentFlowCarPublishRealtime(services.RentFlowCarRealtimeEvent{
 		Type:     eventType,
 		TenantID: payment.TenantID,
 		EntityID: payment.ID,
@@ -100,9 +100,9 @@ func rentFlowPublishPaymentRealtime(eventType string, payment models.RentFlowPay
 
 func rentFlowPublishCarRealtime(tenantID, carID, eventType string) {
 	if strings.TrimSpace(eventType) == "" {
-		eventType = services.RentFlowRealtimeEventCarChanged
+		eventType = services.RentFlowCarRealtimeEventCarChanged
 	}
-	services.RentFlowPublishRealtime(services.RentFlowRealtimeEvent{
+	services.RentFlowCarPublishRealtime(services.RentFlowCarRealtimeEvent{
 		Type:     eventType,
 		TenantID: tenantID,
 		EntityID: carID,
@@ -112,15 +112,15 @@ func rentFlowPublishCarRealtime(tenantID, carID, eventType string) {
 	})
 }
 
-func rentFlowPublishCarStatusRealtime(tenantID string, car models.RentFlowCar) {
+func rentFlowPublishCarStatusRealtime(tenantID string, car models.RentFlowCarCar) {
 	unitCount := rentFlowCarUnitCount(car)
 	availableUnits := unitCount
 	if strings.TrimSpace(strings.ToLower(car.Status)) != "available" || !car.IsAvailable {
 		availableUnits = 0
 	}
 
-	services.RentFlowPublishRealtime(services.RentFlowRealtimeEvent{
-		Type:     services.RentFlowRealtimeEventCarStatusChanged,
+	services.RentFlowCarPublishRealtime(services.RentFlowCarRealtimeEvent{
+		Type:     services.RentFlowCarRealtimeEventCarStatusChanged,
 		TenantID: tenantID,
 		EntityID: car.ID,
 		Data: gin.H{
@@ -135,7 +135,7 @@ func rentFlowPublishCarStatusRealtime(tenantID string, car models.RentFlowCar) {
 }
 
 func rentFlowPublishSupportRealtime(tenantID, ticketID, eventType string) {
-	services.RentFlowPublishRealtime(services.RentFlowRealtimeEvent{
+	services.RentFlowCarPublishRealtime(services.RentFlowCarRealtimeEvent{
 		Type:     eventType,
 		TenantID: tenantID,
 		EntityID: ticketID,
@@ -146,7 +146,7 @@ func rentFlowPublishSupportRealtime(tenantID, ticketID, eventType string) {
 }
 
 func rentFlowPublishEntityRealtime(tenantID, entityID, eventType, entity string) {
-	services.RentFlowPublishRealtime(services.RentFlowRealtimeEvent{
+	services.RentFlowCarPublishRealtime(services.RentFlowCarRealtimeEvent{
 		Type:     eventType,
 		TenantID: tenantID,
 		EntityID: entityID,

@@ -50,37 +50,37 @@ type rentFlowPartnerBranchPayload struct {
 	IsActive        *bool   `json:"isActive"`
 }
 
-func RentFlowPartnerDashboard(c *gin.Context) {
+func RentFlowCarPartnerDashboard(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	var cars []models.RentFlowCar
+	var cars []models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&cars).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลรถได้")
 		return
 	}
 
-	var branches []models.RentFlowBranch
+	var branches []models.RentFlowCarBranch
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("display_order ASC, name ASC").Find(&branches).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลสาขาได้")
 		return
 	}
 
-	var bookings []models.RentFlowBooking
+	var bookings []models.RentFlowCarBooking
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Limit(100).Find(&bookings).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลการจองได้")
 		return
 	}
 
-	var reviews []models.RentFlowReview
+	var reviews []models.RentFlowCarReview
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Limit(20).Find(&reviews).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลรีวิวได้")
 		return
 	}
 
-	var payments []models.RentFlowPayment
+	var payments []models.RentFlowCarPayment
 	if err := config.DB.Where("tenant_id = ? AND status = ?", tenant.ID, "paid").Find(&payments).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลรายได้ได้")
 		return
@@ -89,13 +89,13 @@ func RentFlowPartnerDashboard(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลแดชบอร์ดสำเร็จ", rentFlowBuildPartnerDashboard(tenant, cars, branches, bookings, payments, reviews))
 }
 
-func RentFlowPartnerGetCars(c *gin.Context) {
+func RentFlowCarPartnerGetCars(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	var cars []models.RentFlowCar
+	var cars []models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&cars).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลรถได้")
 		return
@@ -118,7 +118,7 @@ func RentFlowPartnerGetCars(c *gin.Context) {
 	})
 }
 
-func RentFlowPartnerCreateCar(c *gin.Context) {
+func RentFlowCarPartnerCreateCar(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -139,19 +139,19 @@ func RentFlowPartnerCreateCar(c *gin.Context) {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถเพิ่มรถได้")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
-	rentFlowPublishCarRealtime(tenant.ID, car.ID, services.RentFlowRealtimeEventCarChanged)
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
+	rentFlowPublishCarRealtime(tenant.ID, car.ID, services.RentFlowCarRealtimeEventCarChanged)
 
 	rentFlowSuccess(c, http.StatusCreated, "เพิ่มรถสำเร็จ", rentFlowPartnerCarResponse(tenant, car, nil))
 }
 
-func RentFlowPartnerUpdateCar(c *gin.Context) {
+func RentFlowCarPartnerUpdateCar(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	var existing models.RentFlowCar
+	var existing models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("carId")).First(&existing).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบรถที่ต้องการ")
@@ -190,11 +190,11 @@ func RentFlowPartnerUpdateCar(c *gin.Context) {
 		"updated_at":    time.Now(),
 	}
 
-	if err := config.DB.Model(&models.RentFlowCar{}).Where("tenant_id = ? AND id = ?", tenant.ID, existing.ID).Updates(updates).Error; err != nil {
+	if err := config.DB.Model(&models.RentFlowCarCar{}).Where("tenant_id = ? AND id = ?", tenant.ID, existing.ID).Updates(updates).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถบันทึกข้อมูลรถได้")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
 
 	existing.Name = updated.Name
 	existing.Brand = updated.Brand
@@ -212,15 +212,15 @@ func RentFlowPartnerUpdateCar(c *gin.Context) {
 	existing.Status = updated.Status
 	existing.IsAvailable = updated.IsAvailable
 
-	imageURLs, _ := rentFlowCarImageURLs(c, tenant, []models.RentFlowCar{existing})
-	rentFlowPublishCarRealtime(tenant.ID, existing.ID, services.RentFlowRealtimeEventCarChanged)
+	imageURLs, _ := rentFlowCarImageURLs(c, tenant, []models.RentFlowCarCar{existing})
+	rentFlowPublishCarRealtime(tenant.ID, existing.ID, services.RentFlowCarRealtimeEventCarChanged)
 	if statusChanged {
 		rentFlowPublishCarStatusRealtime(tenant.ID, existing)
 	}
 	rentFlowSuccess(c, http.StatusOK, "บันทึกข้อมูลรถสำเร็จ", rentFlowPartnerCarResponse(tenant, existing, imageURLs[existing.ID]))
 }
 
-func RentFlowPartnerDeleteCar(c *gin.Context) {
+func RentFlowCarPartnerDeleteCar(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -233,12 +233,12 @@ func RentFlowPartnerDeleteCar(c *gin.Context) {
 		return
 	}
 
-	if err := tx.Where("tenant_id = ? AND car_id = ?", tenant.ID, carID).Delete(&models.RentFlowCarImage{}).Error; err != nil {
+	if err := tx.Where("tenant_id = ? AND car_id = ?", tenant.ID, carID).Delete(&models.RentFlowCarCarImage{}).Error; err != nil {
 		tx.Rollback()
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบรูปภาพรถได้")
 		return
 	}
-	result := tx.Where("tenant_id = ? AND id = ?", tenant.ID, carID).Delete(&models.RentFlowCar{})
+	result := tx.Where("tenant_id = ? AND id = ?", tenant.ID, carID).Delete(&models.RentFlowCarCar{})
 	if result.Error != nil {
 		tx.Rollback()
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบรถได้")
@@ -254,12 +254,12 @@ func RentFlowPartnerDeleteCar(c *gin.Context) {
 		return
 	}
 
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
-	rentFlowPublishCarRealtime(tenant.ID, carID, services.RentFlowRealtimeEventCarChanged)
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
+	rentFlowPublishCarRealtime(tenant.ID, carID, services.RentFlowCarRealtimeEventCarChanged)
 	rentFlowSuccess(c, http.StatusOK, "ลบรถสำเร็จ", nil)
 }
 
-func RentFlowPartnerDeleteCarImage(c *gin.Context) {
+func RentFlowCarPartnerDeleteCarImage(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -267,7 +267,7 @@ func RentFlowPartnerDeleteCarImage(c *gin.Context) {
 
 	result := config.DB.
 		Where("tenant_id = ? AND car_id = ? AND id = ?", tenant.ID, c.Param("carId"), c.Param("imageId")).
-		Delete(&models.RentFlowCarImage{})
+		Delete(&models.RentFlowCarCarImage{})
 	if result.Error != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบรูปภาพรถได้")
 		return
@@ -277,12 +277,12 @@ func RentFlowPartnerDeleteCarImage(c *gin.Context) {
 		return
 	}
 
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
-	rentFlowPublishCarRealtime(tenant.ID, c.Param("carId"), services.RentFlowRealtimeEventCarChanged)
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
+	rentFlowPublishCarRealtime(tenant.ID, c.Param("carId"), services.RentFlowCarRealtimeEventCarChanged)
 	rentFlowSuccess(c, http.StatusOK, "ลบรูปภาพรถสำเร็จ", nil)
 }
 
-func RentFlowPartnerReorderCarImages(c *gin.Context) {
+func RentFlowCarPartnerReorderCarImages(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -302,7 +302,7 @@ func RentFlowPartnerReorderCarImages(c *gin.Context) {
 		return
 	}
 	for index, imageID := range payload.ImageIDs {
-		if err := tx.Model(&models.RentFlowCarImage{}).
+		if err := tx.Model(&models.RentFlowCarCarImage{}).
 			Where("tenant_id = ? AND car_id = ? AND id = ?", tenant.ID, c.Param("carId"), imageID).
 			Updates(map[string]interface{}{"sort_order": index, "updated_at": time.Now()}).Error; err != nil {
 			tx.Rollback()
@@ -315,19 +315,19 @@ func RentFlowPartnerReorderCarImages(c *gin.Context) {
 		return
 	}
 
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
 	rentFlowAudit(c, tenant.ID, "car_image.reorder", "car", c.Param("carId"), strings.Join(payload.ImageIDs, ","))
-	rentFlowPublishCarRealtime(tenant.ID, c.Param("carId"), services.RentFlowRealtimeEventCarChanged)
+	rentFlowPublishCarRealtime(tenant.ID, c.Param("carId"), services.RentFlowCarRealtimeEventCarChanged)
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตลำดับรูปภาพสำเร็จ", nil)
 }
 
-func RentFlowPartnerGetBranches(c *gin.Context) {
+func RentFlowCarPartnerGetBranches(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	var branches []models.RentFlowBranch
+	var branches []models.RentFlowCarBranch
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("display_order ASC, name ASC").Find(&branches).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลสาขาได้")
 		return
@@ -339,7 +339,7 @@ func RentFlowPartnerGetBranches(c *gin.Context) {
 	})
 }
 
-func RentFlowPartnerCreateBranch(c *gin.Context) {
+func RentFlowCarPartnerCreateBranch(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -360,19 +360,19 @@ func RentFlowPartnerCreateBranch(c *gin.Context) {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถเพิ่มสาขาได้")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowBranchesCachePrefix())
-	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowRealtimeEventBranchChanged)
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarBranchesCachePrefix())
+	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowCarRealtimeEventBranchChanged)
 
 	rentFlowSuccess(c, http.StatusCreated, "เพิ่มสาขาสำเร็จ", branch)
 }
 
-func RentFlowPartnerUpdateBranch(c *gin.Context) {
+func RentFlowCarPartnerUpdateBranch(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	var existing models.RentFlowBranch
+	var existing models.RentFlowCarBranch
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("branchId")).First(&existing).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบสาขาที่ต้องการ")
@@ -411,24 +411,24 @@ func RentFlowPartnerUpdateBranch(c *gin.Context) {
 		"updated_at":       time.Now(),
 	}
 
-	if err := config.DB.Model(&models.RentFlowBranch{}).Where("tenant_id = ? AND id = ?", tenant.ID, existing.ID).Updates(updates).Error; err != nil {
+	if err := config.DB.Model(&models.RentFlowCarBranch{}).Where("tenant_id = ? AND id = ?", tenant.ID, existing.ID).Updates(updates).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถบันทึกข้อมูลสาขาได้")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowBranchesCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarBranchesCachePrefix())
 
 	updated.CreatedAt = existing.CreatedAt
-	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowRealtimeEventBranchChanged)
+	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowCarRealtimeEventBranchChanged)
 	rentFlowSuccess(c, http.StatusOK, "บันทึกข้อมูลสาขาสำเร็จ", updated)
 }
 
-func RentFlowPartnerDeleteBranch(c *gin.Context) {
+func RentFlowCarPartnerDeleteBranch(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	result := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("branchId")).Delete(&models.RentFlowBranch{})
+	result := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("branchId")).Delete(&models.RentFlowCarBranch{})
 	if result.Error != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบสาขาได้")
 		return
@@ -437,13 +437,13 @@ func RentFlowPartnerDeleteBranch(c *gin.Context) {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบสาขาที่ต้องการ")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowBranchesCachePrefix())
-	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowRealtimeEventBranchChanged)
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarBranchesCachePrefix())
+	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowCarRealtimeEventBranchChanged)
 
 	rentFlowSuccess(c, http.StatusOK, "ลบสาขาสำเร็จ", nil)
 }
 
-func rentFlowRequireOwnerTenant(c *gin.Context) (*models.RentFlowTenant, bool) {
+func rentFlowRequireOwnerTenant(c *gin.Context) (*models.RentFlowCarTenant, bool) {
 	tenant, err := rentFlowCurrentUserTenant(c)
 	if err == nil {
 		if permission := rentFlowPartnerPermissionForRequest(c); permission != "" && !rentFlowPartnerUserCan(c, tenant, permission) {
@@ -506,8 +506,8 @@ func rentFlowPartnerPermissionForRequest(c *gin.Context) string {
 	}
 }
 
-func rentFlowPartnerUserCan(c *gin.Context, tenant *models.RentFlowTenant, permission string) bool {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func rentFlowPartnerUserCan(c *gin.Context, tenant *models.RentFlowCarTenant, permission string) bool {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok || tenant == nil {
 		return false
 	}
@@ -518,7 +518,7 @@ func rentFlowPartnerUserCan(c *gin.Context, tenant *models.RentFlowTenant, permi
 		return true
 	}
 
-	var member models.RentFlowTenantMember
+	var member models.RentFlowCarTenantMember
 	if err := config.DB.Where(
 		"tenant_id = ? AND status = ? AND (user_id = ? OR LOWER(email) = ?)",
 		tenant.ID,
@@ -571,7 +571,7 @@ func rentFlowPermissionSetAllows(allowed map[string]bool, permission string) boo
 	return false
 }
 
-func rentFlowBuildPartnerCarFromPayload(c *gin.Context, tenantID, carID string, payload rentFlowPartnerCarPayload) (models.RentFlowCar, bool) {
+func rentFlowBuildPartnerCarFromPayload(c *gin.Context, tenantID, carID string, payload rentFlowPartnerCarPayload) (models.RentFlowCarCar, bool) {
 	name := strings.TrimSpace(payload.Name)
 	brand := strings.TrimSpace(payload.Brand)
 	model := strings.TrimSpace(payload.Model)
@@ -587,7 +587,7 @@ func rentFlowBuildPartnerCarFromPayload(c *gin.Context, tenantID, carID string, 
 
 	if name == "" || brand == "" || model == "" || payload.Year < 1980 || carType == "" || payload.Seats < 1 || transmission == "" || fuel == "" || payload.PricePerDay < 0 {
 		rentFlowError(c, http.StatusBadRequest, "กรุณากรอกข้อมูลรถให้ครบถ้วน")
-		return models.RentFlowCar{}, false
+		return models.RentFlowCarCar{}, false
 	}
 	if carID == "" {
 		carID = services.NewID("car")
@@ -603,7 +603,7 @@ func rentFlowBuildPartnerCarFromPayload(c *gin.Context, tenantID, carID string, 
 		locationID = "default"
 	}
 
-	return models.RentFlowCar{
+	return models.RentFlowCarCar{
 		ID:           carID,
 		TenantID:     tenantID,
 		Name:         name,
@@ -623,12 +623,12 @@ func rentFlowBuildPartnerCarFromPayload(c *gin.Context, tenantID, carID string, 
 	}, true
 }
 
-func rentFlowBuildPartnerBranchFromPayload(c *gin.Context, tenantID, branchID string, payload rentFlowPartnerBranchPayload) (models.RentFlowBranch, bool) {
+func rentFlowBuildPartnerBranchFromPayload(c *gin.Context, tenantID, branchID string, payload rentFlowPartnerBranchPayload) (models.RentFlowCarBranch, bool) {
 	name := strings.TrimSpace(payload.Name)
 	address := strings.TrimSpace(payload.Address)
 	if name == "" || address == "" {
 		rentFlowError(c, http.StatusBadRequest, "กรุณากรอกชื่อสาขาและที่อยู่")
-		return models.RentFlowBranch{}, false
+		return models.RentFlowCarBranch{}, false
 	}
 
 	pickupAvailable := true
@@ -641,7 +641,7 @@ func rentFlowBuildPartnerBranchFromPayload(c *gin.Context, tenantID, branchID st
 	}
 	if !pickupAvailable && !returnAvailable {
 		rentFlowError(c, http.StatusBadRequest, "อย่างน้อยต้องเปิดรับรถหรือคืนรถอย่างใดอย่างหนึ่ง")
-		return models.RentFlowBranch{}, false
+		return models.RentFlowCarBranch{}, false
 	}
 
 	isActive := true
@@ -669,7 +669,7 @@ func rentFlowBuildPartnerBranchFromPayload(c *gin.Context, tenantID, branchID st
 		displayOrder = 1
 	}
 
-	return models.RentFlowBranch{
+	return models.RentFlowCarBranch{
 		ID:              branchID,
 		TenantID:        tenantID,
 		Name:            name,
@@ -698,7 +698,7 @@ func rentFlowNormalizeCarStatus(status string) string {
 	}
 }
 
-func rentFlowPartnerCarResponse(tenant *models.RentFlowTenant, car models.RentFlowCar, images []string) gin.H {
+func rentFlowPartnerCarResponse(tenant *models.RentFlowCarTenant, car models.RentFlowCarCar, images []string) gin.H {
 	primaryImage := ""
 	if len(images) > 0 {
 		primaryImage = images[0]
@@ -747,7 +747,7 @@ func rentFlowPartnerCarResponse(tenant *models.RentFlowTenant, car models.RentFl
 	}
 }
 
-func rentFlowBuildPartnerDashboard(tenant *models.RentFlowTenant, cars []models.RentFlowCar, branches []models.RentFlowBranch, bookings []models.RentFlowBooking, payments []models.RentFlowPayment, reviews []models.RentFlowReview) gin.H {
+func rentFlowBuildPartnerDashboard(tenant *models.RentFlowCarTenant, cars []models.RentFlowCarCar, branches []models.RentFlowCarBranch, bookings []models.RentFlowCarBooking, payments []models.RentFlowCarPayment, reviews []models.RentFlowCarReview) gin.H {
 	carNameByID := make(map[string]string, len(cars))
 	fleetStatus := map[string]int{"available": 0, "rented": 0, "maintenance": 0, "hidden": 0}
 	for _, car := range cars {
@@ -862,7 +862,7 @@ func rentFlowBuildPartnerDashboard(tenant *models.RentFlowTenant, cars []models.
 	}
 }
 
-func rentFlowBuildWeeklySales(bookings []models.RentFlowBooking) []gin.H {
+func rentFlowBuildWeeklySales(bookings []models.RentFlowCarBooking) []gin.H {
 	now := time.Now()
 	rows := make([]gin.H, 0, 7)
 	indexByDay := map[string]int{}

@@ -14,7 +14,7 @@ type StableImageProps = {
   onLoadedChange?: (loaded: boolean) => void;
 };
 
-function isRentFlowApiImage(src: string) {
+function isRentFlowCarApiImage(src: string) {
   return (
     /^https?:\/\//i.test(src) ||
     src.startsWith("/api/rentflow-asset/") ||
@@ -56,7 +56,7 @@ export default function StableImage({
         alt={alt}
         fill
         priority={priority}
-        unoptimized={isRentFlowApiImage(src)}
+        unoptimized={isRentFlowCarApiImage(src)}
         sizes={sizes}
         className={`transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"} ${imageClassName}`}
         onLoad={() => setLoaded(true)}

@@ -32,42 +32,42 @@ func rentFlowError(c *gin.Context, status int, message string) {
 	})
 }
 
-func setRentFlowSessionCookie(c *gin.Context, token string) {
+func setRentFlowCarSessionCookie(c *gin.Context, token string) {
 	maxAge := int((7 * 24 * time.Hour).Seconds())
 	cookieName := rentFlowSessionCookieNameFromRequest(c)
 	rentFlowWriteCookie(c, cookieName, token, maxAge, true)
 
-	if cookieName != services.RentFlowLegacySessionCookieName {
-		rentFlowWriteCookie(c, services.RentFlowLegacySessionCookieName, "", -1, true)
+	if cookieName != services.RentFlowCarLegacySessionCookieName {
+		rentFlowWriteCookie(c, services.RentFlowCarLegacySessionCookieName, "", -1, true)
 	}
 }
 
-func clearRentFlowSessionCookie(c *gin.Context) {
+func clearRentFlowCarSessionCookie(c *gin.Context) {
 	rentFlowWriteCookie(c, rentFlowSessionCookieNameFromRequest(c), "", -1, true)
-	rentFlowWriteCookie(c, services.RentFlowLegacySessionCookieName, "", -1, true)
+	rentFlowWriteCookie(c, services.RentFlowCarLegacySessionCookieName, "", -1, true)
 }
 
 func rentFlowSessionCookieNameFromRequest(c *gin.Context) string {
-	return services.RentFlowSessionCookieNameForApp(rentFlowAppFromRequest(c))
+	return services.RentFlowCarSessionCookieNameForApp(rentFlowAppFromRequest(c))
 }
 
 func rentFlowAppFromRequest(c *gin.Context) string {
 	app := strings.TrimSpace(c.Query("app"))
 	if app == "" {
-		app = strings.TrimSpace(c.GetHeader(services.RentFlowAppHeaderName))
+		app = strings.TrimSpace(c.GetHeader(services.RentFlowCarAppHeaderName))
 	}
 	if app == "" {
 		path := c.Request.URL.Path
 		switch {
 		case strings.HasPrefix(path, "/platform"):
-			app = services.RentFlowAppAdmin
+			app = services.RentFlowCarAppAdmin
 		case strings.HasPrefix(path, "/partner"), path == "/tenants/me":
-			app = services.RentFlowAppPartner
+			app = services.RentFlowCarAppPartner
 		default:
-			app = services.RentFlowAppStorefront
+			app = services.RentFlowCarAppStorefront
 		}
 	}
-	return services.RentFlowNormalizeAppName(app)
+	return services.RentFlowCarNormalizeAppName(app)
 }
 
 func rentFlowSessionTokenFromRequest(c *gin.Context) string {

@@ -15,9 +15,9 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getRentFlowStorefrontHref } from "@/src/lib/tenant";
+import { getRentFlowCarStorefrontHref } from "@/src/lib/tenant";
 import { reviewsApi } from "@/src/services/reviews/reviews.service";
 import type { Review } from "@/src/services/reviews/reviews.types";
 
@@ -79,7 +79,7 @@ export default function ReviewsPage() {
     setReloadTick((current) => current + 1);
   }, []);
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: ["review.created", "tenant.updated"],
     onRefresh: refreshReviews,
     marketplace: true,
@@ -140,7 +140,7 @@ export default function ReviewsPage() {
           <Box className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((review) => {
               const shopHref = review.domainSlug
-                ? getRentFlowStorefrontHref(review.domainSlug)
+                ? getRentFlowCarStorefrontHref(review.domainSlug)
                 : "";
 
               return (
@@ -164,7 +164,7 @@ export default function ReviewsPage() {
                               {review.shopName}
                             </Box>
                           ) : (
-                            review.shopName || "RentFlow"
+                            review.shopName || "RentFlowCar"
                           )}
                           {review.createdAt ? ` • ${formatReviewDate(review.createdAt)}` : ""}
                         </Typography>

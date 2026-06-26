@@ -9,5 +9,5 @@ import (
 func SetupRoutes(r *gin.Engine) {
 	r.Use(middleware.CORSMiddleware())
 	r.Use(middleware.RateLimitFromEnv())
-	RegisterRentFlowRoutes(r)
+	RegisterRentFlowCarRoutes(r)
 }

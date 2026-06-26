@@ -96,7 +96,7 @@ function mapUserToProfileData(user: Customer): ProfileData {
     displayName: getProfileDisplayName(user),
     username: user.username || "",
     phone: user.phone || "",
-    provider: "RentFlow",
+    provider: "RentFlowCar",
     createdAt: formatDateTime(user.createdAt || ""),
     updatedAt: formatDateTime(user.updatedAt || ""),
   };
@@ -314,7 +314,7 @@ export default function ProfilePage() {
         displayName: getProfileDisplayName(res.data),
         username: res.data.username || draft.username,
         phone: res.data.phone || "",
-        provider: "RentFlow",
+        provider: "RentFlowCar",
         createdAt: profile?.createdAt || "-",
         updatedAt: formatDateTime(res.data.updatedAt || ""),
       };

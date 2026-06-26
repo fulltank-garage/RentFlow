@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import usePageReady from "@/src/hooks/usePageReady";
-import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
 import { navigateBookingFlow } from "@/src/lib/booking-flow-navigation";
 import { addonsApi } from "@/src/services/addons/addons.service";
@@ -39,7 +39,7 @@ export default function usePaymentPage() {
   const params = useSearchParams();
   const router = useRouter();
   const ready = usePageReady({ disableDuringFlowTransition: true });
-  const siteMode = useRentFlowSiteMode();
+  const siteMode = useRentFlowCarSiteMode();
 
   const bookingId = params.get("bookingId") || "BK-XXXX";
   const bookingRef = params.get("bookingRef") || "";
@@ -131,7 +131,7 @@ export default function usePaymentPage() {
     (!needSlip || !!slipFile) &&
     !loading;
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: [
       "booking.updated",
       "payment.updated",

@@ -54,7 +54,7 @@ export function BookingMobileCarCard({ car }: { car?: Car | null }) {
 
         <StableImage
           className="aspect-4/3 rounded-[18px] bg-[var(--rf-apple-surface-soft)]"
-          src={car.image || "/RentFlow.png"}
+          src={car.image || "/RentFlowCar.png"}
           alt={car.name}
           sizes="100vw"
           imageClassName="object-contain"
@@ -134,7 +134,7 @@ export default function BookingSummaryCard({
             <Box>
               <StableImage
                 className="aspect-4/3 rounded-[18px] sm:aspect-4/3 lg:h-[clamp(120px,20svh,220px)] lg:shrink-0 lg:aspect-auto"
-                src={car.image || "/RentFlow.png"}
+                src={car.image || "/RentFlowCar.png"}
                 alt={car.name}
                 sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
                 imageClassName="object-contain"

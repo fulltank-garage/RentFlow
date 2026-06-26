@@ -365,7 +365,7 @@ export default function BookingReceiptCard({
 
     ctx.fillStyle = "#ffffff";
     ctx.font = `700 26px ${fontFamily}`;
-    ctx.fillText("RentFlow", headerLeftX, 188);
+    ctx.fillText("RentFlowCar", headerLeftX, 188);
 
     ctx.font = `800 64px ${fontFamily}`;
     const titleLines = wrapCanvasText(
@@ -565,7 +565,7 @@ export default function BookingReceiptCard({
 
     ctx.fillStyle = "#166534";
     ctx.font = `700 22px ${fontFamily}`;
-    ctx.fillText("ขอบคุณที่ใช้บริการ RentFlow", innerX + 30, cursorY + 28);
+    ctx.fillText("ขอบคุณที่ใช้บริการ RentFlowCar", innerX + 30, cursorY + 28);
     ctx.fillStyle = "#64748b";
     ctx.font = `500 19px ${fontFamily}`;
     ctx.fillText(

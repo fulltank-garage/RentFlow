@@ -15,7 +15,7 @@ import (
 	"rentflow-api/services"
 )
 
-func RentFlowGetStorefrontPage(c *gin.Context) {
+func RentFlowCarGetStorefrontPage(c *gin.Context) {
 	scope := "tenant"
 	tenantID := ""
 	if rentFlowIsMarketplaceRequest(c) {
@@ -36,7 +36,7 @@ func RentFlowGetStorefrontPage(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงหน้าร้านสำเร็จ", rentFlowStorefrontPageResponse(item))
 }
 
-func RentFlowPartnerGetStorefrontPage(c *gin.Context) {
+func RentFlowCarPartnerGetStorefrontPage(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -49,7 +49,7 @@ func RentFlowPartnerGetStorefrontPage(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงหน้าร้านสำเร็จ", rentFlowStorefrontPageResponse(item))
 }
 
-func RentFlowPartnerUpdateStorefrontPage(c *gin.Context) {
+func RentFlowCarPartnerUpdateStorefrontPage(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -57,7 +57,7 @@ func RentFlowPartnerUpdateStorefrontPage(c *gin.Context) {
 	rentFlowUpsertStorefrontPage(c, "tenant", tenant.ID)
 }
 
-func RentFlowPartnerUploadStorefrontBlockImage(c *gin.Context) {
+func RentFlowCarPartnerUploadStorefrontBlockImage(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -80,7 +80,7 @@ func RentFlowPartnerUploadStorefrontBlockImage(c *gin.Context) {
 		return
 	}
 
-	image := models.RentFlowStorefrontBlockImage{
+	image := models.RentFlowCarStorefrontBlockImage{
 		ID:       services.NewID("sfbimg"),
 		TenantID: tenant.ID,
 		FileName: filepath.Base(strings.TrimSpace(files[0].Filename)),
@@ -93,11 +93,11 @@ func RentFlowPartnerUploadStorefrontBlockImage(c *gin.Context) {
 	}
 
 	rentFlowAudit(c, tenant.ID, "storefront_block_image.upload", "storefront_block_image", image.ID, "")
-	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowRealtimeEventTenantUpdated)
+	rentFlowPublishCarRealtime(tenant.ID, "", services.RentFlowCarRealtimeEventTenantUpdated)
 	rentFlowSuccess(c, http.StatusOK, "อัปโหลดรูปภาพสำเร็จ", rentFlowStorefrontBlockImageResponse(tenant, image))
 }
 
-func RentFlowGetStorefrontBlockImage(c *gin.Context) {
+func RentFlowCarGetStorefrontBlockImage(c *gin.Context) {
 	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
 	imageID := strings.TrimSpace(c.Param("imageId"))
 	if slug == "" || imageID == "" {
@@ -105,13 +105,13 @@ func RentFlowGetStorefrontBlockImage(c *gin.Context) {
 		return
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปภาพ")
 		return
 	}
 
-	var image models.RentFlowStorefrontBlockImage
+	var image models.RentFlowCarStorefrontBlockImage
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, imageID).First(&image).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปภาพ")
 		return
@@ -124,7 +124,7 @@ func RentFlowGetStorefrontBlockImage(c *gin.Context) {
 	rentFlowSendImageBlob(c, image.MimeType, image.Blob)
 }
 
-func RentFlowAdminGetStorefrontPage(c *gin.Context) {
+func RentFlowCarAdminGetStorefrontPage(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -136,7 +136,7 @@ func RentFlowAdminGetStorefrontPage(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงหน้าเว็บรวมสำเร็จ", rentFlowStorefrontPageResponse(item))
 }
 
-func RentFlowAdminUpdateStorefrontPage(c *gin.Context) {
+func RentFlowCarAdminUpdateStorefrontPage(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -196,16 +196,16 @@ func rentFlowUpsertStorefrontPage(c *gin.Context, scope, tenantID string) {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถบันทึกหน้าร้านได้")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
 	rentFlowAudit(c, tenantID, "storefront_page.update", "storefront_page", item.ID, scope+"|"+page)
 	if tenantID != "" {
-		rentFlowPublishCarRealtime(tenantID, "", services.RentFlowRealtimeEventTenantUpdated)
+		rentFlowPublishCarRealtime(tenantID, "", services.RentFlowCarRealtimeEventTenantUpdated)
 	}
 	rentFlowSuccess(c, http.StatusOK, "บันทึกหน้าร้านสำเร็จ", rentFlowStorefrontPageResponse(item))
 }
 
-func rentFlowLoadStorefrontPage(scope, tenantID, page string) (models.RentFlowStorefrontPage, error) {
-	var item models.RentFlowStorefrontPage
+func rentFlowLoadStorefrontPage(scope, tenantID, page string) (models.RentFlowCarStorefrontPage, error) {
+	var item models.RentFlowCarStorefrontPage
 	query := config.DB.Where("scope = ? AND page = ?", scope, page)
 	if scope == "tenant" {
 		query = query.Where("tenant_id = ?", tenantID)
@@ -214,7 +214,7 @@ func rentFlowLoadStorefrontPage(scope, tenantID, page string) (models.RentFlowSt
 	}
 	err := query.First(&item).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return models.RentFlowStorefrontPage{
+		return models.RentFlowCarStorefrontPage{
 			Scope:       scope,
 			TenantID:    tenantID,
 			Page:        page,
@@ -253,7 +253,7 @@ func rentFlowJSONFromPayload(value interface{}, raw string) (string, bool) {
 	return string(encoded), true
 }
 
-func rentFlowStorefrontPageResponse(item models.RentFlowStorefrontPage) gin.H {
+func rentFlowStorefrontPageResponse(item models.RentFlowCarStorefrontPage) gin.H {
 	var theme interface{} = gin.H{}
 	var blocks interface{} = []interface{}{}
 	if strings.TrimSpace(item.ThemeJSON) != "" {
@@ -276,14 +276,14 @@ func rentFlowStorefrontPageResponse(item models.RentFlowStorefrontPage) gin.H {
 	}
 }
 
-func rentFlowStorefrontBlockImageURL(tenant *models.RentFlowTenant, imageID string) string {
+func rentFlowStorefrontBlockImageURL(tenant *models.RentFlowCarTenant, imageID string) string {
 	if tenant == nil || tenant.DomainSlug == "" || strings.TrimSpace(imageID) == "" {
 		return ""
 	}
 	return "/tenants/" + tenant.DomainSlug + "/storefront-images/" + imageID
 }
 
-func rentFlowStorefrontBlockImageResponse(tenant *models.RentFlowTenant, image models.RentFlowStorefrontBlockImage) gin.H {
+func rentFlowStorefrontBlockImageResponse(tenant *models.RentFlowCarTenant, image models.RentFlowCarStorefrontBlockImage) gin.H {
 	return gin.H{
 		"id":        image.ID,
 		"tenantId":  image.TenantID,

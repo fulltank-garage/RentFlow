@@ -107,14 +107,14 @@ export function getCarTypeImage(type?: string | null) {
   const normalized = type?.trim().toLowerCase();
 
   if (!normalized) {
-    return "/RentFlow.png";
+    return "/RentFlowCar.png";
   }
 
   const matchedType = PRESENTATION_ORDER.find(
     (item) => item.toLowerCase() === normalized
   );
 
-  return matchedType ? CAR_TYPE_IMAGE_MAP[matchedType] : "/RentFlow.png";
+  return matchedType ? CAR_TYPE_IMAGE_MAP[matchedType] : "/RentFlowCar.png";
 }
 
 export function buildCarTypes(cars: Car[]): Car["type"][] {

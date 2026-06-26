@@ -1,4 +1,4 @@
-import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
+import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
 import type { AuthResponse, Customer } from "./auth.types";
 
 type LegacyAuthResponse = {
@@ -17,7 +17,7 @@ export function normalizeCustomer(
 
   return {
     ...user,
-    avatarUrl: resolveRentFlowAssetUrl(user.avatarUrl),
+    avatarUrl: resolveRentFlowCarAssetUrl(user.avatarUrl),
   };
 }
 

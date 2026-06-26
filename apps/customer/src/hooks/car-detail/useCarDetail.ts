@@ -2,18 +2,18 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import { normCarId } from "@/src/utils/car-detail/carDetail.format";
 import usePageReady from "@/src/hooks/usePageReady";
-import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getCarById } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
-import type { RentFlowRealtimeEvent } from "@/src/services/realtime/realtime.types";
+import type { RentFlowCarRealtimeEvent } from "@/src/services/realtime/realtime.types";
 
 export default function useCarDetail(carId: string) {
   const ready = usePageReady();
   const searchParams = useSearchParams();
-  const siteMode = useRentFlowSiteMode();
+  const siteMode = useRentFlowCarSiteMode();
   const tenantSlug = searchParams.get("tenant") || undefined;
 
   const id = React.useMemo(() => normCarId(carId), [carId]);
@@ -21,7 +21,7 @@ export default function useCarDetail(carId: string) {
   const [reloadTick, setReloadTick] = React.useState(0);
 
   const refreshFromRealtime = React.useCallback(
-    (event: RentFlowRealtimeEvent) => {
+    (event: RentFlowCarRealtimeEvent) => {
       const eventCarId = String(event.data?.carId || event.entityId || "");
       if (!eventCarId || eventCarId === id) {
         if (event.type === "car.status.changed") {
@@ -52,7 +52,7 @@ export default function useCarDetail(carId: string) {
     [id]
   );
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: [
       "booking.created",
       "booking.updated",

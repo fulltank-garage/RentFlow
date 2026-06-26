@@ -1,21 +1,21 @@
 import api from "@/src/lib/axios";
-import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
+import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
 import type { ApiResponse } from "../types/types";
 import type { TenantProfile } from "./tenant.types";
 
 function normalizeTenantProfile(tenant: TenantProfile): TenantProfile {
   const promoImageUrls = (tenant.promoImageUrls || [])
-    .map((url) => resolveRentFlowAssetUrl(url))
+    .map((url) => resolveRentFlowCarAssetUrl(url))
     .filter(Boolean) as string[];
   const promoImageUrl =
-    resolveRentFlowAssetUrl(tenant.promoImageUrl) || promoImageUrls[0];
+    resolveRentFlowCarAssetUrl(tenant.promoImageUrl) || promoImageUrls[0];
 
   return {
     ...tenant,
-    logoUrl: resolveRentFlowAssetUrl(tenant.logoUrl),
+    logoUrl: resolveRentFlowCarAssetUrl(tenant.logoUrl),
     promoImageUrl,
     promoImageUrls,
-    lineOaQrCodeUrl: resolveRentFlowAssetUrl(tenant.lineOaQrCodeUrl),
+    lineOaQrCodeUrl: resolveRentFlowCarAssetUrl(tenant.lineOaQrCodeUrl),
   };
 }
 

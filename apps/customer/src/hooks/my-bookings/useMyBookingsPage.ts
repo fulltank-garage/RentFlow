@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
 import { clearCachedSessionUser } from "@/src/services/auth/auth.service";
@@ -140,7 +140,7 @@ export default function useMyBookingsPage() {
     setReloadTick((current) => current + 1);
   }, []);
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: [
       "booking.created",
       "booking.updated",

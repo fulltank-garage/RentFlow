@@ -10,10 +10,10 @@ import (
 	"rentflow-api/services"
 )
 
-func RentFlowGetReviews(c *gin.Context) {
+func RentFlowCarGetReviews(c *gin.Context) {
 	marketplace := rentFlowIsMarketplaceRequest(c)
 
-	tenantMap := make(map[string]models.RentFlowTenant)
+	tenantMap := make(map[string]models.RentFlowCarTenant)
 	tenantIDs := make([]string, 0)
 	if marketplace {
 		tenants, err := rentFlowMarketplaceTenants()
@@ -42,7 +42,7 @@ func RentFlowGetReviews(c *gin.Context) {
 		return
 	}
 
-	var reviews []models.RentFlowReview
+	var reviews []models.RentFlowCarReview
 	if err := config.DB.
 		Where("tenant_id IN ?", tenantIDs).
 		Order("created_at DESC").
@@ -77,7 +77,7 @@ func RentFlowGetReviews(c *gin.Context) {
 	})
 }
 
-func RentFlowCreateReview(c *gin.Context) {
+func RentFlowCarCreateReview(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
@@ -113,7 +113,7 @@ func RentFlowCreateReview(c *gin.Context) {
 		return
 	}
 
-	review := models.RentFlowReview{
+	review := models.RentFlowCarReview{
 		ID:        services.NewID("rev"),
 		TenantID:  tenant.ID,
 		FirstName: firstName,
@@ -127,6 +127,6 @@ func RentFlowCreateReview(c *gin.Context) {
 		return
 	}
 
-	rentFlowPublishEntityRealtime(tenant.ID, review.ID, services.RentFlowRealtimeEventReviewCreated, "review")
+	rentFlowPublishEntityRealtime(tenant.ID, review.ID, services.RentFlowCarRealtimeEventReviewCreated, "review")
 	rentFlowSuccess(c, http.StatusCreated, "ส่งรีวิวสำเร็จ", review)
 }

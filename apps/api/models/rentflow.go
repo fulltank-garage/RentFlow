@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type RentFlowUser struct {
+type RentFlowCarUser struct {
 	ID                 string         `gorm:"primaryKey;size:40" json:"id"`
 	GoogleSub          *string        `gorm:"size:120;uniqueIndex" json:"-"`
 	Username           string         `gorm:"size:80;uniqueIndex" json:"username,omitempty"`
@@ -31,11 +31,11 @@ type RentFlowUser struct {
 	DeletedAt          gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowUser) TableName() string {
+func (RentFlowCarUser) TableName() string {
 	return "rentflow_users"
 }
 
-type RentFlowTenant struct {
+type RentFlowCarTenant struct {
 	ID                 string         `gorm:"primaryKey;size:50" json:"id"`
 	OwnerUserID        *string        `gorm:"size:40;index" json:"ownerUserId,omitempty"`
 	OwnerEmail         string         `gorm:"size:150;index;not null" json:"ownerEmail"`
@@ -66,11 +66,11 @@ type RentFlowTenant struct {
 	DeletedAt          gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowTenant) TableName() string {
+func (RentFlowCarTenant) TableName() string {
 	return "rentflow_tenants"
 }
 
-type RentFlowTenantPromoImage struct {
+type RentFlowCarTenantPromoImage struct {
 	ID           string    `gorm:"primaryKey;size:80" json:"id"`
 	TenantID     string    `gorm:"size:50;index;not null" json:"tenantId"`
 	MimeType     string    `gorm:"size:80;not null" json:"-"`
@@ -80,11 +80,11 @@ type RentFlowTenantPromoImage struct {
 	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
-func (RentFlowTenantPromoImage) TableName() string {
+func (RentFlowCarTenantPromoImage) TableName() string {
 	return "rentflow_tenant_promo_images"
 }
 
-type RentFlowPlatformSetting struct {
+type RentFlowCarPlatformSetting struct {
 	Key           string    `gorm:"primaryKey;size:80" json:"key"`
 	ImageURL      string    `gorm:"-" json:"imageUrl,omitempty"`
 	ImageMimeType string    `gorm:"size:80" json:"-"`
@@ -93,11 +93,11 @@ type RentFlowPlatformSetting struct {
 	UpdatedAt     time.Time `json:"updatedAt"`
 }
 
-func (RentFlowPlatformSetting) TableName() string {
+func (RentFlowCarPlatformSetting) TableName() string {
 	return "rentflow_platform_settings"
 }
 
-type RentFlowBranch struct {
+type RentFlowCarBranch struct {
 	ID              string    `gorm:"primaryKey;size:60" json:"id"`
 	TenantID        string    `gorm:"size:50;index" json:"tenantId,omitempty"`
 	Name            string    `gorm:"size:150;not null" json:"name"`
@@ -118,11 +118,11 @@ type RentFlowBranch struct {
 	UpdatedAt       time.Time `json:"updatedAt"`
 }
 
-func (RentFlowBranch) TableName() string {
+func (RentFlowCarBranch) TableName() string {
 	return "rentflow_branches"
 }
 
-type RentFlowCar struct {
+type RentFlowCarCar struct {
 	ID           string         `gorm:"primaryKey;size:80" json:"id"`
 	TenantID     string         `gorm:"size:50;index" json:"tenantId,omitempty"`
 	Name         string         `gorm:"size:150;not null" json:"name"`
@@ -144,11 +144,11 @@ type RentFlowCar struct {
 	DeletedAt    gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowCar) TableName() string {
+func (RentFlowCarCar) TableName() string {
 	return "rentflow_cars"
 }
 
-type RentFlowCarImage struct {
+type RentFlowCarCarImage struct {
 	ID        string    `gorm:"primaryKey;size:120" json:"id"`
 	TenantID  string    `gorm:"size:50;index" json:"tenantId,omitempty"`
 	CarID     string    `gorm:"size:80;index;not null" json:"carId"`
@@ -160,11 +160,11 @@ type RentFlowCarImage struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (RentFlowCarImage) TableName() string {
+func (RentFlowCarCarImage) TableName() string {
 	return "rentflow_car_images"
 }
 
-type RentFlowBooking struct {
+type RentFlowCarBooking struct {
 	ID             string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID       string         `gorm:"size:50;index" json:"tenantId,omitempty"`
 	BookingCode    string         `gorm:"size:30;uniqueIndex;not null" json:"bookingCode"`
@@ -194,11 +194,11 @@ type RentFlowBooking struct {
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowBooking) TableName() string {
+func (RentFlowCarBooking) TableName() string {
 	return "rentflow_bookings"
 }
 
-type RentFlowPayment struct {
+type RentFlowCarPayment struct {
 	ID               string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID         string         `gorm:"size:50;index" json:"tenantId,omitempty"`
 	BookingID        string         `gorm:"size:50;index;not null" json:"bookingId"`
@@ -229,11 +229,11 @@ type RentFlowPayment struct {
 	DeletedAt        gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowPayment) TableName() string {
+func (RentFlowCarPayment) TableName() string {
 	return "rentflow_payments"
 }
 
-type RentFlowNotification struct {
+type RentFlowCarNotification struct {
 	ID        string    `gorm:"primaryKey;size:50" json:"id"`
 	TenantID  string    `gorm:"size:50;index" json:"tenantId,omitempty"`
 	UserID    *string   `gorm:"size:40;index" json:"-"`
@@ -245,11 +245,11 @@ type RentFlowNotification struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (RentFlowNotification) TableName() string {
+func (RentFlowCarNotification) TableName() string {
 	return "rentflow_notifications"
 }
 
-type RentFlowMessageLog struct {
+type RentFlowCarMessageLog struct {
 	ID           string    `gorm:"primaryKey;size:50" json:"id"`
 	TenantID     string    `gorm:"size:50;index" json:"tenantId,omitempty"`
 	Channel      string    `gorm:"size:30;index;not null" json:"channel"`
@@ -263,11 +263,11 @@ type RentFlowMessageLog struct {
 	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
-func (RentFlowMessageLog) TableName() string {
+func (RentFlowCarMessageLog) TableName() string {
 	return "rentflow_message_logs"
 }
 
-type RentFlowReview struct {
+type RentFlowCarReview struct {
 	ID        string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID  string         `gorm:"size:50;index" json:"tenantId,omitempty"`
 	FirstName string         `gorm:"size:80;not null" json:"firstName"`
@@ -279,11 +279,11 @@ type RentFlowReview struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowReview) TableName() string {
+func (RentFlowCarReview) TableName() string {
 	return "rentflow_reviews"
 }
 
-type RentFlowTenantMember struct {
+type RentFlowCarTenantMember struct {
 	ID              string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID        string         `gorm:"size:50;index;not null" json:"tenantId"`
 	UserID          string         `gorm:"size:40;index" json:"userId,omitempty"`
@@ -297,11 +297,11 @@ type RentFlowTenantMember struct {
 	DeletedAt       gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowTenantMember) TableName() string {
+func (RentFlowCarTenantMember) TableName() string {
 	return "rentflow_tenant_members"
 }
 
-type RentFlowCustomDomain struct {
+type RentFlowCarCustomDomain struct {
 	ID              string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID        string         `gorm:"size:50;index;not null" json:"tenantId"`
 	Domain          string         `gorm:"size:180;uniqueIndex;not null" json:"domain"`
@@ -313,11 +313,11 @@ type RentFlowCustomDomain struct {
 	DeletedAt       gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowCustomDomain) TableName() string {
+func (RentFlowCarCustomDomain) TableName() string {
 	return "rentflow_custom_domains"
 }
 
-type RentFlowAuditLog struct {
+type RentFlowCarAuditLog struct {
 	ID         string    `gorm:"primaryKey;size:50" json:"id"`
 	TenantID   string    `gorm:"size:50;index" json:"tenantId,omitempty"`
 	ActorID    string    `gorm:"size:50;index" json:"actorId,omitempty"`
@@ -331,11 +331,11 @@ type RentFlowAuditLog struct {
 	CreatedAt  time.Time `json:"createdAt"`
 }
 
-func (RentFlowAuditLog) TableName() string {
+func (RentFlowCarAuditLog) TableName() string {
 	return "rentflow_audit_logs"
 }
 
-type RentFlowAvailabilityBlock struct {
+type RentFlowCarAvailabilityBlock struct {
 	ID          string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID    string         `gorm:"size:50;index;not null" json:"tenantId"`
 	CarID       string         `gorm:"size:80;index" json:"carId,omitempty"`
@@ -351,11 +351,11 @@ type RentFlowAvailabilityBlock struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowAvailabilityBlock) TableName() string {
+func (RentFlowCarAvailabilityBlock) TableName() string {
 	return "rentflow_availability_blocks"
 }
 
-type RentFlowPromotion struct {
+type RentFlowCarPromotion struct {
 	ID            string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID      string         `gorm:"size:50;index;not null" json:"tenantId"`
 	Code          string         `gorm:"size:60;index;not null" json:"code"`
@@ -371,11 +371,11 @@ type RentFlowPromotion struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowPromotion) TableName() string {
+func (RentFlowCarPromotion) TableName() string {
 	return "rentflow_promotions"
 }
 
-type RentFlowAddon struct {
+type RentFlowCarAddon struct {
 	ID          string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID    string         `gorm:"size:50;index;not null" json:"tenantId"`
 	Name        string         `gorm:"size:150;not null" json:"name"`
@@ -388,11 +388,11 @@ type RentFlowAddon struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowAddon) TableName() string {
+func (RentFlowCarAddon) TableName() string {
 	return "rentflow_addons"
 }
 
-type RentFlowLead struct {
+type RentFlowCarLead struct {
 	ID            string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID      string         `gorm:"size:50;index;not null" json:"tenantId"`
 	Name          string         `gorm:"size:150;not null" json:"name"`
@@ -407,11 +407,11 @@ type RentFlowLead struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowLead) TableName() string {
+func (RentFlowCarLead) TableName() string {
 	return "rentflow_leads"
 }
 
-type RentFlowLineChannel struct {
+type RentFlowCarLineChannel struct {
 	ID                    string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID              string         `gorm:"size:50;uniqueIndex;not null" json:"tenantId"`
 	ChannelID             string         `gorm:"size:120;not null" json:"channelId"`
@@ -432,11 +432,11 @@ type RentFlowLineChannel struct {
 	DeletedAt             gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowLineChannel) TableName() string {
+func (RentFlowCarLineChannel) TableName() string {
 	return "rentflow_line_channels"
 }
 
-type RentFlowSupportTicket struct {
+type RentFlowCarSupportTicket struct {
 	ID               string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID         string         `gorm:"size:50;index;not null" json:"tenantId"`
 	Channel          string         `gorm:"size:30;index:idx_rentflow_support_thread,unique;not null" json:"channel"`
@@ -456,11 +456,11 @@ type RentFlowSupportTicket struct {
 	DeletedAt        gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowSupportTicket) TableName() string {
+func (RentFlowCarSupportTicket) TableName() string {
 	return "rentflow_support_tickets"
 }
 
-type RentFlowSupportMessage struct {
+type RentFlowCarSupportMessage struct {
 	ID          string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID    string         `gorm:"size:50;index;not null" json:"tenantId"`
 	TicketID    string         `gorm:"size:50;index;not null" json:"ticketId"`
@@ -474,11 +474,11 @@ type RentFlowSupportMessage struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowSupportMessage) TableName() string {
+func (RentFlowCarSupportMessage) TableName() string {
 	return "rentflow_support_messages"
 }
 
-type RentFlowBookingOperation struct {
+type RentFlowCarBookingOperation struct {
 	ID            string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID      string         `gorm:"size:50;index;not null" json:"tenantId"`
 	BookingID     string         `gorm:"size:50;index;not null" json:"bookingId"`
@@ -495,11 +495,11 @@ type RentFlowBookingOperation struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowBookingOperation) TableName() string {
+func (RentFlowCarBookingOperation) TableName() string {
 	return "rentflow_booking_operations"
 }
 
-type RentFlowStorefrontPage struct {
+type RentFlowCarStorefrontPage struct {
 	ID          string     `gorm:"primaryKey;size:50" json:"id"`
 	TenantID    string     `gorm:"size:50;index" json:"tenantId,omitempty"`
 	Scope       string     `gorm:"size:30;index;not null;default:tenant" json:"scope"`
@@ -512,11 +512,11 @@ type RentFlowStorefrontPage struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
-func (RentFlowStorefrontPage) TableName() string {
+func (RentFlowCarStorefrontPage) TableName() string {
 	return "rentflow_storefront_pages"
 }
 
-type RentFlowStorefrontBlockImage struct {
+type RentFlowCarStorefrontBlockImage struct {
 	ID        string    `gorm:"primaryKey;size:80" json:"id"`
 	TenantID  string    `gorm:"size:50;index;not null" json:"tenantId"`
 	FileName  string    `gorm:"size:180" json:"fileName,omitempty"`
@@ -526,11 +526,11 @@ type RentFlowStorefrontBlockImage struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (RentFlowStorefrontBlockImage) TableName() string {
+func (RentFlowCarStorefrontBlockImage) TableName() string {
 	return "rentflow_storefront_block_images"
 }
 
-type RentFlowPlatformInvoice struct {
+type RentFlowCarPlatformInvoice struct {
 	ID            string         `gorm:"primaryKey;size:50" json:"id"`
 	TenantID      string         `gorm:"size:50;index;not null" json:"tenantId"`
 	Period        string         `gorm:"size:20;index;not null" json:"period"`
@@ -549,11 +549,11 @@ type RentFlowPlatformInvoice struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowPlatformInvoice) TableName() string {
+func (RentFlowCarPlatformInvoice) TableName() string {
 	return "rentflow_platform_invoices"
 }
 
-type RentFlowPlatformMember struct {
+type RentFlowCarPlatformMember struct {
 	ID              string         `gorm:"primaryKey;size:50" json:"id"`
 	UserID          string         `gorm:"size:40;index" json:"userId,omitempty"`
 	Email           string         `gorm:"size:150;uniqueIndex;not null" json:"email"`
@@ -566,11 +566,11 @@ type RentFlowPlatformMember struct {
 	DeletedAt       gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (RentFlowPlatformMember) TableName() string {
+func (RentFlowCarPlatformMember) TableName() string {
 	return "rentflow_platform_members"
 }
 
-type RentFlowSessionAudit struct {
+type RentFlowCarSessionAudit struct {
 	ID        string    `gorm:"primaryKey;size:50" json:"id"`
 	UserID    string    `gorm:"size:40;index" json:"userId,omitempty"`
 	UserEmail string    `gorm:"size:150;index" json:"userEmail,omitempty"`
@@ -581,6 +581,6 @@ type RentFlowSessionAudit struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-func (RentFlowSessionAudit) TableName() string {
+func (RentFlowCarSessionAudit) TableName() string {
 	return "rentflow_session_audits"
 }

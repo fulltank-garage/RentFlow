@@ -20,55 +20,55 @@ import (
 )
 
 const (
-	RentFlowLegacySessionCookieName  = "rentflow_session"
-	RentFlowWebSessionCookieName     = "rentflow_web_session"
-	RentFlowPartnerSessionCookieName = "rentflow_partner_session"
-	RentFlowAdminSessionCookieName   = "rentflow_admin_session"
-	RentFlowAppHeaderName            = "X-RentFlow-App"
-	RentFlowAppStorefront            = "storefront"
-	RentFlowAppPartner               = "partner"
-	RentFlowAppAdmin                 = "admin"
-	RentFlowActorUser                = "user"
-	RentFlowActorPlatformAdmin       = "platform_admin"
-	rentFlowSessionPrefix            = "rentflow:session:"
-	rentFlowCachePrefix              = "rentflow:cache:"
-	defaultSessionTTL                = 7 * 24 * time.Hour
+	RentFlowCarLegacySessionCookieName  = "rentflow_session"
+	RentFlowCarWebSessionCookieName     = "rentflow_web_session"
+	RentFlowCarPartnerSessionCookieName = "rentflow_partner_session"
+	RentFlowCarAdminSessionCookieName   = "rentflow_admin_session"
+	RentFlowCarAppHeaderName            = "X-RentFlowCar-App"
+	RentFlowCarAppStorefront            = "storefront"
+	RentFlowCarAppPartner               = "partner"
+	RentFlowCarAppAdmin                 = "admin"
+	RentFlowCarActorUser                = "user"
+	RentFlowCarActorPlatformAdmin       = "platform_admin"
+	rentFlowSessionPrefix               = "rentflow:session:"
+	rentFlowCachePrefix                 = "rentflow:cache:"
+	defaultSessionTTL                   = 7 * 24 * time.Hour
 )
 
-func RentFlowNormalizeAppName(value string) string {
+func RentFlowCarNormalizeAppName(value string) string {
 	switch strings.TrimSpace(strings.ToLower(value)) {
 	case "web", "store", "storefront", "customer":
-		return RentFlowAppStorefront
+		return RentFlowCarAppStorefront
 	case "partner", "owner":
-		return RentFlowAppPartner
+		return RentFlowCarAppPartner
 	case "admin", "platform":
-		return RentFlowAppAdmin
+		return RentFlowCarAppAdmin
 	default:
-		return RentFlowAppStorefront
+		return RentFlowCarAppStorefront
 	}
 }
 
-func RentFlowSessionCookieNameForApp(app string) string {
-	switch RentFlowNormalizeAppName(app) {
-	case RentFlowAppPartner:
-		return RentFlowPartnerSessionCookieName
-	case RentFlowAppAdmin:
-		return RentFlowAdminSessionCookieName
+func RentFlowCarSessionCookieNameForApp(app string) string {
+	switch RentFlowCarNormalizeAppName(app) {
+	case RentFlowCarAppPartner:
+		return RentFlowCarPartnerSessionCookieName
+	case RentFlowCarAppAdmin:
+		return RentFlowCarAdminSessionCookieName
 	default:
-		return RentFlowWebSessionCookieName
+		return RentFlowCarWebSessionCookieName
 	}
 }
 
-func RentFlowSessionCookieNames() []string {
+func RentFlowCarSessionCookieNames() []string {
 	return []string{
-		RentFlowWebSessionCookieName,
-		RentFlowPartnerSessionCookieName,
-		RentFlowAdminSessionCookieName,
-		RentFlowLegacySessionCookieName,
+		RentFlowCarWebSessionCookieName,
+		RentFlowCarPartnerSessionCookieName,
+		RentFlowCarAdminSessionCookieName,
+		RentFlowCarLegacySessionCookieName,
 	}
 }
 
-type RentFlowSession struct {
+type RentFlowCarSession struct {
 	UserID        string    `json:"userId"`
 	UserEmail     string    `json:"userEmail"`
 	ActorType     string    `json:"actorType,omitempty"`
@@ -82,7 +82,7 @@ type RentFlowSession struct {
 }
 
 type memorySessionEntry struct {
-	Session   RentFlowSession
+	Session   RentFlowCarSession
 	SessionID string
 }
 
@@ -196,7 +196,7 @@ func ComputeBookingPrice(pricePerDay int64, pickupDate, returnDate time.Time, pi
 	return totalDays, subtotal, extraCharge, discount, total
 }
 
-func CreateSession(ctx context.Context, session RentFlowSession, ttl time.Duration) (string, error) {
+func CreateSession(ctx context.Context, session RentFlowCarSession, ttl time.Duration) (string, error) {
 	if ttl <= 0 {
 		ttl = defaultSessionTTL
 	}
@@ -221,13 +221,13 @@ func CreateSession(ctx context.Context, session RentFlowSession, ttl time.Durati
 	return token, nil
 }
 
-func storeMemorySession(token string, session RentFlowSession) {
+func storeMemorySession(token string, session RentFlowCarSession) {
 	memorySessionMu.Lock()
 	memorySessions[token] = memorySessionEntry{Session: session, SessionID: token}
 	memorySessionMu.Unlock()
 }
 
-func GetSession(ctx context.Context, token string) (*RentFlowSession, error) {
+func GetSession(ctx context.Context, token string) (*RentFlowCarSession, error) {
 	if strings.TrimSpace(token) == "" {
 		return nil, nil
 	}
@@ -241,7 +241,7 @@ func GetSession(ctx context.Context, token string) (*RentFlowSession, error) {
 			return nil, err
 		}
 
-		var session RentFlowSession
+		var session RentFlowCarSession
 		if err := json.Unmarshal([]byte(raw), &session); err != nil {
 			return nil, err
 		}
@@ -297,7 +297,7 @@ func DeleteUserSessions(ctx context.Context, userID string) error {
 				if err != nil {
 					continue
 				}
-				var session RentFlowSession
+				var session RentFlowCarSession
 				if err := json.Unmarshal([]byte(raw), &session); err == nil && session.UserID == userID {
 					_ = config.RDB.Del(ctx, key).Err()
 				}
@@ -390,11 +390,11 @@ func CacheDeleteByPrefix(ctx context.Context, prefix string) {
 	}
 }
 
-func RentFlowCarsCachePrefix() string {
+func RentFlowCarCarsCachePrefix() string {
 	return rentFlowCachePrefix + "cars:v2"
 }
 
-func RentFlowBranchesCachePrefix() string {
+func RentFlowCarBranchesCachePrefix() string {
 	return rentFlowCachePrefix + "branches:v3"
 }
 

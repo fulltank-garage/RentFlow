@@ -10,7 +10,7 @@ import (
 	"rentflow-api/models"
 )
 
-type RentFlowPlatformAdminIdentity struct {
+type RentFlowCarPlatformAdminIdentity struct {
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 	Name      string `json:"name"`
@@ -18,21 +18,21 @@ type RentFlowPlatformAdminIdentity struct {
 	LastName  string `json:"lastName"`
 }
 
-func RentFlowPlatformAdminEmail() string {
+func RentFlowCarPlatformAdminEmail() string {
 	return strings.TrimSpace(strings.ToLower(os.Getenv("RENTFLOW_SUPER_ADMIN_EMAIL")))
 }
 
-func RentFlowPlatformAdminUsername() string {
+func RentFlowCarPlatformAdminUsername() string {
 	return strings.TrimSpace(strings.ToLower(os.Getenv("RENTFLOW_SUPER_ADMIN_USERNAME")))
 }
 
-func RentFlowPlatformAdminPassword() string {
+func RentFlowCarPlatformAdminPassword() string {
 	return strings.TrimSpace(os.Getenv("RENTFLOW_SUPER_ADMIN_PASSWORD"))
 }
 
-func RentFlowPlatformAdminIdentityFromEnv() (RentFlowPlatformAdminIdentity, bool) {
-	email := RentFlowPlatformAdminEmail()
-	username := RentFlowPlatformAdminUsername()
+func RentFlowCarPlatformAdminIdentityFromEnv() (RentFlowCarPlatformAdminIdentity, bool) {
+	email := RentFlowCarPlatformAdminEmail()
+	username := RentFlowCarPlatformAdminUsername()
 	if username == "" {
 		username = email
 	}
@@ -50,7 +50,7 @@ func RentFlowPlatformAdminIdentityFromEnv() (RentFlowPlatformAdminIdentity, bool
 	}
 	name := strings.TrimSpace(firstName + " " + lastName)
 
-	identity := RentFlowPlatformAdminIdentity{
+	identity := RentFlowCarPlatformAdminIdentity{
 		Username:  username,
 		Email:     email,
 		Name:      name,
@@ -60,11 +60,11 @@ func RentFlowPlatformAdminIdentityFromEnv() (RentFlowPlatformAdminIdentity, bool
 	return identity, username != "" || email != ""
 }
 
-func ValidateRentFlowPlatformAdminCredentials(username, password string) (RentFlowPlatformAdminIdentity, bool) {
-	identity, configured := RentFlowPlatformAdminIdentityFromEnv()
-	adminPassword := RentFlowPlatformAdminPassword()
+func ValidateRentFlowCarPlatformAdminCredentials(username, password string) (RentFlowCarPlatformAdminIdentity, bool) {
+	identity, configured := RentFlowCarPlatformAdminIdentityFromEnv()
+	adminPassword := RentFlowCarPlatformAdminPassword()
 	if !configured || adminPassword == "" {
-		return RentFlowPlatformAdminIdentity{}, false
+		return RentFlowCarPlatformAdminIdentity{}, false
 	}
 
 	normalizedUsername := strings.TrimSpace(strings.ToLower(username))
@@ -72,20 +72,20 @@ func ValidateRentFlowPlatformAdminCredentials(username, password string) (RentFl
 		(identity.Username != "" && normalizedUsername == identity.Username)
 	passwordMatches := subtle.ConstantTimeCompare([]byte(strings.TrimSpace(password)), []byte(adminPassword)) == 1
 	if !usernameMatches || !passwordMatches {
-		return RentFlowPlatformAdminIdentity{}, false
+		return RentFlowCarPlatformAdminIdentity{}, false
 	}
 	return identity, true
 }
 
-func IsRentFlowPlatformAdminSession(session *RentFlowSession) bool {
+func IsRentFlowCarPlatformAdminSession(session *RentFlowCarSession) bool {
 	if session == nil {
 		return false
 	}
-	if RentFlowNormalizeAppName(session.App) != RentFlowAppAdmin || session.ActorType != RentFlowActorPlatformAdmin {
+	if RentFlowCarNormalizeAppName(session.App) != RentFlowCarAppAdmin || session.ActorType != RentFlowCarActorPlatformAdmin {
 		return false
 	}
 
-	identity, configured := RentFlowPlatformAdminIdentityFromEnv()
+	identity, configured := RentFlowCarPlatformAdminIdentityFromEnv()
 	if !configured {
 		return false
 	}
@@ -96,13 +96,13 @@ func IsRentFlowPlatformAdminSession(session *RentFlowSession) bool {
 		(identity.Username != "" && sessionUsername == identity.Username)
 }
 
-func IsRentFlowPlatformAdmin(user *models.RentFlowUser) bool {
+func IsRentFlowCarPlatformAdmin(user *models.RentFlowCarUser) bool {
 	if user == nil {
 		return false
 	}
 
-	adminEmail := RentFlowPlatformAdminEmail()
-	adminUsername := RentFlowPlatformAdminUsername()
+	adminEmail := RentFlowCarPlatformAdminEmail()
+	adminUsername := RentFlowCarPlatformAdminUsername()
 	userEmail := strings.TrimSpace(strings.ToLower(user.Email))
 	userUsername := strings.TrimSpace(strings.ToLower(user.Username))
 
@@ -115,7 +115,7 @@ func IsRentFlowPlatformAdmin(user *models.RentFlowUser) bool {
 		return false
 	}
 
-	var member models.RentFlowPlatformMember
+	var member models.RentFlowCarPlatformMember
 	err := config.DB.
 		Where("status = ?", "active").
 		Where("user_id = ? OR LOWER(email) = ?", user.ID, userEmail).
@@ -123,15 +123,15 @@ func IsRentFlowPlatformAdmin(user *models.RentFlowUser) bool {
 	return err == nil
 }
 
-func RentFlowPlatformAdminConfigured() bool {
-	if RentFlowPlatformAdminEmail() != "" || RentFlowPlatformAdminUsername() != "" {
+func RentFlowCarPlatformAdminConfigured() bool {
+	if RentFlowCarPlatformAdminEmail() != "" || RentFlowCarPlatformAdminUsername() != "" {
 		return true
 	}
 	if config.DB == nil {
 		return false
 	}
 	var count int64
-	if err := config.DB.Model(&models.RentFlowPlatformMember{}).
+	if err := config.DB.Model(&models.RentFlowCarPlatformMember{}).
 		Where("status = ?", "active").
 		Count(&count).Error; err != nil {
 		return false
@@ -139,12 +139,12 @@ func RentFlowPlatformAdminConfigured() bool {
 	return count > 0
 }
 
-func EnsureRentFlowPlatformAdmin() {
-	if _, ok := RentFlowPlatformAdminIdentityFromEnv(); !ok {
+func EnsureRentFlowCarPlatformAdmin() {
+	if _, ok := RentFlowCarPlatformAdminIdentityFromEnv(); !ok {
 		log.Println("ยังไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_EMAIL หรือ RENTFLOW_SUPER_ADMIN_USERNAME")
 		return
 	}
-	if RentFlowPlatformAdminPassword() == "" {
+	if RentFlowCarPlatformAdminPassword() == "" {
 		log.Println("ยังไม่ได้กำหนด RENTFLOW_SUPER_ADMIN_PASSWORD")
 	}
 }

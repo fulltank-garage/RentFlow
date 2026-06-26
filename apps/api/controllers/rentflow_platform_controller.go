@@ -51,12 +51,12 @@ type rentFlowPlatformDomainItem struct {
 	LastCheckedAt *time.Time `json:"lastCheckedAt,omitempty"`
 }
 
-func RentFlowAdminGetMe(c *gin.Context) {
+func RentFlowCarAdminGetMe(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
 
-	if admin, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
+	if admin, ok := middleware.CurrentRentFlowCarPlatformAdmin(c); ok {
 		rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลผู้ดูแลระบบสำเร็จ", gin.H{
 			"user":  rentFlowPlatformAdminUserResponse(admin),
 			"hosts": rentFlowPlatformHosts(),
@@ -64,7 +64,7 @@ func RentFlowAdminGetMe(c *gin.Context) {
 		return
 	}
 
-	user, ok := middleware.CurrentRentFlowUser(c)
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบผู้ดูแลก่อน")
 		return
@@ -82,7 +82,7 @@ func RentFlowAdminGetMe(c *gin.Context) {
 	})
 }
 
-func RentFlowAdminLogin(c *gin.Context) {
+func RentFlowCarAdminLogin(c *gin.Context) {
 	var payload struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
@@ -92,9 +92,9 @@ func RentFlowAdminLogin(c *gin.Context) {
 		return
 	}
 
-	identity, valid := services.ValidateRentFlowPlatformAdminCredentials(payload.Username, payload.Password)
+	identity, valid := services.ValidateRentFlowCarPlatformAdminCredentials(payload.Username, payload.Password)
 	if !valid {
-		if !services.RentFlowPlatformAdminConfigured() || services.RentFlowPlatformAdminPassword() == "" {
+		if !services.RentFlowCarPlatformAdminConfigured() || services.RentFlowCarPlatformAdminPassword() == "" {
 			rentFlowError(c, http.StatusInternalServerError, "ยังไม่ได้ตั้งค่าบัญชีผู้ดูแลระบบกลาง")
 			return
 		}
@@ -107,12 +107,12 @@ func RentFlowAdminLogin(c *gin.Context) {
 		return
 	}
 
-	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowSession{
-		ActorType:     services.RentFlowActorPlatformAdmin,
+	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowCarSession{
+		ActorType:     services.RentFlowCarActorPlatformAdmin,
 		AdminUsername: identity.Username,
 		AdminEmail:    identity.Email,
 		AdminName:     identity.Name,
-		App:           services.RentFlowAppAdmin,
+		App:           services.RentFlowCarAppAdmin,
 		IP:            c.ClientIP(),
 		UserAgent:     c.Request.UserAgent(),
 	}, 7*24*time.Hour)
@@ -121,14 +121,14 @@ func RentFlowAdminLogin(c *gin.Context) {
 		return
 	}
 
-	setRentFlowSessionCookie(c, sessionToken)
+	setRentFlowCarSessionCookie(c, sessionToken)
 	rentFlowRecordAdminSessionAudit(c, identity, "login")
 	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบผู้ดูแลสำเร็จ", gin.H{
 		"user": rentFlowPlatformAdminIdentityResponse(identity),
 	})
 }
 
-func rentFlowPlatformAdminIdentityResponse(identity services.RentFlowPlatformAdminIdentity) gin.H {
+func rentFlowPlatformAdminIdentityResponse(identity services.RentFlowCarPlatformAdminIdentity) gin.H {
 	return gin.H{
 		"id":        "platform_admin",
 		"username":  identity.Username,
@@ -139,7 +139,7 @@ func rentFlowPlatformAdminIdentityResponse(identity services.RentFlowPlatformAdm
 	}
 }
 
-func rentFlowPlatformAdminUserResponse(session *services.RentFlowSession) gin.H {
+func rentFlowPlatformAdminUserResponse(session *services.RentFlowCarSession) gin.H {
 	name := strings.TrimSpace(session.AdminName)
 	if name == "" {
 		name = strings.TrimSpace(session.AdminUsername)
@@ -157,7 +157,7 @@ func rentFlowPlatformAdminUserResponse(session *services.RentFlowSession) gin.H 
 	}
 }
 
-func RentFlowAdminGetOverview(c *gin.Context) {
+func RentFlowCarAdminGetOverview(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -197,7 +197,7 @@ func RentFlowAdminGetOverview(c *gin.Context) {
 	})
 }
 
-func RentFlowAdminListPartners(c *gin.Context) {
+func RentFlowCarAdminListPartners(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -214,7 +214,7 @@ func RentFlowAdminListPartners(c *gin.Context) {
 	})
 }
 
-func RentFlowAdminCreatePartner(c *gin.Context) {
+func RentFlowCarAdminCreatePartner(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -258,7 +258,7 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 		return
 	}
 
-	var existingUser models.RentFlowUser
+	var existingUser models.RentFlowCarUser
 	userErr := config.DB.Where("username = ? OR email = ?", username, username).First(&existingUser).Error
 	switch {
 	case userErr == nil:
@@ -270,7 +270,7 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 	}
 
 	publicDomain := rentFlowPublicDomain(domainSlug)
-	var existingTenant models.RentFlowTenant
+	var existingTenant models.RentFlowCarTenant
 	tenantErr := config.DB.Where("domain_slug = ? OR public_domain = ?", domainSlug, publicDomain).First(&existingTenant).Error
 	switch {
 	case tenantErr == nil:
@@ -292,7 +292,7 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 	memberID := services.NewID("mbr")
 	now := time.Now()
 
-	user := models.RentFlowUser{
+	user := models.RentFlowCarUser{
 		ID:           userID,
 		Username:     username,
 		FirstName:    firstName,
@@ -302,7 +302,7 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 		Phone:        phone,
 		PasswordHash: passwordHash,
 	}
-	tenant := models.RentFlowTenant{
+	tenant := models.RentFlowCarTenant{
 		ID:           tenantID,
 		OwnerUserID:  &userID,
 		OwnerEmail:   username,
@@ -313,7 +313,7 @@ func RentFlowAdminCreatePartner(c *gin.Context) {
 		BookingMode:  "chat",
 		Plan:         plan,
 	}
-	member := models.RentFlowTenantMember{
+	member := models.RentFlowCarTenantMember{
 		ID:        memberID,
 		TenantID:  tenantID,
 		UserID:    userID,
@@ -382,7 +382,7 @@ func rentFlowValidatePartnerUsername(username string) string {
 	return ""
 }
 
-func RentFlowAdminListDomains(c *gin.Context) {
+func RentFlowCarAdminListDomains(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -406,7 +406,7 @@ func RentFlowAdminListDomains(c *gin.Context) {
 	})
 }
 
-func RentFlowAdminGetBilling(c *gin.Context) {
+func RentFlowCarAdminGetBilling(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -456,7 +456,7 @@ func RentFlowAdminGetBilling(c *gin.Context) {
 	})
 }
 
-func RentFlowAdminUpdateInvoiceStatus(c *gin.Context) {
+func RentFlowCarAdminUpdateInvoiceStatus(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -478,7 +478,7 @@ func RentFlowAdminUpdateInvoiceStatus(c *gin.Context) {
 		return
 	}
 
-	var invoice models.RentFlowPlatformInvoice
+	var invoice models.RentFlowCarPlatformInvoice
 	if err := config.DB.Where("id = ?", c.Param("invoiceId")).First(&invoice).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบใบแจ้งหนี้")
@@ -512,7 +512,7 @@ func RentFlowAdminUpdateInvoiceStatus(c *gin.Context) {
 		}
 	}
 
-	if err := config.DB.Model(&models.RentFlowPlatformInvoice{}).
+	if err := config.DB.Model(&models.RentFlowCarPlatformInvoice{}).
 		Where("id = ?", invoice.ID).
 		Updates(updates).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดตใบแจ้งหนี้ได้")
@@ -526,7 +526,7 @@ func RentFlowAdminUpdateInvoiceStatus(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตใบแจ้งหนี้สำเร็จ", invoice)
 }
 
-func RentFlowAdminGetSecurity(c *gin.Context) {
+func RentFlowCarAdminGetSecurity(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -537,7 +537,7 @@ func RentFlowAdminGetSecurity(c *gin.Context) {
 		return
 	}
 
-	var members []models.RentFlowTenantMember
+	var members []models.RentFlowCarTenantMember
 	if err := config.DB.Where("status = ?", "active").Find(&members).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลสมาชิกได้")
 		return
@@ -556,19 +556,19 @@ func RentFlowAdminGetSecurity(c *gin.Context) {
 		})
 	}
 
-	var platformMembers []models.RentFlowPlatformMember
+	var platformMembers []models.RentFlowCarPlatformMember
 	if err := config.DB.Order("created_at DESC").Find(&platformMembers).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลทีมผู้ดูแลระบบได้")
 		return
 	}
 
-	var lineChannels []models.RentFlowLineChannel
+	var lineChannels []models.RentFlowCarLineChannel
 	if err := config.DB.Where("status = ?", "connected").Find(&lineChannels).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูล LINE OA ได้")
 		return
 	}
 
-	var customDomains []models.RentFlowCustomDomain
+	var customDomains []models.RentFlowCarCustomDomain
 	if err := config.DB.Find(&customDomains).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลโดเมนได้")
 		return
@@ -578,7 +578,7 @@ func RentFlowAdminGetSecurity(c *gin.Context) {
 		{
 			"title":  "ผู้ดูแลระบบกลาง",
 			"detail": "ใช้บัญชีผู้ดูแลระบบกลางเพียงบัญชีเดียวในการควบคุม tenant และสถานะระบบ",
-			"status": map[bool]string{true: "configured", false: "missing"}[services.RentFlowPlatformAdminConfigured()],
+			"status": map[bool]string{true: "configured", false: "missing"}[services.RentFlowCarPlatformAdminConfigured()],
 		},
 		{
 			"title":  "แยกข้อมูลตามร้าน",
@@ -592,7 +592,7 @@ func RentFlowAdminGetSecurity(c *gin.Context) {
 		},
 	}
 
-	var sessionAudits []models.RentFlowSessionAudit
+	var sessionAudits []models.RentFlowCarSessionAudit
 	if err := config.DB.Order("created_at DESC").Limit(80).Find(&sessionAudits).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงประวัติการเข้าสู่ระบบได้")
 		return
@@ -600,7 +600,7 @@ func RentFlowAdminGetSecurity(c *gin.Context) {
 
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลความปลอดภัยสำเร็จ", gin.H{
 		"summary": gin.H{
-			"platformAdminConfigured": services.RentFlowPlatformAdminConfigured(),
+			"platformAdminConfigured": services.RentFlowCarPlatformAdminConfigured(),
 			"tenantOwners":            len(tenantItems),
 			"tenantMembers":           len(members),
 			"connectedLineChannels":   len(lineChannels),
@@ -614,11 +614,11 @@ func RentFlowAdminGetSecurity(c *gin.Context) {
 	})
 }
 
-func RentFlowAdminListPlatformMembers(c *gin.Context) {
+func RentFlowCarAdminListPlatformMembers(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
-	var items []models.RentFlowPlatformMember
+	var items []models.RentFlowCarPlatformMember
 	if err := config.DB.Order("created_at DESC").Find(&items).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลทีมผู้ดูแลระบบได้")
 		return
@@ -626,7 +626,7 @@ func RentFlowAdminListPlatformMembers(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลทีมผู้ดูแลระบบสำเร็จ", gin.H{"items": rentFlowPlatformMemberResponses(items), "total": len(items)})
 }
 
-func RentFlowAdminCreatePlatformMember(c *gin.Context) {
+func RentFlowCarAdminCreatePlatformMember(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -653,7 +653,7 @@ func RentFlowAdminCreatePlatformMember(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusCreated, "เพิ่มทีมผู้ดูแลระบบสำเร็จ", rentFlowPlatformMemberResponse(member))
 }
 
-func RentFlowAdminUpdatePlatformMember(c *gin.Context) {
+func RentFlowCarAdminUpdatePlatformMember(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -672,7 +672,7 @@ func RentFlowAdminUpdatePlatformMember(c *gin.Context) {
 	if !ok {
 		return
 	}
-	result := config.DB.Model(&models.RentFlowPlatformMember{}).
+	result := config.DB.Model(&models.RentFlowCarPlatformMember{}).
 		Where("id = ?", member.ID).
 		Updates(map[string]interface{}{
 			"user_id":          member.UserID,
@@ -695,11 +695,11 @@ func RentFlowAdminUpdatePlatformMember(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตทีมผู้ดูแลระบบสำเร็จ", rentFlowPlatformMemberResponse(member))
 }
 
-func RentFlowAdminDeletePlatformMember(c *gin.Context) {
+func RentFlowCarAdminDeletePlatformMember(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
-	result := config.DB.Where("id = ?", c.Param("memberId")).Delete(&models.RentFlowPlatformMember{})
+	result := config.DB.Where("id = ?", c.Param("memberId")).Delete(&models.RentFlowCarPlatformMember{})
 	if result.Error != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบทีมผู้ดูแลระบบได้")
 		return
@@ -712,11 +712,11 @@ func RentFlowAdminDeletePlatformMember(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ลบทีมผู้ดูแลระบบสำเร็จ", nil)
 }
 
-func RentFlowAdminGetAuditLogs(c *gin.Context) {
+func RentFlowCarAdminGetAuditLogs(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
-	var logs []models.RentFlowAuditLog
+	var logs []models.RentFlowCarAuditLog
 	query := config.DB.Order("created_at DESC").Limit(200)
 	if tenantID := strings.TrimSpace(c.Query("tenantId")); tenantID != "" {
 		query = query.Where("tenant_id = ?", tenantID)
@@ -731,7 +731,7 @@ func RentFlowAdminGetAuditLogs(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึง audit log สำเร็จ", gin.H{"items": logs, "total": len(logs)})
 }
 
-func RentFlowAdminUpdateUserSecurity(c *gin.Context) {
+func RentFlowCarAdminUpdateUserSecurity(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -752,7 +752,7 @@ func RentFlowAdminUpdateUserSecurity(c *gin.Context) {
 		rentFlowError(c, http.StatusBadRequest, "สถานะผู้ใช้ไม่ถูกต้อง")
 		return
 	}
-	var user models.RentFlowUser
+	var user models.RentFlowCarUser
 	if err := config.DB.Where("id = ? OR username = ? OR email = ?", c.Param("userId"), c.Param("userId"), c.Param("userId")).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบผู้ใช้")
@@ -775,7 +775,7 @@ func RentFlowAdminUpdateUserSecurity(c *gin.Context) {
 		updates["failed_login_count"] = 0
 		updates["last_failed_login_at"] = nil
 	}
-	if err := config.DB.Model(&models.RentFlowUser{}).Where("id = ?", user.ID).Updates(updates).Error; err != nil {
+	if err := config.DB.Model(&models.RentFlowCarUser{}).Where("id = ?", user.ID).Updates(updates).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดตผู้ใช้ได้")
 		return
 	}
@@ -827,7 +827,7 @@ func rentFlowPlatformCountTenantsByStatus(items []rentFlowPlatformTenantItem, st
 	return total
 }
 
-func rentFlowCountCustomDomainStatus(items []models.RentFlowCustomDomain, status string) int {
+func rentFlowCountCustomDomainStatus(items []models.RentFlowCarCustomDomain, status string) int {
 	total := 0
 	for _, item := range items {
 		if item.Status == status {
@@ -864,7 +864,7 @@ func rentFlowNormalizePlatformInvoiceStatus(status string) string {
 	}
 }
 
-func rentFlowPlatformEnsureInvoices(tenants []rentFlowPlatformTenantItem) ([]models.RentFlowPlatformInvoice, error) {
+func rentFlowPlatformEnsureInvoices(tenants []rentFlowPlatformTenantItem) ([]models.RentFlowCarPlatformInvoice, error) {
 	period := time.Now().Format("2006-01")
 	planPrices := map[string]int64{
 		"starter":    0,
@@ -873,7 +873,7 @@ func rentFlowPlatformEnsureInvoices(tenants []rentFlowPlatformTenantItem) ([]mod
 	}
 	for _, tenant := range tenants {
 		amount := planPrices[rentFlowNormalizePlatformPartnerPlan(tenant.Plan)]
-		var existing models.RentFlowPlatformInvoice
+		var existing models.RentFlowCarPlatformInvoice
 		err := config.DB.Where("tenant_id = ? AND period = ?", tenant.ID, period).First(&existing).Error
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			now := time.Now()
@@ -882,7 +882,7 @@ func rentFlowPlatformEnsureInvoices(tenants []rentFlowPlatformTenantItem) ([]mod
 				status = "paid"
 			}
 			dueAt := now.AddDate(0, 0, 14)
-			invoice := models.RentFlowPlatformInvoice{
+			invoice := models.RentFlowCarPlatformInvoice{
 				ID:         services.NewID("inv"),
 				TenantID:   tenant.ID,
 				Period:     period,
@@ -906,14 +906,14 @@ func rentFlowPlatformEnsureInvoices(tenants []rentFlowPlatformTenantItem) ([]mod
 			return nil, err
 		}
 	}
-	var invoices []models.RentFlowPlatformInvoice
+	var invoices []models.RentFlowCarPlatformInvoice
 	if err := config.DB.Order("created_at DESC").Limit(200).Find(&invoices).Error; err != nil {
 		return nil, err
 	}
 	return invoices, nil
 }
 
-func rentFlowPlatformMemberFromPayload(c *gin.Context, email, name, role, status string, permissions []string, id string) (models.RentFlowPlatformMember, bool) {
+func rentFlowPlatformMemberFromPayload(c *gin.Context, email, name, role, status string, permissions []string, id string) (models.RentFlowCarPlatformMember, bool) {
 	email = strings.TrimSpace(strings.ToLower(email))
 	name = strings.TrimSpace(name)
 	role = strings.TrimSpace(strings.ToLower(role))
@@ -923,7 +923,7 @@ func rentFlowPlatformMemberFromPayload(c *gin.Context, email, name, role, status
 	}
 	if email == "" {
 		rentFlowError(c, http.StatusBadRequest, "กรุณากรอกอีเมลทีมผู้ดูแลระบบ")
-		return models.RentFlowPlatformMember{}, false
+		return models.RentFlowCarPlatformMember{}, false
 	}
 	if role != "owner" && role != "admin" && role != "support" && role != "finance" {
 		role = "admin"
@@ -933,7 +933,7 @@ func rentFlowPlatformMemberFromPayload(c *gin.Context, email, name, role, status
 	}
 
 	userID := ""
-	var user models.RentFlowUser
+	var user models.RentFlowCarUser
 	if err := config.DB.Where("LOWER(email) = ? OR LOWER(username) = ?", email, email).First(&user).Error; err == nil {
 		userID = user.ID
 		if name == "" {
@@ -943,7 +943,7 @@ func rentFlowPlatformMemberFromPayload(c *gin.Context, email, name, role, status
 	if id == "" {
 		id = services.NewID("pam")
 	}
-	return models.RentFlowPlatformMember{
+	return models.RentFlowCarPlatformMember{
 		ID:              id,
 		UserID:          userID,
 		Email:           email,
@@ -954,7 +954,7 @@ func rentFlowPlatformMemberFromPayload(c *gin.Context, email, name, role, status
 	}, true
 }
 
-func rentFlowPlatformMemberResponses(items []models.RentFlowPlatformMember) []gin.H {
+func rentFlowPlatformMemberResponses(items []models.RentFlowCarPlatformMember) []gin.H {
 	result := make([]gin.H, 0, len(items))
 	for _, item := range items {
 		result = append(result, rentFlowPlatformMemberResponse(item))
@@ -962,7 +962,7 @@ func rentFlowPlatformMemberResponses(items []models.RentFlowPlatformMember) []gi
 	return result
 }
 
-func rentFlowPlatformMemberResponse(item models.RentFlowPlatformMember) gin.H {
+func rentFlowPlatformMemberResponse(item models.RentFlowCarPlatformMember) gin.H {
 	return gin.H{
 		"id":          item.ID,
 		"userId":      item.UserID,
@@ -1023,7 +1023,7 @@ func rentFlowPlatformHosts() gin.H {
 }
 
 func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
-	var tenants []models.RentFlowTenant
+	var tenants []models.RentFlowCarTenant
 	if err := config.DB.Order("created_at DESC").Find(&tenants).Error; err != nil {
 		return nil, err
 	}
@@ -1034,7 +1034,7 @@ func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
 	tenantIDs := make([]string, 0, len(tenants))
 	ownerUserIDs := make([]string, 0, len(tenants))
 	ownerEmails := make([]string, 0, len(tenants))
-	tenantByID := make(map[string]models.RentFlowTenant, len(tenants))
+	tenantByID := make(map[string]models.RentFlowCarTenant, len(tenants))
 	for _, tenant := range tenants {
 		tenantIDs = append(tenantIDs, tenant.ID)
 		tenantByID[tenant.ID] = tenant
@@ -1049,7 +1049,7 @@ func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
 	ownerNamesByUserID := map[string]string{}
 	ownerNamesByEmail := map[string]string{}
 	if len(ownerUserIDs) > 0 || len(ownerEmails) > 0 {
-		query := config.DB.Model(&models.RentFlowUser{})
+		query := config.DB.Model(&models.RentFlowCarUser{})
 		if len(ownerUserIDs) > 0 {
 			query = query.Where("id IN ?", ownerUserIDs)
 		}
@@ -1060,7 +1060,7 @@ func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
 				query = query.Where("LOWER(email) IN ?", ownerEmails)
 			}
 		}
-		var users []models.RentFlowUser
+		var users []models.RentFlowCarUser
 		if err := query.Find(&users).Error; err != nil {
 			return nil, err
 		}
@@ -1073,7 +1073,7 @@ func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
 	}
 
 	carCount := map[string]int{}
-	var cars []models.RentFlowCar
+	var cars []models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id IN ?", tenantIDs).Find(&cars).Error; err != nil {
 		return nil, err
 	}
@@ -1083,7 +1083,7 @@ func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
 
 	totalBookings := map[string]int{}
 	bookingsThisMonth := map[string]int{}
-	var bookings []models.RentFlowBooking
+	var bookings []models.RentFlowCarBooking
 	if err := config.DB.Where("tenant_id IN ?", tenantIDs).Find(&bookings).Error; err != nil {
 		return nil, err
 	}
@@ -1097,7 +1097,7 @@ func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
 	}
 
 	revenueThisMonth := map[string]int64{}
-	var payments []models.RentFlowPayment
+	var payments []models.RentFlowCarPayment
 	if err := config.DB.Where("tenant_id IN ? AND status = ?", tenantIDs, "paid").Find(&payments).Error; err != nil {
 		return nil, err
 	}
@@ -1170,7 +1170,7 @@ func rentFlowPlatformDomainItems(tenantItems []rentFlowPlatformTenantItem) ([]re
 		})
 	}
 
-	var customDomains []models.RentFlowCustomDomain
+	var customDomains []models.RentFlowCarCustomDomain
 	if err := config.DB.Order("created_at DESC").Find(&customDomains).Error; err != nil {
 		return nil, err
 	}

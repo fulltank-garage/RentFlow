@@ -139,8 +139,8 @@ export default function Login() {
           <CardContent className="grid w-full content-start gap-4 p-6! pb-7! md:p-8! md:pb-9!">
             <Box className="mx-auto grid h-16 w-48 place-items-center md:h-20 md:w-56">
               <Image
-                src="/RentFlow.png"
-                alt="RentFlow"
+                src="/RentFlowCar.png"
+                alt="RentFlowCar"
                 width={220}
                 height={112}
                 priority

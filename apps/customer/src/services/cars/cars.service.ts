@@ -1,6 +1,6 @@
 import api from "@/src/lib/axios";
-import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
-import type { RentFlowRequestOptions } from "../types/types";
+import { getRentFlowCarTenantHeaders } from "@/src/lib/tenant";
+import type { RentFlowCarRequestOptions } from "../types/types";
 import type { ApiResponse } from "../types/types";
 import type {
   Car,
@@ -16,12 +16,12 @@ import {
 
 export async function getCars(
   params?: GetCarsParams,
-  options?: RentFlowRequestOptions
+  options?: RentFlowCarRequestOptions
 ): Promise<GetCarsResponse> {
   const headers =
     options?.marketplace === true
       ? undefined
-      : getRentFlowTenantHeaders({ tenantSlug: options?.tenantSlug });
+      : getRentFlowCarTenantHeaders({ tenantSlug: options?.tenantSlug });
 
   const res = await api.get<CarsApiResponse>("/cars", {
     params: {
@@ -41,7 +41,7 @@ export async function getCars(
 
 export async function getCarById(
   carId: string,
-  options?: RentFlowRequestOptions
+  options?: RentFlowCarRequestOptions
 ): Promise<Car | null> {
   const { items } = await getCars(undefined, options);
   return items.find((car) => car.id === carId) ?? null;

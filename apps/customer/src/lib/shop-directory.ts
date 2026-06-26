@@ -31,7 +31,7 @@ export function buildShopSummaries(cars: Car[]) {
     if (!current) {
       shops.set(key, {
         key,
-        name: car.shopName || "RentFlow",
+        name: car.shopName || "RentFlowCar",
         domainSlug: car.domainSlug,
         publicDomain: car.publicDomain,
         logoUrl: car.logoUrl,

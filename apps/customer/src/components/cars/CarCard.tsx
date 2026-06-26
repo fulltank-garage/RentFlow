@@ -14,7 +14,7 @@ import {
 import type { Car } from "@/src/services/cars/cars.types";
 import { formatTHB } from "@/src/constants/money";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
-import { getRentFlowStorefrontHref } from "@/src/lib/tenant";
+import { getRentFlowCarStorefrontHref } from "@/src/lib/tenant";
 
 type Props = {
     car: Car;
@@ -30,7 +30,7 @@ export default function CarCard({ car, showShop = false }: Props) {
     car.domainSlug ? `&tenant=${encodeURIComponent(car.domainSlug)}` : ""
   }&bookingMode=${car.bookingMode === "payment" ? "payment" : "chat"}`;
   const shopHref = car.domainSlug
-    ? getRentFlowStorefrontHref(car.domainSlug)
+    ? getRentFlowCarStorefrontHref(car.domainSlug)
     : "";
   const availableUnits =
     typeof car.availableUnits === "number"
@@ -50,7 +50,7 @@ export default function CarCard({ car, showShop = false }: Props) {
       <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
         <Box
           component="img"
-          src={car.imageUrl || car.image || "/RentFlow.png"}
+          src={car.imageUrl || car.image || "/RentFlowCar.png"}
           alt={car.name}
           loading="lazy"
           decoding="async"

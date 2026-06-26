@@ -17,35 +17,35 @@ import (
 	"rentflow-api/models"
 )
 
-func rentFlowUserAvatarURL(user models.RentFlowUser) string {
+func rentFlowUserAvatarURL(user models.RentFlowCarUser) string {
 	if len(user.AvatarBlob) == 0 || strings.TrimSpace(user.AvatarMimeType) == "" {
 		return ""
 	}
 	return "/users/" + url.PathEscape(user.ID) + "/avatar?v=" + url.QueryEscape(user.UpdatedAt.UTC().Format(time.RFC3339Nano))
 }
 
-func rentFlowTenantLogoURL(tenant models.RentFlowTenant) string {
+func rentFlowTenantLogoURL(tenant models.RentFlowCarTenant) string {
 	if len(tenant.LogoBlob) == 0 || strings.TrimSpace(tenant.LogoMimeType) == "" {
 		return ""
 	}
 	return "/tenants/" + url.PathEscape(tenant.DomainSlug) + "/logo?v=" + url.QueryEscape(tenant.UpdatedAt.UTC().Format(time.RFC3339Nano))
 }
 
-func rentFlowTenantPromoImageURL(tenant models.RentFlowTenant) string {
+func rentFlowTenantPromoImageURL(tenant models.RentFlowCarTenant) string {
 	if len(tenant.PromoImageBlob) == 0 || strings.TrimSpace(tenant.PromoImageMimeType) == "" {
 		return ""
 	}
 	return "/tenants/" + url.PathEscape(tenant.DomainSlug) + "/promo-image?v=" + url.QueryEscape(tenant.UpdatedAt.UTC().Format(time.RFC3339Nano))
 }
 
-func rentFlowTenantLineOAQRCodeURL(tenant models.RentFlowTenant) string {
+func rentFlowTenantLineOAQRCodeURL(tenant models.RentFlowCarTenant) string {
 	if len(tenant.LineOAQRBlob) == 0 || strings.TrimSpace(tenant.LineOAQRMimeType) == "" {
 		return ""
 	}
 	return "/tenants/" + url.PathEscape(tenant.DomainSlug) + "/line-oa-qr?v=" + url.QueryEscape(tenant.UpdatedAt.UTC().Format(time.RFC3339Nano))
 }
 
-func rentFlowTenantPromoImageURLByImage(tenant models.RentFlowTenant, image models.RentFlowTenantPromoImage) string {
+func rentFlowTenantPromoImageURLByImage(tenant models.RentFlowCarTenant, image models.RentFlowCarTenantPromoImage) string {
 	if len(image.Blob) == 0 || strings.TrimSpace(image.MimeType) == "" {
 		return ""
 	}
@@ -56,8 +56,8 @@ func rentFlowTenantPromoImageURLByImage(tenant models.RentFlowTenant, image mode
 	return "/tenants/" + url.PathEscape(tenant.DomainSlug) + "/promo-images/" + url.PathEscape(image.ID) + "?v=" + url.QueryEscape(version)
 }
 
-func rentFlowTenantPromoImageURLs(tenant models.RentFlowTenant) []string {
-	var images []models.RentFlowTenantPromoImage
+func rentFlowTenantPromoImageURLs(tenant models.RentFlowCarTenant) []string {
+	var images []models.RentFlowCarTenantPromoImage
 	if err := config.DB.
 		Where("tenant_id = ?", tenant.ID).
 		Order("display_order ASC, created_at ASC").
@@ -79,21 +79,21 @@ func rentFlowTenantPromoImageURLs(tenant models.RentFlowTenant) []string {
 	return []string{}
 }
 
-func rentFlowPlatformImageURL(setting models.RentFlowPlatformSetting) string {
+func rentFlowPlatformImageURL(setting models.RentFlowCarPlatformSetting) string {
 	if len(setting.ImageBlob) == 0 || strings.TrimSpace(setting.ImageMimeType) == "" {
 		return ""
 	}
 	return "/platform/settings/marketplace-promo-image?v=" + url.QueryEscape(setting.UpdatedAt.UTC().Format(time.RFC3339Nano))
 }
 
-func rentFlowPaymentSlipURL(payment models.RentFlowPayment) string {
+func rentFlowPaymentSlipURL(payment models.RentFlowCarPayment) string {
 	if len(payment.SlipBlob) == 0 || strings.TrimSpace(payment.SlipMimeType) == "" {
 		return ""
 	}
 	return "/payment-slips/" + url.PathEscape(payment.ID) + "?v=" + url.QueryEscape(payment.UpdatedAt.UTC().Format(time.RFC3339Nano))
 }
 
-func rentFlowUserResponse(user models.RentFlowUser) gin.H {
+func rentFlowUserResponse(user models.RentFlowCarUser) gin.H {
 	return gin.H{
 		"id":        user.ID,
 		"username":  user.Username,
@@ -144,7 +144,7 @@ func rentFlowFetchRemoteImage(source string) ([]byte, string, error) {
 	if err != nil {
 		return nil, "", errors.New("ไม่สามารถดาวน์โหลดรูปภาพได้")
 	}
-	request.Header.Set("User-Agent", "RentFlow-Api/1.0")
+	request.Header.Set("User-Agent", "RentFlowCar-Api/1.0")
 
 	response, err := client.Do(request)
 	if err != nil {

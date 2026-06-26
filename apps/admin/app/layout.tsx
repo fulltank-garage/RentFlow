@@ -18,12 +18,12 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "RentFlow ศูนย์จัดการระบบ",
+  title: "RentFlowCar ศูนย์จัดการระบบ",
   description: "หลังบ้านสำหรับดูแลระบบกลาง ร้านเช่ารถ โดเมน แผน และความปลอดภัย",
   icons: {
-    icon: "/RentFlowIcon.png",
-    shortcut: "/RentFlowIcon.png",
-    apple: "/RentFlowIcon.png",
+    icon: "/RentFlowCarIcon.png",
+    shortcut: "/RentFlowCarIcon.png",
+    apple: "/RentFlowCarIcon.png",
   },
 };
 

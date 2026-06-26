@@ -171,7 +171,7 @@ export default function PaymentMethodSection({
                 </Typography>
                 <Typography className="apple-body-sm text-slate-600">
                   ธนาคาร: กสิกรไทย • เลขบัญชี: 123-4-56789-0 • ชื่อบัญชี:
-                  RentFlow Co.,Ltd.
+                  RentFlowCar Co.,Ltd.
                 </Typography>
                 <Typography className="apple-body-sm text-slate-600">
                   จำนวนเงิน:{" "}

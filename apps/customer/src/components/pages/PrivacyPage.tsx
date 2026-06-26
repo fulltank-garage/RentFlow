@@ -47,7 +47,7 @@ export default function PrivacyPage() {
               นโยบายความเป็นส่วนตัว
             </Typography>
             <Typography className="apple-subtitle text-lg">
-              แนวทางการดูแล การใช้ และการคุ้มครองข้อมูลส่วนบุคคลของผู้ใช้งาน RentFlow
+              แนวทางการดูแล การใช้ และการคุ้มครองข้อมูลส่วนบุคคลของผู้ใช้งาน RentFlowCar
             </Typography>
           </Box>
 

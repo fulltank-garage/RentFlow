@@ -1,7 +1,7 @@
 import api from "@/src/lib/axios";
-import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
+import { getRentFlowCarTenantHeaders } from "@/src/lib/tenant";
 import type { ApiResponse } from "../types/types";
-import type { RentFlowRequestOptions } from "../types/types";
+import type { RentFlowCarRequestOptions } from "../types/types";
 import type {
   Booking,
   BookingPricePreview,
@@ -12,7 +12,7 @@ import type {
 export const bookingApi = {
   async previewPrice(
     payload: BookingPricePreviewPayload,
-    options?: RentFlowRequestOptions
+    options?: RentFlowCarRequestOptions
   ) {
     const res = await api.post<ApiResponse<BookingPricePreview>>(
       "/bookings/preview",
@@ -20,7 +20,7 @@ export const bookingApi = {
       {
         headers:
           options?.tenantSlug !== undefined
-            ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
+            ? getRentFlowCarTenantHeaders({ tenantSlug: options.tenantSlug })
             : undefined,
       }
     );
@@ -29,45 +29,45 @@ export const bookingApi = {
 
   async createBooking(
     payload: CreateBookingPayload,
-    options?: RentFlowRequestOptions
+    options?: RentFlowCarRequestOptions
   ) {
     const res = await api.post<ApiResponse<Booking>>("/bookings", payload, {
       headers:
         options?.tenantSlug !== undefined
-          ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
+          ? getRentFlowCarTenantHeaders({ tenantSlug: options.tenantSlug })
           : undefined,
     });
     return res.data;
   },
 
-  async getMyBookings(options?: RentFlowRequestOptions) {
+  async getMyBookings(options?: RentFlowCarRequestOptions) {
     const res = await api.get<ApiResponse<Booking[]>>("/bookings/me", {
       headers:
         options?.tenantSlug !== undefined
-          ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
+          ? getRentFlowCarTenantHeaders({ tenantSlug: options.tenantSlug })
           : undefined,
     });
     return res.data;
   },
 
-  async getBookingById(bookingId: string, options?: RentFlowRequestOptions) {
+  async getBookingById(bookingId: string, options?: RentFlowCarRequestOptions) {
     const res = await api.get<ApiResponse<Booking>>(`/bookings/${bookingId}`, {
       headers:
         options?.tenantSlug !== undefined
-          ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
+          ? getRentFlowCarTenantHeaders({ tenantSlug: options.tenantSlug })
           : undefined,
     });
     return res.data;
   },
 
-  async cancelBooking(bookingId: string, options?: RentFlowRequestOptions) {
+  async cancelBooking(bookingId: string, options?: RentFlowCarRequestOptions) {
     const res = await api.patch<ApiResponse<Booking>>(
       `/bookings/${bookingId}/cancel`,
       undefined,
       {
         headers:
           options?.tenantSlug !== undefined
-            ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
+            ? getRentFlowCarTenantHeaders({ tenantSlug: options.tenantSlug })
             : undefined,
       }
     );

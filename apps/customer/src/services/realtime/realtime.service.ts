@@ -1,30 +1,30 @@
 "use client";
 
-import { getRentFlowApiBaseUrl } from "@/src/lib/runtime-api-url";
+import { getRentFlowCarApiBaseUrl } from "@/src/lib/runtime-api-url";
 import {
-  getRentFlowTenantHost,
-  getRentFlowTenantSlug,
+  getRentFlowCarTenantHost,
+  getRentFlowCarTenantSlug,
 } from "@/src/lib/tenant";
-import type { RentFlowRealtimeEvent } from "./realtime.types";
+import type { RentFlowCarRealtimeEvent } from "./realtime.types";
 
 type SubscribeOptions = {
   app?: "storefront" | "partner" | "admin";
   tenantSlug?: string;
   marketplace?: boolean;
-  onEvent: (event: RentFlowRealtimeEvent) => void;
+  onEvent: (event: RentFlowCarRealtimeEvent) => void;
   onError?: () => void;
   onStatus?: (status: "connecting" | "open" | "closed" | "error") => void;
 };
 
 function realtimeUrl(options: SubscribeOptions) {
-  const base = new URL(getRentFlowApiBaseUrl());
+  const base = new URL(getRentFlowCarApiBaseUrl());
   base.protocol = base.protocol === "https:" ? "wss:" : "ws:";
   base.pathname = "/ws/realtime";
   base.search = "";
   base.searchParams.set("app", options.app || "storefront");
 
-  const tenantSlug = options.tenantSlug ?? getRentFlowTenantSlug();
-  const host = getRentFlowTenantHost();
+  const tenantSlug = options.tenantSlug ?? getRentFlowCarTenantSlug();
+  const host = getRentFlowCarTenantHost();
   if (tenantSlug) {
     base.searchParams.set("tenant", tenantSlug);
   }
@@ -38,7 +38,7 @@ function realtimeUrl(options: SubscribeOptions) {
   return base.toString();
 }
 
-export function subscribeRentFlowRealtime(options: SubscribeOptions) {
+export function subscribeRentFlowCarRealtime(options: SubscribeOptions) {
   if (typeof window === "undefined") {
     return () => undefined;
   }
@@ -55,7 +55,7 @@ export function subscribeRentFlowRealtime(options: SubscribeOptions) {
     socket = new WebSocket(realtimeUrl(options));
     socket.onmessage = (message) => {
       try {
-        options.onEvent(JSON.parse(message.data) as RentFlowRealtimeEvent);
+        options.onEvent(JSON.parse(message.data) as RentFlowCarRealtimeEvent);
       } catch {
         // Ignore malformed realtime payloads and keep the socket alive.
       }

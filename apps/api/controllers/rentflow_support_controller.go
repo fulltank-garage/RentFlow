@@ -20,7 +20,7 @@ type rentFlowLineUserProfile struct {
 	PictureURL  string `json:"pictureUrl"`
 }
 
-func RentFlowPartnerGetSupport(c *gin.Context) {
+func RentFlowCarPartnerGetSupport(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -35,7 +35,7 @@ func RentFlowPartnerGetSupport(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลซัพพอร์ตสำเร็จ", response)
 }
 
-func RentFlowPartnerUpdateSupportTicket(c *gin.Context) {
+func RentFlowCarPartnerUpdateSupportTicket(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -51,7 +51,7 @@ func RentFlowPartnerUpdateSupportTicket(c *gin.Context) {
 		return
 	}
 
-	var ticket models.RentFlowSupportTicket
+	var ticket models.RentFlowCarSupportTicket
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("ticketId")).First(&ticket).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบ ticket ที่ต้องการ")
@@ -75,7 +75,7 @@ func RentFlowPartnerUpdateSupportTicket(c *gin.Context) {
 		ticket.OwnerEmail = ownerEmail
 	}
 
-	if err := config.DB.Model(&models.RentFlowSupportTicket{}).
+	if err := config.DB.Model(&models.RentFlowCarSupportTicket{}).
 		Where("tenant_id = ? AND id = ?", tenant.ID, ticket.ID).
 		Updates(updates).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดต ticket ได้")
@@ -83,7 +83,7 @@ func RentFlowPartnerUpdateSupportTicket(c *gin.Context) {
 	}
 
 	rentFlowAudit(c, tenant.ID, "support.ticket.update", "support_ticket", ticket.ID, ticket.Status+"|"+ticket.Priority+"|"+ticket.OwnerEmail)
-	rentFlowPublishSupportRealtime(tenant.ID, ticket.ID, services.RentFlowRealtimeEventSupportChanged)
+	rentFlowPublishSupportRealtime(tenant.ID, ticket.ID, services.RentFlowCarRealtimeEventSupportChanged)
 	rentFlowSuccess(c, http.StatusOK, "อัปเดต ticket สำเร็จ", gin.H{
 		"id":         ticket.ID,
 		"status":     ticket.Status,
@@ -92,12 +92,12 @@ func RentFlowPartnerUpdateSupportTicket(c *gin.Context) {
 	})
 }
 
-func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
+func RentFlowCarPartnerCreateSupportMessage(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
-	user, _ := middleware.CurrentRentFlowUser(c)
+	user, _ := middleware.CurrentRentFlowCarUser(c)
 
 	var payload struct {
 		Message    string `json:"message"`
@@ -114,7 +114,7 @@ func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
 		return
 	}
 
-	var ticket models.RentFlowSupportTicket
+	var ticket models.RentFlowCarSupportTicket
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("ticketId")).First(&ticket).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบ ticket ที่ต้องการ")
@@ -144,7 +144,7 @@ func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
 
 		if err := rentFlowLinePushTextMessage(channel.AccessToken, ticket.ExternalThreadID, messageText); err != nil {
 			messageStatus = "failed"
-			_ = config.DB.Create(&models.RentFlowMessageLog{
+			_ = config.DB.Create(&models.RentFlowCarMessageLog{
 				ID:           services.NewID("msg"),
 				TenantID:     tenant.ID,
 				Channel:      "line",
@@ -159,7 +159,7 @@ func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
 		}
 
 		messageStatus = "sent"
-		_ = config.DB.Create(&models.RentFlowMessageLog{
+		_ = config.DB.Create(&models.RentFlowCarMessageLog{
 			ID:        services.NewID("msg"),
 			TenantID:  tenant.ID,
 			Channel:   "line",
@@ -170,7 +170,7 @@ func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
 		}).Error
 	}
 
-	message := models.RentFlowSupportMessage{
+	message := models.RentFlowCarSupportMessage{
 		ID:         services.NewID("supmsg"),
 		TenantID:   tenant.ID,
 		TicketID:   ticket.ID,
@@ -195,7 +195,7 @@ func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
 	if !payload.IsInternal && strings.TrimSpace(ticket.OwnerEmail) == "" {
 		updates["owner_email"] = strings.TrimSpace(strings.ToLower(user.Email))
 	}
-	if err := config.DB.Model(&models.RentFlowSupportTicket{}).
+	if err := config.DB.Model(&models.RentFlowCarSupportTicket{}).
 		Where("tenant_id = ? AND id = ?", tenant.ID, ticket.ID).
 		Updates(updates).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดต ticket หลังส่งข้อความได้")
@@ -203,7 +203,7 @@ func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
 	}
 
 	rentFlowAudit(c, tenant.ID, "support.message.create", "support_ticket", ticket.ID, messageFrom)
-	rentFlowPublishSupportRealtime(tenant.ID, ticket.ID, services.RentFlowRealtimeEventSupportChanged)
+	rentFlowPublishSupportRealtime(tenant.ID, ticket.ID, services.RentFlowCarRealtimeEventSupportChanged)
 	rentFlowSuccess(c, http.StatusCreated, "บันทึกข้อความซัพพอร์ตสำเร็จ", gin.H{
 		"id":         message.ID,
 		"fromType":   message.FromType,
@@ -215,7 +215,7 @@ func RentFlowPartnerCreateSupportMessage(c *gin.Context) {
 }
 
 func rentFlowPartnerSupportResponse(tenantID, ownerEmail string) (gin.H, error) {
-	var tickets []models.RentFlowSupportTicket
+	var tickets []models.RentFlowCarSupportTicket
 	if err := config.DB.Where("tenant_id = ?", tenantID).Order("updated_at DESC").Find(&tickets).Error; err != nil {
 		return nil, err
 	}
@@ -229,9 +229,9 @@ func rentFlowPartnerSupportResponse(tenantID, ownerEmail string) (gin.H, error) 
 		}
 	}
 
-	messageMap := map[string][]models.RentFlowSupportMessage{}
+	messageMap := map[string][]models.RentFlowCarSupportMessage{}
 	if len(ticketIDs) > 0 {
-		var messages []models.RentFlowSupportMessage
+		var messages []models.RentFlowCarSupportMessage
 		if err := config.DB.Where("tenant_id = ? AND ticket_id IN ?", tenantID, ticketIDs).Order("created_at ASC").Find(&messages).Error; err != nil {
 			return nil, err
 		}
@@ -242,7 +242,7 @@ func rentFlowPartnerSupportResponse(tenantID, ownerEmail string) (gin.H, error) 
 
 	bookingCodeMap := map[string]string{}
 	if len(bookingIDs) > 0 {
-		var bookings []models.RentFlowBooking
+		var bookings []models.RentFlowCarBooking
 		if err := config.DB.Where("tenant_id = ? AND id IN ?", tenantID, bookingIDs).Find(&bookings).Error; err == nil {
 			for _, booking := range bookings {
 				bookingCodeMap[booking.ID] = booking.BookingCode
@@ -325,7 +325,7 @@ func rentFlowPartnerSupportOwners(tenantID, ownerEmail string) ([]gin.H, error) 
 	}
 
 	if strings.TrimSpace(ownerEmail) != "" {
-		var owner models.RentFlowUser
+		var owner models.RentFlowCarUser
 		if err := config.DB.Where("LOWER(email) = ?", strings.ToLower(ownerEmail)).First(&owner).Error; err == nil {
 			addItem(owner.Email, owner.Name)
 		} else {
@@ -333,7 +333,7 @@ func rentFlowPartnerSupportOwners(tenantID, ownerEmail string) ([]gin.H, error) 
 		}
 	}
 
-	var members []models.RentFlowTenantMember
+	var members []models.RentFlowCarTenantMember
 	if err := config.DB.Where("tenant_id = ? AND status = ?", tenantID, "active").Order("role DESC, email ASC").Find(&members).Error; err != nil {
 		return nil, err
 	}
@@ -361,7 +361,7 @@ func rentFlowNormalizeSupportPriority(value string) string {
 	}
 }
 
-func rentFlowSupportIngestLineEvent(tenant *models.RentFlowTenant, channel *models.RentFlowLineChannel, event rentFlowLineWebhookEvent) {
+func rentFlowSupportIngestLineEvent(tenant *models.RentFlowCarTenant, channel *models.RentFlowCarLineChannel, event rentFlowLineWebhookEvent) {
 	threadID := strings.TrimSpace(rentFlowLineEventRecipient(event))
 	if threadID == "" || threadID == "unknown" {
 		return
@@ -369,7 +369,7 @@ func rentFlowSupportIngestLineEvent(tenant *models.RentFlowTenant, channel *mode
 
 	providerRef := strings.TrimSpace(event.WebhookEventID)
 	if providerRef != "" {
-		var existingMessage models.RentFlowSupportMessage
+		var existingMessage models.RentFlowCarSupportMessage
 		if err := config.DB.Where("tenant_id = ? AND provider_ref = ?", tenant.ID, providerRef).First(&existingMessage).Error; err == nil {
 			return
 		}
@@ -394,11 +394,11 @@ func rentFlowSupportIngestLineEvent(tenant *models.RentFlowTenant, channel *mode
 	}
 
 	now := time.Now()
-	var ticket models.RentFlowSupportTicket
+	var ticket models.RentFlowCarSupportTicket
 	err := config.DB.Where("tenant_id = ? AND channel = ? AND external_thread_id = ?", tenant.ID, "line", threadID).First(&ticket).Error
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		ticket = models.RentFlowSupportTicket{
+		ticket = models.RentFlowCarSupportTicket{
 			ID:               services.NewID("supt"),
 			TenantID:         tenant.ID,
 			Channel:          "line",
@@ -422,7 +422,7 @@ func rentFlowSupportIngestLineEvent(tenant *models.RentFlowTenant, channel *mode
 		if ticket.Status == "resolved" || ticket.Status == "closed" {
 			updates["status"] = "open"
 		}
-		_ = config.DB.Model(&models.RentFlowSupportTicket{}).
+		_ = config.DB.Model(&models.RentFlowCarSupportTicket{}).
 			Where("tenant_id = ? AND id = ?", tenant.ID, ticket.ID).
 			Updates(updates).Error
 		ticket.Subject = subject
@@ -433,7 +433,7 @@ func rentFlowSupportIngestLineEvent(tenant *models.RentFlowTenant, channel *mode
 		return
 	}
 
-	_ = config.DB.Create(&models.RentFlowSupportMessage{
+	_ = config.DB.Create(&models.RentFlowCarSupportMessage{
 		ID:          services.NewID("supmsg"),
 		TenantID:    tenant.ID,
 		TicketID:    ticket.ID,
@@ -443,7 +443,7 @@ func rentFlowSupportIngestLineEvent(tenant *models.RentFlowTenant, channel *mode
 		Status:      "received",
 		ProviderRef: providerRef,
 	}).Error
-	rentFlowPublishSupportRealtime(tenant.ID, ticket.ID, services.RentFlowRealtimeEventSupportChanged)
+	rentFlowPublishSupportRealtime(tenant.ID, ticket.ID, services.RentFlowCarRealtimeEventSupportChanged)
 }
 
 func rentFlowLineGetUserProfile(accessToken, userID string) (*rentFlowLineUserProfile, error) {

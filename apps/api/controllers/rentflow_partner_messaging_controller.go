@@ -114,7 +114,7 @@ type rentFlowLineConnectionResponse struct {
 	RecentEvents          []rentFlowLineRecentEvent `json:"recentEvents,omitempty"`
 }
 
-func RentFlowPartnerGetLineMessaging(c *gin.Context) {
+func RentFlowCarPartnerGetLineMessaging(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -129,7 +129,7 @@ func RentFlowPartnerGetLineMessaging(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูล LINE OA สำเร็จ", rentFlowBuildLineConnectionResponse(c, tenant, channel))
 }
 
-func RentFlowPartnerSaveLineMessaging(c *gin.Context) {
+func RentFlowCarPartnerSaveLineMessaging(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -163,7 +163,7 @@ func RentFlowPartnerSaveLineMessaging(c *gin.Context) {
 
 	now := time.Now()
 	if channel == nil {
-		channel = &models.RentFlowLineChannel{
+		channel = &models.RentFlowCarLineChannel{
 			ID:       services.NewID("line"),
 			TenantID: tenant.ID,
 		}
@@ -190,7 +190,7 @@ func RentFlowPartnerSaveLineMessaging(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "บันทึก LINE OA สำเร็จ", rentFlowBuildLineConnectionResponse(c, tenant, channel))
 }
 
-func RentFlowPartnerTestLineMessaging(c *gin.Context) {
+func RentFlowCarPartnerTestLineMessaging(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -237,7 +237,7 @@ func RentFlowPartnerTestLineMessaging(c *gin.Context) {
 	})
 }
 
-func RentFlowPartnerTestLineWebhook(c *gin.Context) {
+func RentFlowCarPartnerTestLineWebhook(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -288,7 +288,7 @@ func RentFlowPartnerTestLineWebhook(c *gin.Context) {
 		} else {
 			updates["last_error"] = strings.TrimSpace(result.Reason)
 		}
-		_ = config.DB.Model(&models.RentFlowLineChannel{}).
+		_ = config.DB.Model(&models.RentFlowCarLineChannel{}).
 			Where("tenant_id = ?", tenant.ID).
 			Updates(updates).Error
 		channel.WebhookURL = endpoint
@@ -305,7 +305,7 @@ func RentFlowPartnerTestLineWebhook(c *gin.Context) {
 	if result.Success {
 		logStatus = "test_passed"
 	}
-	_ = config.DB.Create(&models.RentFlowMessageLog{
+	_ = config.DB.Create(&models.RentFlowCarMessageLog{
 		ID:           services.NewID("msg"),
 		TenantID:     tenant.ID,
 		Channel:      "line",
@@ -323,13 +323,13 @@ func RentFlowPartnerTestLineWebhook(c *gin.Context) {
 	})
 }
 
-func RentFlowPartnerDeleteLineMessaging(c *gin.Context) {
+func RentFlowCarPartnerDeleteLineMessaging(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	result := config.DB.Where("tenant_id = ?", tenant.ID).Delete(&models.RentFlowLineChannel{})
+	result := config.DB.Where("tenant_id = ?", tenant.ID).Delete(&models.RentFlowCarLineChannel{})
 	if result.Error != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบการเชื่อมต่อ LINE OA ได้")
 		return
@@ -343,14 +343,14 @@ func RentFlowPartnerDeleteLineMessaging(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ลบการเชื่อมต่อ LINE OA สำเร็จ", nil)
 }
 
-func RentFlowLineWebhook(c *gin.Context) {
+func RentFlowCarLineWebhook(c *gin.Context) {
 	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
 	if slug == "" {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "message": "ไม่พบร้าน"})
 		return
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.Where("domain_slug = ?", slug).First(&tenant).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "message": "ไม่พบร้าน"})
 		return
@@ -387,7 +387,7 @@ func RentFlowLineWebhook(c *gin.Context) {
 
 	now := time.Now()
 	for _, event := range envelope.Events {
-		logEntry := models.RentFlowMessageLog{
+		logEntry := models.RentFlowCarMessageLog{
 			ID:          services.NewID("msg"),
 			TenantID:    tenant.ID,
 			Channel:     "line",
@@ -401,7 +401,7 @@ func RentFlowLineWebhook(c *gin.Context) {
 		rentFlowSupportIngestLineEvent(&tenant, channel, event)
 	}
 
-	_ = config.DB.Model(&models.RentFlowLineChannel{}).
+	_ = config.DB.Model(&models.RentFlowCarLineChannel{}).
 		Where("tenant_id = ?", tenant.ID).
 		Updates(map[string]interface{}{
 			"last_webhook_test_at":     &now,
@@ -413,8 +413,8 @@ func RentFlowLineWebhook(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true})
 }
 
-func rentFlowLineChannelByTenant(tenantID string) (*models.RentFlowLineChannel, error) {
-	var channel models.RentFlowLineChannel
+func rentFlowLineChannelByTenant(tenantID string) (*models.RentFlowCarLineChannel, error) {
+	var channel models.RentFlowCarLineChannel
 	if err := config.DB.Where("tenant_id = ?", tenantID).First(&channel).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -424,7 +424,7 @@ func rentFlowLineChannelByTenant(tenantID string) (*models.RentFlowLineChannel, 
 	return &channel, nil
 }
 
-func rentFlowLineResolveCredentials(channelID, channelSecret, accessToken string, channel *models.RentFlowLineChannel) (string, string, string, error) {
+func rentFlowLineResolveCredentials(channelID, channelSecret, accessToken string, channel *models.RentFlowCarLineChannel) (string, string, string, error) {
 	resolvedChannelID := strings.TrimSpace(channelID)
 	resolvedChannelSecret := strings.TrimSpace(channelSecret)
 	resolvedAccessToken := strings.TrimSpace(accessToken)
@@ -447,7 +447,7 @@ func rentFlowLineResolveCredentials(channelID, channelSecret, accessToken string
 	return resolvedChannelID, resolvedChannelSecret, resolvedAccessToken, nil
 }
 
-func rentFlowBuildLineConnectionResponse(c *gin.Context, tenant *models.RentFlowTenant, channel *models.RentFlowLineChannel) rentFlowLineConnectionResponse {
+func rentFlowBuildLineConnectionResponse(c *gin.Context, tenant *models.RentFlowCarTenant, channel *models.RentFlowCarLineChannel) rentFlowLineConnectionResponse {
 	response := rentFlowLineConnectionResponse{
 		TenantID:     tenant.ID,
 		ShopName:     tenant.ShopName,
@@ -484,7 +484,7 @@ func rentFlowBuildLineConnectionResponse(c *gin.Context, tenant *models.RentFlow
 }
 
 func rentFlowLineRecentEvents(tenantID string) []rentFlowLineRecentEvent {
-	var logs []models.RentFlowMessageLog
+	var logs []models.RentFlowCarMessageLog
 	if err := config.DB.
 		Where("tenant_id = ? AND channel = ?", tenantID, "line").
 		Order("created_at DESC").
@@ -508,7 +508,7 @@ func rentFlowLineRecentEvents(tenantID string) []rentFlowLineRecentEvent {
 	return items
 }
 
-func rentFlowLineWebhookURL(c *gin.Context, tenant *models.RentFlowTenant) string {
+func rentFlowLineWebhookURL(c *gin.Context, tenant *models.RentFlowCarTenant) string {
 	return rentFlowPublicAPIBaseURL(c) + "/webhooks/line/" + tenant.DomainSlug
 }
 

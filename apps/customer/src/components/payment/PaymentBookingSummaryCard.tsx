@@ -262,7 +262,7 @@ export default function PaymentBookingSummaryCard({
           <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
             <StableImage
               className="aspect-4/3 rounded-[18px]"
-              src={car.image || "/RentFlow.png"}
+              src={car.image || "/RentFlowCar.png"}
               alt={car.name}
               sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
               imageClassName="object-cover"

@@ -1,5 +1,5 @@
 import api from "@/src/lib/axios";
-import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
+import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
 import type { ApiResponse } from "@/src/services/types/types";
 
 import type { PlatformPublicSettings } from "./platform.types";
@@ -9,7 +9,7 @@ function normalizePlatformSettings(
 ): PlatformPublicSettings {
   return {
     ...settings,
-    promoImageUrl: resolveRentFlowAssetUrl(settings.promoImageUrl),
+    promoImageUrl: resolveRentFlowCarAssetUrl(settings.promoImageUrl),
   };
 }
 

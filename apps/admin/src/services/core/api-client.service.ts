@@ -46,7 +46,7 @@ const adminApiClient = axios.create({
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
-    "X-RentFlow-App": "admin",
+    "X-RentFlowCar-App": "admin",
   },
 });
 
@@ -64,7 +64,7 @@ export async function requestAdmin<T>(
       method: init?.method || "GET",
       data: init?.data,
       headers: {
-        "X-RentFlow-App": "admin",
+        "X-RentFlowCar-App": "admin",
         ...init?.headers,
       },
     });

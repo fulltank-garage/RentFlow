@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
-import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
+import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
-import type { RentFlowRealtimeEvent } from "@/src/services/realtime/realtime.types";
+import type { RentFlowCarRealtimeEvent } from "@/src/services/realtime/realtime.types";
 
 type Params = {
     q: string;
@@ -20,13 +20,13 @@ type Params = {
 
 export function useCarsCatalog(params: Params) {
   const { q, type, sort, location, pickupDate, returnDate, tenantSlug } = params;
-  const siteMode = useRentFlowSiteMode();
+  const siteMode = useRentFlowCarSiteMode();
   const [cars, setCars] = React.useState<Car[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const [reloadTick, setReloadTick] = React.useState(0);
 
-    const refreshFromRealtime = React.useCallback((event?: RentFlowRealtimeEvent) => {
+    const refreshFromRealtime = React.useCallback((event?: RentFlowCarRealtimeEvent) => {
         if (event?.type === "car.status.changed") {
             const carId = String(event.data?.carId || event.entityId || "");
             if (carId) {
@@ -57,7 +57,7 @@ export function useCarsCatalog(params: Params) {
         setReloadTick((current) => current + 1);
     }, []);
 
-    useRentFlowRealtimeRefresh({
+    useRentFlowCarRealtimeRefresh({
         events: [
             "booking.created",
             "booking.updated",

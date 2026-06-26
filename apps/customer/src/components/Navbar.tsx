@@ -18,8 +18,8 @@ import {
 } from "@mui/material";
 
 import { NAV } from "@/src/constants/navigation";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
-import { useRentFlowSiteModeStatus } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
+import { useRentFlowCarSiteModeStatus } from "@/src/hooks/useRentFlowCarSiteMode";
 import {
   AUTH_SESSION_CHANGED_EVENT,
   clearCachedSessionUser,
@@ -274,10 +274,10 @@ export default function Navbar({
     React.useState<TenantProfile | null>(initialTenantProfile);
   const verifyingSessionRef = React.useRef(false);
 
-  const { siteMode } = useRentFlowSiteModeStatus(initialHost);
-  const brandName = tenantProfile?.shopName || "RentFlow";
+  const { siteMode } = useRentFlowCarSiteModeStatus(initialHost);
+  const brandName = tenantProfile?.shopName || "RentFlowCar";
   const brandLogoSrc =
-    tenantProfile?.logoUrl || (siteMode === "storefront" ? "" : "/RentFlow.png");
+    tenantProfile?.logoUrl || (siteMode === "storefront" ? "" : "/RentFlowCar.png");
   const navItems = React.useMemo(
     () =>
       siteMode === "marketplace"
@@ -298,7 +298,7 @@ export default function Navbar({
       });
   }, [initialTenantProfile, siteMode]);
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: ["tenant.updated"],
     onRefresh: reloadTenantProfile,
     enabled: siteMode === "storefront",

@@ -28,7 +28,7 @@ async function proxyPartnerRequest(
   });
 
   const headers = new Headers();
-  headers.set("X-RentFlow-App", "partner");
+  headers.set("X-RentFlowCar-App", "partner");
 
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("Content-Type", contentType);

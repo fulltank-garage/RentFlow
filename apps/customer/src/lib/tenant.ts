@@ -1,6 +1,6 @@
 const DEFAULT_ROOT_DOMAIN = "rentflowcar.xyz";
-export type RentFlowSiteMode = "marketplace" | "storefront";
-export type RentFlowRequestScope = {
+export type RentFlowCarSiteMode = "marketplace" | "storefront";
+export type RentFlowCarRequestScope = {
   host?: string;
   tenantSlug?: string;
 };
@@ -21,25 +21,25 @@ function normalizeHost(value?: string) {
   }
 }
 
-export function getRentFlowRootDomain() {
+export function getRentFlowCarRootDomain() {
   return normalizeHost(
     process.env.NEXT_PUBLIC_RENTFLOW_ROOT_DOMAIN || DEFAULT_ROOT_DOMAIN
   );
 }
 
-function getRentFlowRootLabel() {
-  const rootDomain = getRentFlowRootDomain();
+function getRentFlowCarRootLabel() {
+  const rootDomain = getRentFlowCarRootDomain();
   return rootDomain.split(".")[0] || "rentflow";
 }
 
-function getRentFlowMarketplaceHosts() {
+function getRentFlowCarMarketplaceHosts() {
   return (process.env.NEXT_PUBLIC_RENTFLOW_MARKETPLACE_HOSTS || "")
     .split(",")
     .map((host) => normalizeHost(host))
     .filter(Boolean);
 }
 
-export function getRentFlowTenantHost() {
+export function getRentFlowCarTenantHost() {
   if (typeof window !== "undefined") {
     return normalizeHost(window.location.host);
   }
@@ -47,17 +47,17 @@ export function getRentFlowTenantHost() {
   return normalizeHost(process.env.NEXT_PUBLIC_RENTFLOW_TENANT_HOST);
 }
 
-export function isRentFlowMarketplaceHost(host = getRentFlowTenantHost()) {
+export function isRentFlowCarMarketplaceHost(host = getRentFlowCarTenantHost()) {
   const normalizedHost = normalizeHost(host);
-  const rootDomain = getRentFlowRootDomain();
-  const rootLabel = getRentFlowRootLabel();
+  const rootDomain = getRentFlowCarRootDomain();
+  const rootLabel = getRentFlowCarRootLabel();
   const fallbackTenant = process.env.NEXT_PUBLIC_RENTFLOW_TENANT || "";
 
   if (!normalizedHost) {
     return !fallbackTenant;
   }
 
-  if (getRentFlowMarketplaceHosts().includes(normalizedHost)) {
+  if (getRentFlowCarMarketplaceHosts().includes(normalizedHost)) {
     return true;
   }
 
@@ -85,15 +85,15 @@ export function isRentFlowMarketplaceHost(host = getRentFlowTenantHost()) {
   return false;
 }
 
-export function getRentFlowTenantSlug(host = getRentFlowTenantHost()) {
+export function getRentFlowCarTenantSlug(host = getRentFlowCarTenantHost()) {
   const normalizedHost = normalizeHost(host);
-  const rootDomain = getRentFlowRootDomain();
+  const rootDomain = getRentFlowCarRootDomain();
 
   if (!normalizedHost) {
     return process.env.NEXT_PUBLIC_RENTFLOW_TENANT || "";
   }
 
-  if (isRentFlowMarketplaceHost(normalizedHost)) {
+  if (isRentFlowCarMarketplaceHost(normalizedHost)) {
     return "";
   }
 
@@ -118,17 +118,17 @@ export function getRentFlowTenantSlug(host = getRentFlowTenantHost()) {
   return process.env.NEXT_PUBLIC_RENTFLOW_TENANT || "";
 }
 
-export function getRentFlowSiteMode(host = getRentFlowTenantHost()): RentFlowSiteMode {
-  return isRentFlowMarketplaceHost(host) ? "marketplace" : "storefront";
+export function getRentFlowCarSiteMode(host = getRentFlowCarTenantHost()): RentFlowCarSiteMode {
+  return isRentFlowCarMarketplaceHost(host) ? "marketplace" : "storefront";
 }
 
-export function getRentFlowStorefrontHref(tenantSlug?: string) {
+export function getRentFlowCarStorefrontHref(tenantSlug?: string) {
   const slug = tenantSlug?.trim().toLowerCase();
   if (!slug) {
     return "";
   }
 
-  const rootDomain = getRentFlowRootDomain();
+  const rootDomain = getRentFlowCarRootDomain();
 
   if (typeof window !== "undefined") {
     const protocol = window.location.protocol || "https:";
@@ -155,15 +155,15 @@ export function getRentFlowStorefrontHref(tenantSlug?: string) {
   return `https://${slug}.${rootDomain}`;
 }
 
-export function getRentFlowTenantHeaders(scope?: RentFlowRequestScope) {
-  const host = normalizeHost(scope?.host) || getRentFlowTenantHost();
+export function getRentFlowCarTenantHeaders(scope?: RentFlowCarRequestScope) {
+  const host = normalizeHost(scope?.host) || getRentFlowCarTenantHost();
   const slug =
     scope?.tenantSlug !== undefined
       ? scope.tenantSlug.trim().toLowerCase()
-      : getRentFlowTenantSlug(host);
+      : getRentFlowCarTenantSlug(host);
 
   return {
-    ...(host ? { "X-RentFlow-Host": host } : {}),
-    ...(slug ? { "X-RentFlow-Tenant": slug } : {}),
+    ...(host ? { "X-RentFlowCar-Host": host } : {}),
+    ...(slug ? { "X-RentFlowCar-Tenant": slug } : {}),
   };
 }

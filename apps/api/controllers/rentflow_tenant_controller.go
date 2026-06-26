@@ -40,7 +40,7 @@ type rentFlowUploadedPromoImage struct {
 	MimeType string
 }
 
-func RentFlowResolveTenant(c *gin.Context) {
+func RentFlowCarResolveTenant(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
@@ -49,7 +49,7 @@ func RentFlowResolveTenant(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลร้านสำเร็จ", rentFlowPublicTenantResponse(*tenant))
 }
 
-func RentFlowListPublicTenants(c *gin.Context) {
+func RentFlowCarListPublicTenants(c *gin.Context) {
 	tenants, err := rentFlowMarketplaceTenants()
 	if err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลร้านได้")
@@ -67,7 +67,7 @@ func RentFlowListPublicTenants(c *gin.Context) {
 	})
 }
 
-func RentFlowGetMyTenant(c *gin.Context) {
+func RentFlowCarGetMyTenant(c *gin.Context) {
 	tenant, err := rentFlowCurrentUserTenant(c)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -81,8 +81,8 @@ func RentFlowGetMyTenant(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลร้านสำเร็จ", rentFlowOwnerTenantResponse(*tenant))
 }
 
-func RentFlowUpsertMyTenant(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarUpsertMyTenant(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
@@ -291,7 +291,7 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 
 	publicDomain := rentFlowPublicDomain(domainSlug)
 
-	var existing models.RentFlowTenant
+	var existing models.RentFlowCarTenant
 	result := config.DB.
 		Where("owner_user_id = ? OR owner_email = ?", user.ID, user.Email).
 		First(&existing)
@@ -302,7 +302,7 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 	}
 
 	conflictQuery := config.DB.
-		Model(&models.RentFlowTenant{}).
+		Model(&models.RentFlowCarTenant{}).
 		Where("(domain_slug = ? OR public_domain = ?)", domainSlug, publicDomain)
 	if result.Error == nil {
 		conflictQuery = conflictQuery.Where("id <> ?", existing.ID)
@@ -320,7 +320,7 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 
 	ownerUserID := user.ID
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		tenant := models.RentFlowTenant{
+		tenant := models.RentFlowCarTenant{
 			ID:                 services.NewID("tnt"),
 			OwnerUserID:        &ownerUserID,
 			OwnerEmail:         user.Email,
@@ -358,8 +358,8 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 				return
 			}
 		}
-		services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
-		services.CacheDeleteByPrefix(config.Ctx, services.RentFlowBranchesCachePrefix())
+		services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
+		services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarBranchesCachePrefix())
 		rentFlowSuccess(c, http.StatusCreated, "บันทึกข้อมูลร้านสำเร็จ", rentFlowOwnerTenantResponse(tenant))
 		return
 	}
@@ -399,7 +399,7 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 		updates["line_oaqr_blob"] = lineOAQRBlob
 	}
 
-	if err := config.DB.Model(&models.RentFlowTenant{}).
+	if err := config.DB.Model(&models.RentFlowCarTenant{}).
 		Where("id = ?", existing.ID).
 		Select(rentFlowUpdateColumns(updates)).
 		Updates(updates).Error; err != nil {
@@ -460,8 +460,8 @@ func RentFlowUpsertMyTenant(c *gin.Context) {
 
 	_ = config.DB.Where("id = ?", existing.ID).First(&existing).Error
 
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowBranchesCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarBranchesCachePrefix())
 	rentFlowSuccess(c, http.StatusOK, "บันทึกข้อมูลร้านสำเร็จ", rentFlowOwnerTenantResponse(existing))
 }
 
@@ -479,14 +479,14 @@ func rentFlowMultipartStringValues(values []string) []string {
 
 func rentFlowReplaceTenantPromoImages(tenantID string, images []rentFlowUploadedPromoImage) error {
 	return config.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Where("tenant_id = ?", tenantID).Delete(&models.RentFlowTenantPromoImage{}).Error; err != nil {
+		if err := tx.Where("tenant_id = ?", tenantID).Delete(&models.RentFlowCarTenantPromoImage{}).Error; err != nil {
 			return err
 		}
 		for index, image := range images {
 			if len(image.Blob) == 0 || strings.TrimSpace(image.MimeType) == "" {
 				continue
 			}
-			item := models.RentFlowTenantPromoImage{
+			item := models.RentFlowCarTenantPromoImage{
 				ID:           services.NewID("tpi"),
 				TenantID:     tenantID,
 				MimeType:     image.MimeType,
@@ -501,7 +501,7 @@ func rentFlowReplaceTenantPromoImages(tenantID string, images []rentFlowUploaded
 	})
 }
 
-func RentFlowPartnerReorderPromoImages(c *gin.Context) {
+func RentFlowCarPartnerReorderPromoImages(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -519,7 +519,7 @@ func RentFlowPartnerReorderPromoImages(c *gin.Context) {
 			if id == "" {
 				continue
 			}
-			if err := tx.Model(&models.RentFlowTenantPromoImage{}).
+			if err := tx.Model(&models.RentFlowCarTenantPromoImage{}).
 				Where("tenant_id = ? AND id = ?", tenant.ID, id).
 				Updates(map[string]interface{}{"display_order": index + 1, "updated_at": time.Now()}).Error; err != nil {
 				return err
@@ -530,17 +530,17 @@ func RentFlowPartnerReorderPromoImages(c *gin.Context) {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถจัดลำดับรูปโปรโมชันได้")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
 	rentFlowAudit(c, tenant.ID, "promo_images.reorder", "tenant", tenant.ID, strings.Join(payload.ImageIDs, ","))
 	rentFlowSuccess(c, http.StatusOK, "จัดลำดับรูปโปรโมชันสำเร็จ", rentFlowOwnerTenantResponse(*tenant))
 }
 
-func RentFlowPartnerDeletePromoImage(c *gin.Context) {
+func RentFlowCarPartnerDeletePromoImage(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
-	result := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("imageId")).Delete(&models.RentFlowTenantPromoImage{})
+	result := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("imageId")).Delete(&models.RentFlowCarTenantPromoImage{})
 	if result.Error != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบรูปโปรโมชันได้")
 		return
@@ -549,7 +549,7 @@ func RentFlowPartnerDeletePromoImage(c *gin.Context) {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปโปรโมชัน")
 		return
 	}
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
 	rentFlowAudit(c, tenant.ID, "promo_images.delete", "tenant_promo_image", c.Param("imageId"), "")
 	rentFlowSuccess(c, http.StatusOK, "ลบรูปโปรโมชันสำเร็จ", rentFlowOwnerTenantResponse(*tenant))
 }
@@ -562,7 +562,7 @@ func rentFlowUpdateColumns(updates map[string]interface{}) []string {
 	return columns
 }
 
-func rentFlowRequireTenant(c *gin.Context) (*models.RentFlowTenant, bool) {
+func rentFlowRequireTenant(c *gin.Context) (*models.RentFlowCarTenant, bool) {
 	tenant, err := rentFlowTenantFromRequest(c, true)
 	if err == nil {
 		return tenant, true
@@ -575,7 +575,7 @@ func rentFlowRequireTenant(c *gin.Context) (*models.RentFlowTenant, bool) {
 	return nil, false
 }
 
-func rentFlowTenantFromRequest(c *gin.Context, allowDefault bool) (*models.RentFlowTenant, error) {
+func rentFlowTenantFromRequest(c *gin.Context, allowDefault bool) (*models.RentFlowCarTenant, error) {
 	identity := rentFlowTenantIdentityFromRequest(c)
 	host := rentFlowNormalizeTenantHost(identity)
 	slug := rentFlowSlugFromTenantIdentity(identity)
@@ -596,7 +596,7 @@ func rentFlowTenantFromRequest(c *gin.Context, allowDefault bool) (*models.RentF
 		return nil, gorm.ErrRecordNotFound
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := query.First(&tenant).Error; err != nil {
 		return nil, err
 	}
@@ -606,7 +606,7 @@ func rentFlowTenantFromRequest(c *gin.Context, allowDefault bool) (*models.RentF
 func rentFlowIsMarketplaceRequest(c *gin.Context) bool {
 	for _, value := range []string{
 		c.Query("marketplace"),
-		c.GetHeader("X-RentFlow-Marketplace"),
+		c.GetHeader("X-RentFlowCar-Marketplace"),
 	} {
 		switch strings.TrimSpace(strings.ToLower(value)) {
 		case "1", "true", "yes", "on":
@@ -618,8 +618,8 @@ func rentFlowIsMarketplaceRequest(c *gin.Context) bool {
 	return rentFlowIsRootMarketplaceHost(host)
 }
 
-func rentFlowMarketplaceTenants() ([]models.RentFlowTenant, error) {
-	var tenants []models.RentFlowTenant
+func rentFlowMarketplaceTenants() ([]models.RentFlowCarTenant, error) {
+	var tenants []models.RentFlowCarTenant
 	if err := config.DB.
 		Where("status = ?", "active").
 		Order("shop_name ASC").
@@ -629,25 +629,25 @@ func rentFlowMarketplaceTenants() ([]models.RentFlowTenant, error) {
 	return tenants, nil
 }
 
-func rentFlowTenantMap(tenants []models.RentFlowTenant) map[string]models.RentFlowTenant {
-	items := make(map[string]models.RentFlowTenant, len(tenants))
+func rentFlowTenantMap(tenants []models.RentFlowCarTenant) map[string]models.RentFlowCarTenant {
+	items := make(map[string]models.RentFlowCarTenant, len(tenants))
 	for _, tenant := range tenants {
 		items[tenant.ID] = tenant
 	}
 	return items
 }
 
-func rentFlowCurrentUserTenant(c *gin.Context) (*models.RentFlowTenant, error) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func rentFlowCurrentUserTenant(c *gin.Context) (*models.RentFlowCarTenant, error) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		return nil, gorm.ErrRecordNotFound
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.
 		Where("owner_user_id = ? OR owner_email = ?", user.ID, user.Email).
 		First(&tenant).Error; err != nil {
-		var member models.RentFlowTenantMember
+		var member models.RentFlowCarTenantMember
 		memberErr := config.DB.
 			Where("status = ? AND (user_id = ? OR LOWER(email) = ?)", "active", user.ID, strings.ToLower(user.Email)).
 			First(&member).Error
@@ -661,8 +661,8 @@ func rentFlowCurrentUserTenant(c *gin.Context) (*models.RentFlowTenant, error) {
 	return &tenant, nil
 }
 
-func rentFlowDefaultTenant() (*models.RentFlowTenant, error) {
-	var tenant models.RentFlowTenant
+func rentFlowDefaultTenant() (*models.RentFlowCarTenant, error) {
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.Where("id = ?", rentFlowDefaultTenantID).First(&tenant).Error; err != nil {
 		return nil, err
 	}
@@ -673,8 +673,8 @@ func rentFlowTenantIdentityFromRequest(c *gin.Context) string {
 	for _, value := range []string{
 		c.Query("tenant"),
 		c.Query("host"),
-		c.GetHeader("X-RentFlow-Tenant"),
-		c.GetHeader("X-RentFlow-Host"),
+		c.GetHeader("X-RentFlowCar-Tenant"),
+		c.GetHeader("X-RentFlowCar-Host"),
 		c.GetHeader("X-Forwarded-Host"),
 		c.Request.Host,
 	} {
@@ -812,7 +812,7 @@ func rentFlowSlugFromTenantIdentity(value string) string {
 	return ""
 }
 
-func rentFlowPublicTenantResponse(tenant models.RentFlowTenant) gin.H {
+func rentFlowPublicTenantResponse(tenant models.RentFlowCarTenant) gin.H {
 	promoImageUrls := rentFlowTenantPromoImageURLs(tenant)
 	promoImageUrl := ""
 	if len(promoImageUrls) > 0 {
@@ -843,20 +843,20 @@ func rentFlowPublicTenantResponse(tenant models.RentFlowTenant) gin.H {
 	return response
 }
 
-func rentFlowOwnerTenantResponse(tenant models.RentFlowTenant) gin.H {
+func rentFlowOwnerTenantResponse(tenant models.RentFlowCarTenant) gin.H {
 	response := rentFlowPublicTenantResponse(tenant)
 	response["ownerEmail"] = tenant.OwnerEmail
 	return response
 }
 
-func RentFlowGetTenantLogo(c *gin.Context) {
+func RentFlowCarGetTenantLogo(c *gin.Context) {
 	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
 	if slug == "" {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบโลโก้ร้าน")
 		return
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบโลโก้ร้าน")
 		return
@@ -870,14 +870,14 @@ func RentFlowGetTenantLogo(c *gin.Context) {
 	rentFlowSendImageBlob(c, tenant.LogoMimeType, tenant.LogoBlob)
 }
 
-func RentFlowGetTenantPromoImage(c *gin.Context) {
+func RentFlowCarGetTenantPromoImage(c *gin.Context) {
 	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
 	if slug == "" {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปโปรโมชัน")
 		return
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปโปรโมชัน")
 		return
@@ -891,14 +891,14 @@ func RentFlowGetTenantPromoImage(c *gin.Context) {
 	rentFlowSendImageBlob(c, tenant.PromoImageMimeType, tenant.PromoImageBlob)
 }
 
-func RentFlowGetTenantLineOAQRCode(c *gin.Context) {
+func RentFlowCarGetTenantLineOAQRCode(c *gin.Context) {
 	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
 	if slug == "" {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
 		return
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
 		return
@@ -912,7 +912,7 @@ func RentFlowGetTenantLineOAQRCode(c *gin.Context) {
 	rentFlowSendImageBlob(c, tenant.LineOAQRMimeType, tenant.LineOAQRBlob)
 }
 
-func RentFlowGetTenantPromoImageByID(c *gin.Context) {
+func RentFlowCarGetTenantPromoImageByID(c *gin.Context) {
 	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
 	imageID := strings.TrimSpace(c.Param("imageId"))
 	if slug == "" || imageID == "" {
@@ -920,13 +920,13 @@ func RentFlowGetTenantPromoImageByID(c *gin.Context) {
 		return
 	}
 
-	var tenant models.RentFlowTenant
+	var tenant models.RentFlowCarTenant
 	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปโปรโมชัน")
 		return
 	}
 
-	var image models.RentFlowTenantPromoImage
+	var image models.RentFlowCarTenantPromoImage
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, imageID).First(&image).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปโปรโมชัน")
 		return

@@ -16,7 +16,7 @@ const (
 	rentFlowPlatformAdminKey = "rentflow.platformAdmin"
 )
 
-func AttachRentFlowSession() gin.HandlerFunc {
+func AttachRentFlowCarSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := rentFlowSessionTokenFromRequest(c)
 		if token == "" {
@@ -37,14 +37,14 @@ func AttachRentFlowSession() gin.HandlerFunc {
 			return
 		}
 
-		if services.IsRentFlowPlatformAdminSession(session) {
+		if services.IsRentFlowCarPlatformAdminSession(session) {
 			c.Set(rentFlowSessionKey, *session)
 			c.Set(rentFlowPlatformAdminKey, *session)
 			c.Next()
 			return
 		}
 
-		var user models.RentFlowUser
+		var user models.RentFlowCarUser
 		if err := config.DB.Where("id = ?", session.UserID).First(&user).Error; err != nil {
 			_ = services.DeleteSession(config.Ctx, token)
 			c.Next()
@@ -73,24 +73,24 @@ func rentFlowSessionTokenFromRequest(c *gin.Context) string {
 func rentFlowSessionCookieNameFromRequest(c *gin.Context) string {
 	app := strings.TrimSpace(c.Query("app"))
 	if app == "" {
-		app = strings.TrimSpace(c.GetHeader(services.RentFlowAppHeaderName))
+		app = strings.TrimSpace(c.GetHeader(services.RentFlowCarAppHeaderName))
 	}
 	if app == "" {
 		path := c.Request.URL.Path
 		switch {
 		case strings.HasPrefix(path, "/platform"):
-			app = services.RentFlowAppAdmin
+			app = services.RentFlowCarAppAdmin
 		case strings.HasPrefix(path, "/partner"), path == "/tenants/me":
-			app = services.RentFlowAppPartner
+			app = services.RentFlowCarAppPartner
 		default:
-			app = services.RentFlowAppStorefront
+			app = services.RentFlowCarAppStorefront
 		}
 	}
 
-	return services.RentFlowSessionCookieNameForApp(app)
+	return services.RentFlowCarSessionCookieNameForApp(app)
 }
 
-func RequireRentFlowSession() gin.HandlerFunc {
+func RequireRentFlowCarSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if _, ok := c.Get(rentFlowUserKey); ok {
 			c.Next()
@@ -109,27 +109,27 @@ func RequireRentFlowSession() gin.HandlerFunc {
 	}
 }
 
-func CurrentRentFlowUser(c *gin.Context) (*models.RentFlowUser, bool) {
+func CurrentRentFlowCarUser(c *gin.Context) (*models.RentFlowCarUser, bool) {
 	value, ok := c.Get(rentFlowUserKey)
 	if !ok {
 		return nil, false
 	}
 
-	user, ok := value.(models.RentFlowUser)
+	user, ok := value.(models.RentFlowCarUser)
 	if !ok {
 		return nil, false
 	}
 	return &user, true
 }
 
-func CurrentRentFlowPlatformAdmin(c *gin.Context) (*services.RentFlowSession, bool) {
+func CurrentRentFlowCarPlatformAdmin(c *gin.Context) (*services.RentFlowCarSession, bool) {
 	value, ok := c.Get(rentFlowPlatformAdminKey)
 	if !ok {
 		return nil, false
 	}
 
-	session, ok := value.(services.RentFlowSession)
-	if !ok || !services.IsRentFlowPlatformAdminSession(&session) {
+	session, ok := value.(services.RentFlowCarSession)
+	if !ok || !services.IsRentFlowCarPlatformAdminSession(&session) {
 		return nil, false
 	}
 	return &session, true

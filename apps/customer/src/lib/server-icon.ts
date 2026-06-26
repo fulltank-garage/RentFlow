@@ -3,7 +3,7 @@ import "server-only";
 import { readFile } from "fs/promises";
 import path from "path";
 
-import { getInitialRentFlowTenantProfile } from "@/src/lib/server-tenant";
+import { getInitialRentFlowCarTenantProfile } from "@/src/lib/server-tenant";
 
 function headerValue(headers: Headers, name: string) {
   return headers.get(name)?.trim() || "";
@@ -16,7 +16,7 @@ function requestOrigin(headers: Headers) {
 }
 
 async function fallbackIconResponse() {
-  const file = await readFile(path.join(process.cwd(), "public", "RentFlowIcon.png"));
+  const file = await readFile(path.join(process.cwd(), "public", "RentFlowCarIcon.png"));
   return new Response(file, {
     headers: {
       "Content-Type": "image/png",
@@ -28,7 +28,7 @@ async function fallbackIconResponse() {
 export async function rentFlowTenantIconResponse(request: Request) {
   const requestHeaders = request.headers;
   const host = headerValue(requestHeaders, "x-forwarded-host") || headerValue(requestHeaders, "host");
-  const tenant = await getInitialRentFlowTenantProfile(host);
+  const tenant = await getInitialRentFlowCarTenantProfile(host);
   const logoUrl = tenant?.logoUrl?.trim();
 
   if (!logoUrl) {

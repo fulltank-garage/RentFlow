@@ -88,7 +88,7 @@ export default function TermsContent() {
       <Divider className="my-1! border-black/10!" />
 
       <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
-        RentFlow อาจปรับปรุงเงื่อนไขการใช้งานตามความเหมาะสม
+        RentFlowCar อาจปรับปรุงเงื่อนไขการใช้งานตามความเหมาะสม
       </Typography>
     </Stack>
   );

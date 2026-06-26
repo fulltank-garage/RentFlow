@@ -12,12 +12,12 @@ import (
 	"rentflow-api/services"
 )
 
-func RentFlowPartnerListMembers(c *gin.Context) {
+func RentFlowCarPartnerListMembers(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
-	var items []models.RentFlowTenantMember
+	var items []models.RentFlowCarTenantMember
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&items).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลทีมได้")
 		return
@@ -25,7 +25,7 @@ func RentFlowPartnerListMembers(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลทีมสำเร็จ", gin.H{"items": rentFlowPartnerMemberResponses(items), "total": len(items)})
 }
 
-func RentFlowPartnerCreateMember(c *gin.Context) {
+func RentFlowCarPartnerCreateMember(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -42,7 +42,7 @@ func RentFlowPartnerCreateMember(c *gin.Context) {
 	}
 	role := rentFlowNormalizeMemberRole(payload.Role)
 	permissionsJSON := rentFlowPartnerPermissionsJSON(payload.Permissions)
-	item := models.RentFlowTenantMember{
+	item := models.RentFlowCarTenantMember{
 		ID:              services.NewID("mbr"),
 		TenantID:        tenant.ID,
 		Email:           strings.TrimSpace(strings.ToLower(payload.Email)),
@@ -60,11 +60,11 @@ func RentFlowPartnerCreateMember(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "member.create", "member", item.ID, item.Email)
-	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowRealtimeEventMemberChanged, "member")
+	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowCarRealtimeEventMemberChanged, "member")
 	rentFlowSuccess(c, http.StatusCreated, "เพิ่มทีมสำเร็จ", rentFlowPartnerMemberResponse(item))
 }
 
-func rentFlowPartnerMemberResponses(items []models.RentFlowTenantMember) []gin.H {
+func rentFlowPartnerMemberResponses(items []models.RentFlowCarTenantMember) []gin.H {
 	result := make([]gin.H, 0, len(items))
 	for _, item := range items {
 		result = append(result, rentFlowPartnerMemberResponse(item))
@@ -72,7 +72,7 @@ func rentFlowPartnerMemberResponses(items []models.RentFlowTenantMember) []gin.H
 	return result
 }
 
-func rentFlowPartnerMemberResponse(item models.RentFlowTenantMember) gin.H {
+func rentFlowPartnerMemberResponse(item models.RentFlowCarTenantMember) gin.H {
 	return gin.H{
 		"id":          item.ID,
 		"tenantId":    item.TenantID,
@@ -87,7 +87,7 @@ func rentFlowPartnerMemberResponse(item models.RentFlowTenantMember) gin.H {
 	}
 }
 
-func RentFlowPartnerUpdateMember(c *gin.Context) {
+func RentFlowCarPartnerUpdateMember(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -104,7 +104,7 @@ func RentFlowPartnerUpdateMember(c *gin.Context) {
 		status = "active"
 	}
 	role := rentFlowNormalizeMemberRole(payload.Role)
-	result := config.DB.Model(&models.RentFlowTenantMember{}).
+	result := config.DB.Model(&models.RentFlowCarTenantMember{}).
 		Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("memberId")).
 		Updates(map[string]interface{}{
 			"name":             strings.TrimSpace(payload.Name),
@@ -122,16 +122,16 @@ func RentFlowPartnerUpdateMember(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "member.update", "member", c.Param("memberId"), role)
-	rentFlowPublishEntityRealtime(tenant.ID, c.Param("memberId"), services.RentFlowRealtimeEventMemberChanged, "member")
+	rentFlowPublishEntityRealtime(tenant.ID, c.Param("memberId"), services.RentFlowCarRealtimeEventMemberChanged, "member")
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตทีมสำเร็จ", nil)
 }
 
-func RentFlowPartnerDeleteMember(c *gin.Context) {
+func RentFlowCarPartnerDeleteMember(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
-	result := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("memberId")).Delete(&models.RentFlowTenantMember{})
+	result := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("memberId")).Delete(&models.RentFlowCarTenantMember{})
 	if result.Error != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบทีมได้")
 		return
@@ -141,7 +141,7 @@ func RentFlowPartnerDeleteMember(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "member.delete", "member", c.Param("memberId"), "")
-	rentFlowPublishEntityRealtime(tenant.ID, c.Param("memberId"), services.RentFlowRealtimeEventMemberChanged, "member")
+	rentFlowPublishEntityRealtime(tenant.ID, c.Param("memberId"), services.RentFlowCarRealtimeEventMemberChanged, "member")
 	rentFlowSuccess(c, http.StatusOK, "ลบทีมสำเร็จ", nil)
 }
 
@@ -169,12 +169,12 @@ func rentFlowPartnerPermissionsJSON(items []string) string {
 	return string(raw)
 }
 
-func RentFlowPartnerListPromotions(c *gin.Context) {
+func RentFlowCarPartnerListPromotions(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
-	var items []models.RentFlowPromotion
+	var items []models.RentFlowCarPromotion
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&items).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงโปรโมชันได้")
 		return
@@ -182,7 +182,7 @@ func RentFlowPartnerListPromotions(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงโปรโมชันสำเร็จ", gin.H{"items": items, "total": len(items)})
 }
 
-func RentFlowPartnerCreatePromotion(c *gin.Context) {
+func RentFlowCarPartnerCreatePromotion(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -196,11 +196,11 @@ func RentFlowPartnerCreatePromotion(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "promotion.create", "promotion", item.ID, item.Code)
-	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowRealtimeEventPromotionChanged, "promotion")
+	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowCarRealtimeEventPromotionChanged, "promotion")
 	rentFlowSuccess(c, http.StatusCreated, "เพิ่มโปรโมชันสำเร็จ", item)
 }
 
-func RentFlowPartnerUpdatePromotion(c *gin.Context) {
+func RentFlowCarPartnerUpdatePromotion(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -209,7 +209,7 @@ func RentFlowPartnerUpdatePromotion(c *gin.Context) {
 	if !ok {
 		return
 	}
-	result := config.DB.Model(&models.RentFlowPromotion{}).
+	result := config.DB.Model(&models.RentFlowCarPromotion{}).
 		Where("tenant_id = ? AND id = ?", tenant.ID, item.ID).
 		Updates(map[string]interface{}{
 			"code": item.Code, "name": item.Name, "description": item.Description,
@@ -226,20 +226,20 @@ func RentFlowPartnerUpdatePromotion(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "promotion.update", "promotion", item.ID, item.Code)
-	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowRealtimeEventPromotionChanged, "promotion")
+	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowCarRealtimeEventPromotionChanged, "promotion")
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตโปรโมชันสำเร็จ", item)
 }
 
-func RentFlowPartnerDeletePromotion(c *gin.Context) {
-	rentFlowPartnerDeleteModel(c, "promotionId", &models.RentFlowPromotion{}, "promotion", "ลบโปรโมชันสำเร็จ", services.RentFlowRealtimeEventPromotionChanged)
+func RentFlowCarPartnerDeletePromotion(c *gin.Context) {
+	rentFlowPartnerDeleteModel(c, "promotionId", &models.RentFlowCarPromotion{}, "promotion", "ลบโปรโมชันสำเร็จ", services.RentFlowCarRealtimeEventPromotionChanged)
 }
 
-func RentFlowPartnerListAddons(c *gin.Context) {
+func RentFlowCarPartnerListAddons(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
-	var items []models.RentFlowAddon
+	var items []models.RentFlowCarAddon
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&items).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงบริการเสริมได้")
 		return
@@ -247,13 +247,13 @@ func RentFlowPartnerListAddons(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงบริการเสริมสำเร็จ", gin.H{"items": items, "total": len(items)})
 }
 
-func RentFlowListAddons(c *gin.Context) {
+func RentFlowCarListAddons(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
 	}
 
-	var items []models.RentFlowAddon
+	var items []models.RentFlowCarAddon
 	if err := config.DB.
 		Where("tenant_id = ? AND is_active = ?", tenant.ID, true).
 		Order("created_at DESC").
@@ -265,7 +265,7 @@ func RentFlowListAddons(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงบริการเสริมสำเร็จ", gin.H{"items": items, "total": len(items)})
 }
 
-func RentFlowPartnerCreateAddon(c *gin.Context) {
+func RentFlowCarPartnerCreateAddon(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -279,11 +279,11 @@ func RentFlowPartnerCreateAddon(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "addon.create", "addon", item.ID, item.Name)
-	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowRealtimeEventAddonChanged, "addon")
+	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowCarRealtimeEventAddonChanged, "addon")
 	rentFlowSuccess(c, http.StatusCreated, "เพิ่มบริการเสริมสำเร็จ", item)
 }
 
-func RentFlowPartnerUpdateAddon(c *gin.Context) {
+func RentFlowCarPartnerUpdateAddon(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -292,7 +292,7 @@ func RentFlowPartnerUpdateAddon(c *gin.Context) {
 	if !ok {
 		return
 	}
-	result := config.DB.Model(&models.RentFlowAddon{}).
+	result := config.DB.Model(&models.RentFlowCarAddon{}).
 		Where("tenant_id = ? AND id = ?", tenant.ID, item.ID).
 		Updates(map[string]interface{}{"name": item.Name, "description": item.Description, "price": item.Price, "unit": item.Unit, "is_active": item.IsActive, "updated_at": time.Now()})
 	if result.Error != nil {
@@ -304,20 +304,20 @@ func RentFlowPartnerUpdateAddon(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "addon.update", "addon", item.ID, item.Name)
-	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowRealtimeEventAddonChanged, "addon")
+	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowCarRealtimeEventAddonChanged, "addon")
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตบริการเสริมสำเร็จ", item)
 }
 
-func RentFlowPartnerDeleteAddon(c *gin.Context) {
-	rentFlowPartnerDeleteModel(c, "addonId", &models.RentFlowAddon{}, "addon", "ลบบริการเสริมสำเร็จ", services.RentFlowRealtimeEventAddonChanged)
+func RentFlowCarPartnerDeleteAddon(c *gin.Context) {
+	rentFlowPartnerDeleteModel(c, "addonId", &models.RentFlowCarAddon{}, "addon", "ลบบริการเสริมสำเร็จ", services.RentFlowCarRealtimeEventAddonChanged)
 }
 
-func RentFlowPartnerListLeads(c *gin.Context) {
+func RentFlowCarPartnerListLeads(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
-	var items []models.RentFlowLead
+	var items []models.RentFlowCarLead
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&items).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงลีดได้")
 		return
@@ -325,7 +325,7 @@ func RentFlowPartnerListLeads(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงลีดสำเร็จ", gin.H{"items": items, "total": len(items)})
 }
 
-func RentFlowPartnerCreateLead(c *gin.Context) {
+func RentFlowCarPartnerCreateLead(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -339,11 +339,11 @@ func RentFlowPartnerCreateLead(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "lead.create", "lead", item.ID, item.Name)
-	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowRealtimeEventLeadChanged, "lead")
+	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowCarRealtimeEventLeadChanged, "lead")
 	rentFlowSuccess(c, http.StatusCreated, "เพิ่มลีดสำเร็จ", item)
 }
 
-func RentFlowPartnerUpdateLead(c *gin.Context) {
+func RentFlowCarPartnerUpdateLead(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
@@ -352,7 +352,7 @@ func RentFlowPartnerUpdateLead(c *gin.Context) {
 	if !ok {
 		return
 	}
-	result := config.DB.Model(&models.RentFlowLead{}).
+	result := config.DB.Model(&models.RentFlowCarLead{}).
 		Where("tenant_id = ? AND id = ?", tenant.ID, item.ID).
 		Updates(map[string]interface{}{"name": item.Name, "email": item.Email, "phone": item.Phone, "source": item.Source, "status": item.Status, "interested_car": item.InterestedCar, "note": item.Note, "updated_at": time.Now()})
 	if result.Error != nil {
@@ -364,15 +364,15 @@ func RentFlowPartnerUpdateLead(c *gin.Context) {
 		return
 	}
 	rentFlowAudit(c, tenant.ID, "lead.update", "lead", item.ID, item.Status)
-	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowRealtimeEventLeadChanged, "lead")
+	rentFlowPublishEntityRealtime(tenant.ID, item.ID, services.RentFlowCarRealtimeEventLeadChanged, "lead")
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตลีดสำเร็จ", item)
 }
 
-func RentFlowPartnerDeleteLead(c *gin.Context) {
-	rentFlowPartnerDeleteModel(c, "leadId", &models.RentFlowLead{}, "lead", "ลบลีดสำเร็จ", services.RentFlowRealtimeEventLeadChanged)
+func RentFlowCarPartnerDeleteLead(c *gin.Context) {
+	rentFlowPartnerDeleteModel(c, "leadId", &models.RentFlowCarLead{}, "lead", "ลบลีดสำเร็จ", services.RentFlowCarRealtimeEventLeadChanged)
 }
 
-func rentFlowPromotionFromPayload(c *gin.Context, tenantID, id string) (models.RentFlowPromotion, bool) {
+func rentFlowPromotionFromPayload(c *gin.Context, tenantID, id string) (models.RentFlowCarPromotion, bool) {
 	var payload struct {
 		Code          string `json:"code"`
 		Name          string `json:"name"`
@@ -385,7 +385,7 @@ func rentFlowPromotionFromPayload(c *gin.Context, tenantID, id string) (models.R
 	}
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลโปรโมชันไม่ถูกต้อง")
-		return models.RentFlowPromotion{}, false
+		return models.RentFlowCarPromotion{}, false
 	}
 	if id == "" {
 		id = services.NewID("prm")
@@ -394,7 +394,7 @@ func rentFlowPromotionFromPayload(c *gin.Context, tenantID, id string) (models.R
 	name := strings.TrimSpace(payload.Name)
 	if code == "" || name == "" {
 		rentFlowError(c, http.StatusBadRequest, "กรุณากรอกโค้ดและชื่อโปรโมชัน")
-		return models.RentFlowPromotion{}, false
+		return models.RentFlowCarPromotion{}, false
 	}
 	discountType := strings.TrimSpace(payload.DiscountType)
 	if discountType != "amount" {
@@ -404,10 +404,10 @@ func rentFlowPromotionFromPayload(c *gin.Context, tenantID, id string) (models.R
 	if payload.IsActive != nil {
 		isActive = *payload.IsActive
 	}
-	return models.RentFlowPromotion{ID: id, TenantID: tenantID, Code: code, Name: name, Description: strings.TrimSpace(payload.Description), DiscountType: discountType, DiscountValue: payload.DiscountValue, IsActive: isActive}, true
+	return models.RentFlowCarPromotion{ID: id, TenantID: tenantID, Code: code, Name: name, Description: strings.TrimSpace(payload.Description), DiscountType: discountType, DiscountValue: payload.DiscountValue, IsActive: isActive}, true
 }
 
-func rentFlowAddonFromPayload(c *gin.Context, tenantID, id string) (models.RentFlowAddon, bool) {
+func rentFlowAddonFromPayload(c *gin.Context, tenantID, id string) (models.RentFlowCarAddon, bool) {
 	var payload struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
@@ -417,7 +417,7 @@ func rentFlowAddonFromPayload(c *gin.Context, tenantID, id string) (models.RentF
 	}
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลบริการเสริมไม่ถูกต้อง")
-		return models.RentFlowAddon{}, false
+		return models.RentFlowCarAddon{}, false
 	}
 	if id == "" {
 		id = services.NewID("add")
@@ -425,7 +425,7 @@ func rentFlowAddonFromPayload(c *gin.Context, tenantID, id string) (models.RentF
 	name := strings.TrimSpace(payload.Name)
 	if name == "" {
 		rentFlowError(c, http.StatusBadRequest, "กรุณากรอกชื่อบริการเสริม")
-		return models.RentFlowAddon{}, false
+		return models.RentFlowCarAddon{}, false
 	}
 	unit := strings.TrimSpace(payload.Unit)
 	if unit == "" {
@@ -435,10 +435,10 @@ func rentFlowAddonFromPayload(c *gin.Context, tenantID, id string) (models.RentF
 	if payload.IsActive != nil {
 		isActive = *payload.IsActive
 	}
-	return models.RentFlowAddon{ID: id, TenantID: tenantID, Name: name, Description: strings.TrimSpace(payload.Description), Price: payload.Price, Unit: unit, IsActive: isActive}, true
+	return models.RentFlowCarAddon{ID: id, TenantID: tenantID, Name: name, Description: strings.TrimSpace(payload.Description), Price: payload.Price, Unit: unit, IsActive: isActive}, true
 }
 
-func rentFlowLeadFromPayload(c *gin.Context, tenantID, id string) (models.RentFlowLead, bool) {
+func rentFlowLeadFromPayload(c *gin.Context, tenantID, id string) (models.RentFlowCarLead, bool) {
 	var payload struct {
 		Name          string `json:"name"`
 		Email         string `json:"email"`
@@ -450,7 +450,7 @@ func rentFlowLeadFromPayload(c *gin.Context, tenantID, id string) (models.RentFl
 	}
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลลีดไม่ถูกต้อง")
-		return models.RentFlowLead{}, false
+		return models.RentFlowCarLead{}, false
 	}
 	if id == "" {
 		id = services.NewID("led")
@@ -458,13 +458,13 @@ func rentFlowLeadFromPayload(c *gin.Context, tenantID, id string) (models.RentFl
 	name := strings.TrimSpace(payload.Name)
 	if name == "" {
 		rentFlowError(c, http.StatusBadRequest, "กรุณากรอกชื่อลีด")
-		return models.RentFlowLead{}, false
+		return models.RentFlowCarLead{}, false
 	}
 	status := strings.TrimSpace(payload.Status)
 	if status == "" {
 		status = "new"
 	}
-	return models.RentFlowLead{ID: id, TenantID: tenantID, Name: name, Email: strings.TrimSpace(strings.ToLower(payload.Email)), Phone: strings.TrimSpace(payload.Phone), Source: strings.TrimSpace(payload.Source), Status: status, InterestedCar: strings.TrimSpace(payload.InterestedCar), Note: strings.TrimSpace(payload.Note)}, true
+	return models.RentFlowCarLead{ID: id, TenantID: tenantID, Name: name, Email: strings.TrimSpace(strings.ToLower(payload.Email)), Phone: strings.TrimSpace(payload.Phone), Source: strings.TrimSpace(payload.Source), Status: status, InterestedCar: strings.TrimSpace(payload.InterestedCar), Note: strings.TrimSpace(payload.Note)}, true
 }
 
 func rentFlowPartnerDeleteModel(c *gin.Context, param string, model interface{}, entity, successMessage, eventType string) {

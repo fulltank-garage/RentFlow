@@ -1,5 +1,5 @@
 import {
-  RentFlowApiError,
+  RentFlowCarApiError,
   requestPartner,
   resolvePartnerAssetUrl,
 } from "../core/api-client.service";
@@ -126,7 +126,7 @@ export const tenantService = {
         return normalizeTenant(tenant);
       } catch (error) {
         const canRetryAsJson =
-          error instanceof RentFlowApiError &&
+          error instanceof RentFlowCarApiError &&
           error.status === 400 &&
           error.message.includes("ข้อมูลร้านไม่ถูกต้อง") &&
           (input.logoUrl !== undefined ||

@@ -46,7 +46,7 @@ export default function TermsPage() {
               เงื่อนไขการใช้งาน
             </Typography>
             <Typography className="apple-subtitle text-lg">
-              ข้อกำหนดสำหรับการใช้บริการ RentFlow โปรดอ่านก่อนเริ่มใช้งาน
+              ข้อกำหนดสำหรับการใช้บริการ RentFlowCar โปรดอ่านก่อนเริ่มใช้งาน
             </Typography>
           </Box>
 

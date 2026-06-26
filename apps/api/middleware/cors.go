@@ -27,14 +27,14 @@ func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
 
-		if allowedOrigins[origin] || isLocalDevelopmentOrigin(origin) || isRentFlowSubdomainOrigin(origin) {
+		if allowedOrigins[origin] || isLocalDevelopmentOrigin(origin) || isRentFlowCarSubdomainOrigin(origin) {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			c.Writer.Header().Set("Vary", "Origin")
 			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		}
 
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization, Cookie, X-RentFlow-App, X-RentFlow-Host, X-RentFlow-Tenant, X-RentFlow-Marketplace")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization, Cookie, X-RentFlowCar-App, X-RentFlowCar-Host, X-RentFlowCar-Tenant, X-RentFlowCar-Marketplace")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
@@ -56,7 +56,7 @@ func isLocalDevelopmentOrigin(origin string) bool {
 		(host == "localhost" || strings.HasSuffix(host, ".localhost") || host == "127.0.0.1")
 }
 
-func isRentFlowSubdomainOrigin(origin string) bool {
+func isRentFlowCarSubdomainOrigin(origin string) bool {
 	parsed, err := url.Parse(origin)
 	if err != nil {
 		return false

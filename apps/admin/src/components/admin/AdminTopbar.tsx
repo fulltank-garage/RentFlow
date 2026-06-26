@@ -51,7 +51,7 @@ function MobileMenuGlyph({ open }: { open: boolean }) {
   );
 }
 
-function RentFlowLogoMark({ size = 42 }: { size?: number }) {
+function RentFlowCarLogoMark({ size = 42 }: { size?: number }) {
   return (
     <Box
       className="grid shrink-0 place-items-center bg-transparent"
@@ -62,8 +62,8 @@ function RentFlowLogoMark({ size = 42 }: { size?: number }) {
       }}
     >
       <Image
-        src="/RentFlow.png"
-        alt="RentFlow"
+        src="/RentFlowCar.png"
+        alt="RentFlowCar"
         width={Math.round(size * 2.72)}
         height={size}
         className="h-full w-full object-contain"
@@ -130,7 +130,7 @@ export default function AdminTopbar({
                 }}
               >
                 <Stack direction="row" spacing={1.5} alignItems="center">
-                  <RentFlowLogoMark />
+                  <RentFlowCarLogoMark />
 
                   <Box className="hidden text-left md:block">
                     <Typography className="text-sm font-bold text-slate-950">
@@ -206,7 +206,7 @@ export default function AdminTopbar({
 
         <Box sx={{ px: 2, py: 3 }}>
           <Stack direction="row" spacing={1.5} alignItems="center">
-            <RentFlowLogoMark size={46} />
+            <RentFlowCarLogoMark size={46} />
 
             <Box sx={{ minWidth: 0 }}>
               <Box

@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 import { formatTHB } from "@/src/constants/money";
-import { getRentFlowRootDomain } from "@/src/lib/tenant";
+import { getRentFlowCarRootDomain } from "@/src/lib/tenant";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 import type { ShopSummary } from "@/src/lib/shop-directory";
 
@@ -48,7 +48,7 @@ export default function ShopRecommendationsSection({
   showDivider = true,
   layout = "section",
 }: Props) {
-  const rootDomain = getRentFlowRootDomain();
+  const rootDomain = getRentFlowCarRootDomain();
   const visibleShops = React.useMemo(
     () => (limit ? shops.slice(0, limit) : shops),
     [limit, shops]

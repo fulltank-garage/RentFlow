@@ -11,7 +11,7 @@ import {
   TRUST_POINTS,
 } from "@/src/constants/features";
 import usePageReady from "@/src/hooks/usePageReady";
-import { useRentFlowSiteModeStatus } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarSiteModeStatus } from "@/src/hooks/useRentFlowCarSiteMode";
 import { tenantApi } from "@/src/services/tenant/tenant.service";
 import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
@@ -25,7 +25,7 @@ export default function FeaturesPage({
   initialTenantProfile = null,
 }: FeaturesPageProps) {
   const ready = usePageReady();
-  const { siteMode, ready: siteReady } = useRentFlowSiteModeStatus(initialHost);
+  const { siteMode, ready: siteReady } = useRentFlowCarSiteModeStatus(initialHost);
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(initialTenantProfile);
   const isStorefront = siteMode === "storefront";
@@ -70,7 +70,7 @@ export default function FeaturesPage({
     }
 
     return {
-      title: "ทำไมต้อง RentFlow",
+      title: "ทำไมต้อง RentFlowCar",
       subtitle:
         "แพลตฟอร์มเช่ารถที่เน้นความชัดเจน โปร่งใส และประสบการณ์ใช้งานที่ลื่นไหล",
       featuresTitle: "จุดเด่นของระบบ",

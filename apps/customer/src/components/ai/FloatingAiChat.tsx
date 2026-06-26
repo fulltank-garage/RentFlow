@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 import { formatTHB } from "@/src/constants/money";
-import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 import { aiService } from "@/src/services/ai/ai.service";
@@ -96,7 +96,7 @@ export default function FloatingAiChat() {
   const [result, setResult] = React.useState<StorefrontAssistantResult | null>(
     null
   );
-  const siteMode = useRentFlowSiteMode();
+  const siteMode = useRentFlowCarSiteMode();
 
   React.useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -141,7 +141,7 @@ export default function FloatingAiChat() {
             <Stack direction="row" alignItems="center" spacing={1.5}>
               <Box className="min-w-0 flex-1">
                 <Typography className="text-sm font-bold">
-                  ผู้ช่วยเลือก RentFlow
+                  ผู้ช่วยเลือก RentFlowCar
                 </Typography>
                 <Typography className="text-xs text-white/65">
                   {siteMode === "marketplace"

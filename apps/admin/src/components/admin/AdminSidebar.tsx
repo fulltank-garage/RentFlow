@@ -62,8 +62,8 @@ export default function AdminSidebar({
         <Stack direction="row" spacing={1.5} alignItems="center" className="min-w-0">
           <Box className="grid h-[42px] w-[118px] shrink-0 place-items-center bg-transparent shadow-none">
             <Image
-              src="/RentFlow.png"
-              alt="RentFlow"
+              src="/RentFlowCar.png"
+              alt="RentFlowCar"
               width={160}
               height={82}
               className="h-full w-full object-contain"

@@ -12,12 +12,12 @@ import (
 
 const rentFlowMarketplacePromoImageKey = "marketplace_home_promo_image"
 
-func RentFlowGetPublicPlatformSettings(c *gin.Context) {
+func RentFlowCarGetPublicPlatformSettings(c *gin.Context) {
 	setting := rentFlowMarketplacePromoImageSetting()
 	rentFlowSuccess(c, http.StatusOK, "ดึงการตั้งค่าหน้ารวมสำเร็จ", rentFlowPlatformSettingsResponse(setting))
 }
 
-func RentFlowAdminGetPlatformSettings(c *gin.Context) {
+func RentFlowCarAdminGetPlatformSettings(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -26,7 +26,7 @@ func RentFlowAdminGetPlatformSettings(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงการตั้งค่าหน้ารวมสำเร็จ", rentFlowPlatformSettingsResponse(setting))
 }
 
-func RentFlowAdminUpdatePlatformSettings(c *gin.Context) {
+func RentFlowCarAdminUpdatePlatformSettings(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -65,7 +65,7 @@ func RentFlowAdminUpdatePlatformSettings(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "บันทึกการตั้งค่าหน้ารวมสำเร็จ", rentFlowPlatformSettingsResponse(setting))
 }
 
-func RentFlowGetMarketplacePromoImage(c *gin.Context) {
+func RentFlowCarGetMarketplacePromoImage(c *gin.Context) {
 	setting := rentFlowMarketplacePromoImageSetting()
 	if len(setting.ImageBlob) == 0 || strings.TrimSpace(setting.ImageMimeType) == "" {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปโปรโมชันหน้ารวม")
@@ -75,13 +75,13 @@ func RentFlowGetMarketplacePromoImage(c *gin.Context) {
 	rentFlowSendImageBlob(c, setting.ImageMimeType, setting.ImageBlob)
 }
 
-func rentFlowMarketplacePromoImageSetting() models.RentFlowPlatformSetting {
-	var setting models.RentFlowPlatformSetting
+func rentFlowMarketplacePromoImageSetting() models.RentFlowCarPlatformSetting {
+	var setting models.RentFlowCarPlatformSetting
 	_ = config.DB.Where("key = ?", rentFlowMarketplacePromoImageKey).First(&setting).Error
 	return setting
 }
 
-func rentFlowPlatformSettingsResponse(setting models.RentFlowPlatformSetting) gin.H {
+func rentFlowPlatformSettingsResponse(setting models.RentFlowCarPlatformSetting) gin.H {
 	return gin.H{
 		"promoImageUrl": rentFlowPlatformImageURL(setting),
 		"updatedAt":     setting.UpdatedAt,

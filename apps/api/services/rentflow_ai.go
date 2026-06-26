@@ -27,7 +27,7 @@ type rentFlowOllamaGenerateResponse struct {
 	Done     bool   `json:"done"`
 }
 
-func RentFlowAIBaseURL() string {
+func RentFlowCarAIBaseURL() string {
 	for _, key := range []string{
 		"RENTFLOW_AI_OLLAMA_URL",
 		"LOCAL_AI_URL",
@@ -39,7 +39,7 @@ func RentFlowAIBaseURL() string {
 	return ""
 }
 
-func RentFlowAIModel() string {
+func RentFlowCarAIModel() string {
 	for _, key := range []string{
 		"RENTFLOW_AI_MODEL",
 		"LOCAL_AI_MODEL",
@@ -51,21 +51,21 @@ func RentFlowAIModel() string {
 	return ""
 }
 
-func RentFlowAIProviderLabel() string {
-	model := RentFlowAIModel()
+func RentFlowCarAIProviderLabel() string {
+	model := RentFlowCarAIModel()
 	if model == "" {
 		return "database-rules"
 	}
 	return "ollama:" + model
 }
 
-func RentFlowAIEnabled() bool {
-	return RentFlowAIBaseURL() != "" && RentFlowAIModel() != ""
+func RentFlowCarAIEnabled() bool {
+	return RentFlowCarAIBaseURL() != "" && RentFlowCarAIModel() != ""
 }
 
-func RentFlowAIGenerateText(ctx context.Context, systemPrompt, userPrompt string) (string, error) {
-	baseURL := RentFlowAIBaseURL()
-	model := RentFlowAIModel()
+func RentFlowCarAIGenerateText(ctx context.Context, systemPrompt, userPrompt string) (string, error) {
+	baseURL := RentFlowCarAIBaseURL()
+	model := RentFlowCarAIModel()
 	if baseURL == "" || model == "" {
 		return "", fmt.Errorf("ai provider not configured")
 	}

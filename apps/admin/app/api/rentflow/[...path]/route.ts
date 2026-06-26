@@ -28,7 +28,7 @@ async function proxyAdminRequest(
   });
 
   const headers = new Headers();
-  headers.set("X-RentFlow-App", "admin");
+  headers.set("X-RentFlowCar-App", "admin");
 
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("Content-Type", contentType);

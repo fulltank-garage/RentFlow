@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
+import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
 import type {
   StorefrontBlock,
   StorefrontTheme,
@@ -334,7 +334,7 @@ export default function StorefrontBlocksSection({
           const toneStyle = getBlockToneStyle(block.tone, theme);
           const isCentered = block.align === "center";
           const eyebrow = block.subtitle || getBlockEyebrow(block.type);
-          const imageUrl = resolveRentFlowAssetUrl(block.imageUrl);
+          const imageUrl = resolveRentFlowCarAssetUrl(block.imageUrl);
 
           return (
             <Card

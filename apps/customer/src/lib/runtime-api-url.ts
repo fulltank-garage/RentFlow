@@ -2,13 +2,13 @@ function trimTrailingSlash(value: string) {
   return value.replace(/\/+$/, "");
 }
 
-export function getRentFlowApiBaseUrl() {
+export function getRentFlowCarApiBaseUrl() {
   return trimTrailingSlash(
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
   );
 }
 
-function isRentFlowApiAssetPath(pathname: string) {
+function isRentFlowCarApiAssetPath(pathname: string) {
   return (
     pathname.startsWith("/tenants/") ||
     pathname.startsWith("/cars/") ||
@@ -17,11 +17,11 @@ function isRentFlowApiAssetPath(pathname: string) {
   );
 }
 
-function toRentFlowAssetProxyUrl(pathname: string, search = "") {
+function toRentFlowCarAssetProxyUrl(pathname: string, search = "") {
   return `/api/rentflow-asset${pathname}${search}`;
 }
 
-export function resolveRentFlowAssetUrl(value?: string | null) {
+export function resolveRentFlowCarAssetUrl(value?: string | null) {
   const rawValue = value?.trim() || "";
   if (
     !rawValue ||
@@ -35,13 +35,13 @@ export function resolveRentFlowAssetUrl(value?: string | null) {
   if (/^https?:\/\//i.test(rawValue)) {
     try {
       const url = new URL(rawValue);
-      const apiBaseUrl = new URL(getRentFlowApiBaseUrl());
+      const apiBaseUrl = new URL(getRentFlowCarApiBaseUrl());
 
       if (
         url.origin === apiBaseUrl.origin &&
-        isRentFlowApiAssetPath(url.pathname)
+        isRentFlowCarApiAssetPath(url.pathname)
       ) {
-        return toRentFlowAssetProxyUrl(url.pathname, url.search);
+        return toRentFlowCarAssetProxyUrl(url.pathname, url.search);
       }
     } catch {
       return rawValue;
@@ -55,11 +55,11 @@ export function resolveRentFlowAssetUrl(value?: string | null) {
     "http://rentflow.local"
   );
 
-  if (isRentFlowApiAssetPath(relativeUrl.pathname)) {
-    return toRentFlowAssetProxyUrl(relativeUrl.pathname, relativeUrl.search);
+  if (isRentFlowCarApiAssetPath(relativeUrl.pathname)) {
+    return toRentFlowCarAssetProxyUrl(relativeUrl.pathname, relativeUrl.search);
   }
 
-  const apiBaseUrl = getRentFlowApiBaseUrl();
+  const apiBaseUrl = getRentFlowCarApiBaseUrl();
   if (!apiBaseUrl) {
     return rawValue;
   }

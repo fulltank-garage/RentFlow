@@ -14,7 +14,7 @@ import (
 	"rentflow-api/services"
 )
 
-func RentFlowPreviewBookingPrice(c *gin.Context) {
+func RentFlowCarPreviewBookingPrice(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
@@ -61,7 +61,7 @@ func RentFlowPreviewBookingPrice(c *gin.Context) {
 	})
 }
 
-func RentFlowCreateBooking(c *gin.Context) {
+func RentFlowCarCreateBooking(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
@@ -86,7 +86,7 @@ func RentFlowCreateBooking(c *gin.Context) {
 		return
 	}
 
-	user, ok := middleware.CurrentRentFlowUser(c)
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
@@ -129,7 +129,7 @@ func RentFlowCreateBooking(c *gin.Context) {
 	_, addonsJSON, addonsTotal := rentFlowBookingAddonsSummary(tenant.ID, payload.Addons, totalDays)
 	totalAmount += addonsTotal
 
-	booking := models.RentFlowBooking{
+	booking := models.RentFlowCarBooking{
 		ID:             services.NewID("bok"),
 		TenantID:       tenant.ID,
 		BookingCode:    services.NewBookingCode(),
@@ -165,19 +165,19 @@ func RentFlowCreateBooking(c *gin.Context) {
 		rentFlowCreateNotification(tenant.ID, booking.UserID, booking.UserEmail, "สร้างการจองใหม่", "การจอง "+booking.BookingCode+" ถูกสร้างเรียบร้อยแล้ว")
 	}
 
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
-	rentFlowPublishBookingRealtime(services.RentFlowRealtimeEventBookingCreated, booking)
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
+	rentFlowPublishBookingRealtime(services.RentFlowCarRealtimeEventBookingCreated, booking)
 	rentFlowSuccess(c, http.StatusCreated, "สร้างรายการจองสำเร็จ", rentFlowBookingResponse(booking))
 }
 
-func RentFlowGetMyBookings(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarGetMyBookings(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
 	}
 
-	var bookings []models.RentFlowBooking
+	var bookings []models.RentFlowCarBooking
 	if err := config.DB.
 		Where("user_id = ? OR customer_email = ?", user.ID, user.Email).
 		Order("created_at DESC").
@@ -189,7 +189,7 @@ func RentFlowGetMyBookings(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงรายการจองสำเร็จ", rentFlowBookingResponses(bookings))
 }
 
-func RentFlowGetBookingByID(c *gin.Context) {
+func RentFlowCarGetBookingByID(c *gin.Context) {
 	booking, ok := rentFlowLoadOwnedBooking(c, c.Param("bookingId"))
 	if !ok {
 		return
@@ -197,7 +197,7 @@ func RentFlowGetBookingByID(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลการจองสำเร็จ", rentFlowBookingResponse(*booking))
 }
 
-func RentFlowCancelBooking(c *gin.Context) {
+func RentFlowCarCancelBooking(c *gin.Context) {
 	booking, ok := rentFlowLoadOwnedBooking(c, c.Param("bookingId"))
 	if !ok {
 		return
@@ -212,7 +212,7 @@ func RentFlowCancelBooking(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Model(&models.RentFlowBooking{}).
+	if err := config.DB.Model(&models.RentFlowCarBooking{}).
 		Where("id = ?", booking.ID).
 		Updates(map[string]interface{}{
 			"status":     "cancelled",
@@ -224,12 +224,12 @@ func RentFlowCancelBooking(c *gin.Context) {
 
 	booking.Status = "cancelled"
 	rentFlowCreateNotification(booking.TenantID, booking.UserID, booking.CustomerEmail, "ยกเลิกการจอง", "การจอง "+booking.BookingCode+" ถูกยกเลิกแล้ว")
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
-	rentFlowPublishBookingRealtime(services.RentFlowRealtimeEventBookingCancelled, *booking)
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
+	rentFlowPublishBookingRealtime(services.RentFlowCarRealtimeEventBookingCancelled, *booking)
 	rentFlowSuccess(c, http.StatusOK, "ยกเลิกรายการจองสำเร็จ", rentFlowBookingResponse(*booking))
 }
 
-func RentFlowCreatePayment(c *gin.Context) {
+func RentFlowCarCreatePayment(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
@@ -248,7 +248,7 @@ func RentFlowCreatePayment(c *gin.Context) {
 		return
 	}
 
-	var booking models.RentFlowBooking
+	var booking models.RentFlowCarBooking
 	if err := config.DB.Where("tenant_id = ? AND (id = ? OR booking_code = ?)", tenant.ID, payload.BookingID, payload.BookingID).First(&booking).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบรายการจองที่ต้องการชำระเงิน")
@@ -280,7 +280,7 @@ func RentFlowCreatePayment(c *gin.Context) {
 	}
 
 	now := time.Now()
-	payment := models.RentFlowPayment{
+	payment := models.RentFlowCarPayment{
 		ID:               services.NewID("pay"),
 		TenantID:         tenant.ID,
 		BookingID:        booking.ID,
@@ -307,7 +307,7 @@ func RentFlowCreatePayment(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Model(&models.RentFlowBooking{}).
+	if err := config.DB.Model(&models.RentFlowCarBooking{}).
 		Where("id = ?", booking.ID).
 		Updates(map[string]interface{}{
 			"status":     "paid",
@@ -319,18 +319,18 @@ func RentFlowCreatePayment(c *gin.Context) {
 
 	rentFlowCreateNotification(tenant.ID, booking.UserID, booking.CustomerEmail, "ชำระเงินสำเร็จ", "การจอง "+booking.BookingCode+" ชำระเงินเรียบร้อยแล้ว")
 	booking.Status = "paid"
-	rentFlowPublishPaymentRealtime(services.RentFlowRealtimeEventPaymentCreated, payment)
-	rentFlowPublishBookingRealtime(services.RentFlowRealtimeEventBookingUpdated, booking)
+	rentFlowPublishPaymentRealtime(services.RentFlowCarRealtimeEventPaymentCreated, payment)
+	rentFlowPublishBookingRealtime(services.RentFlowCarRealtimeEventBookingUpdated, booking)
 	rentFlowSuccess(c, http.StatusCreated, "สร้างรายการชำระเงินสำเร็จ", rentFlowPaymentResponse(payment))
 }
 
-func RentFlowGetPaymentByBookingID(c *gin.Context) {
+func RentFlowCarGetPaymentByBookingID(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
 	}
 
-	var payment models.RentFlowPayment
+	var payment models.RentFlowCarPayment
 	if err := config.DB.Where("tenant_id = ? AND booking_id = ?", tenant.ID, c.Param("bookingId")).Order("created_at DESC").First(&payment).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			rentFlowError(c, http.StatusNotFound, "ยังไม่มีข้อมูลการชำระเงินสำหรับการจองนี้")
@@ -342,13 +342,13 @@ func RentFlowGetPaymentByBookingID(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลการชำระเงินสำเร็จ", rentFlowPaymentResponse(payment))
 }
 
-func RentFlowGetPaymentSlip(c *gin.Context) {
+func RentFlowCarGetPaymentSlip(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
 	}
 
-	var payment models.RentFlowPayment
+	var payment models.RentFlowCarPayment
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, c.Param("paymentId")).First(&payment).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบสลิปชำระเงิน")
 		return
@@ -362,14 +362,14 @@ func RentFlowGetPaymentSlip(c *gin.Context) {
 	rentFlowSendImageBlob(c, payment.SlipMimeType, payment.SlipBlob)
 }
 
-func RentFlowGetNotifications(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarGetNotifications(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
 	}
 
-	var notifications []models.RentFlowNotification
+	var notifications []models.RentFlowCarNotification
 	if err := config.DB.
 		Where("user_id = ? OR user_email = ?", user.ID, user.Email).
 		Order("created_at DESC").
@@ -384,14 +384,14 @@ func RentFlowGetNotifications(c *gin.Context) {
 	})
 }
 
-func RentFlowMarkNotificationAsRead(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarMarkNotificationAsRead(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
 	}
 
-	if err := config.DB.Model(&models.RentFlowNotification{}).
+	if err := config.DB.Model(&models.RentFlowCarNotification{}).
 		Where("id = ? AND (user_id = ? OR user_email = ?)", c.Param("notificationId"), user.ID, user.Email).
 		Updates(map[string]interface{}{
 			"is_read":    true,
@@ -404,14 +404,14 @@ func RentFlowMarkNotificationAsRead(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตการแจ้งเตือนสำเร็จ", nil)
 }
 
-func RentFlowMarkAllNotificationsAsRead(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarMarkAllNotificationsAsRead(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
 	}
 
-	if err := config.DB.Model(&models.RentFlowNotification{}).
+	if err := config.DB.Model(&models.RentFlowCarNotification{}).
 		Where("user_id = ? OR user_email = ?", user.ID, user.Email).
 		Updates(map[string]interface{}{
 			"is_read":    true,
@@ -424,26 +424,26 @@ func RentFlowMarkAllNotificationsAsRead(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตการแจ้งเตือนทั้งหมดสำเร็จ", nil)
 }
 
-func rentFlowValidateBookingDatesAndCar(c *gin.Context, tenantID, carID, pickupDateRaw, returnDateRaw string) (models.RentFlowCar, time.Time, time.Time, bool) {
-	var car models.RentFlowCar
+func rentFlowValidateBookingDatesAndCar(c *gin.Context, tenantID, carID, pickupDateRaw, returnDateRaw string) (models.RentFlowCarCar, time.Time, time.Time, bool) {
+	var car models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ? AND id = ? AND is_available = ? AND status = ?", tenantID, carID, true, "available").First(&car).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรถที่ต้องการ")
-		return models.RentFlowCar{}, time.Time{}, time.Time{}, false
+		return models.RentFlowCarCar{}, time.Time{}, time.Time{}, false
 	}
 
 	pickupDate, err := services.ParseDateTime(pickupDateRaw)
 	if err != nil {
 		rentFlowError(c, http.StatusBadRequest, "วันรับรถไม่ถูกต้อง")
-		return models.RentFlowCar{}, time.Time{}, time.Time{}, false
+		return models.RentFlowCarCar{}, time.Time{}, time.Time{}, false
 	}
 	returnDate, err := services.ParseDateTime(returnDateRaw)
 	if err != nil {
 		rentFlowError(c, http.StatusBadRequest, "วันคืนรถไม่ถูกต้อง")
-		return models.RentFlowCar{}, time.Time{}, time.Time{}, false
+		return models.RentFlowCarCar{}, time.Time{}, time.Time{}, false
 	}
 	if !returnDate.After(pickupDate) {
 		rentFlowError(c, http.StatusBadRequest, "วันคืนรถต้องหลังวันรับรถ")
-		return models.RentFlowCar{}, time.Time{}, time.Time{}, false
+		return models.RentFlowCarCar{}, time.Time{}, time.Time{}, false
 	}
 
 	return car, pickupDate, returnDate, true
@@ -500,10 +500,10 @@ func rentFlowBookingAddonsSummary(tenantID string, payload []rentFlowBookingAddo
 		}
 	}
 
-	dbAddonsByID := map[string]models.RentFlowAddon{}
-	dbAddonsByName := map[string]models.RentFlowAddon{}
+	dbAddonsByID := map[string]models.RentFlowCarAddon{}
+	dbAddonsByName := map[string]models.RentFlowCarAddon{}
 	if len(ids) > 0 || len(names) > 0 {
-		var dbAddons []models.RentFlowAddon
+		var dbAddons []models.RentFlowCarAddon
 		query := config.DB.Where("tenant_id = ? AND is_active = ?", tenantID, true)
 		if len(ids) > 0 && len(names) > 0 {
 			query = query.Where("id IN ? OR LOWER(name) IN ?", ids, names)
@@ -623,14 +623,14 @@ func rentFlowBookingAddonsFromJSON(raw string) []rentFlowBookingAddonItem {
 	return items
 }
 
-func rentFlowLoadOwnedBooking(c *gin.Context, bookingID string) (*models.RentFlowBooking, bool) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func rentFlowLoadOwnedBooking(c *gin.Context, bookingID string) (*models.RentFlowCarBooking, bool) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return nil, false
 	}
 
-	var booking models.RentFlowBooking
+	var booking models.RentFlowCarBooking
 	if err := config.DB.
 		Where("(id = ? OR booking_code = ?) AND (user_id = ? OR customer_email = ?)", bookingID, bookingID, user.ID, user.Email).
 		First(&booking).Error; err != nil {
@@ -645,7 +645,7 @@ func rentFlowLoadOwnedBooking(c *gin.Context, bookingID string) (*models.RentFlo
 	return &booking, true
 }
 
-func rentFlowBookingResponses(bookings []models.RentFlowBooking) []gin.H {
+func rentFlowBookingResponses(bookings []models.RentFlowCarBooking) []gin.H {
 	carIDs := make([]string, 0, len(bookings))
 	tenantIDs := make([]string, 0, len(bookings))
 	locationValues := make([]string, 0, len(bookings)*2)
@@ -680,18 +680,18 @@ func rentFlowBookingResponses(bookings []models.RentFlowBooking) []gin.H {
 		}
 	}
 
-	carMap := map[string]models.RentFlowCar{}
+	carMap := map[string]models.RentFlowCarCar{}
 	if len(carIDs) > 0 {
-		var cars []models.RentFlowCar
+		var cars []models.RentFlowCarCar
 		_ = config.DB.Unscoped().Where("id IN ?", carIDs).Find(&cars).Error
 		for _, car := range cars {
 			carMap[car.ID] = car
 		}
 	}
 
-	tenantMap := map[string]models.RentFlowTenant{}
+	tenantMap := map[string]models.RentFlowCarTenant{}
 	if len(tenantIDs) > 0 {
-		var tenants []models.RentFlowTenant
+		var tenants []models.RentFlowCarTenant
 		_ = config.DB.Where("id IN ?", tenantIDs).Find(&tenants).Error
 		for _, tenant := range tenants {
 			tenantMap[tenant.ID] = tenant
@@ -700,7 +700,7 @@ func rentFlowBookingResponses(bookings []models.RentFlowBooking) []gin.H {
 
 	branchNameMap := map[string]string{}
 	if len(tenantIDs) > 0 && len(locationValues) > 0 {
-		var branches []models.RentFlowBranch
+		var branches []models.RentFlowCarBranch
 		_ = config.DB.
 			Where("tenant_id IN ? AND (id IN ? OR location_id IN ? OR name IN ?)", tenantIDs, locationValues, locationValues, locationValues).
 			Find(&branches).Error
@@ -723,11 +723,11 @@ func rentFlowBookingResponses(bookings []models.RentFlowBooking) []gin.H {
 	return items
 }
 
-func rentFlowBookingResponse(booking models.RentFlowBooking) gin.H {
-	return rentFlowBookingResponses([]models.RentFlowBooking{booking})[0]
+func rentFlowBookingResponse(booking models.RentFlowCarBooking) gin.H {
+	return rentFlowBookingResponses([]models.RentFlowCarBooking{booking})[0]
 }
 
-func rentFlowBookingResponseWithMaps(booking models.RentFlowBooking, carMap map[string]models.RentFlowCar, tenantMap map[string]models.RentFlowTenant, branchNameMap map[string]string) gin.H {
+func rentFlowBookingResponseWithMaps(booking models.RentFlowCarBooking, carMap map[string]models.RentFlowCarCar, tenantMap map[string]models.RentFlowCarTenant, branchNameMap map[string]string) gin.H {
 	car := carMap[booking.CarID]
 	tenant := tenantMap[booking.TenantID]
 	pickupLocation := rentFlowDisplayBranchName(booking.TenantID, booking.PickupLocation, branchNameMap)
@@ -784,7 +784,7 @@ func rentFlowDisplayBranchName(tenantID, value string, branchNameMap map[string]
 	return trimmed
 }
 
-func rentFlowPaymentResponse(payment models.RentFlowPayment) gin.H {
+func rentFlowPaymentResponse(payment models.RentFlowCarPayment) gin.H {
 	return gin.H{
 		"id":               payment.ID,
 		"tenantId":         payment.TenantID,
@@ -853,7 +853,7 @@ func rentFlowCreateNotification(tenantID string, userID *string, userEmail, titl
 	if strings.TrimSpace(userEmail) == "" {
 		return
 	}
-	notification := models.RentFlowNotification{
+	notification := models.RentFlowCarNotification{
 		ID:        services.NewID("ntf"),
 		TenantID:  tenantID,
 		UserID:    userID,
@@ -863,7 +863,7 @@ func rentFlowCreateNotification(tenantID string, userID *string, userEmail, titl
 		IsRead:    false,
 	}
 	_ = config.DB.Create(&notification).Error
-	_ = config.DB.Create(&models.RentFlowMessageLog{
+	_ = config.DB.Create(&models.RentFlowCarMessageLog{
 		ID:        services.NewID("msg"),
 		TenantID:  tenantID,
 		Channel:   "email",
@@ -876,8 +876,8 @@ func rentFlowCreateNotification(tenantID string, userID *string, userEmail, titl
 	if userID != nil {
 		userIDValue = *userID
 	}
-	services.RentFlowPublishRealtime(services.RentFlowRealtimeEvent{
-		Type:      services.RentFlowRealtimeEventNotificationNew,
+	services.RentFlowCarPublishRealtime(services.RentFlowCarRealtimeEvent{
+		Type:      services.RentFlowCarRealtimeEventNotificationNew,
 		TenantID:  tenantID,
 		UserID:    userIDValue,
 		UserEmail: notification.UserEmail,

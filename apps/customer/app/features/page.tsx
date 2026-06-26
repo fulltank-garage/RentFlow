@@ -2,13 +2,13 @@ import { Suspense } from "react";
 import FeaturesPage from "@/src/components/pages/FeaturesPage";
 import FeaturesPageSkeleton from "@/src/components/feature/FeaturesPageSkeleton";
 import {
-  getInitialRentFlowTenantProfile,
-  getRentFlowRequestHost,
+  getInitialRentFlowCarTenantProfile,
+  getRentFlowCarRequestHost,
 } from "@/src/lib/server-tenant";
 
 export default async function Page() {
-  const host = await getRentFlowRequestHost();
-  const initialTenantProfile = await getInitialRentFlowTenantProfile(host);
+  const host = await getRentFlowCarRequestHost();
+  const initialTenantProfile = await getInitialRentFlowCarTenantProfile(host);
 
   return (
     <Suspense fallback={<FeaturesPageSkeleton />}>

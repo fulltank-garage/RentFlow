@@ -24,7 +24,7 @@ import {
     writeStoreProfile,
 } from "@/src/lib/partner-store";
 import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealtimeRefresh";
-import { RentFlowApiError } from "@/src/services/core/api-client.service";
+import { RentFlowCarApiError } from "@/src/services/core/api-client.service";
 import { tenantService } from "@/src/services/tenant/tenant.service";
 
 export default function StoreSetupPage() {
@@ -134,7 +134,7 @@ export default function StoreSetupPage() {
             })
             .catch((error: unknown) => {
                 if (
-                    error instanceof RentFlowApiError &&
+                    error instanceof RentFlowCarApiError &&
                     error.status === 404
                 ) {
                     return;

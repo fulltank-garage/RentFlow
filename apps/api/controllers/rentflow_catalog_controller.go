@@ -41,10 +41,10 @@ type rentFlowCarAvailabilitySnapshot struct {
 	Available      bool
 }
 
-func RentFlowGetCars(c *gin.Context) {
+func RentFlowCarGetCars(c *gin.Context) {
 	marketplace := rentFlowIsMarketplaceRequest(c)
 
-	tenantMap := make(map[string]models.RentFlowTenant)
+	tenantMap := make(map[string]models.RentFlowCarTenant)
 	tenantIDs := make([]string, 0)
 	cacheScope := ""
 	if marketplace {
@@ -69,7 +69,7 @@ func RentFlowGetCars(c *gin.Context) {
 	}
 
 	cacheKey := services.CacheKey(
-		services.RentFlowCarsCachePrefix(),
+		services.RentFlowCarCarsCachePrefix(),
 		cacheScope,
 		c.Query("q"),
 		c.Query("type"),
@@ -95,7 +95,7 @@ func RentFlowGetCars(c *gin.Context) {
 		return
 	}
 
-	var cars []models.RentFlowCar
+	var cars []models.RentFlowCarCar
 	query := config.DB.Where(
 		"tenant_id IN ? AND ((is_available = ? AND status = ?) OR status = ?)",
 		tenantIDs,
@@ -144,7 +144,7 @@ func RentFlowGetCars(c *gin.Context) {
 	pickupDate, pickupErr := services.ParseDateTime(c.Query("pickupDate"))
 	returnDate, returnErr := services.ParseDateTime(c.Query("returnDate"))
 
-	visibleCars := make([]models.RentFlowCar, 0, len(cars))
+	visibleCars := make([]models.RentFlowCarCar, 0, len(cars))
 	availabilityByCarID := make(map[string]rentFlowCarAvailabilitySnapshot, len(cars))
 	for _, car := range cars {
 		snapshot := rentFlowBaseCarAvailability(car)
@@ -232,12 +232,12 @@ func RentFlowGetCars(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func rentFlowFairMarketplaceCars(cars []models.RentFlowCar) []models.RentFlowCar {
+func rentFlowFairMarketplaceCars(cars []models.RentFlowCarCar) []models.RentFlowCarCar {
 	if len(cars) <= 1 {
 		return cars
 	}
 	tenantOrder := make([]string, 0)
-	grouped := map[string][]models.RentFlowCar{}
+	grouped := map[string][]models.RentFlowCarCar{}
 	seen := map[string]bool{}
 	for _, car := range cars {
 		if !seen[car.TenantID] {
@@ -252,7 +252,7 @@ func rentFlowFairMarketplaceCars(cars []models.RentFlowCar) []models.RentFlowCar
 	rotation := time.Now().YearDay() % len(tenantOrder)
 	tenantOrder = append(tenantOrder[rotation:], tenantOrder[:rotation]...)
 
-	result := make([]models.RentFlowCar, 0, len(cars))
+	result := make([]models.RentFlowCarCar, 0, len(cars))
 	for len(result) < len(cars) {
 		added := false
 		for _, tenantID := range tenantOrder {
@@ -271,13 +271,13 @@ func rentFlowFairMarketplaceCars(cars []models.RentFlowCar) []models.RentFlowCar
 	return result
 }
 
-func RentFlowGetCarPrimaryImage(c *gin.Context) {
+func RentFlowCarGetCarPrimaryImage(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
 	}
 
-	var image models.RentFlowCarImage
+	var image models.RentFlowCarCarImage
 	if err := config.DB.
 		Where("tenant_id = ? AND car_id = ?", tenant.ID, c.Param("carId")).
 		Order("sort_order ASC").
@@ -293,13 +293,13 @@ func RentFlowGetCarPrimaryImage(c *gin.Context) {
 	rentFlowSendCarImage(c, image)
 }
 
-func RentFlowGetCarImage(c *gin.Context) {
+func RentFlowCarGetCarImage(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
 	}
 
-	var image models.RentFlowCarImage
+	var image models.RentFlowCarCarImage
 	if err := config.DB.
 		Where("tenant_id = ? AND car_id = ? AND id = ?", tenant.ID, c.Param("carId"), c.Param("imageId")).
 		First(&image).Error; err != nil {
@@ -314,7 +314,7 @@ func RentFlowGetCarImage(c *gin.Context) {
 	rentFlowSendCarImage(c, image)
 }
 
-func RentFlowUploadCarImages(c *gin.Context) {
+func RentFlowCarUploadCarImages(c *gin.Context) {
 	tenant, err := rentFlowCurrentUserTenant(c)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -326,7 +326,7 @@ func RentFlowUploadCarImages(c *gin.Context) {
 	}
 
 	carID := strings.TrimSpace(c.Param("carId"))
-	var car models.RentFlowCar
+	var car models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenant.ID, carID).First(&car).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบรถที่ต้องการอัปโหลดรูป")
@@ -368,14 +368,14 @@ func RentFlowUploadCarImages(c *gin.Context) {
 	}
 
 	if replaceImages {
-		if err := tx.Where("tenant_id = ? AND car_id = ?", tenant.ID, carID).Delete(&models.RentFlowCarImage{}).Error; err != nil {
+		if err := tx.Where("tenant_id = ? AND car_id = ?", tenant.ID, carID).Delete(&models.RentFlowCarCarImage{}).Error; err != nil {
 			tx.Rollback()
 			rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถลบรูปภาพเดิมได้")
 			return
 		}
 	}
 
-	images := make([]models.RentFlowCarImage, 0, len(files))
+	images := make([]models.RentFlowCarCarImage, 0, len(files))
 	for index, fileHeader := range files {
 		image, err := rentFlowBuildCarImage(tenant.ID, carID, maxSortOrder+index+1, fileHeader)
 		if err != nil {
@@ -396,23 +396,23 @@ func RentFlowUploadCarImages(c *gin.Context) {
 		return
 	}
 
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
 	items := make([]gin.H, 0, len(images))
 	for _, image := range images {
 		items = append(items, rentFlowCarImageResponse(c, tenant, image))
 	}
 
-	rentFlowPublishCarRealtime(tenant.ID, carID, services.RentFlowRealtimeEventCarChanged)
+	rentFlowPublishCarRealtime(tenant.ID, carID, services.RentFlowCarRealtimeEventCarChanged)
 	rentFlowSuccess(c, http.StatusCreated, "อัปโหลดรูปภาพสำเร็จ", gin.H{
 		"items": items,
 		"total": len(items),
 	})
 }
 
-func RentFlowGetBranches(c *gin.Context) {
+func RentFlowCarGetBranches(c *gin.Context) {
 	marketplace := rentFlowIsMarketplaceRequest(c)
 	cacheScope := ""
-	tenantMap := make(map[string]models.RentFlowTenant)
+	tenantMap := make(map[string]models.RentFlowCarTenant)
 	tenantIDs := make([]string, 0)
 	if marketplace {
 		tenants, err := rentFlowMarketplaceTenants()
@@ -435,7 +435,7 @@ func RentFlowGetBranches(c *gin.Context) {
 		cacheScope = tenant.ID
 	}
 
-	cacheKey := services.CacheKey(services.RentFlowBranchesCachePrefix(), cacheScope, "all")
+	cacheKey := services.CacheKey(services.RentFlowCarBranchesCachePrefix(), cacheScope, "all")
 	var cached rentFlowAPIResponse
 	if services.CacheGetJSON(config.Ctx, cacheKey, &cached) {
 		c.JSON(http.StatusOK, cached)
@@ -453,7 +453,7 @@ func RentFlowGetBranches(c *gin.Context) {
 		return
 	}
 
-	var branches []models.RentFlowBranch
+	var branches []models.RentFlowCarBranch
 	if err := config.DB.Where("tenant_id IN ? AND is_active = ?", tenantIDs, true).Order("name ASC").Find(&branches).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลสาขาได้")
 		return
@@ -498,7 +498,7 @@ func rentFlowLocationIDsForFilter(tenantIDs []string, location string) []string 
 		return nil
 	}
 
-	var branches []models.RentFlowBranch
+	var branches []models.RentFlowCarBranch
 	if err := config.DB.
 		Where("tenant_id IN ? AND (id = ? OR location_id = ? OR name = ?)", tenantIDs, location, location, location).
 		Find(&branches).Error; err != nil {
@@ -523,7 +523,7 @@ func rentFlowLocationIDsForFilter(tenantIDs []string, location string) []string 
 	return values
 }
 
-func rentFlowBranchDisplayName(branch models.RentFlowBranch) string {
+func rentFlowBranchDisplayName(branch models.RentFlowCarBranch) string {
 	name := strings.TrimSpace(branch.Name)
 	if name != "" && !rentFlowLooksGeneratedID(name, "brn") {
 		return name
@@ -609,13 +609,13 @@ func rentFlowTitleLocationPart(value string) string {
 	return strings.ToUpper(string(runes[0])) + string(runes[1:])
 }
 
-func RentFlowGetBranchByID(c *gin.Context) {
+func RentFlowCarGetBranchByID(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
 	}
 
-	var branch models.RentFlowBranch
+	var branch models.RentFlowCarBranch
 	if err := config.DB.Where("tenant_id = ? AND id = ? AND is_active = ?", tenant.ID, c.Param("branchId"), true).First(&branch).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบสาขาที่ต้องการ")
@@ -646,7 +646,7 @@ func RentFlowGetBranchByID(c *gin.Context) {
 	})
 }
 
-func RentFlowCheckAvailability(c *gin.Context) {
+func RentFlowCarCheckAvailability(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
@@ -673,7 +673,7 @@ func RentFlowCheckAvailability(c *gin.Context) {
 		return
 	}
 
-	var car models.RentFlowCar
+	var car models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ? AND id = ? AND is_available = ? AND status = ?", tenant.ID, payload.CarID, true, "available").First(&car).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบรถที่ต้องการ")
@@ -705,7 +705,7 @@ func RentFlowCheckAvailability(c *gin.Context) {
 	})
 }
 
-func RentFlowGetUnavailableDates(c *gin.Context) {
+func RentFlowCarGetUnavailableDates(c *gin.Context) {
 	tenant, ok := rentFlowRequireTenant(c)
 	if !ok {
 		return
@@ -728,14 +728,14 @@ func rentFlowNormalizeBookingMode(mode string) string {
 	}
 }
 
-func rentFlowCarUnitCount(car models.RentFlowCar) int {
+func rentFlowCarUnitCount(car models.RentFlowCarCar) int {
 	if car.UnitCount < 1 {
 		return 1
 	}
 	return car.UnitCount
 }
 
-func rentFlowBaseCarAvailability(car models.RentFlowCar) rentFlowCarAvailabilitySnapshot {
+func rentFlowBaseCarAvailability(car models.RentFlowCarCar) rentFlowCarAvailabilitySnapshot {
 	unitCount := rentFlowCarUnitCount(car)
 	available := car.IsAvailable && strings.TrimSpace(strings.ToLower(car.Status)) == "available"
 	availableUnits := unitCount
@@ -750,14 +750,14 @@ func rentFlowBaseCarAvailability(car models.RentFlowCar) rentFlowCarAvailability
 	}
 }
 
-func rentFlowCarAvailability(tenantID string, car models.RentFlowCar, pickupDate, returnDate time.Time) (rentFlowCarAvailabilitySnapshot, error) {
+func rentFlowCarAvailability(tenantID string, car models.RentFlowCarCar, pickupDate, returnDate time.Time) (rentFlowCarAvailabilitySnapshot, error) {
 	base := rentFlowBaseCarAvailability(car)
 	if !base.Available {
 		return base, nil
 	}
 
 	var reservedCount int64
-	err := config.DB.Model(&models.RentFlowBooking{}).
+	err := config.DB.Model(&models.RentFlowCarBooking{}).
 		Where("tenant_id = ? AND car_id = ?", tenantID, car.ID).
 		Where("status IN ?", rentFlowReservationBlockingStatuses()).
 		Where("pickup_date < ? AND return_date > ?", returnDate, pickupDate).
@@ -766,7 +766,7 @@ func rentFlowCarAvailability(tenantID string, car models.RentFlowCar, pickupDate
 		return base, err
 	}
 
-	var blocks []models.RentFlowAvailabilityBlock
+	var blocks []models.RentFlowCarAvailabilityBlock
 	err = config.DB.
 		Where("tenant_id = ? AND (car_id = ? OR car_id = '')", tenantID, car.ID).
 		Find(&blocks).Error
@@ -809,7 +809,7 @@ func rentFlowCarAvailability(tenantID string, car models.RentFlowCar, pickupDate
 }
 
 func rentFlowCarIsAvailable(tenantID, carID string, pickupDate, returnDate time.Time) (bool, error) {
-	var car models.RentFlowCar
+	var car models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ? AND id = ?", tenantID, carID).First(&car).Error; err != nil {
 		return false, err
 	}
@@ -818,7 +818,7 @@ func rentFlowCarIsAvailable(tenantID, carID string, pickupDate, returnDate time.
 }
 
 func rentFlowUnavailableDates(tenantID, carID string) ([]string, error) {
-	var bookings []models.RentFlowBooking
+	var bookings []models.RentFlowCarBooking
 	if err := config.DB.
 		Where("tenant_id = ? AND car_id = ?", tenantID, carID).
 		Where("status IN ?", rentFlowReservationBlockingStatuses()).
@@ -831,7 +831,7 @@ func rentFlowUnavailableDates(tenantID, carID string) ([]string, error) {
 		days = append(days, services.ExpandDateRange(booking.PickupDate, booking.ReturnDate)...)
 	}
 
-	var blocks []models.RentFlowAvailabilityBlock
+	var blocks []models.RentFlowCarAvailabilityBlock
 	if err := config.DB.
 		Where("tenant_id = ? AND (car_id = ? OR car_id = '')", tenantID, carID).
 		Find(&blocks).Error; err != nil {
@@ -870,16 +870,16 @@ type rentFlowCarImageRef struct {
 	UpdatedAt time.Time
 }
 
-func rentFlowCarImageURLs(c *gin.Context, tenant *models.RentFlowTenant, cars []models.RentFlowCar) (map[string][]string, error) {
+func rentFlowCarImageURLs(c *gin.Context, tenant *models.RentFlowCarTenant, cars []models.RentFlowCarCar) (map[string][]string, error) {
 	if tenant == nil {
 		return rentFlowCarImageURLsForTenants(c, nil, cars)
 	}
-	return rentFlowCarImageURLsForTenants(c, map[string]models.RentFlowTenant{
+	return rentFlowCarImageURLsForTenants(c, map[string]models.RentFlowCarTenant{
 		tenant.ID: *tenant,
 	}, cars)
 }
 
-func rentFlowCarImageURLsForTenants(c *gin.Context, tenantMap map[string]models.RentFlowTenant, cars []models.RentFlowCar) (map[string][]string, error) {
+func rentFlowCarImageURLsForTenants(c *gin.Context, tenantMap map[string]models.RentFlowCarTenant, cars []models.RentFlowCarCar) (map[string][]string, error) {
 	result := make(map[string][]string, len(cars))
 	if len(cars) == 0 {
 		return result, nil
@@ -898,7 +898,7 @@ func rentFlowCarImageURLsForTenants(c *gin.Context, tenantMap map[string]models.
 
 	var images []rentFlowCarImageRef
 	if err := config.DB.
-		Model(&models.RentFlowCarImage{}).
+		Model(&models.RentFlowCarCarImage{}).
 		Select("id, car_id, tenant_id, sort_order, updated_at").
 		Where("tenant_id IN ? AND car_id IN ?", tenantIDs, carIDs).
 		Order("tenant_id ASC, car_id ASC, sort_order ASC").
@@ -914,7 +914,7 @@ func rentFlowCarImageURLsForTenants(c *gin.Context, tenantMap map[string]models.
 	return result, nil
 }
 
-func rentFlowCarImageURL(_ *gin.Context, tenant *models.RentFlowTenant, carID, imageID string, updatedAt time.Time) string {
+func rentFlowCarImageURL(_ *gin.Context, tenant *models.RentFlowCarTenant, carID, imageID string, updatedAt time.Time) string {
 	imagePath := "/cars/" + url.PathEscape(carID) + "/images/" + url.PathEscape(imageID)
 	params := url.Values{}
 	if tenant != nil && tenant.DomainSlug != "" {
@@ -950,7 +950,7 @@ func rentFlowUploadedImageFiles(form *multipart.Form) []*multipart.FileHeader {
 func rentFlowCurrentMaxImageSortOrder(tenantID, carID string) (int, error) {
 	var maxSortOrder int
 	row := config.DB.
-		Model(&models.RentFlowCarImage{}).
+		Model(&models.RentFlowCarCarImage{}).
 		Select("COALESCE(MAX(sort_order), -1)").
 		Where("tenant_id = ? AND car_id = ?", tenantID, carID).
 		Row()
@@ -961,30 +961,30 @@ func rentFlowCurrentMaxImageSortOrder(tenantID, carID string) (int, error) {
 	return maxSortOrder, nil
 }
 
-func rentFlowBuildCarImage(tenantID, carID string, sortOrder int, fileHeader *multipart.FileHeader) (models.RentFlowCarImage, error) {
+func rentFlowBuildCarImage(tenantID, carID string, sortOrder int, fileHeader *multipart.FileHeader) (models.RentFlowCarCarImage, error) {
 	file, err := fileHeader.Open()
 	if err != nil {
-		return models.RentFlowCarImage{}, errors.New("ไม่สามารถอ่านไฟล์รูปภาพได้")
+		return models.RentFlowCarCarImage{}, errors.New("ไม่สามารถอ่านไฟล์รูปภาพได้")
 	}
 	defer file.Close()
 
 	imageBlob, err := io.ReadAll(io.LimitReader(file, rentFlowMaxCarImageBytes+1))
 	if err != nil {
-		return models.RentFlowCarImage{}, errors.New("ไม่สามารถอ่านไฟล์รูปภาพได้")
+		return models.RentFlowCarCarImage{}, errors.New("ไม่สามารถอ่านไฟล์รูปภาพได้")
 	}
 	if len(imageBlob) == 0 {
-		return models.RentFlowCarImage{}, errors.New("ไฟล์รูปภาพว่างเปล่า")
+		return models.RentFlowCarCarImage{}, errors.New("ไฟล์รูปภาพว่างเปล่า")
 	}
 	if len(imageBlob) > rentFlowMaxCarImageBytes {
-		return models.RentFlowCarImage{}, errors.New("ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5MB")
+		return models.RentFlowCarCarImage{}, errors.New("ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5MB")
 	}
 
 	mimeType := http.DetectContentType(imageBlob)
 	if _, ok := rentFlowAllowedImageTypes[mimeType]; !ok {
-		return models.RentFlowCarImage{}, errors.New("รองรับเฉพาะไฟล์ JPG, PNG, WEBP หรือ GIF")
+		return models.RentFlowCarCarImage{}, errors.New("รองรับเฉพาะไฟล์ JPG, PNG, WEBP หรือ GIF")
 	}
 
-	return models.RentFlowCarImage{
+	return models.RentFlowCarCarImage{
 		ID:        services.NewID("carimg"),
 		TenantID:  tenantID,
 		CarID:     carID,
@@ -995,7 +995,7 @@ func rentFlowBuildCarImage(tenantID, carID string, sortOrder int, fileHeader *mu
 	}, nil
 }
 
-func rentFlowCarImageResponse(c *gin.Context, tenant *models.RentFlowTenant, image models.RentFlowCarImage) gin.H {
+func rentFlowCarImageResponse(c *gin.Context, tenant *models.RentFlowCarTenant, image models.RentFlowCarCarImage) gin.H {
 	return gin.H{
 		"id":        image.ID,
 		"tenantId":  image.TenantID,
@@ -1010,6 +1010,6 @@ func rentFlowCarImageResponse(c *gin.Context, tenant *models.RentFlowTenant, ima
 	}
 }
 
-func rentFlowSendCarImage(c *gin.Context, image models.RentFlowCarImage) {
+func rentFlowSendCarImage(c *gin.Context, image models.RentFlowCarCarImage) {
 	rentFlowSendImageBlob(c, image.MimeType, image.ImageBlob)
 }

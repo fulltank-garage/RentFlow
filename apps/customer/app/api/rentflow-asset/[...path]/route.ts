@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getRentFlowApiBaseUrl } from "@/src/lib/runtime-api-url";
+import { getRentFlowCarApiBaseUrl } from "@/src/lib/runtime-api-url";
 
 type RouteContext = {
   params: Promise<{
@@ -11,12 +11,12 @@ type RouteContext = {
 function buildAssetUrl(path: string[], requestUrl: string) {
   const url = new URL(requestUrl);
   const assetPath = path.map((part) => encodeURIComponent(part)).join("/");
-  const targetUrl = new URL(`/${assetPath}`, getRentFlowApiBaseUrl());
+  const targetUrl = new URL(`/${assetPath}`, getRentFlowCarApiBaseUrl());
   targetUrl.search = url.search;
   return targetUrl;
 }
 
-async function proxyRentFlowAsset(
+async function proxyRentFlowCarAsset(
   request: NextRequest,
   context: RouteContext,
   method: "GET" | "HEAD"
@@ -82,9 +82,9 @@ async function proxyRentFlowAsset(
 }
 
 export async function GET(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowAsset(request, context, "GET");
+  return proxyRentFlowCarAsset(request, context, "GET");
 }
 
 export async function HEAD(request: NextRequest, context: RouteContext) {
-  return proxyRentFlowAsset(request, context, "HEAD");
+  return proxyRentFlowCarAsset(request, context, "HEAD");
 }

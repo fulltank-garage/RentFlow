@@ -24,10 +24,10 @@ func main() {
 	} else {
 		log.Println("Redis เชื่อมต่อแล้ว")
 	}
-	services.StartRentFlowRealtimeRedisBridge(config.Ctx)
+	services.StartRentFlowCarRealtimeRedisBridge(config.Ctx)
 
-	services.EnsureRentFlowPlatformAdmin()
-	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarsCachePrefix())
+	services.EnsureRentFlowCarPlatformAdmin()
+	services.CacheDeleteByPrefix(config.Ctx, services.RentFlowCarCarsCachePrefix())
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()

@@ -11,7 +11,7 @@ export const storefrontApi = {
         tenant: options?.tenantSlug,
       },
       headers: options?.marketplace
-        ? { "X-RentFlow-Marketplace": "true" }
+        ? { "X-RentFlowCar-Marketplace": "true" }
         : undefined,
     });
     return res.data.data;

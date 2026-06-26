@@ -34,14 +34,14 @@ type rentFlowAssistantCriteria struct {
 }
 
 type rentFlowAssistantScoredCar struct {
-	Car     models.RentFlowCar
-	Tenant  models.RentFlowTenant
+	Car     models.RentFlowCarCar
+	Tenant  models.RentFlowCarTenant
 	Image   string
 	Score   int
 	Reasons []string
 }
 
-func RentFlowStorefrontAssistant(c *gin.Context) {
+func RentFlowCarStorefrontAssistant(c *gin.Context) {
 	var payload rentFlowStorefrontAssistantPayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลคำถามไม่ถูกต้อง")
@@ -55,7 +55,7 @@ func RentFlowStorefrontAssistant(c *gin.Context) {
 	}
 
 	marketplace := rentFlowIsMarketplaceRequest(c)
-	var tenants []models.RentFlowTenant
+	var tenants []models.RentFlowCarTenant
 	if marketplace {
 		items, err := rentFlowMarketplaceTenants()
 		if err != nil {
@@ -68,7 +68,7 @@ func RentFlowStorefrontAssistant(c *gin.Context) {
 		if !ok {
 			return
 		}
-		tenants = []models.RentFlowTenant{*tenant}
+		tenants = []models.RentFlowCarTenant{*tenant}
 	}
 
 	if len(tenants) == 0 {
@@ -87,7 +87,7 @@ func RentFlowStorefrontAssistant(c *gin.Context) {
 	tenantMap := rentFlowTenantMap(tenants)
 	tenantIDs := rentFlowAssistantTenantIDs(tenants)
 
-	var cars []models.RentFlowCar
+	var cars []models.RentFlowCarCar
 	if err := config.DB.
 		Where("tenant_id IN ? AND is_available = ?", tenantIDs, true).
 		Where("status <> ?", "archived").
@@ -113,7 +113,7 @@ func RentFlowStorefrontAssistant(c *gin.Context) {
 	summary := rentFlowAssistantStorefrontSummary(marketplace, criteria, recommendations, matched)
 	if generated, err := rentFlowAIStorefrontSummary(c, marketplace, criteria, recommendations); err == nil && generated != "" {
 		summary = generated
-		provider = services.RentFlowAIProviderLabel()
+		provider = services.RentFlowCarAIProviderLabel()
 	}
 
 	rentFlowSuccess(c, http.StatusOK, "สร้างคำแนะนำสำหรับลูกค้าสำเร็จ", gin.H{
@@ -127,31 +127,31 @@ func RentFlowStorefrontAssistant(c *gin.Context) {
 	})
 }
 
-func RentFlowPartnerAssistant(c *gin.Context) {
+func RentFlowCarPartnerAssistant(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
 		return
 	}
 
-	var cars []models.RentFlowCar
+	var cars []models.RentFlowCarCar
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&cars).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลรถสำหรับ AI ได้")
 		return
 	}
 
-	var bookings []models.RentFlowBooking
+	var bookings []models.RentFlowCarBooking
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&bookings).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลการจองสำหรับ AI ได้")
 		return
 	}
 
-	var reviews []models.RentFlowReview
+	var reviews []models.RentFlowCarReview
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Limit(30).Find(&reviews).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลรีวิวสำหรับ AI ได้")
 		return
 	}
 
-	var payments []models.RentFlowPayment
+	var payments []models.RentFlowCarPayment
 	if err := config.DB.Where("tenant_id = ?", tenant.ID).Order("created_at DESC").Find(&payments).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลการชำระเงินสำหรับ AI ได้")
 		return
@@ -294,7 +294,7 @@ func RentFlowPartnerAssistant(c *gin.Context) {
 	provider := "database-rules"
 	if generated, err := rentFlowAIPartnerSummary(c, tenant.ShopName, metrics, alerts, actions, topCars); err == nil && generated != "" {
 		summary = generated
-		provider = services.RentFlowAIProviderLabel()
+		provider = services.RentFlowCarAIProviderLabel()
 	}
 
 	rentFlowSuccess(c, http.StatusOK, "สร้างภาพรวม AI สำหรับร้านสำเร็จ", gin.H{
@@ -308,7 +308,7 @@ func RentFlowPartnerAssistant(c *gin.Context) {
 	})
 }
 
-func RentFlowAdminAssistant(c *gin.Context) {
+func RentFlowCarAdminAssistant(c *gin.Context) {
 	if !rentFlowRequirePlatformAdmin(c) {
 		return
 	}
@@ -400,12 +400,12 @@ func RentFlowAdminAssistant(c *gin.Context) {
 		{"title": "ดัน best-practice จากร้านที่โตดี", "detail": "หยิบ pattern ของร้านที่รายได้สูงสุดไปทำ onboarding หรือ playbook สำหรับร้านใหม่", "priority": "medium"},
 	}
 
-	summary := fmt.Sprintf("ตอนนี้ RentFlow มี tenant ทั้งหมด %d ร้าน เปิดใช้งานอยู่ %d ร้าน และสร้างรายได้รวมเดือนนี้ %s", summaryData["totalTenants"].(int), summaryData["activeTenants"].(int), rentFlowFormatTHB(summaryData["revenueThisMonth"].(int64)))
+	summary := fmt.Sprintf("ตอนนี้ RentFlowCar มี tenant ทั้งหมด %d ร้าน เปิดใช้งานอยู่ %d ร้าน และสร้างรายได้รวมเดือนนี้ %s", summaryData["totalTenants"].(int), summaryData["activeTenants"].(int), rentFlowFormatTHB(summaryData["revenueThisMonth"].(int64)))
 
 	provider := "database-rules"
 	if generated, err := rentFlowAIAdminSummary(c, summaryData, alerts, actions, growthTenants, riskTenants); err == nil && generated != "" {
 		summary = generated
-		provider = services.RentFlowAIProviderLabel()
+		provider = services.RentFlowCarAIProviderLabel()
 	}
 
 	rentFlowSuccess(c, http.StatusOK, "สร้างภาพรวม AI สำหรับ platform สำเร็จ", gin.H{
@@ -421,11 +421,11 @@ func RentFlowAdminAssistant(c *gin.Context) {
 }
 
 func rentFlowAIStorefrontSummary(c *gin.Context, marketplace bool, criteria rentFlowAssistantCriteria, recommendations []gin.H) (string, error) {
-	if !services.RentFlowAIEnabled() || len(recommendations) == 0 {
+	if !services.RentFlowCarAIEnabled() || len(recommendations) == 0 {
 		return "", fmt.Errorf("ai disabled")
 	}
 
-	systemPrompt := "คุณคือผู้ช่วยเลือกรถเช่าของ RentFlow ตอบเป็นภาษาไทยแบบกระชับ มืออาชีพ และไม่ใช้ markdown"
+	systemPrompt := "คุณคือผู้ช่วยเลือกรถเช่าของ RentFlowCar ตอบเป็นภาษาไทยแบบกระชับ มืออาชีพ และไม่ใช้ markdown"
 	userPrompt := fmt.Sprintf(
 		"โหมด: %s\nคำถามลูกค้า: %s\nเงื่อนไขที่ระบบตีความได้: %+v\nรถที่แนะนำ: %+v\n\nช่วยสรุปเป็น 2-3 ประโยคว่าเพราะอะไรตัวเลือกเหล่านี้ถึงเหมาะกับลูกค้า โดยอิงเฉพาะข้อมูลที่ให้มา ห้ามแต่งข้อมูลเพิ่ม",
 		rentFlowAssistantModeLabel(marketplace),
@@ -434,11 +434,11 @@ func rentFlowAIStorefrontSummary(c *gin.Context, marketplace bool, criteria rent
 		recommendations,
 	)
 
-	return services.RentFlowAIGenerateText(c.Request.Context(), systemPrompt, userPrompt)
+	return services.RentFlowCarAIGenerateText(c.Request.Context(), systemPrompt, userPrompt)
 }
 
 func rentFlowAIPartnerSummary(c *gin.Context, shopName string, metrics, alerts, actions, topCars []gin.H) (string, error) {
-	if !services.RentFlowAIEnabled() {
+	if !services.RentFlowCarAIEnabled() {
 		return "", fmt.Errorf("ai disabled")
 	}
 
@@ -452,15 +452,15 @@ func rentFlowAIPartnerSummary(c *gin.Context, shopName string, metrics, alerts, 
 		topCars,
 	)
 
-	return services.RentFlowAIGenerateText(c.Request.Context(), systemPrompt, userPrompt)
+	return services.RentFlowCarAIGenerateText(c.Request.Context(), systemPrompt, userPrompt)
 }
 
 func rentFlowAIAdminSummary(c *gin.Context, summaryData gin.H, alerts, actions []gin.H, growthTenants []rentFlowPlatformTenantItem, riskTenants []gin.H) (string, error) {
-	if !services.RentFlowAIEnabled() {
+	if !services.RentFlowCarAIEnabled() {
 		return "", fmt.Errorf("ai disabled")
 	}
 
-	systemPrompt := "คุณคือ AI analyst ของแพลตฟอร์ม RentFlow ตอบภาษาไทยแบบผู้บริหารอ่านเร็ว กระชับ และชี้ประเด็นสำคัญ"
+	systemPrompt := "คุณคือ AI analyst ของแพลตฟอร์ม RentFlowCar ตอบภาษาไทยแบบผู้บริหารอ่านเร็ว กระชับ และชี้ประเด็นสำคัญ"
 	userPrompt := fmt.Sprintf(
 		"platformSummary: %+v\nalerts: %+v\nactions: %+v\ngrowthTenants: %+v\nriskTenants: %+v\n\nช่วยสรุป 3-4 ประโยคว่า ภาพรวมแพลตฟอร์มตอนนี้เป็นอย่างไร ร้านกลุ่มไหนน่าสนใจ ร้านกลุ่มไหนเสี่ยง และทีม platform ควรทำอะไรก่อน ห้ามแต่งข้อมูลนอกเหนือจากนี้",
 		summaryData,
@@ -470,7 +470,7 @@ func rentFlowAIAdminSummary(c *gin.Context, summaryData gin.H, alerts, actions [
 		riskTenants,
 	)
 
-	return services.RentFlowAIGenerateText(c.Request.Context(), systemPrompt, userPrompt)
+	return services.RentFlowCarAIGenerateText(c.Request.Context(), systemPrompt, userPrompt)
 }
 
 func rentFlowAssistantModeLabel(marketplace bool) string {
@@ -480,7 +480,7 @@ func rentFlowAssistantModeLabel(marketplace bool) string {
 	return "storefront"
 }
 
-func rentFlowAssistantTenantIDs(tenants []models.RentFlowTenant) []string {
+func rentFlowAssistantTenantIDs(tenants []models.RentFlowCarTenant) []string {
 	ids := make([]string, 0, len(tenants))
 	for _, tenant := range tenants {
 		ids = append(ids, tenant.ID)
@@ -526,7 +526,7 @@ func rentFlowAssistantCriteriaFromQuery(query string) rentFlowAssistantCriteria 
 	return criteria
 }
 
-func rentFlowAssistantRecommendCars(cars []models.RentFlowCar, tenantMap map[string]models.RentFlowTenant, imageURLs map[string][]string, criteria rentFlowAssistantCriteria) ([]gin.H, bool) {
+func rentFlowAssistantRecommendCars(cars []models.RentFlowCarCar, tenantMap map[string]models.RentFlowCarTenant, imageURLs map[string][]string, criteria rentFlowAssistantCriteria) ([]gin.H, bool) {
 	scored := make([]rentFlowAssistantScoredCar, 0, len(cars))
 	matched := false
 	lowerQuery := strings.ToLower(criteria.RawQuery)
@@ -631,8 +631,8 @@ func rentFlowAssistantRecommendCars(cars []models.RentFlowCar, tenantMap map[str
 	return result, matched
 }
 
-func rentFlowAssistantFallbackCars(cars []models.RentFlowCar, tenantMap map[string]models.RentFlowTenant, imageURLs map[string][]string) []gin.H {
-	items := make([]models.RentFlowCar, len(cars))
+func rentFlowAssistantFallbackCars(cars []models.RentFlowCarCar, tenantMap map[string]models.RentFlowCarTenant, imageURLs map[string][]string) []gin.H {
+	items := make([]models.RentFlowCarCar, len(cars))
 	copy(items, cars)
 	sort.Slice(items, func(i, j int) bool {
 		return items[i].PricePerDay < items[j].PricePerDay

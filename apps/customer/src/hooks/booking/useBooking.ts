@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
-import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
+import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
 import { navigateBookingFlow } from "@/src/lib/booking-flow-navigation";
 import { addonsApi } from "@/src/services/addons/addons.service";
@@ -106,7 +106,7 @@ function buildAddonPayload(
 export default function useBooking() {
   const params = useSearchParams();
   const router = useRouter();
-  const siteMode = useRentFlowSiteMode();
+  const siteMode = useRentFlowCarSiteMode();
 
   const carId = params.get("carId") || "";
   const tenantSlugFromUrl = params.get("tenant") || "";
@@ -254,7 +254,7 @@ export default function useBooking() {
     [car?.domainSlug, tenantSlugFromUrl]
   );
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: [
       "booking.created",
       "booking.updated",
@@ -272,7 +272,7 @@ export default function useBooking() {
     enabled: Boolean(carId),
   });
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: ["branch.changed", "tenant.updated"],
     onRefresh: React.useCallback(() => {
       setBranchReloadTick((current) => current + 1);
@@ -281,7 +281,7 @@ export default function useBooking() {
     enabled: Boolean(effectiveTenantSlug),
   });
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: ["addon.changed", "tenant.updated"],
     onRefresh: React.useCallback(() => {
       setAddonReloadTick((current) => current + 1);

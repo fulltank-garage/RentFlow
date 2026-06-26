@@ -1,22 +1,22 @@
 "use client";
 
 import * as React from "react";
-import { subscribeRentFlowRealtime } from "@/src/services/realtime/realtime.service";
+import { subscribeRentFlowCarRealtime } from "@/src/services/realtime/realtime.service";
 import type {
-  RentFlowRealtimeEvent,
-  RentFlowRealtimeEventType,
+  RentFlowCarRealtimeEvent,
+  RentFlowCarRealtimeEventType,
 } from "@/src/services/realtime/realtime.types";
 
 type Options = {
-  events: RentFlowRealtimeEventType[];
-  onRefresh: (event: RentFlowRealtimeEvent) => void;
+  events: RentFlowCarRealtimeEventType[];
+  onRefresh: (event: RentFlowCarRealtimeEvent) => void;
   tenantSlug?: string;
   marketplace?: boolean;
   enabled?: boolean;
   fallbackIntervalMs?: number;
 };
 
-export function useRentFlowRealtimeRefresh({
+export function useRentFlowCarRealtimeRefresh({
   events,
   onRefresh,
   tenantSlug,
@@ -37,12 +37,12 @@ export function useRentFlowRealtimeRefresh({
     if (!enabled) return;
 
     const allowedEvents = new Set(eventKey.split("|").filter(Boolean));
-    return subscribeRentFlowRealtime({
+    return subscribeRentFlowCarRealtime({
       app: "storefront",
       tenantSlug,
       marketplace,
       onEvent(event) {
-        if (allowedEvents.has(event.type as RentFlowRealtimeEventType)) {
+        if (allowedEvents.has(event.type as RentFlowCarRealtimeEventType)) {
           lastEventAtRef.current = Date.now();
           onRefreshRef.current(event);
         }

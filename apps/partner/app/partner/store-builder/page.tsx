@@ -316,7 +316,7 @@ function StorefrontFramePreview({
             พรีวิวหน้าร้านจริง
           </Typography>
           <Typography className="mt-1 text-sm text-slate-500">
-            แสดง RentFlow-Web-App จริงแบบเดียวกับที่ลูกค้าเห็น คลิกข้อความบนพรีวิวเพื่อแก้ไขได้ทันที
+            แสดง RentFlowCar-Web-App จริงแบบเดียวกับที่ลูกค้าเห็น คลิกข้อความบนพรีวิวเพื่อแก้ไขได้ทันที
           </Typography>
         </Box>
         <Stack direction="row" spacing={1} className="flex-wrap">

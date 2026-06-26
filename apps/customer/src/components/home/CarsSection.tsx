@@ -55,7 +55,7 @@ export default function CarsSection({ cars, formatTHB }: Props) {
               <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
                 <Box
                   component="img"
-                  src={c.imageUrl || c.image || "/RentFlow.png"}
+                  src={c.imageUrl || c.image || "/RentFlowCar.png"}
                   alt={c.name}
                   loading="lazy"
                   decoding="async"

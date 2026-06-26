@@ -1,4 +1,4 @@
-export type RentFlowRealtimeEventType =
+export type RentFlowCarRealtimeEventType =
   | "connection.ready"
   | "booking.created"
   | "booking.updated"
@@ -18,8 +18,8 @@ export type RentFlowRealtimeEventType =
   | "support.changed"
   | "tenant.updated";
 
-export type RentFlowRealtimeEvent = {
-  type: RentFlowRealtimeEventType | string;
+export type RentFlowCarRealtimeEvent = {
+  type: RentFlowCarRealtimeEventType | string;
   tenantId?: string;
   userId?: string;
   userEmail?: string;

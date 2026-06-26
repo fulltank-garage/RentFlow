@@ -179,8 +179,8 @@ export default function AuthCard({
               <Box className="mb-4 flex items-center justify-center">
                 <Box className="relative h-16 w-48 sm:w-56">
                   <Image
-                    src="/RentFlow.png"
-                    alt="RentFlow Logo"
+                    src="/RentFlowCar.png"
+                    alt="RentFlowCar Logo"
                     fill
                     className="object-contain"
                     priority

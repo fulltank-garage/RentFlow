@@ -119,7 +119,7 @@ export default function PrivacyContent() {
       <Divider className="my-1! border-black/10!" />
 
       <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
-        RentFlow ให้ความสำคัญกับความเป็นส่วนตัวและความปลอดภัยของข้อมูลผู้ใช้งาน
+        RentFlowCar ให้ความสำคัญกับความเป็นส่วนตัวและความปลอดภัยของข้อมูลผู้ใช้งาน
       </Typography>
     </Stack>
   );

@@ -17,10 +17,10 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
-import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
-import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
+import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
+import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getRentFlowStorefrontHref } from "@/src/lib/tenant";
+import { getRentFlowCarStorefrontHref } from "@/src/lib/tenant";
 import { reviewsApi } from "@/src/services/reviews/reviews.service";
 import type { Review } from "@/src/services/reviews/reviews.types";
 
@@ -42,7 +42,7 @@ function formatReviewDate(value: string) {
 }
 
 export default function ReviewsSection() {
-  const siteMode = useRentFlowSiteMode();
+  const siteMode = useRentFlowCarSiteMode();
   const isMarketplace = siteMode === "marketplace";
   const [reviews, setReviews] = React.useState<Review[]>([]);
   const [firstName, setFirstName] = React.useState("");
@@ -94,7 +94,7 @@ export default function ReviewsSection() {
     };
   }, [isMarketplace, reloadTick, showSnackbar]);
 
-  useRentFlowRealtimeRefresh({
+  useRentFlowCarRealtimeRefresh({
     events: ["review.created", "tenant.updated"],
     onRefresh: React.useCallback(() => {
       setReloadTick((current) => current + 1);
@@ -165,7 +165,7 @@ export default function ReviewsSection() {
 
   function renderReviewCard(review: Review, key: string) {
     const shopHref = review.domainSlug
-      ? getRentFlowStorefrontHref(review.domainSlug)
+      ? getRentFlowCarStorefrontHref(review.domainSlug)
       : "";
     const reviewDate = formatReviewDate(review.createdAt);
 

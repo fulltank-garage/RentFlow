@@ -1,4 +1,4 @@
-import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
+import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
 import type { Review } from "./reviews.types";
 
 export function normalizeReview(raw: Partial<Review> & { id: string }): Review {
@@ -14,6 +14,6 @@ export function normalizeReview(raw: Partial<Review> & { id: string }): Review {
     shopName: raw.shopName,
     domainSlug: raw.domainSlug,
     publicDomain: raw.publicDomain,
-    logoUrl: resolveRentFlowAssetUrl(raw.logoUrl),
+    logoUrl: resolveRentFlowCarAssetUrl(raw.logoUrl),
   };
 }

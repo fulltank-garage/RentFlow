@@ -1,6 +1,6 @@
 import api from "@/src/lib/axios";
-import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
-import type { ApiResponse, RentFlowRequestOptions } from "../types/types";
+import { getRentFlowCarTenantHeaders } from "@/src/lib/tenant";
+import type { ApiResponse, RentFlowCarRequestOptions } from "../types/types";
 import type {
   StorefrontAddon,
   StorefrontAddonListResponse,
@@ -26,11 +26,11 @@ function normalizeAddon(addon: StorefrontAddon): StorefrontAddon {
 }
 
 export const addonsApi = {
-  async getAddons(options?: RentFlowRequestOptions) {
+  async getAddons(options?: RentFlowCarRequestOptions) {
     const res = await api.get<ApiResponse<StorefrontAddonListResponse>>("/addons", {
       headers:
         options?.tenantSlug !== undefined
-          ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
+          ? getRentFlowCarTenantHeaders({ tenantSlug: options.tenantSlug })
           : undefined,
     });
 

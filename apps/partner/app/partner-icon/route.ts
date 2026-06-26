@@ -15,7 +15,7 @@ const FALLBACK_CONTENT_TYPE = "image/png";
 
 async function fallbackIconResponse() {
   const file = await readFile(
-    path.join(process.cwd(), "public", "RentFlowIcon.png")
+    path.join(process.cwd(), "public", "RentFlowCarIcon.png")
   );
 
   return new NextResponse(file, {

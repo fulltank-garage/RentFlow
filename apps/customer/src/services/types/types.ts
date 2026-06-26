@@ -39,7 +39,7 @@ export type LineOfficialAccountSummary = {
   isConnected?: boolean;
 };
 
-export type RentFlowRequestOptions = {
+export type RentFlowCarRequestOptions = {
   tenantSlug?: string;
   marketplace?: boolean;
 };

@@ -4,15 +4,15 @@ import { cache } from "react";
 import { headers } from "next/headers";
 
 import {
-  getRentFlowSiteMode,
-  getRentFlowTenantHeaders,
-  getRentFlowTenantSlug,
+  getRentFlowCarSiteMode,
+  getRentFlowCarTenantHeaders,
+  getRentFlowCarTenantSlug,
 } from "@/src/lib/tenant";
-import { getRentFlowApiBaseUrl, resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
+import { getRentFlowCarApiBaseUrl, resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
 import type { ApiResponse } from "@/src/services/types/types";
 import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
-export async function getRentFlowRequestHost() {
+export async function getRentFlowCarRequestHost() {
   const requestHeaders = await headers();
   return (
     requestHeaders.get("x-forwarded-host") ||
@@ -22,20 +22,20 @@ export async function getRentFlowRequestHost() {
   );
 }
 
-export const getInitialRentFlowTenantProfile = cache(
+export const getInitialRentFlowCarTenantProfile = cache(
   async (host: string): Promise<TenantProfile | null> => {
-    if (getRentFlowSiteMode(host) !== "storefront") {
+    if (getRentFlowCarSiteMode(host) !== "storefront") {
       return null;
     }
 
-    const tenantSlug = getRentFlowTenantSlug(host);
-    const requestHeaders = getRentFlowTenantHeaders({
+    const tenantSlug = getRentFlowCarTenantSlug(host);
+    const requestHeaders = getRentFlowCarTenantHeaders({
       host,
       tenantSlug,
     });
 
     try {
-      const response = await fetch(`${getRentFlowApiBaseUrl()}/tenants/resolve`, {
+      const response = await fetch(`${getRentFlowCarApiBaseUrl()}/tenants/resolve`, {
         cache: "no-store",
         headers: requestHeaders,
       });
@@ -53,11 +53,11 @@ export const getInitialRentFlowTenantProfile = cache(
 
       return {
         ...tenant,
-        logoUrl: resolveRentFlowAssetUrl(tenant.logoUrl),
-        promoImageUrl: resolveRentFlowAssetUrl(tenant.promoImageUrl),
-        lineOaQrCodeUrl: resolveRentFlowAssetUrl(tenant.lineOaQrCodeUrl),
+        logoUrl: resolveRentFlowCarAssetUrl(tenant.logoUrl),
+        promoImageUrl: resolveRentFlowCarAssetUrl(tenant.promoImageUrl),
+        lineOaQrCodeUrl: resolveRentFlowCarAssetUrl(tenant.lineOaQrCodeUrl),
         promoImageUrls: (tenant.promoImageUrls || [])
-          .map((url) => resolveRentFlowAssetUrl(url))
+          .map((url) => resolveRentFlowCarAssetUrl(url))
           .filter(Boolean) as string[],
       };
     } catch {

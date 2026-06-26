@@ -1,31 +1,31 @@
 import axios, { AxiosHeaders } from "axios";
-import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
-import { getRentFlowApiBaseUrl } from "@/src/lib/runtime-api-url";
+import { getRentFlowCarTenantHeaders } from "@/src/lib/tenant";
+import { getRentFlowCarApiBaseUrl } from "@/src/lib/runtime-api-url";
 import { readClientCookie } from "@/src/lib/client-cookie";
 
 const AUTH_TOKEN_STORAGE_KEY = "rf_session_token_v1";
 
 const api = axios.create({
   baseURL:
-    typeof window !== "undefined" ? "/api/rentflow" : getRentFlowApiBaseUrl(),
+    typeof window !== "undefined" ? "/api/rentflow" : getRentFlowCarApiBaseUrl(),
   timeout: 30000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
-    "X-RentFlow-App": "storefront",
+    "X-RentFlowCar-App": "storefront",
   },
 });
 
 api.interceptors.request.use((config) => {
   const headers = AxiosHeaders.from(config.headers);
   config.baseURL =
-    typeof window !== "undefined" ? "/api/rentflow" : getRentFlowApiBaseUrl();
+    typeof window !== "undefined" ? "/api/rentflow" : getRentFlowCarApiBaseUrl();
 
   if (typeof FormData !== "undefined" && config.data instanceof FormData) {
     headers.delete("Content-Type");
   }
 
-  headers.set("X-RentFlow-App", "storefront");
+  headers.set("X-RentFlowCar-App", "storefront");
 
   if (typeof window !== "undefined" && !headers.has("Authorization")) {
     const sessionToken = readClientCookie(AUTH_TOKEN_STORAGE_KEY);
@@ -34,7 +34,7 @@ api.interceptors.request.use((config) => {
     }
   }
 
-  for (const [key, value] of Object.entries(getRentFlowTenantHeaders())) {
+  for (const [key, value] of Object.entries(getRentFlowCarTenantHeaders())) {
     if (!headers.has(key)) {
       headers.set(key, value);
     }

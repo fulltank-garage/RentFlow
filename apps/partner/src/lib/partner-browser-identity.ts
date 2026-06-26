@@ -1,7 +1,7 @@
 import { PARTNER_STORE_KEY, type PartnerStoreProfile } from "./partner-store";
 
-export const PARTNER_DEFAULT_BROWSER_TITLE = "RentFlow ศูนย์จัดการร้าน";
-export const PARTNER_DEFAULT_BROWSER_ICON = "/RentFlowIcon.png";
+export const PARTNER_DEFAULT_BROWSER_TITLE = "RentFlowCar ศูนย์จัดการร้าน";
+export const PARTNER_DEFAULT_BROWSER_ICON = "/RentFlowCarIcon.png";
 
 export function parsePartnerStoreProfileCookie(value?: string | null) {
   if (!value) return null;

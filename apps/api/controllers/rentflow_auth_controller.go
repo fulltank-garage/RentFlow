@@ -27,7 +27,7 @@ type rentFlowGooglePayload struct {
 	} `json:"user"`
 }
 
-func rentFlowAuthPayload(user models.RentFlowUser, sessionToken string) gin.H {
+func rentFlowAuthPayload(user models.RentFlowCarUser, sessionToken string) gin.H {
 	payload := gin.H{
 		"user": rentFlowUserResponse(user),
 	}
@@ -37,7 +37,7 @@ func rentFlowAuthPayload(user models.RentFlowUser, sessionToken string) gin.H {
 	return payload
 }
 
-func RentFlowAuthWithGoogle(c *gin.Context) {
+func RentFlowCarAuthWithGoogle(c *gin.Context) {
 	var payload rentFlowGooglePayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลสำหรับเข้าสู่ระบบไม่ถูกต้อง")
@@ -63,7 +63,7 @@ func RentFlowAuthWithGoogle(c *gin.Context) {
 
 	avatarBlob, avatarMimeType, avatarErr := rentFlowImageBlobFromSource(&payload.User.Picture)
 
-	var user models.RentFlowUser
+	var user models.RentFlowCarUser
 	result := config.DB.Where("email = ?", email).First(&user)
 	isNewUser := false
 	switch {
@@ -77,7 +77,7 @@ func RentFlowAuthWithGoogle(c *gin.Context) {
 	}
 
 	if isNewUser {
-		user = models.RentFlowUser{
+		user = models.RentFlowCarUser{
 			ID:             services.NewID("usr"),
 			GoogleSub:      &googleSub,
 			Username:       email,
@@ -120,7 +120,7 @@ func RentFlowAuthWithGoogle(c *gin.Context) {
 		}
 	}
 
-	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowSession{
+	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowCarSession{
 		UserID:    user.ID,
 		UserEmail: user.Email,
 		App:       rentFlowAppFromRequest(c),
@@ -132,15 +132,15 @@ func RentFlowAuthWithGoogle(c *gin.Context) {
 		return
 	}
 
-	setRentFlowSessionCookie(c, sessionToken)
+	setRentFlowCarSessionCookie(c, sessionToken)
 	rentFlowRecordSessionAudit(c, user, "login")
 
 	if isNewUser {
-		notification := models.RentFlowNotification{
+		notification := models.RentFlowCarNotification{
 			ID:        services.NewID("ntf"),
 			UserID:    &user.ID,
 			UserEmail: user.Email,
-			Title:     "ยินดีต้อนรับสู่ RentFlow",
+			Title:     "ยินดีต้อนรับสู่ RentFlowCar",
 			Message:   "บัญชีของคุณพร้อมใช้งานแล้ว สามารถเริ่มค้นหารถและทำรายการจองได้ทันที",
 			IsRead:    false,
 		}
@@ -150,7 +150,7 @@ func RentFlowAuthWithGoogle(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบสำเร็จ", rentFlowAuthPayload(user, sessionToken))
 }
 
-func RentFlowRegister(c *gin.Context) {
+func RentFlowCarRegister(c *gin.Context) {
 	var payload struct {
 		Username  string `json:"username"`
 		Password  string `json:"password"`
@@ -176,7 +176,7 @@ func RentFlowRegister(c *gin.Context) {
 		return
 	}
 
-	var existing models.RentFlowUser
+	var existing models.RentFlowCarUser
 	err := config.DB.Where("username = ? OR email = ?", username, username).First(&existing).Error
 	switch {
 	case err == nil:
@@ -193,7 +193,7 @@ func RentFlowRegister(c *gin.Context) {
 		return
 	}
 
-	user := models.RentFlowUser{
+	user := models.RentFlowCarUser{
 		ID:           services.NewID("usr"),
 		Username:     username,
 		FirstName:    firstName,
@@ -208,7 +208,7 @@ func RentFlowRegister(c *gin.Context) {
 		return
 	}
 
-	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowSession{
+	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowCarSession{
 		UserID:    user.ID,
 		UserEmail: user.Email,
 		App:       rentFlowAppFromRequest(c),
@@ -220,14 +220,14 @@ func RentFlowRegister(c *gin.Context) {
 		return
 	}
 
-	setRentFlowSessionCookie(c, sessionToken)
+	setRentFlowCarSessionCookie(c, sessionToken)
 	rentFlowRecordSessionAudit(c, user, "register")
-	rentFlowCreateNotification("", &user.ID, user.Email, "ยินดีต้อนรับสู่ RentFlow", "บัญชีของคุณพร้อมใช้งานแล้ว")
+	rentFlowCreateNotification("", &user.ID, user.Email, "ยินดีต้อนรับสู่ RentFlowCar", "บัญชีของคุณพร้อมใช้งานแล้ว")
 
 	rentFlowSuccess(c, http.StatusCreated, "สมัครสมาชิกสำเร็จ", rentFlowAuthPayload(user, sessionToken))
 }
 
-func RentFlowLogin(c *gin.Context) {
+func RentFlowCarLogin(c *gin.Context) {
 	var payload struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
@@ -243,7 +243,7 @@ func RentFlowLogin(c *gin.Context) {
 		return
 	}
 
-	var user models.RentFlowUser
+	var user models.RentFlowCarUser
 	if err := config.DB.Where("username = ? OR email = ?", username, username).First(&user).Error; err != nil {
 		rentFlowError(c, http.StatusUnauthorized, "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
 		return
@@ -266,12 +266,12 @@ func RentFlowLogin(c *gin.Context) {
 			updates["locked_reason"] = "กรอกรหัสผ่านผิดเกินจำนวนครั้งที่กำหนด"
 			updates["locked_at"] = &now
 		}
-		_ = config.DB.Model(&models.RentFlowUser{}).Where("id = ?", user.ID).Updates(updates).Error
+		_ = config.DB.Model(&models.RentFlowCarUser{}).Where("id = ?", user.ID).Updates(updates).Error
 		rentFlowError(c, http.StatusUnauthorized, "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
 		return
 	}
 
-	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowSession{
+	sessionToken, err := services.CreateSession(config.Ctx, services.RentFlowCarSession{
 		UserID:    user.ID,
 		UserEmail: user.Email,
 		App:       rentFlowAppFromRequest(c),
@@ -283,8 +283,8 @@ func RentFlowLogin(c *gin.Context) {
 		return
 	}
 
-	setRentFlowSessionCookie(c, sessionToken)
-	_ = config.DB.Model(&models.RentFlowUser{}).Where("id = ?", user.ID).Updates(map[string]interface{}{
+	setRentFlowCarSessionCookie(c, sessionToken)
+	_ = config.DB.Model(&models.RentFlowCarUser{}).Where("id = ?", user.ID).Updates(map[string]interface{}{
 		"failed_login_count":   0,
 		"last_failed_login_at": nil,
 		"updated_at":           time.Now(),
@@ -295,7 +295,7 @@ func RentFlowLogin(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "เข้าสู่ระบบสำเร็จ", authPayload)
 }
 
-func RentFlowForgotPassword(c *gin.Context) {
+func RentFlowCarForgotPassword(c *gin.Context) {
 	var payload struct {
 		Username    string `json:"username"`
 		Phone       string `json:"phone"`
@@ -319,7 +319,7 @@ func RentFlowForgotPassword(c *gin.Context) {
 		return
 	}
 
-	var user models.RentFlowUser
+	var user models.RentFlowCarUser
 	if err := config.DB.Where("username = ? OR email = ?", username, username).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบบัญชีผู้ใช้")
@@ -333,7 +333,7 @@ func RentFlowForgotPassword(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Model(&models.RentFlowUser{}).Where("id = ?", user.ID).Updates(map[string]interface{}{
+	if err := config.DB.Model(&models.RentFlowCarUser{}).Where("id = ?", user.ID).Updates(map[string]interface{}{
 		"password_hash":        hash,
 		"password_changed_at":  time.Now(),
 		"must_change_password": false,
@@ -349,8 +349,8 @@ func RentFlowForgotPassword(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "เปลี่ยนรหัสผ่านสำเร็จ", nil)
 }
 
-func RentFlowGetMe(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarGetMe(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
@@ -360,11 +360,11 @@ func RentFlowGetMe(c *gin.Context) {
 	})
 }
 
-func RentFlowLogout(c *gin.Context) {
-	if user, ok := middleware.CurrentRentFlowUser(c); ok {
+func RentFlowCarLogout(c *gin.Context) {
+	if user, ok := middleware.CurrentRentFlowCarUser(c); ok {
 		rentFlowRecordSessionAudit(c, *user, "logout")
-	} else if admin, ok := middleware.CurrentRentFlowPlatformAdmin(c); ok {
-		rentFlowRecordAdminSessionAudit(c, services.RentFlowPlatformAdminIdentity{
+	} else if admin, ok := middleware.CurrentRentFlowCarPlatformAdmin(c); ok {
+		rentFlowRecordAdminSessionAudit(c, services.RentFlowCarPlatformAdminIdentity{
 			Username: admin.AdminUsername,
 			Email:    admin.AdminEmail,
 			Name:     admin.AdminName,
@@ -374,12 +374,12 @@ func RentFlowLogout(c *gin.Context) {
 	if token != "" {
 		_ = services.DeleteSession(config.Ctx, token)
 	}
-	clearRentFlowSessionCookie(c)
+	clearRentFlowCarSessionCookie(c)
 	rentFlowSuccess(c, http.StatusOK, "ออกจากระบบสำเร็จ", nil)
 }
 
-func RentFlowUserMe(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarUserMe(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
@@ -387,8 +387,8 @@ func RentFlowUserMe(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "ดึงข้อมูลโปรไฟล์สำเร็จ", rentFlowUserResponse(*user))
 }
 
-func RentFlowUpdateMe(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarUpdateMe(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
@@ -477,7 +477,7 @@ func RentFlowUpdateMe(c *gin.Context) {
 		}
 	}
 
-	if err := config.DB.Model(&models.RentFlowUser{}).
+	if err := config.DB.Model(&models.RentFlowCarUser{}).
 		Where("id = ?", user.ID).
 		Select(rentFlowUpdateColumns(updates)).
 		Updates(updates).Error; err != nil {
@@ -489,8 +489,8 @@ func RentFlowUpdateMe(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตโปรไฟล์สำเร็จ", rentFlowUserResponse(*user))
 }
 
-func RentFlowGetUserAvatar(c *gin.Context) {
-	var user models.RentFlowUser
+func RentFlowCarGetUserAvatar(c *gin.Context) {
+	var user models.RentFlowCarUser
 	if err := config.DB.Where("id = ?", strings.TrimSpace(c.Param("userId"))).First(&user).Error; err != nil {
 		rentFlowError(c, http.StatusNotFound, "ไม่พบรูปโปรไฟล์")
 		return
@@ -504,8 +504,8 @@ func RentFlowGetUserAvatar(c *gin.Context) {
 	rentFlowSendImageBlob(c, user.AvatarMimeType, user.AvatarBlob)
 }
 
-func RentFlowChangePassword(c *gin.Context) {
-	user, ok := middleware.CurrentRentFlowUser(c)
+func RentFlowCarChangePassword(c *gin.Context) {
+	user, ok := middleware.CurrentRentFlowCarUser(c)
 	if !ok {
 		rentFlowError(c, http.StatusUnauthorized, "กรุณาเข้าสู่ระบบก่อน")
 		return
@@ -536,7 +536,7 @@ func RentFlowChangePassword(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Model(&models.RentFlowUser{}).Where("id = ?", user.ID).Updates(map[string]interface{}{
+	if err := config.DB.Model(&models.RentFlowCarUser{}).Where("id = ?", user.ID).Updates(map[string]interface{}{
 		"password_hash":        hash,
 		"password_changed_at":  time.Now(),
 		"must_change_password": false,
@@ -549,11 +549,11 @@ func RentFlowChangePassword(c *gin.Context) {
 	rentFlowSuccess(c, http.StatusOK, "อัปเดตรหัสผ่านสำเร็จ", nil)
 }
 
-func rentFlowRecordSessionAudit(c *gin.Context, user models.RentFlowUser, action string) {
+func rentFlowRecordSessionAudit(c *gin.Context, user models.RentFlowCarUser, action string) {
 	if strings.TrimSpace(user.ID) == "" || config.DB == nil {
 		return
 	}
-	audit := models.RentFlowSessionAudit{
+	audit := models.RentFlowCarSessionAudit{
 		ID:        services.NewID("ses"),
 		UserID:    user.ID,
 		UserEmail: user.Email,
@@ -565,15 +565,15 @@ func rentFlowRecordSessionAudit(c *gin.Context, user models.RentFlowUser, action
 	_ = config.DB.Create(&audit).Error
 }
 
-func rentFlowRecordAdminSessionAudit(c *gin.Context, identity services.RentFlowPlatformAdminIdentity, action string) {
+func rentFlowRecordAdminSessionAudit(c *gin.Context, identity services.RentFlowCarPlatformAdminIdentity, action string) {
 	if config.DB == nil {
 		return
 	}
-	audit := models.RentFlowSessionAudit{
+	audit := models.RentFlowCarSessionAudit{
 		ID:        services.NewID("ses"),
 		UserID:    "platform_admin",
 		UserEmail: identity.Email,
-		App:       services.RentFlowAppAdmin,
+		App:       services.RentFlowCarAppAdmin,
 		Action:    strings.TrimSpace(strings.ToLower(action)),
 		IP:        c.ClientIP(),
 		UserAgent: c.Request.UserAgent(),

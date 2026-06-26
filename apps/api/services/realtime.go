@@ -14,27 +14,27 @@ import (
 )
 
 const (
-	RentFlowRealtimeEventBookingCreated     = "booking.created"
-	RentFlowRealtimeEventBookingUpdated     = "booking.updated"
-	RentFlowRealtimeEventBookingCancelled   = "booking.cancelled"
-	RentFlowRealtimeEventPaymentCreated     = "payment.created"
-	RentFlowRealtimeEventPaymentUpdated     = "payment.updated"
-	RentFlowRealtimeEventNotificationNew    = "notification.new"
-	RentFlowRealtimeEventReviewCreated      = "review.created"
-	RentFlowRealtimeEventCarChanged         = "car.changed"
-	RentFlowRealtimeEventCarStatusChanged   = "car.status.changed"
-	RentFlowRealtimeEventBranchChanged      = "branch.changed"
-	RentFlowRealtimeEventAddonChanged       = "addon.changed"
-	RentFlowRealtimeEventPromotionChanged   = "promotion.changed"
-	RentFlowRealtimeEventLeadChanged        = "lead.changed"
-	RentFlowRealtimeEventMemberChanged      = "member.changed"
-	RentFlowRealtimeEventAvailabilityChange = "availability.changed"
-	RentFlowRealtimeEventSupportChanged     = "support.changed"
-	RentFlowRealtimeEventTenantUpdated      = "tenant.updated"
-	rentFlowRealtimeRedisChannel            = "rentflow:realtime:events"
+	RentFlowCarRealtimeEventBookingCreated     = "booking.created"
+	RentFlowCarRealtimeEventBookingUpdated     = "booking.updated"
+	RentFlowCarRealtimeEventBookingCancelled   = "booking.cancelled"
+	RentFlowCarRealtimeEventPaymentCreated     = "payment.created"
+	RentFlowCarRealtimeEventPaymentUpdated     = "payment.updated"
+	RentFlowCarRealtimeEventNotificationNew    = "notification.new"
+	RentFlowCarRealtimeEventReviewCreated      = "review.created"
+	RentFlowCarRealtimeEventCarChanged         = "car.changed"
+	RentFlowCarRealtimeEventCarStatusChanged   = "car.status.changed"
+	RentFlowCarRealtimeEventBranchChanged      = "branch.changed"
+	RentFlowCarRealtimeEventAddonChanged       = "addon.changed"
+	RentFlowCarRealtimeEventPromotionChanged   = "promotion.changed"
+	RentFlowCarRealtimeEventLeadChanged        = "lead.changed"
+	RentFlowCarRealtimeEventMemberChanged      = "member.changed"
+	RentFlowCarRealtimeEventAvailabilityChange = "availability.changed"
+	RentFlowCarRealtimeEventSupportChanged     = "support.changed"
+	RentFlowCarRealtimeEventTenantUpdated      = "tenant.updated"
+	rentFlowRealtimeRedisChannel               = "rentflow:realtime:events"
 )
 
-type RentFlowRealtimeEvent struct {
+type RentFlowCarRealtimeEvent struct {
 	Type      string      `json:"type"`
 	TenantID  string      `json:"tenantId,omitempty"`
 	UserID    string      `json:"userId,omitempty"`
@@ -45,7 +45,7 @@ type RentFlowRealtimeEvent struct {
 	SourceID  string      `json:"sourceId,omitempty"`
 }
 
-type RentFlowRealtimeClientFilter struct {
+type RentFlowCarRealtimeClientFilter struct {
 	App         string
 	TenantID    string
 	UserID      string
@@ -57,7 +57,7 @@ type rentFlowRealtimeClient struct {
 	hub    *rentFlowRealtimeHub
 	conn   *websocket.Conn
 	send   chan []byte
-	filter RentFlowRealtimeClientFilter
+	filter RentFlowCarRealtimeClientFilter
 }
 
 type rentFlowRealtimeHub struct {
@@ -79,7 +79,7 @@ var (
 	}
 )
 
-func StartRentFlowRealtimeRedisBridge(ctx context.Context) {
+func StartRentFlowCarRealtimeRedisBridge(ctx context.Context) {
 	if config.RDB == nil {
 		log.Println("Realtime ใช้โหมดในเครื่อง เพราะ Redis ยังไม่ได้เชื่อมต่อ")
 		return
@@ -98,7 +98,7 @@ func StartRentFlowRealtimeRedisBridge(ctx context.Context) {
 		defer pubsub.Close()
 		channel := pubsub.Channel()
 		for message := range channel {
-			var event RentFlowRealtimeEvent
+			var event RentFlowCarRealtimeEvent
 			if err := json.Unmarshal([]byte(message.Payload), &event); err != nil {
 				log.Println("อ่านข้อความ realtime จาก Redis ไม่สำเร็จ:", err)
 				continue
@@ -111,7 +111,7 @@ func StartRentFlowRealtimeRedisBridge(ctx context.Context) {
 	}()
 }
 
-func RentFlowPublishRealtime(event RentFlowRealtimeEvent) {
+func RentFlowCarPublishRealtime(event RentFlowCarRealtimeEvent) {
 	if strings.TrimSpace(event.Type) == "" {
 		return
 	}
@@ -136,8 +136,8 @@ func RentFlowPublishRealtime(event RentFlowRealtimeEvent) {
 	}
 }
 
-func RentFlowServeRealtime(w http.ResponseWriter, r *http.Request, filter RentFlowRealtimeClientFilter) error {
-	filter.App = RentFlowNormalizeAppName(filter.App)
+func RentFlowCarServeRealtime(w http.ResponseWriter, r *http.Request, filter RentFlowCarRealtimeClientFilter) error {
+	filter.App = RentFlowCarNormalizeAppName(filter.App)
 	filter.UserEmail = strings.TrimSpace(strings.ToLower(filter.UserEmail))
 	conn, err := rentFlowRealtimeUpgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -161,7 +161,7 @@ func (h *rentFlowRealtimeHub) register(client *rentFlowRealtimeClient) {
 	h.mu.Lock()
 	h.clients[client] = struct{}{}
 	h.mu.Unlock()
-	client.enqueue(RentFlowRealtimeEvent{
+	client.enqueue(RentFlowCarRealtimeEvent{
 		Type:      "connection.ready",
 		TenantID:  client.filter.TenantID,
 		UserID:    client.filter.UserID,
@@ -183,7 +183,7 @@ func (h *rentFlowRealtimeHub) unregister(client *rentFlowRealtimeClient) {
 	h.mu.Unlock()
 }
 
-func (h *rentFlowRealtimeHub) broadcast(event RentFlowRealtimeEvent) {
+func (h *rentFlowRealtimeHub) broadcast(event RentFlowCarRealtimeEvent) {
 	payload, err := json.Marshal(event)
 	if err != nil {
 		return
@@ -203,11 +203,11 @@ func (h *rentFlowRealtimeHub) broadcast(event RentFlowRealtimeEvent) {
 	}
 }
 
-func rentFlowRealtimeMatches(filter RentFlowRealtimeClientFilter, event RentFlowRealtimeEvent) bool {
-	switch RentFlowNormalizeAppName(filter.App) {
-	case RentFlowAppAdmin:
+func rentFlowRealtimeMatches(filter RentFlowCarRealtimeClientFilter, event RentFlowCarRealtimeEvent) bool {
+	switch RentFlowCarNormalizeAppName(filter.App) {
+	case RentFlowCarAppAdmin:
 		return true
-	case RentFlowAppPartner:
+	case RentFlowCarAppPartner:
 		return filter.TenantID != "" && filter.TenantID == event.TenantID
 	default:
 		if filter.UserID != "" && filter.UserID == event.UserID {
@@ -228,24 +228,24 @@ func rentFlowRealtimeMatches(filter RentFlowRealtimeClientFilter, event RentFlow
 
 func rentFlowRealtimeIsMarketplaceEvent(eventType string) bool {
 	switch eventType {
-	case RentFlowRealtimeEventBookingCreated,
-		RentFlowRealtimeEventBookingUpdated,
-		RentFlowRealtimeEventBookingCancelled,
-		RentFlowRealtimeEventReviewCreated,
-		RentFlowRealtimeEventCarChanged,
-		RentFlowRealtimeEventCarStatusChanged,
-		RentFlowRealtimeEventBranchChanged,
-		RentFlowRealtimeEventAddonChanged,
-		RentFlowRealtimeEventPromotionChanged,
-		RentFlowRealtimeEventAvailabilityChange,
-		RentFlowRealtimeEventTenantUpdated:
+	case RentFlowCarRealtimeEventBookingCreated,
+		RentFlowCarRealtimeEventBookingUpdated,
+		RentFlowCarRealtimeEventBookingCancelled,
+		RentFlowCarRealtimeEventReviewCreated,
+		RentFlowCarRealtimeEventCarChanged,
+		RentFlowCarRealtimeEventCarStatusChanged,
+		RentFlowCarRealtimeEventBranchChanged,
+		RentFlowCarRealtimeEventAddonChanged,
+		RentFlowCarRealtimeEventPromotionChanged,
+		RentFlowCarRealtimeEventAvailabilityChange,
+		RentFlowCarRealtimeEventTenantUpdated:
 		return true
 	default:
 		return false
 	}
 }
 
-func (client *rentFlowRealtimeClient) enqueue(event RentFlowRealtimeEvent) {
+func (client *rentFlowRealtimeClient) enqueue(event RentFlowCarRealtimeEvent) {
 	payload, err := json.Marshal(event)
 	if err != nil {
 		return
