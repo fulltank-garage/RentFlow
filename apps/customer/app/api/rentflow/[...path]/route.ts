@@ -64,12 +64,14 @@ async function proxyRentFlowApi(request: NextRequest, context: RouteContext) {
     redirect: "manual",
     cache: "no-store",
   });
+  const responseBody = await upstream.arrayBuffer();
 
   const responseHeaders = new Headers(upstream.headers);
   HOP_BY_HOP_HEADERS.forEach((header) => responseHeaders.delete(header));
+  responseHeaders.delete("content-encoding");
   responseHeaders.delete("set-cookie");
 
-  const response = new NextResponse(upstream.body, {
+  const response = new NextResponse(responseBody, {
     status: upstream.status,
     statusText: upstream.statusText,
     headers: responseHeaders,

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readFile } from "fs/promises";
+import path from "path";
 import {
   PARTNER_DEFAULT_BROWSER_ICON,
   PARTNER_STORE_KEY,
@@ -9,10 +11,19 @@ import {
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const FALLBACK_CONTENT_TYPE = "image/svg+xml; charset=utf-8";
+const FALLBACK_CONTENT_TYPE = "image/png";
 
-function fallbackIconResponse(request: NextRequest) {
-  return NextResponse.redirect(new URL(PARTNER_DEFAULT_BROWSER_ICON, request.url));
+async function fallbackIconResponse() {
+  const file = await readFile(
+    path.join(process.cwd(), "public", "RentFlowIcon.png")
+  );
+
+  return new NextResponse(file, {
+    headers: {
+      "Content-Type": FALLBACK_CONTENT_TYPE,
+      "Cache-Control": "public, max-age=300, stale-while-revalidate=86400",
+    },
+  });
 }
 
 export async function GET(request: NextRequest) {
@@ -22,7 +33,7 @@ export async function GET(request: NextRequest) {
   const iconUrl = getPartnerBrowserIcon(profile);
 
   if (!iconUrl || iconUrl === PARTNER_DEFAULT_BROWSER_ICON) {
-    return fallbackIconResponse(request);
+    return fallbackIconResponse();
   }
 
   try {
@@ -30,7 +41,7 @@ export async function GET(request: NextRequest) {
     const response = await fetch(sourceUrl, { cache: "no-store" });
 
     if (!response.ok || !response.body) {
-      return fallbackIconResponse(request);
+      return fallbackIconResponse();
     }
 
     return new NextResponse(response.body, {
@@ -41,6 +52,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch {
-    return fallbackIconResponse(request);
+    return fallbackIconResponse();
   }
 }

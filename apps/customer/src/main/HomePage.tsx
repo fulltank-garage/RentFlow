@@ -206,6 +206,7 @@ export default function HomePage({
   const recommendedShops = React.useMemo(() => {
     return buildShopSummariesFromTenants(marketplaceTenants, cars).slice(0, 12);
   }, [cars, marketplaceTenants]);
+  const shouldShowCatalogError = Boolean(error) && !cars.length;
   const heroImages = React.useMemo(() => {
     if (siteMode === "storefront") {
       const images = tenantProfile?.promoImageUrls?.length
@@ -321,7 +322,7 @@ export default function HomePage({
         locations={locations}
       />
 
-      {error ? (
+      {shouldShowCatalogError ? (
         <Box className="mx-auto w-full max-w-6xl px-6">
           <Alert severity="warning" className="rounded-2xl!">
             {error}

@@ -16,10 +16,10 @@ function requestOrigin(headers: Headers) {
 }
 
 async function fallbackIconResponse() {
-  const file = await readFile(path.join(process.cwd(), "public", "RentFlow.svg"));
+  const file = await readFile(path.join(process.cwd(), "public", "RentFlowIcon.png"));
   return new Response(file, {
     headers: {
-      "Content-Type": "image/svg+xml; charset=utf-8",
+      "Content-Type": "image/png",
       "Cache-Control": "public, max-age=300, stale-while-revalidate=86400",
     },
   });

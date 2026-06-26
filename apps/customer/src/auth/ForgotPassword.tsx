@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
           <CardContent className="p-5! sm:p-6! md:p-8!">
             <Stack className="mb-6 items-center text-center">
               <Box className="mb-4 flex items-center justify-center">
-                <Box className="relative h-16 w-16">
+                <Box className="relative h-16 w-48 sm:w-56">
                   <Image
                     src="/RentFlow.png"
                     alt="RentFlow Logo"

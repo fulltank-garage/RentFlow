@@ -276,8 +276,6 @@ export default function Navbar({
 
   const { siteMode } = useRentFlowSiteModeStatus(initialHost);
   const brandName = tenantProfile?.shopName || "RentFlow";
-  const brandCaption =
-    siteMode === "storefront" && tenantProfile ? "หน้าร้านเช่ารถ" : "Smart Car Rental";
   const brandLogoSrc =
     tenantProfile?.logoUrl || (siteMode === "storefront" ? "" : "/RentFlow.png");
   const navItems = React.useMemo(
@@ -430,28 +428,19 @@ export default function Navbar({
           <Box
             component={Link}
             href="/"
-            className="flex min-w-0 items-center gap-2 no-underline md:gap-2.5"
+            className="flex min-w-0 items-center no-underline"
             sx={{
               "@media (min-width: 801px)": {
                 justifySelf: "start",
               },
             }}
           >
-            <Box className="relative h-5 w-5 shrink-0 overflow-hidden">
+            <Box className="relative h-8 w-[156px] shrink-0 overflow-hidden md:h-9 md:w-[178px]">
               <BrandLogo
                 src={brandLogoSrc}
                 alt={brandName}
                 className="h-full w-full object-contain"
               />
-            </Box>
-
-            <Box className="flex min-w-0 flex-col">
-              <Typography className="apple-nav-brand truncate font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
-                {brandName}
-              </Typography>
-              <Typography className="apple-nav-caption mt-0.5! truncate font-medium! leading-none! text-[var(--rf-apple-muted)]!">
-                {brandCaption}
-              </Typography>
             </Box>
           </Box>
 
@@ -647,24 +636,13 @@ export default function Navbar({
           <Container maxWidth="lg" className="w-full!">
           <Box>
             <Box className="flex items-center justify-between">
-              <Box className="flex items-center gap-3">
-                <Box className="relative flex h-8 w-8 shrink-0 items-center justify-center">
-                  <Box className="relative h-6 w-6 overflow-hidden">
-                    <BrandLogo
-                      src={brandLogoSrc}
-                      alt={brandName}
-                      className="h-full w-full object-contain"
-                    />
-                  </Box>
-                </Box>
-
-                <Box>
-                  <Typography className="apple-nav-brand font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
-                    {brandName}
-                  </Typography>
-                  <Typography className="apple-nav-caption mt-1! font-medium! leading-none! text-[var(--rf-apple-muted)]!">
-                    {brandCaption}
-                  </Typography>
+              <Box className="flex min-w-0 items-center">
+                <Box className="relative h-10 w-[174px] shrink-0 overflow-hidden">
+                  <BrandLogo
+                    src={brandLogoSrc}
+                    alt={brandName}
+                    className="h-full w-full object-contain"
+                  />
                 </Box>
               </Box>
 

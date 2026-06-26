@@ -56,17 +56,17 @@ function RentFlowLogoMark({ size = 42 }: { size?: number }) {
     <Box
       className="grid shrink-0 place-items-center bg-transparent"
       sx={{
-        width: size,
+        width: Math.round(size * 2.72),
         height: size,
         boxShadow: "none",
       }}
     >
       <Image
-        src="/RentFlow.svg"
+        src="/RentFlow.png"
         alt="RentFlow"
-        width={size}
+        width={Math.round(size * 2.72)}
         height={size}
-        className="h-[86%] w-[86%] object-contain"
+        className="h-full w-full object-contain"
       />
     </Box>
   );

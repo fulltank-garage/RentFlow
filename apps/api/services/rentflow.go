@@ -210,15 +210,21 @@ func CreateSession(ctx context.Context, session RentFlowSession, ttl time.Durati
 			return "", err
 		}
 		if err := config.RDB.Set(ctx, rentFlowSessionPrefix+token, payload, ttl).Err(); err != nil {
-			return "", err
+			log.Println("บันทึก session ลง Redis ไม่สำเร็จ จะใช้ memory session แทน:", err)
+			storeMemorySession(token, session)
+			return token, nil
 		}
 		return token, nil
 	}
 
+	storeMemorySession(token, session)
+	return token, nil
+}
+
+func storeMemorySession(token string, session RentFlowSession) {
 	memorySessionMu.Lock()
 	memorySessions[token] = memorySessionEntry{Session: session, SessionID: token}
 	memorySessionMu.Unlock()
-	return token, nil
 }
 
 func GetSession(ctx context.Context, token string) (*RentFlowSession, error) {

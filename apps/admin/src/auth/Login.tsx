@@ -137,14 +137,14 @@ export default function Login() {
           className="admin-card order-1 flex w-full overflow-hidden rounded-[34px]! border-slate-200! bg-white! shadow-[0_28px_80px_rgba(15,23,42,0.16)]! lg:order-2 lg:aspect-square"
         >
           <CardContent className="grid w-full content-start gap-4 p-6! pb-7! md:p-8! md:pb-9!">
-            <Box className="mx-auto grid h-14 w-14 place-items-center md:h-16 md:w-16">
+            <Box className="mx-auto grid h-16 w-48 place-items-center md:h-20 md:w-56">
               <Image
-                src="/RentFlow.svg"
+                src="/RentFlow.png"
                 alt="RentFlow"
-                width={64}
-                height={64}
+                width={220}
+                height={112}
                 priority
-                className="h-14 w-14 object-contain md:h-16 md:w-16"
+                className="h-full w-full object-contain"
               />
             </Box>
 
