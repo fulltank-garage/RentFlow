@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "../../..");
-const source = resolve(repoRoot, "apps/_shared/ui/theme.css");
+const source = resolve(repoRoot, "packages/shared-ui/src/theme.css");
 const targets = [
   "apps/customer/app/shared-ui-theme.css",
   "apps/admin/app/shared-ui-theme.css",

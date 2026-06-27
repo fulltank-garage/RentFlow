@@ -4,7 +4,7 @@
 
 **Goal:** Move RentFlowCar color tokens and reusable UI CSS primitives into one shared theme used by customer, admin, and partner.
 
-**Architecture:** Create a CSS-only shared UI package under `apps/_shared/ui/theme.css` so all three Next apps can import identical tokens without adding workspace package wiring. Keep each app's `app/globals.css` as the local entrypoint for Tailwind and app-specific selectors, but source shared theme variables and common `.rf-*`, `.admin-*`, `.partner-*`, and `.apple-*` primitives from the shared file.
+**Architecture:** Create a CSS-only shared UI source under `packages/shared-ui/src/theme.css` so all three Next apps can import identical tokens without adding workspace package wiring. Keep each app's `app/globals.css` as the local entrypoint for Tailwind and app-specific selectors, but source shared theme variables and common `.rf-*`, `.admin-*`, `.partner-*`, and `.apple-*` primitives from the shared file.
 
 **Tech Stack:** Next.js App Router, Tailwind CSS v4 CSS imports, plain CSS custom properties.
 
@@ -13,8 +13,8 @@
 ### Task 1: Create Shared Theme CSS
 
 **Files:**
-- Create: `apps/_shared/ui/README.md`
-- Create: `apps/_shared/ui/theme.css`
+- Create: `packages/shared-ui/README.md`
+- Create: `packages/shared-ui/src/theme.css`
 - Modify: `apps/customer/app/globals.css`
 - Modify: `apps/admin/app/globals.css`
 - Modify: `apps/partner/app/globals.css`
@@ -23,14 +23,14 @@
 
 Run:
 ```bash
-mkdir -p apps/_shared/ui/styles
+mkdir -p packages/shared-ui/src
 ```
 
 Expected: directory exists.
 
 - [ ] **Step 2: Move shared color tokens and reusable primitives to `theme.css`**
 
-Create `apps/_shared/ui/theme.css` with:
+Create `packages/shared-ui/src/theme.css` with:
 ```css
 :root {
   --primary-navy: #011027;
@@ -74,7 +74,7 @@ Then add aliases for current app selectors:
 
 At the top of each app `globals.css`, keep Tailwind first and add:
 ```css
-@import "../../../apps/_shared/ui/theme.css";
+@import "../../../packages/shared-ui/src/theme.css";
 ```
 
 - [ ] **Step 4: Remove duplicated color declarations from app roots**
@@ -92,7 +92,7 @@ Expected: app CSS still owns app-specific class names, but color values come fro
 ### Task 2: Verify Shared Theme Adoption
 
 **Files:**
-- Check: `apps/_shared/ui/theme.css`
+- Check: `packages/shared-ui/src/theme.css`
 - Check: `apps/customer/app/globals.css`
 - Check: `apps/admin/app/globals.css`
 - Check: `apps/partner/app/globals.css`
@@ -130,7 +130,7 @@ Expected: all builds pass.
 
 Run:
 ```bash
-git add apps/_shared/ui apps/customer/app/globals.css apps/admin/app/globals.css apps/partner/app/globals.css docs/superpowers/plans/2026-06-26-shared-ui-theme.md
+git add packages/shared-ui apps/customer/app/globals.css apps/admin/app/globals.css apps/partner/app/globals.css docs/superpowers/plans/2026-06-26-shared-ui-theme.md
 git commit -m "refactor: share UI theme across apps"
 git push origin rentflow
 ```

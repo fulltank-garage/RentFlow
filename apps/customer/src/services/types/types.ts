@@ -1,8 +1,4 @@
-export type ApiResponse<T> = {
-  success: boolean;
-  message: string;
-  data: T;
-};
+export type { ApiResponse } from "@/src/shared/types/api";
 
 export type PaginationMeta = {
   page: number;
