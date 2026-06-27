@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node ../_shared/ui/sync-theme.mjs",
+    "predev": "node ./scripts/sync-shared-ui.mjs",
     "dev": "next dev",
-    "prebuild": "node ../_shared/ui/sync-theme.mjs",
+    "prebuild": "node ./scripts/sync-shared-ui.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

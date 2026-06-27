@@ -9,6 +9,6 @@ Shared CSS theme tokens and reusable UI primitives for the customer, admin, and 
 @import "./shared-ui-theme.css";
 ```
 
-Run `node ../_shared/ui/sync-theme.mjs` from an app before `next dev` or `next build` to copy `apps/_shared/ui/theme.css` into that app's `app/shared-ui-theme.css`.
+Each app runs `node ./scripts/sync-shared-ui.mjs` before `next dev` or `next build`. The app-local wrapper copies `apps/_shared/ui/theme.css` when the full repo is available, and falls back to the committed `app/shared-ui-theme.css` copy in app-only build contexts such as Railway.
 
 The local generated copy avoids Turbopack dev panics caused by CSS imports that resolve outside an app root.
