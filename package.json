@@ -1,0 +1,26 @@
+{
+  "name": "rentflowcar",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/customer",
+    "apps/admin",
+    "apps/partner",
+    "packages/shared-ui",
+    "packages/shared-types",
+    "packages/shared-utils"
+  ],
+  "scripts": {
+    "dev:customer": "npm --workspace rentflow-web-app run dev",
+    "dev:admin": "npm --workspace rentflow-admin-dashboard run dev",
+    "dev:partner": "npm --workspace rentflow-partner-dashboard run dev",
+    "build:customer": "npm --workspace rentflow-web-app run build",
+    "build:admin": "npm --workspace rentflow-admin-dashboard run build",
+    "build:partner": "npm --workspace rentflow-partner-dashboard run build",
+    "lint:customer": "npm --workspace rentflow-web-app run lint",
+    "lint:admin": "npm --workspace rentflow-admin-dashboard run lint",
+    "lint:partner": "npm --workspace rentflow-partner-dashboard run lint",
+    "dev:api": "cd apps/api && go run .",
+    "test:api": "cd apps/api && go test ./..."
+  }
+}
