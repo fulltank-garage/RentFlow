@@ -11,6 +11,10 @@ import {
   getInitialRentFlowCarTenantProfile,
   getRentFlowCarRequestHost,
 } from "@/src/lib/server-tenant";
+import {
+  buildRentFlowCarJsonLd,
+  buildRentFlowCarMetadata,
+} from "@/src/lib/seo";
 
 const notoThai = Noto_Sans_Thai({
   subsets: ["thai"],
@@ -29,22 +33,7 @@ const roboto = Roboto({
 export async function generateMetadata(): Promise<Metadata> {
   const host = await getRentFlowCarRequestHost();
   const tenant = await getInitialRentFlowCarTenantProfile(host);
-  const title = tenant?.shopName
-    ? `${tenant.shopName} - เช่ารถง่าย แค่ปลายนิ้ว`
-    : "RentFlowCar - เช่ารถง่าย แค่ปลายนิ้ว";
-  const icon = "/tenant-icon";
-
-  return {
-    title,
-    description: tenant?.shopName
-      ? `เช่ารถกับ ${tenant.shopName} ผ่าน RentFlowCar`
-      : "เช่ารถง่าย แค่ปลายนิ้ว",
-    icons: {
-      icon,
-      shortcut: icon,
-      apple: icon,
-    },
-  };
+  return buildRentFlowCarMetadata({ host, tenant });
 }
 
 export default async function RootLayout({
@@ -54,6 +43,10 @@ export default async function RootLayout({
 }>) {
   const host = await getRentFlowCarRequestHost();
   const initialTenantProfile = await getInitialRentFlowCarTenantProfile(host);
+  const jsonLd = buildRentFlowCarJsonLd({
+    host,
+    tenant: initialTenantProfile,
+  });
 
   return (
     <html
@@ -62,6 +55,10 @@ export default async function RootLayout({
       className={`${notoThai.variable} ${roboto.variable}`}
     >
       <body className="font-thai">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Providers>
           <Navbar
             initialHost={host}

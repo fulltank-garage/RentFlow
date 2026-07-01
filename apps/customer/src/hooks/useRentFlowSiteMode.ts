@@ -3,8 +3,8 @@
 import * as React from "react";
 
 import {
-  getRentFlowSiteMode,
-  type RentFlowSiteMode,
+  getRentFlowCarSiteMode,
+  type RentFlowCarSiteMode,
 } from "@/src/lib/tenant";
 
 export function useRentFlowSiteMode(initialHost?: string) {
@@ -13,16 +13,16 @@ export function useRentFlowSiteMode(initialHost?: string) {
 
 export function useRentFlowSiteModeStatus(initialHost?: string) {
   const [state, setState] = React.useState<{
-    siteMode: RentFlowSiteMode;
+    siteMode: RentFlowCarSiteMode;
     ready: boolean;
   }>(() => ({
-    siteMode: initialHost ? getRentFlowSiteMode(initialHost) : "marketplace",
+    siteMode: initialHost ? getRentFlowCarSiteMode(initialHost) : "marketplace",
     ready: Boolean(initialHost),
   }));
 
   React.useEffect(() => {
     setState({
-      siteMode: getRentFlowSiteMode(),
+      siteMode: getRentFlowCarSiteMode(),
       ready: true,
     });
   }, []);

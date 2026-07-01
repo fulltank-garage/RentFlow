@@ -1,4 +1,8 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
+
+const appRoot = dirname(fileURLToPath(import.meta.url));
 
 function apiImageRemotePattern() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -23,6 +27,9 @@ function apiImageRemotePattern() {
 }
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: appRoot,
+  },
   images: {
     localPatterns: [
       {
