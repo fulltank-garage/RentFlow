@@ -66,7 +66,7 @@ describe("RentFlowCar SEO helpers", () => {
     });
 
     assert.equal(metadata.alternates?.canonical, "https://rentflowcar.xyz/cars");
-    assert.match(String(metadata.title), /รถเช่าทั้งหมด/);
+    assert.equal(String(metadata.title), "RentFlowCar - รถเช่าทั้งหมด");
     assert.equal(metadata.openGraph?.url, "https://rentflowcar.xyz/cars");
   });
 

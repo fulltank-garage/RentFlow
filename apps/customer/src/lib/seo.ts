@@ -185,7 +185,7 @@ export function buildRentFlowCarPageMetadata({
 }): Metadata {
   const origin = getRentFlowCarOrigin(host);
   const canonical = getRentFlowCarCanonicalUrl({ host, pathname });
-  const fullTitle = `${title} | ${DEFAULT_BRAND_NAME}`;
+  const fullTitle = `${DEFAULT_BRAND_NAME} - ${title}`;
   const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE, origin);
 
   return {
@@ -248,7 +248,7 @@ export function buildRentFlowCarClassMetadata({
 
 export function buildRentFlowCarNoIndexMetadata(title: string): Metadata {
   return {
-    title: `${title} | ${DEFAULT_BRAND_NAME}`,
+    title: `${DEFAULT_BRAND_NAME} - ${title}`,
     robots: {
       index: false,
       follow: false,
