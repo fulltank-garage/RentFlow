@@ -1,6 +1,8 @@
 # Local verification caches
 .npm-cache/
 .go-cache/
+.go-mod-cache/
+.go-path/
 
 # App build outputs and dependencies
 node_modules/
