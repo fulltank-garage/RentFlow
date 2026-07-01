@@ -1,6 +1,11 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import BookingSuccessPage from "@/src/components/pages/BookingSuccessPage";
 import BookingSuccessPageSkeleton from "@/src/components/booking/BookingSuccessPageSkeleton";
+import { buildRentFlowCarNoIndexMetadata } from "@/src/lib/seo";
+
+export const metadata: Metadata =
+  buildRentFlowCarNoIndexMetadata("จองรถสำเร็จ");
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
