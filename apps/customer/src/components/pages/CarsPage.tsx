@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
-import { Box, Container, Typography, Chip, Alert } from "@mui/material";
+import { Box, Container, Typography, Chip } from "@mui/material";
 import CarsFilterBar from "@/src/components/cars/CarsFilterBar";
 import CarGrid from "@/src/components/cars/CarGrid";
 import CarsPageSkeleton from "@/src/components/cars/CarsPageSkeleton";
@@ -68,7 +68,8 @@ export default function CarsPage() {
     carTypes,
     locations,
     loading: directoryLoading,
-    error: directoryError,
+    carsError: directoryCarsError,
+    branchesError,
   } = useCatalogDirectory(tenantSlug || undefined);
   const isMarketplace = siteMode === "marketplace";
   const isTenantCarsPage = Boolean(tenantSlug);
@@ -82,8 +83,6 @@ export default function CarsPage() {
       ),
     [cars, directoryCars, shopNameFromQuery, tenantSlug]
   );
-
-  const pageError = [error, directoryError].filter(Boolean).join(" • ");
 
   if (loading && cars.length === 0) {
     return <CarsPageSkeleton showShop={isMarketplace && !isTenantCarsPage} />;
@@ -130,6 +129,8 @@ export default function CarsPage() {
         returnDate={returnDate}
         carTypes={carTypes}
         locations={locations}
+        carTypesError={directoryCarsError}
+        locationsError={branchesError}
         onQChange={(value) => {
           setQ(value);
           updateUrl({ q: value });
@@ -158,12 +159,6 @@ export default function CarsPage() {
         onReset={resetFilters}
       />
 
-      {pageError ? (
-        <Alert severity="error" className="mt-6 rounded-xl!">
-          {pageError}
-        </Alert>
-      ) : null}
-
       {directoryLoading && !carTypes.length && !locations.length ? (
         <Chip
           size="small"
@@ -177,6 +172,7 @@ export default function CarsPage() {
         cars={cars}
         showShop={isMarketplace && !isTenantCarsPage}
         loading={loading}
+        error={error}
       />
     </Container>
     </Box>

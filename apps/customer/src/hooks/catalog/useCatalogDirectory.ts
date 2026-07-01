@@ -21,6 +21,8 @@ export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
   const [branches, setBranches] = React.useState<Branch[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [carsError, setCarsError] = React.useState<string | null>(null);
+  const [branchesError, setBranchesError] = React.useState<string | null>(null);
   const [reloadTick, setReloadTick] = React.useState(0);
 
   const refreshFromRealtime = React.useCallback((event?: RentFlowCarRealtimeEvent) => {
@@ -76,6 +78,8 @@ export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
     async function loadDirectory() {
       setLoading(true);
       setError(null);
+      setCarsError(null);
+      setBranchesError(null);
       const start = Date.now();
 
       const [carsResult, branchesResult] = await Promise.allSettled([
@@ -96,17 +100,22 @@ export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
       if (carsResult.status === "fulfilled") {
         setCars(carsResult.value.items);
       } else {
+        const message = getErrorMessage(carsResult.reason, "โหลดข้อมูลรถไม่สำเร็จ");
         setCars([]);
-        messages.push(getErrorMessage(carsResult.reason, "โหลดข้อมูลรถไม่สำเร็จ"));
+        setCarsError(message);
+        messages.push(message);
       }
 
       if (branchesResult.status === "fulfilled") {
         setBranches(branchesResult.value.data);
       } else {
-        setBranches([]);
-        messages.push(
-          getErrorMessage(branchesResult.reason, "โหลดข้อมูลสาขาไม่สำเร็จ")
+        const message = getErrorMessage(
+          branchesResult.reason,
+          "โหลดข้อมูลสาขาไม่สำเร็จ"
         );
+        setBranches([]);
+        setBranchesError(message);
+        messages.push(message);
       }
 
       setError(messages.length ? messages.join(" • ") : null);
@@ -133,5 +142,7 @@ export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
     classes: React.useMemo(() => buildCarClasses(cars), [cars]),
     loading,
     error,
+    carsError,
+    branchesError,
   };
 }

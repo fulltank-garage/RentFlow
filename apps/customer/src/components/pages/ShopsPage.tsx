@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Alert, Box } from "@mui/material";
+import { Box } from "@mui/material";
 
 import ShopRecommendationsSection from "@/src/components/shops/ShopRecommendationsSection";
 import ShopsPageSkeleton from "@/src/components/shops/ShopsPageSkeleton";
@@ -11,7 +11,7 @@ import { tenantApi } from "@/src/services/tenant/tenant.service";
 import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
 export default function ShopsPage() {
-  const { cars, loading, error } = useCatalogDirectory();
+  const { cars, loading, carsError } = useCatalogDirectory();
   const [minimumLoading, setMinimumLoading] = React.useState(true);
   const [tenants, setTenants] = React.useState<TenantProfile[]>([]);
   const [tenantsLoading, setTenantsLoading] = React.useState(true);
@@ -60,20 +60,14 @@ export default function ShopsPage() {
 
   return (
     <Box className="apple-page">
-      {error || tenantsError ? (
-        <Box className="mx-auto mb-6 w-full max-w-6xl px-6">
-          <Alert severity="warning" className="rounded-2xl!">
-            {[error, tenantsError].filter(Boolean).join(" • ")}
-          </Alert>
-        </Box>
-      ) : null}
-
       <ShopRecommendationsSection
         shops={shops}
         title="ร้านทั้งหมด"
         subtitle="เลือกร้านเช่ารถที่เหมาะกับการเดินทางของคุณ"
         showDivider={false}
         layout="page"
+        dataError={tenantsError}
+        supportingError={carsError}
       />
     </Box>
   );

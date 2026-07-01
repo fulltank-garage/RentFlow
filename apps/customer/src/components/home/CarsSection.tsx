@@ -16,13 +16,15 @@ import {
 
 import type { Car } from "@/src/services/cars/cars.types";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 
 type Props = {
   cars: Car[];
   formatTHB: (n: number) => string;
+  error?: string | null;
 };
 
-export default function CarsSection({ cars, formatTHB }: Props) {
+export default function CarsSection({ cars, formatTHB, error }: Props) {
   return (
     <Container maxWidth="lg" className="apple-section">
       <Box className="apple-section-intro">
@@ -44,7 +46,13 @@ export default function CarsSection({ cars, formatTHB }: Props) {
       </Box>
 
       <Box className="apple-shelf apple-shelf-wide mt-10 md:grid md:grid-cols-2 lg:grid-cols-3">
-        {cars.length ? (
+        {error ? (
+          <DataLoadErrorCard
+            title="โหลดรายการรถแนะนำไม่ได้"
+            message={error}
+            className="md:col-span-2 lg:col-span-3"
+          />
+        ) : cars.length ? (
           cars.map((c) => (
             <Card
               key={c.id}

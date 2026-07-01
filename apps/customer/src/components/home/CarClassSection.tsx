@@ -16,13 +16,16 @@ import {
   getCarTypeImage,
   type CatalogCarClass,
 } from "@/src/lib/rentflow-catalog";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 
 export default function CarClassSection({
   classes,
   loading = false,
+  error,
 }: {
   classes: CatalogCarClass[];
   loading?: boolean;
+  error?: string | null;
 }) {
   return (
     <Box>
@@ -42,7 +45,13 @@ export default function CarClassSection({
 
         <Box className="apple-card mt-10 p-4 sm:p-5 md:p-7">
           <Box className="apple-shelf apple-shelf-compact sm:grid sm:grid-cols-2 lg:grid-cols-4">
-          {loading && !classes.length ? (
+          {error ? (
+            <DataLoadErrorCard
+              title="โหลดข้อมูลประเภทรถไม่ได้"
+              message={error}
+              className="sm:col-span-2 lg:col-span-4"
+            />
+          ) : loading && !classes.length ? (
             Array.from({ length: 4 }).map((_, index) => (
               <Box
                 key={`class-skeleton-${index}`}

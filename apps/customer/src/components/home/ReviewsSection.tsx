@@ -17,6 +17,7 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
@@ -50,6 +51,7 @@ export default function ReviewsSection() {
   const [comment, setComment] = React.useState("");
   const [rating, setRating] = React.useState<number | null>(5);
   const [loadingReviews, setLoadingReviews] = React.useState(true);
+  const [reviewsError, setReviewsError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [reloadTick, setReloadTick] = React.useState(0);
   const [snackbar, setSnackbar] = React.useState<SnackbarState>({
@@ -70,6 +72,8 @@ export default function ReviewsSection() {
 
     async function loadReviews() {
       try {
+        setLoadingReviews(true);
+        setReviewsError(null);
         const res = await reviewsApi.getReviews({
           marketplace: isMarketplace,
         });
@@ -78,7 +82,8 @@ export default function ReviewsSection() {
         }
       } catch (err: unknown) {
         if (!cancelled) {
-          showSnackbar(getErrorMessage(err, "ไม่สามารถโหลดรีวิวได้"), "error");
+          setReviews([]);
+          setReviewsError(getErrorMessage(err, "ไม่สามารถโหลดรีวิวได้"));
         }
       } finally {
         if (!cancelled) {
@@ -92,7 +97,7 @@ export default function ReviewsSection() {
     return () => {
       cancelled = true;
     };
-  }, [isMarketplace, reloadTick, showSnackbar]);
+  }, [isMarketplace, reloadTick]);
 
   useRentFlowCarRealtimeRefresh({
     events: ["review.created", "tenant.updated"],
@@ -272,7 +277,13 @@ export default function ReviewsSection() {
         </Box>
 
         <Box className="apple-card apple-card-no-hover mt-10 overflow-hidden rounded-[34px] bg-white p-4">
-          {loadingReviews ? (
+          {reviewsError ? (
+            <DataLoadErrorCard
+              title="โหลดรายการรีวิวไม่ได้"
+              message={reviewsError}
+              className="min-h-72"
+            />
+          ) : loadingReviews ? (
             <Box className="grid min-h-72 gap-3">
               <Box className="flex w-max gap-3">
                 {Array.from({ length: 3 }).map((_, index) =>
@@ -445,7 +456,13 @@ export default function ReviewsSection() {
         </Card>
 
         <Box className="apple-card apple-card-no-hover rounded-[30px] bg-white p-4">
-          {loadingReviews ? (
+          {reviewsError ? (
+            <DataLoadErrorCard
+              title="โหลดรายการรีวิวไม่ได้"
+              message={reviewsError}
+              className="min-h-72"
+            />
+          ) : loadingReviews ? (
             <Box className="grid min-h-72 gap-3">
               {Array.from({ length: 3 }).map((_, index) =>
                 renderReviewSkeletonCard(`store-review-skeleton-${index}`)

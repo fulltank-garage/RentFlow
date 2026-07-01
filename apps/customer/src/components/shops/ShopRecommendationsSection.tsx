@@ -17,6 +17,7 @@ import { formatTHB } from "@/src/constants/money";
 import { getRentFlowCarRootDomain } from "@/src/lib/tenant";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 import type { ShopSummary } from "@/src/lib/shop-directory";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 
 type Props = {
   shops: ShopSummary[];
@@ -25,6 +26,8 @@ type Props = {
   limit?: number;
   showDivider?: boolean;
   layout?: "section" | "page";
+  dataError?: string | null;
+  supportingError?: string | null;
 };
 
 function getShopHref(shop: ShopSummary) {
@@ -47,6 +50,8 @@ export default function ShopRecommendationsSection({
   limit,
   showDivider = true,
   layout = "section",
+  dataError,
+  supportingError,
 }: Props) {
   const rootDomain = getRentFlowCarRootDomain();
   const visibleShops = React.useMemo(
@@ -89,8 +94,24 @@ export default function ShopRecommendationsSection({
       </Box>
 
       <Box className="apple-shelf apple-shelf-wide mt-10 sm:grid sm:grid-cols-2 lg:grid-cols-3">
-        {visibleShops.length ? (
-          visibleShops.map((shop) => (
+        {dataError ? (
+          <DataLoadErrorCard
+            title="โหลดรายการร้านไม่ได้"
+            message={dataError}
+            className="sm:col-span-2 lg:col-span-3"
+          />
+        ) : (
+          <>
+            {supportingError ? (
+              <DataLoadErrorCard
+                title="โหลดข้อมูลรถของร้านไม่ได้"
+                message={supportingError}
+                helperText="ยังแสดงรายการร้านได้ แต่จำนวนรถและราคาเริ่มต้นอาจไม่ครบถ้วน"
+                compact
+              />
+            ) : null}
+            {visibleShops.length ? (
+              visibleShops.map((shop) => (
             <Card
               key={shop.key}
               elevation={0}
@@ -173,15 +194,17 @@ export default function ShopRecommendationsSection({
                 </Box>
               </CardContent>
             </Card>
-          ))
-        ) : (
-          <Box className="flex min-h-48 items-center justify-center rounded-[30px] border border-dashed border-black/10 bg-white px-8 py-12 text-center sm:col-span-2 lg:col-span-3">
-            <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
-              {isPageLayout
-                ? "ยังไม่มีร้านที่พร้อมแสดงในตอนนี้"
-                : "ยังไม่มีร้านแนะนำในตอนนี้"}
-            </Typography>
-          </Box>
+              ))
+            ) : (
+              <Box className="flex min-h-48 items-center justify-center rounded-[30px] border border-dashed border-black/10 bg-white px-8 py-12 text-center sm:col-span-2 lg:col-span-3">
+                <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
+                  {isPageLayout
+                    ? "ยังไม่มีร้านที่พร้อมแสดงในตอนนี้"
+                    : "ยังไม่มีร้านแนะนำในตอนนี้"}
+                </Typography>
+              </Box>
+            )}
+          </>
         )}
       </Box>
 

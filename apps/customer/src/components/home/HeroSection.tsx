@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 
 import { Herotextfield } from "@/src/components/hero/Herotextfield";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
 import {
   getCarTypeLabel,
@@ -50,6 +51,8 @@ type Props = {
 
   carTypes: readonly CarType[];
   locations: readonly LocationOption[];
+  carTypesError?: string | null;
+  locationsError?: string | null;
 };
 
 export default function HeroSection({
@@ -66,6 +69,8 @@ export default function HeroSection({
   setQ,
   carTypes,
   locations,
+  carTypesError,
+  locationsError,
 }: Props) {
   const router = useRouter();
   const today = getTodayLocalDate();
@@ -284,6 +289,24 @@ export default function HeroSection({
                   </Box>
 
                   <Box className="grid gap-4">
+                    {locationsError ? (
+                      <DataLoadErrorCard
+                        title="โหลดรายการสาขาในช่องค้นหาไม่ได้"
+                        message={locationsError}
+                        helperText="ช่องสาขาจะแสดงเฉพาะตัวเลือกทั้งหมดจนกว่าจะโหลดข้อมูลสำเร็จ"
+                        compact
+                      />
+                    ) : null}
+
+                    {carTypesError ? (
+                      <DataLoadErrorCard
+                        title="โหลดรายการประเภทรถในช่องค้นหาไม่ได้"
+                        message={carTypesError}
+                        helperText="ช่องประเภทรถจะแสดงเฉพาะตัวเลือกทั้งหมดจนกว่าจะโหลดข้อมูลสำเร็จ"
+                        compact
+                      />
+                    ) : null}
+
                     <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.08fr_1fr_1fr]">
                       <TextField
                         select

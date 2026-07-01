@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Box, TextField, MenuItem, Button } from "@mui/material";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
 import {
   getCarTypeLabel,
@@ -19,6 +20,8 @@ type Props = {
   returnDate: string;
   carTypes: readonly CarType[];
   locations: readonly LocationOption[];
+  carTypesError?: string | null;
+  locationsError?: string | null;
   onQChange: (value: string) => void;
   onTypeChange: (value: CarType | "all") => void;
   onSortChange: (value: SortKey) => void;
@@ -37,6 +40,8 @@ export default function CarsFilterBar({
   returnDate,
   carTypes,
   locations,
+  carTypesError,
+  locationsError,
   onQChange,
   onTypeChange,
   onSortChange,
@@ -63,6 +68,28 @@ export default function CarsFilterBar({
           ปรับสาขา ช่วงวัน และประเภทรถให้ตรงกับการเดินทางของคุณ
         </Box>
       </Box>
+
+      {locationsError || carTypesError ? (
+        <Box className="mb-4 grid gap-3 md:grid-cols-2">
+          {locationsError ? (
+            <DataLoadErrorCard
+              title="โหลดรายการสาขาสำหรับตัวกรองไม่ได้"
+              message={locationsError}
+              helperText="ตัวกรองสาขาจะแสดงเฉพาะตัวเลือกทั้งหมดชั่วคราว"
+              compact
+            />
+          ) : null}
+
+          {carTypesError ? (
+            <DataLoadErrorCard
+              title="โหลดรายการประเภทรถสำหรับตัวกรองไม่ได้"
+              message={carTypesError}
+              helperText="ตัวกรองประเภทรถจะแสดงเฉพาะตัวเลือกทั้งหมดชั่วคราว"
+              compact
+            />
+          ) : null}
+        </Box>
+      ) : null}
 
       <Box className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <TextField

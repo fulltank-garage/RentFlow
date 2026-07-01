@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Alert, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import { useSearchParams } from "next/navigation";
 
 import HeroSection from "@/src/components/home/HeroSection";
@@ -43,13 +43,24 @@ export default function HomePage({
   const [pickupDate, setPickupDate] = React.useState("");
   const [returnDate, setReturnDate] = React.useState("");
   const [q, setQ] = React.useState("");
-  const { siteMode, cars, carTypes, locations, classes, loading, error } =
+  const {
+    siteMode,
+    cars,
+    carTypes,
+    locations,
+    classes,
+    loading,
+    carsError,
+    branchesError,
+  } =
     useCatalogDirectory(undefined, initialHost);
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(initialTenantProfile);
   const [marketplaceTenants, setMarketplaceTenants] = React.useState<
     TenantProfile[]
   >([]);
+  const [marketplaceTenantsError, setMarketplaceTenantsError] =
+    React.useState<string | null>(null);
   const [platformSettings, setPlatformSettings] =
     React.useState<PlatformPublicSettings | null>(null);
   const [storefrontPage, setStorefrontPage] =
@@ -87,16 +98,21 @@ export default function HomePage({
 
     if (siteMode !== "marketplace") {
       setMarketplaceTenants([]);
+      setMarketplaceTenantsError(null);
       return;
     }
 
+    setMarketplaceTenantsError(null);
     tenantApi
       .listTenants()
       .then((res) => {
         if (!cancelled) setMarketplaceTenants(res.data.items);
       })
       .catch(() => {
-        if (!cancelled) setMarketplaceTenants([]);
+        if (!cancelled) {
+          setMarketplaceTenants([]);
+          setMarketplaceTenantsError("โหลดข้อมูลร้านไม่สำเร็จ");
+        }
       });
 
     return () => {
@@ -206,7 +222,6 @@ export default function HomePage({
   const recommendedShops = React.useMemo(() => {
     return buildShopSummariesFromTenants(marketplaceTenants, cars).slice(0, 12);
   }, [cars, marketplaceTenants]);
-  const shouldShowCatalogError = Boolean(error) && !cars.length;
   const heroImages = React.useMemo(() => {
     if (siteMode === "storefront") {
       const images = tenantProfile?.promoImageUrls?.length
@@ -320,15 +335,9 @@ export default function HomePage({
         setQ={setQ}
         carTypes={carTypes}
         locations={locations}
+        carTypesError={carsError}
+        locationsError={branchesError}
       />
-
-      {shouldShowCatalogError ? (
-        <Box className="mx-auto w-full max-w-6xl px-6">
-          <Alert severity="warning" className="rounded-2xl!">
-            {error}
-          </Alert>
-        </Box>
-      ) : null}
 
       <StorefrontBlocksSection
         blocks={storefrontBlocks}
@@ -341,12 +350,25 @@ export default function HomePage({
 
       {siteMode === "marketplace" ? (
         <>
-          <ShopRecommendationsSection shops={recommendedShops} limit={12} />
+          <ShopRecommendationsSection
+            shops={recommendedShops}
+            limit={12}
+            dataError={marketplaceTenantsError}
+            supportingError={carsError}
+          />
         </>
       ) : (
         <>
-          <CarsSection cars={recommendedCars} formatTHB={formatTHB} />
-          <CarClassSection classes={classes} loading={loading} />
+          <CarsSection
+            cars={recommendedCars}
+            formatTHB={formatTHB}
+            error={carsError}
+          />
+          <CarClassSection
+            classes={classes}
+            loading={loading}
+            error={carsError}
+          />
         </>
       )}
 

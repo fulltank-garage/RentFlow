@@ -3,12 +3,14 @@
 import * as React from "react";
 import { Box, Card, CardActions, CardContent, Skeleton, Typography } from "@mui/material";
 import type { Car } from "@/src/services/cars/cars.types";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 import CarCard from "./CarCard";
 
 type Props = {
     cars: Car[];
     showShop?: boolean;
     loading?: boolean;
+    error?: string | null;
 };
 
 function ShopBoxSkeleton() {
@@ -57,7 +59,7 @@ function CarGridSkeletonCard({ showShop = false }: { showShop?: boolean }) {
     );
 }
 
-export default function CarGrid({ cars, showShop = false, loading = false }: Props) {
+export default function CarGrid({ cars, showShop = false, loading = false, error }: Props) {
     if (loading) {
         return (
             <Box className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -65,6 +67,16 @@ export default function CarGrid({ cars, showShop = false, loading = false }: Pro
                     <CarGridSkeletonCard key={`car-grid-loading-${index}`} showShop={showShop} />
                 ))}
             </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <DataLoadErrorCard
+                title="โหลดรายการรถในหน้านี้ไม่ได้"
+                message={error}
+                className="mt-8"
+            />
         );
     }
 

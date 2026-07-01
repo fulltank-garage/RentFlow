@@ -15,6 +15,7 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import { getErrorMessage } from "@/src/lib/api-error";
 import { getRentFlowCarStorefrontHref } from "@/src/lib/tenant";
@@ -64,6 +65,7 @@ function ReviewsPageSkeleton() {
 export default function ReviewsPage() {
   const [reviews, setReviews] = React.useState<Review[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [reviewsError, setReviewsError] = React.useState<string | null>(null);
   const [reloadTick, setReloadTick] = React.useState(0);
   const [snackbar, setSnackbar] = React.useState<{
     open: boolean;
@@ -88,6 +90,8 @@ export default function ReviewsPage() {
   React.useEffect(() => {
     let cancelled = false;
 
+    setLoading(true);
+    setReviewsError(null);
     reviewsApi
       .getReviews({ marketplace: true })
       .then((res) => {
@@ -95,11 +99,8 @@ export default function ReviewsPage() {
       })
       .catch((error: unknown) => {
         if (!cancelled) {
-          setSnackbar({
-            open: true,
-            message: getErrorMessage(error, "ไม่สามารถโหลดรีวิวได้"),
-            severity: "error",
-          });
+          setReviews([]);
+          setReviewsError(getErrorMessage(error, "ไม่สามารถโหลดรีวิวได้"));
         }
       })
       .finally(() => {
@@ -134,7 +135,13 @@ export default function ReviewsPage() {
           </Typography>
         </Box>
 
-        {loading ? (
+        {reviewsError ? (
+          <DataLoadErrorCard
+            title="โหลดรายการรีวิวไม่ได้"
+            message={reviewsError}
+            className="mt-10 min-h-80"
+          />
+        ) : loading ? (
           <ReviewsPageSkeleton />
         ) : reviews.length ? (
           <Box className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
