@@ -25,6 +25,7 @@ export function useCarsCatalog(params: Params) {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const [reloadTick, setReloadTick] = React.useState(0);
+    const hasLoadedCarsRef = React.useRef(false);
 
     const refreshFromRealtime = React.useCallback((event?: RentFlowCarRealtimeEvent) => {
         if (event?.type === "car.status.changed") {
@@ -77,9 +78,13 @@ export function useCarsCatalog(params: Params) {
         let cancelled = false;
 
         async function loadCars() {
+            const isInitialLoad = !hasLoadedCarsRef.current;
+
             try {
-                setLoading(true);
-                setError(null);
+                if (isInitialLoad) {
+                    setLoading(true);
+                    setError(null);
+                }
 
                 const start = Date.now();
 
@@ -95,19 +100,25 @@ export function useCarsCatalog(params: Params) {
                     tenantSlug: tenantSlug || undefined,
                 });
                 const elapsed = Date.now() - start;
-                const delay = Math.max(500 - elapsed, 0);
-
-                await new Promise((r) => setTimeout(r, delay));
+                if (isInitialLoad) {
+                    const delay = Math.max(500 - elapsed, 0);
+                    await new Promise((r) => setTimeout(r, delay));
+                }
 
                 if (cancelled) return;
 
                 setCars(res.items);
+                setError(null);
             } catch (err: unknown) {
                 if (cancelled) return;
 
+                if (isInitialLoad) {
+                    setCars([]);
+                }
                 setError(getErrorMessage(err, "โหลดข้อมูลไม่สำเร็จ"));
             } finally {
                 if (!cancelled) {
+                    hasLoadedCarsRef.current = true;
                     setLoading(false);
                 }
             }

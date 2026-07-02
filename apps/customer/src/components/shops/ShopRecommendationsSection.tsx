@@ -28,6 +28,7 @@ type Props = {
   layout?: "section" | "page";
   dataError?: string | null;
   supportingError?: string | null;
+  hasAvailableCars?: boolean;
 };
 
 function getShopHref(shop: ShopSummary) {
@@ -52,10 +53,14 @@ export default function ShopRecommendationsSection({
   layout = "section",
   dataError,
   supportingError,
+  hasAvailableCars = false,
 }: Props) {
   const rootDomain = getRentFlowCarRootDomain();
   const visibleShops = React.useMemo(
-    () => (limit ? shops.slice(0, limit) : shops),
+    () => {
+      const readyShops = shops.filter((shop) => shop.carCount > 0);
+      return limit ? readyShops.slice(0, limit) : readyShops;
+    },
     [limit, shops]
   );
   const isPageLayout = layout === "page";
@@ -196,11 +201,16 @@ export default function ShopRecommendationsSection({
             </Card>
               ))
             ) : (
-              <Box className="flex min-h-48 items-center justify-center rounded-[30px] border border-dashed border-black/10 bg-white px-8 py-12 text-center sm:col-span-2 lg:col-span-3">
-                <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
-                  {isPageLayout
-                    ? "ยังไม่มีร้านที่พร้อมแสดงในตอนนี้"
-                    : "ยังไม่มีร้านแนะนำในตอนนี้"}
+              <Box className="flex min-h-40 flex-col items-center justify-center rounded-[30px] border border-black/10 bg-white px-8 py-10 text-center sm:col-span-2 lg:col-span-3">
+                <Typography className="text-base font-semibold text-[var(--rf-apple-ink)] md:text-lg">
+                  {hasAvailableCars
+                    ? "ไม่พบร้านที่ตรงกับเงื่อนไข"
+                    : "ยังไม่มีร้านที่พร้อมแสดงในตอนนี้"}
+                </Typography>
+                <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+                  {hasAvailableCars
+                    ? "ลองเปลี่ยนคำค้นหา หรือเลือกประเภทอื่น"
+                    : "เมื่อมีรถพร้อมให้เช่า ร้านจะแสดงในหน้านี้"}
                 </Typography>
               </Box>
             )}

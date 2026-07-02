@@ -410,7 +410,16 @@ export default function Navbar({
         zIndex: (theme) => theme.zIndex.modal + 20,
       }}
     >
-      <Container maxWidth="lg">
+      <Container
+        maxWidth="lg"
+        sx={{
+          "@media (min-width: 1200px)": {
+            maxWidth: "1360px",
+            paddingLeft: "24px",
+            paddingRight: "24px",
+          },
+        }}
+      >
         <Toolbar
           className="min-h-[52px]! px-0! md:min-h-11!"
           sx={{
@@ -464,9 +473,10 @@ export default function Navbar({
                     component={Link}
                     href={n.href}
                     disableElevation
-                    className="apple-nav-link min-w-0! rounded-full! px-3.5! py-1.5! !font-normal"
+                    className="apple-nav-link min-w-0! rounded-full! px-2.5! py-1! !font-normal"
                     sx={{
                       fontWeight: "400 !important",
+                      minHeight: "30px !important",
                       lineHeight: 1.42859,
                       letterSpacing: "-0.016em",
                       color: active
@@ -482,7 +492,7 @@ export default function Navbar({
                         color: "var(--rf-apple-ink)",
                       },
                       transition:
-                        "background-color .32s ease, color .32s ease, opacity .32s ease, transform .86s cubic-bezier(0.18,0.9,0.22,1)",
+                        "background-color var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease), color var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease), opacity var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease), transform var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease)",
                     }}
                   >
                     {n.label}
@@ -560,7 +570,7 @@ export default function Navbar({
                         outline: "none",
                       },
                       transition:
-                        "opacity .32s ease, transform .86s cubic-bezier(0.18,0.9,0.22,1)",
+                        "opacity var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease), transform var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease)",
                     }}
                   >
                     <Box className="flex w-full items-center justify-end gap-2.5">
@@ -750,7 +760,7 @@ export default function Navbar({
                     sx={{
                       display: "block",
                       transition:
-                        "opacity .32s ease, transform .86s cubic-bezier(0.18,0.9,0.22,1)",
+                        "opacity var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease), transform var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease)",
                       "&:hover": {
                         backgroundColor: "transparent",
                         transform: "scale(1.006)",

@@ -10,7 +10,11 @@ const DEFAULT_OG_IMAGE = "/opengraph-image";
 type SeoTenant = {
   shopName?: string;
   logoUrl?: string;
+  promoImageUrl?: string;
+  promoImageUrls?: string[];
   contactPhone?: string;
+  publicDomain?: string;
+  domainSlug?: string;
 };
 
 type SeoCar = {
@@ -178,6 +182,7 @@ export function buildRentFlowCarPageMetadata({
   title,
   description,
   image,
+  tenant,
 }: RentFlowCarSeoInput & {
   title: string;
   description: string;
@@ -185,23 +190,42 @@ export function buildRentFlowCarPageMetadata({
 }): Metadata {
   const origin = getRentFlowCarOrigin(host);
   const canonical = getRentFlowCarCanonicalUrl({ host, pathname });
-  const fullTitle = `${DEFAULT_BRAND_NAME} - ${title}`;
-  const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE, origin);
+  const tenantName = tenant?.shopName?.trim();
+  const siteName = tenantName || DEFAULT_BRAND_NAME;
+  const fullTitle = tenantName
+    ? `${tenantName} - ${title}`
+    : `${DEFAULT_BRAND_NAME} - ${title}`;
+  const pageDescription = tenantName
+    ? `${title}สำหรับ ${tenantName} บน RentFlowCar ${description}`
+    : description;
+  const tenantImage =
+    tenant?.promoImageUrl || tenant?.promoImageUrls?.[0] || tenant?.logoUrl;
+  const imageUrl = absoluteUrl(image || tenantImage || DEFAULT_OG_IMAGE, origin);
 
   return {
     metadataBase: new URL(origin),
     title: fullTitle,
-    description,
+    description: pageDescription,
     alternates: {
       canonical,
     },
+    keywords: [
+      title,
+      DEFAULT_BRAND_NAME,
+      tenantName || "",
+      tenant?.domainSlug || "",
+      "เช่ารถ",
+      "รถเช่า",
+      "จองรถเช่า",
+      "car rental",
+    ].filter(Boolean),
     openGraph: {
       type: "website",
       locale: "th_TH",
       url: canonical,
-      siteName: DEFAULT_BRAND_NAME,
+      siteName,
       title: fullTitle,
-      description,
+      description: pageDescription,
       images: [
         {
           url: imageUrl,
@@ -214,7 +238,7 @@ export function buildRentFlowCarPageMetadata({
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
-      description,
+      description: pageDescription,
       images: [imageUrl],
     },
   };
@@ -235,11 +259,13 @@ function getClassDisplayName(slug: string) {
 export function buildRentFlowCarClassMetadata({
   host,
   slug,
+  tenant,
 }: RentFlowCarSeoInput & { slug: string }): Metadata {
   const className = getClassDisplayName(slug);
 
   return buildRentFlowCarPageMetadata({
     host,
+    tenant,
     pathname: `/classes/${encodeURIComponent(slug)}`,
     title: `เช่ารถ ${className}`,
     description: `ค้นหารถเช่าประเภท ${className} เปรียบเทียบตัวเลือก ราคา และจองผ่าน RentFlowCar ได้สะดวก`,

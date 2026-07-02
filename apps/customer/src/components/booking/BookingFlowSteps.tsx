@@ -117,7 +117,8 @@ export default function BookingFlowSteps({
                       backgroundColor: CURRENT_COLOR,
                       borderColor: CURRENT_COLOR,
                       color: "#fff",
-                      boxShadow: "0 10px 24px rgba(79, 70, 229, 0.16)",
+                      boxShadow:
+                        "0 10px 24px color-mix(in srgb, var(--rf-booking-step-current) 18%, transparent)",
                     }
                   : {
                       backgroundColor: PENDING_BORDER,

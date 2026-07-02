@@ -10,9 +10,11 @@ import { buildRentFlowCarPageMetadata } from "@/src/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const host = await getRentFlowCarRequestHost();
+  const tenant = await getInitialRentFlowCarTenantProfile(host);
 
   return buildRentFlowCarPageMetadata({
     host,
+    tenant,
     pathname: "/features",
     title: "ฟีเจอร์การจองรถเช่า",
     description:

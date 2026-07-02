@@ -203,7 +203,7 @@ function ReceiptPreviewSection({
   fields: PreviewField[];
 }) {
   return (
-    <Box className="rounded-[30px] border border-black/6 bg-[#f8fafc] p-4 md:p-5">
+    <Box className="rounded-[30px] border border-black/10 bg-[#f8fafc] p-4 shadow-[var(--rf-apple-shadow-soft)] md:p-5">
       <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
         {title}
       </Typography>
@@ -212,7 +212,7 @@ function ReceiptPreviewSection({
         {fields.map((field) => (
           <Box
             key={`${title}-${field.label}`}
-            className={`${field.wide ? "col-span-12" : "col-span-12 sm:col-span-6"} rounded-[24px] bg-white px-4 py-4 shadow-[0_16px_40px_rgba(15,23,42,0.06)]`}
+            className={`${field.wide ? "col-span-12" : "col-span-12 sm:col-span-6"} rounded-[24px] border border-black/10 bg-white px-4 py-4 shadow-[var(--rf-apple-shadow-soft)]`}
           >
             <Typography className="apple-label-text font-bold uppercase text-[var(--rf-apple-muted)]">
               {field.label}
@@ -689,7 +689,7 @@ export default function BookingReceiptCard({
         )}
       </Box>
 
-      <Box className="mt-6 overflow-hidden rounded-[34px] border border-black/6 bg-white shadow-[0_28px_80px_rgba(15,23,42,0.08)]">
+      <Box className="mt-6 overflow-hidden rounded-[34px] border border-black/10 bg-white shadow-[var(--rf-apple-shadow-soft)]">
         <Box className="bg-[linear-gradient(135deg,#081425_0%,#172554_58%,#1e40af_100%)] px-6 py-6 text-white md:px-8 md:py-8">
           <Box className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
             <Box className="min-w-0">
@@ -723,7 +723,7 @@ export default function BookingReceiptCard({
 
         <Box className="space-y-5 px-5 py-5 md:px-8 md:py-8">
           <Box className="grid gap-4 md:grid-cols-[minmax(0,1fr)_280px]">
-            <Box className="rounded-[28px] border border-black/6 bg-[#f8fafc] p-5">
+            <Box className="rounded-[28px] border border-black/10 bg-[#f8fafc] p-5 shadow-[var(--rf-apple-shadow-soft)]">
               <Typography className="apple-label-text font-bold uppercase text-[var(--rf-apple-muted)]">
                 รหัสการจอง
               </Typography>
@@ -745,7 +745,7 @@ export default function BookingReceiptCard({
           <ReceiptPreviewSection title="ข้อมูลผู้จอง" fields={customerFields} />
           <ReceiptPreviewSection title="รายละเอียดการเช่า" fields={tripFields} />
 
-          <Box className="rounded-[30px] border border-black/6 bg-[#f8fafc] p-4 md:p-5">
+          <Box className="rounded-[30px] border border-black/10 bg-[#f8fafc] p-4 shadow-[var(--rf-apple-shadow-soft)] md:p-5">
             <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
               หมายเหตุ
             </Typography>

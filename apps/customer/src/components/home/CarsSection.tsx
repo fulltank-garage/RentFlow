@@ -129,7 +129,7 @@ export default function CarsSection({ cars, formatTHB, error }: Props) {
             </Card>
           ))
         ) : (
-          <Box className="flex min-h-48 items-center justify-center rounded-[30px] border border-dashed border-black/10 bg-white px-8 py-12 text-center md:col-span-2 md:px-12 lg:col-span-3">
+          <Box className="flex min-h-48 items-center justify-center rounded-[30px] border border-black/10 bg-white px-8 py-12 text-center md:col-span-2 md:px-12 lg:col-span-3">
             <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
               ยังไม่มีรถแนะนำในตอนนี้
             </Typography>

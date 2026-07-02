@@ -60,14 +60,9 @@ export default function ContactPage() {
         </Alert>
       ) : null}
 
-      <Box className="mt-10 grid gap-5 lg:grid-cols-12">
-        <Box className="lg:col-span-5">
-          <ContactInfoCard branches={branches} />
-        </Box>
-
-        <Box className="lg:col-span-7">
-          <ContactFormCard />
-        </Box>
+      <Box className="mt-10 space-y-8">
+        <ContactFormCard />
+        <ContactInfoCard branches={branches} />
       </Box>
     </Container>
     </Box>

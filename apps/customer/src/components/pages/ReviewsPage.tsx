@@ -67,6 +67,7 @@ export default function ReviewsPage() {
   const [loading, setLoading] = React.useState(true);
   const [reviewsError, setReviewsError] = React.useState<string | null>(null);
   const [reloadTick, setReloadTick] = React.useState(0);
+  const hasLoadedReviewsRef = React.useRef(false);
   const [snackbar, setSnackbar] = React.useState<{
     open: boolean;
     message: string;
@@ -89,13 +90,20 @@ export default function ReviewsPage() {
 
   React.useEffect(() => {
     let cancelled = false;
+    const isInitialLoad = !hasLoadedReviewsRef.current;
 
-    setLoading(true);
-    setReviewsError(null);
+    if (isInitialLoad) {
+      setLoading(true);
+      setReviewsError(null);
+    }
+
     reviewsApi
       .getReviews({ marketplace: true })
       .then((res) => {
-        if (!cancelled) setReviews(res.data.items);
+        if (!cancelled) {
+          setReviews(res.data.items);
+          setReviewsError(null);
+        }
       })
       .catch((error: unknown) => {
         if (!cancelled) {
@@ -104,7 +112,10 @@ export default function ReviewsPage() {
         }
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          hasLoadedReviewsRef.current = true;
+          setLoading(false);
+        }
       });
 
     return () => {

@@ -53,7 +53,7 @@ export default function ClassPage({ slug }: { slug: string }) {
           {cars.length ? (
             cars.map((car) => <CarCard key={car.id} car={car} />)
           ) : (
-            <Box className="rounded-[30px] border border-dashed border-black/10 bg-white p-12 text-center text-sm font-semibold text-[var(--rf-apple-muted)] md:col-span-2 lg:col-span-3">
+            <Box className="rounded-[30px] border border-black/10 bg-white p-12 text-center text-sm font-semibold text-[var(--rf-apple-muted)] md:col-span-2 lg:col-span-3">
               ยังไม่มีรถประเภทนี้
             </Box>
           )}

@@ -46,13 +46,14 @@ type Props = {
   returnDate: string;
   setReturnDate: (v: string) => void;
 
-  q: string;
-  setQ: (v: string) => void;
-
   carTypes: readonly CarType[];
   locations: readonly LocationOption[];
   carTypesError?: string | null;
   locationsError?: string | null;
+};
+
+type DatePickerInput = HTMLInputElement & {
+  showPicker?: () => void;
 };
 
 export default function HeroSection({
@@ -65,8 +66,6 @@ export default function HeroSection({
   setPickupDate,
   returnDate,
   setReturnDate,
-  q,
-  setQ,
   carTypes,
   locations,
   carTypesError,
@@ -78,6 +77,17 @@ export default function HeroSection({
   const [heroIndex, setHeroIndex] = React.useState(0);
   const [highlightAnnouncement, setHighlightAnnouncement] = React.useState(true);
   const [loadedHeroImages, setLoadedHeroImages] = React.useState<string[]>([]);
+
+  const openDatePicker = (event: React.MouseEvent<HTMLInputElement>) => {
+    const input = event.currentTarget as DatePickerInput;
+    input.focus();
+
+    try {
+      input.showPicker?.();
+    } catch {
+      // Some browsers only allow the native picker from direct user activation.
+    }
+  };
 
   React.useEffect(() => {
     if (!heroImages.length) return;
@@ -123,7 +133,6 @@ export default function HeroSection({
     if (location) params.set("location", location);
     if (nextPickupDate) params.set("pickupDate", nextPickupDate);
     if (nextReturnDate) params.set("returnDate", nextReturnDate);
-    if (q.trim()) params.set("q", q.trim());
     if (type && type !== "All") params.set("type", type);
 
     router.push(`/cars?${params.toString()}`);
@@ -140,7 +149,8 @@ export default function HeroSection({
           backgroundColor: highlightAnnouncement
             ? "var(--rf-apple-blue)"
             : "#ececef",
-          transition: "background-color .7s ease",
+          transition:
+            "background-color var(--rf-apple-hover-card-duration) var(--rf-apple-hover-ease)",
         }}
       >
         <Container maxWidth="lg">
@@ -150,7 +160,8 @@ export default function HeroSection({
               className="apple-announcement-text max-w-4xl tracking-[-0.016em]"
               sx={{
                 color: highlightAnnouncement ? "white" : "var(--rf-apple-ink)",
-                transition: "color .7s ease",
+                transition:
+                  "color var(--rf-apple-hover-card-duration) var(--rf-apple-hover-ease)",
               }}
             >
               <Box
@@ -170,7 +181,7 @@ export default function HeroSection({
                     fontWeight: 400,
                     boxShadow: "none",
                     transition:
-                      "opacity .3s ease, color .7s ease, text-decoration-color .7s ease",
+                      "opacity var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease), color var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease), text-decoration-color var(--rf-apple-hover-control-duration) var(--rf-apple-hover-ease)",
                   },
                   "& a:hover": {
                     opacity: 0.88,
@@ -284,7 +295,7 @@ export default function HeroSection({
                       ค้นหารถเช่า
                     </Typography>
                     <Typography className="apple-subtitle mt-2 text-sm">
-                      เลือกช่วงเวลา สาขา และรุ่นที่ต้องการ
+                      เลือกช่วงเวลา สาขา และประเภทรถที่ต้องการ
                     </Typography>
                   </Box>
 
@@ -307,7 +318,7 @@ export default function HeroSection({
                       />
                     ) : null}
 
-                    <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.08fr_1fr_1fr]">
+                    <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.95fr_0.95fr_0.9fr_auto] xl:items-stretch">
                       <TextField
                         select
                         id="home-search-pickup-branch"
@@ -316,11 +327,23 @@ export default function HeroSection({
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         fullWidth
-                        InputLabelProps={{ htmlFor: undefined }}
-                        SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
+                        InputLabelProps={{ htmlFor: undefined, shrink: true }}
+                        SelectProps={{
+                          displayEmpty: true,
+                          MenuProps: rentFlowSelectMenuProps,
+                          renderValue: (selected) =>
+                            selected ? (
+                              locations.find((loc) => loc.value === selected)?.label ||
+                              String(selected)
+                            ) : (
+                              <Box component="span" className="text-[var(--rf-apple-muted)]">
+                                กรุณาเลือกสาขา
+                              </Box>
+                            ),
+                        }}
                         sx={Herotextfield}
                       >
-                        <MenuItem value="">ทุกสาขา</MenuItem>
+                        <MenuItem value="">กรุณาเลือกสาขา</MenuItem>
                         {locations.map((loc) => (
                           <MenuItem key={loc.value} value={loc.value}>
                             {loc.label}
@@ -345,7 +368,11 @@ export default function HeroSection({
                         }}
                         fullWidth
                         InputLabelProps={{ shrink: true }}
-                        inputProps={{ min: today }}
+                        inputProps={{
+                          min: today,
+                          onClick: openDatePicker,
+                          style: { cursor: "pointer" },
+                        }}
                         sx={Herotextfield}
                       />
 
@@ -360,12 +387,13 @@ export default function HeroSection({
                         }
                         fullWidth
                         InputLabelProps={{ shrink: true }}
-                        inputProps={{ min: minReturnDate }}
+                        inputProps={{
+                          min: minReturnDate,
+                          onClick: openDatePicker,
+                          style: { cursor: "pointer" },
+                        }}
                         sx={Herotextfield}
                       />
-                    </Box>
-
-                    <Box className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr_auto] lg:items-stretch">
                       <TextField
                         select
                         id="home-search-car-type"
@@ -386,21 +414,14 @@ export default function HeroSection({
                         ))}
                       </TextField>
 
-                      <TextField
-                        id="home-search-car-model"
-                        name="carModel"
-                        label="ค้นหาชื่อรุ่น"
-                        value={q}
-                        onChange={(e) => setQ(e.target.value)}
-                        placeholder="เช่น Yaris, Cross..."
-                        fullWidth
-                        sx={Herotextfield}
-                      />
-
                       <Button
                         size="large"
                         variant="contained"
-                        className="min-h-12! rounded-full! px-10! text-base! max-lg:w-full lg:min-w-[190px]"
+                        className="min-h-12! w-full rounded-full! px-8! text-base! md:col-span-2 xl:col-span-1 xl:w-auto"
+                        sx={{
+                          minWidth: "180px !important",
+                          whiteSpace: "nowrap",
+                        }}
                         onClick={handleSearch}
                       >
                         ค้นหารถว่าง

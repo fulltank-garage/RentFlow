@@ -28,7 +28,7 @@ export default function BookingAddons({
         เลือกบริการเสริมที่ต้องการ ระบบจะรวมยอดนี้ไว้ในสรุปการจองและยอดชำระ
       </Typography>
 
-      <Box className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <Box className="mt-4 rounded-2xl border border-black/10 bg-slate-50 p-4 shadow-[var(--rf-apple-shadow-soft)]">
         {addonOptions.length === 0 ? (
           <Typography className="apple-body-sm text-slate-500">
             ร้านนี้ยังไม่ได้ตั้งค่าบริการเสริมเพิ่มเติม

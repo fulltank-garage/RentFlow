@@ -24,6 +24,7 @@ export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
   const [carsError, setCarsError] = React.useState<string | null>(null);
   const [branchesError, setBranchesError] = React.useState<string | null>(null);
   const [reloadTick, setReloadTick] = React.useState(0);
+  const hasLoadedDirectoryRef = React.useRef(false);
 
   const refreshFromRealtime = React.useCallback((event?: RentFlowCarRealtimeEvent) => {
     if (event?.type === "car.status.changed") {
@@ -76,10 +77,15 @@ export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
     let cancelled = false;
 
     async function loadDirectory() {
-      setLoading(true);
-      setError(null);
-      setCarsError(null);
-      setBranchesError(null);
+      const isInitialLoad = !hasLoadedDirectoryRef.current;
+
+      if (isInitialLoad) {
+        setLoading(true);
+        setError(null);
+        setCarsError(null);
+        setBranchesError(null);
+      }
+
       const start = Date.now();
 
       const [carsResult, branchesResult] = await Promise.allSettled([
@@ -99,30 +105,39 @@ export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
 
       if (carsResult.status === "fulfilled") {
         setCars(carsResult.value.items);
+        setCarsError(null);
       } else {
         const message = getErrorMessage(carsResult.reason, "โหลดข้อมูลรถไม่สำเร็จ");
-        setCars([]);
+        if (isInitialLoad) {
+          setCars([]);
+        }
         setCarsError(message);
         messages.push(message);
       }
 
       if (branchesResult.status === "fulfilled") {
         setBranches(branchesResult.value.data);
+        setBranchesError(null);
       } else {
         const message = getErrorMessage(
           branchesResult.reason,
           "โหลดข้อมูลสาขาไม่สำเร็จ"
         );
-        setBranches([]);
+        if (isInitialLoad) {
+          setBranches([]);
+        }
         setBranchesError(message);
         messages.push(message);
       }
 
       setError(messages.length ? messages.join(" • ") : null);
-      const elapsed = Date.now() - start;
-      const delay = Math.max(500 - elapsed, 0);
-      await new Promise((resolve) => window.setTimeout(resolve, delay));
+      if (isInitialLoad) {
+        const elapsed = Date.now() - start;
+        const delay = Math.max(500 - elapsed, 0);
+        await new Promise((resolve) => window.setTimeout(resolve, delay));
+      }
       if (cancelled) return;
+      hasLoadedDirectoryRef.current = true;
       setLoading(false);
     }
 

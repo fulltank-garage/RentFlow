@@ -11,6 +11,7 @@ type Props = {
     showShop?: boolean;
     loading?: boolean;
     error?: string | null;
+    hasAvailableCars?: boolean;
 };
 
 function ShopBoxSkeleton() {
@@ -59,7 +60,13 @@ function CarGridSkeletonCard({ showShop = false }: { showShop?: boolean }) {
     );
 }
 
-export default function CarGrid({ cars, showShop = false, loading = false, error }: Props) {
+export default function CarGrid({
+    cars,
+    showShop = false,
+    loading = false,
+    error,
+    hasAvailableCars = false,
+}: Props) {
     if (loading) {
         return (
             <Box className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -82,12 +89,16 @@ export default function CarGrid({ cars, showShop = false, loading = false, error
 
     if (cars.length === 0) {
         return (
-            <Box className="mt-8 rounded-[30px] border border-dashed border-black/10 bg-white p-12 text-center">
+            <Box className="mt-8 rounded-[30px] border border-black/10 bg-white p-12 text-center">
                 <Typography className="text-base font-semibold text-[var(--rf-apple-ink)]">
-                    ไม่พบรถที่ตรงกับเงื่อนไข
+                    {hasAvailableCars
+                        ? "ไม่พบรถที่ตรงกับเงื่อนไข"
+                        : "ยังไม่มีรถที่พร้อมแสดงในตอนนี้"}
                 </Typography>
                 <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
-                    ลองเปลี่ยนคำค้นหา หรือเลือกประเภทอื่น
+                    {hasAvailableCars
+                        ? "ลองเปลี่ยนคำค้นหา หรือเลือกประเภทอื่น"
+                        : "เมื่อมีรถพร้อมให้เช่า รถจะแสดงในหน้านี้"}
                 </Typography>
             </Box>
         );

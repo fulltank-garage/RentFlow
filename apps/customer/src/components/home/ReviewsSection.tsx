@@ -54,6 +54,7 @@ export default function ReviewsSection() {
   const [reviewsError, setReviewsError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [reloadTick, setReloadTick] = React.useState(0);
+  const hasLoadedReviewsRef = React.useRef(false);
   const [snackbar, setSnackbar] = React.useState<SnackbarState>({
     open: false,
     message: "",
@@ -71,14 +72,20 @@ export default function ReviewsSection() {
     let cancelled = false;
 
     async function loadReviews() {
+      const isInitialLoad = !hasLoadedReviewsRef.current;
+
       try {
-        setLoadingReviews(true);
-        setReviewsError(null);
+        if (isInitialLoad) {
+          setLoadingReviews(true);
+          setReviewsError(null);
+        }
+
         const res = await reviewsApi.getReviews({
           marketplace: isMarketplace,
         });
         if (!cancelled) {
           setReviews(res.data.items);
+          setReviewsError(null);
         }
       } catch (err: unknown) {
         if (!cancelled) {
@@ -87,6 +94,7 @@ export default function ReviewsSection() {
         }
       } finally {
         if (!cancelled) {
+          hasLoadedReviewsRef.current = true;
           setLoadingReviews(false);
         }
       }
@@ -320,7 +328,7 @@ export default function ReviewsSection() {
               </Box>
             </Box>
           ) : (
-            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-dashed border-black/10 bg-[var(--rf-apple-surface-soft)] p-8 text-center">
+            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-8 text-center">
               <Typography className="mt-4 text-sm font-semibold text-[var(--rf-apple-ink)]">
                 ยังไม่มีรีวิว
               </Typography>
@@ -497,7 +505,7 @@ export default function ReviewsSection() {
               ))}
             </Box>
           ) : (
-            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-dashed border-black/10 bg-[var(--rf-apple-surface-soft)] p-8 text-center">
+            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-8 text-center">
               <Typography className="mt-4 text-sm font-semibold text-[var(--rf-apple-ink)]">
                 ยังไม่มีรีวิว
               </Typography>

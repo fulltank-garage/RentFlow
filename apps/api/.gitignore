@@ -1,3 +1,4 @@
 .env
+.go-build-cache/
 tmp/
 air-build.log

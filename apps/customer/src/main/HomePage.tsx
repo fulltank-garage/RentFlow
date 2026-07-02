@@ -42,7 +42,6 @@ export default function HomePage({
   const [type, setType] = React.useState<CarType | "All">("All");
   const [pickupDate, setPickupDate] = React.useState("");
   const [returnDate, setReturnDate] = React.useState("");
-  const [q, setQ] = React.useState("");
   const {
     siteMode,
     cars,
@@ -331,8 +330,6 @@ export default function HomePage({
         setPickupDate={setPickupDate}
         returnDate={returnDate}
         setReturnDate={setReturnDate}
-        q={q}
-        setQ={setQ}
         carTypes={carTypes}
         locations={locations}
         carTypesError={carsError}
@@ -355,6 +352,7 @@ export default function HomePage({
             limit={12}
             dataError={marketplaceTenantsError}
             supportingError={carsError}
+            hasAvailableCars={cars.length > 0}
           />
         </>
       ) : (

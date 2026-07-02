@@ -3,13 +3,18 @@ import type { Metadata } from "next";
 import PrivacyPage from "@/src/components/pages/PrivacyPage";
 import PrivacyPageSkeleton from "@/src/components/privacy/PrivacyPageSkeleton";
 import { buildRentFlowCarPageMetadata } from "@/src/lib/seo";
-import { getRentFlowCarRequestHost } from "@/src/lib/server-tenant";
+import {
+  getInitialRentFlowCarTenantProfile,
+  getRentFlowCarRequestHost,
+} from "@/src/lib/server-tenant";
 
 export async function generateMetadata(): Promise<Metadata> {
   const host = await getRentFlowCarRequestHost();
+  const tenant = await getInitialRentFlowCarTenantProfile(host);
 
   return buildRentFlowCarPageMetadata({
     host,
+    tenant,
     pathname: "/privacy",
     title: "นโยบายความเป็นส่วนตัว",
     description:

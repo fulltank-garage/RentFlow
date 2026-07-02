@@ -68,6 +68,7 @@ export default function ShopsPage() {
         layout="page"
         dataError={tenantsError}
         supportingError={carsError}
+        hasAvailableCars={cars.length > 0}
       />
     </Box>
   );

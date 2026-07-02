@@ -128,13 +128,15 @@ export default function FloatingAiChat() {
     <Box className="fixed bottom-5 right-5 z-50 md:bottom-7 md:right-7">
       <Paper
         elevation={0}
-        className={`absolute bottom-0 right-0 w-[calc(100vw-40px)] max-w-[420px] overflow-hidden rounded-[30px]! border border-black/10 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] transform-gpu will-change-[transform,opacity,filter] transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`absolute bottom-0 right-0 w-[calc(100vw-40px)] max-w-[420px] overflow-hidden rounded-[30px]! border border-black/10 bg-white shadow-[var(--rf-apple-shadow-soft)] transform-gpu will-change-[transform,opacity,filter] transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           open
             ? "pointer-events-auto translate-y-0 scale-[1] opacity-100 blur-0"
             : "pointer-events-none translate-y-3 scale-[0.985] opacity-0 blur-[6px]"
         }`}
         sx={{
           transformOrigin: "bottom right",
+          borderColor: "var(--rf-apple-border)",
+          boxShadow: "var(--rf-apple-shadow-soft) !important",
         }}
       >
           <Box className="bg-[var(--rf-apple-ink)] px-5 py-4 text-white">
@@ -168,23 +170,27 @@ export default function FloatingAiChat() {
               </Typography>
             </Box>
 
-            <Box className="mt-4 grid gap-2 sm:grid-cols-2">
+            <Box className="mt-4 flex flex-wrap gap-2">
               {SUGGESTIONS.map((suggestion) => (
                 <Chip
                   key={suggestion}
                   size="small"
                   label={suggestion}
                   onClick={() => setQuery(suggestion)}
-                  className={`apple-body-sm h-auto! min-h-11! w-full! cursor-pointer justify-start! rounded-[18px]! border px-2! py-2! text-left! font-bold! leading-5! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006] ${
+                  className={`apple-body-sm h-auto! min-h-11! max-w-full! cursor-pointer justify-start! rounded-[18px]! border px-2! py-2! text-left! font-bold! leading-5! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006] ${
                     query === suggestion
                       ? "border-[var(--rf-apple-blue)]! bg-[var(--rf-apple-blue)]! text-white!"
                       : "border-black/10! bg-[var(--rf-apple-surface-soft)]! text-[var(--rf-apple-ink)]! hover:bg-white!"
                   }`}
                   sx={{
+                    maxWidth: "100%",
                     "& .MuiChip-label": {
                       display: "block",
+                      maxWidth: "100%",
                       overflow: "visible",
+                      overflowWrap: "anywhere",
                       whiteSpace: "normal",
+                      wordBreak: "break-word",
                     },
                   }}
                 />
@@ -272,7 +278,7 @@ export default function FloatingAiChat() {
         }`}
       >
           <Box
-            className={`hidden rounded-[20px] border border-black/10 bg-white px-4 py-2 text-right shadow-[0_14px_40px_rgba(0,0,0,0.12)] transition-all duration-500 sm:block ${
+            className={`hidden rounded-[20px] border border-black/10 bg-white px-4 py-2 text-right shadow-[var(--rf-apple-shadow-soft)] transition-all duration-500 sm:block ${
               !open && showHint
                 ? "translate-x-0 opacity-100"
                 : "pointer-events-none translate-x-3 opacity-0"
@@ -288,43 +294,33 @@ export default function FloatingAiChat() {
           <Button
             aria-label="เปิดผู้ช่วย AI"
             onClick={() => setOpen(true)}
-            className="h-16! min-w-[64px]! rounded-full! bg-[var(--rf-apple-ink)]! px-4! text-white! shadow-[0_18px_48px_rgba(0,0,0,0.28)] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.02] hover:bg-black!"
+            className="h-16! w-16! min-w-[64px]! max-w-[64px]! rounded-full! bg-[var(--rf-apple-ink)]! p-0! text-white! shadow-[var(--rf-apple-shadow)] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.02] hover:bg-black!"
             sx={{
-              boxShadow:
-                "0 20px 54px rgba(15, 23, 42, 0.34), 0 8px 22px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(255,255,255,0.04) inset",
+              aspectRatio: "1 / 1",
+              borderRadius: "9999px !important",
+              boxShadow: "var(--rf-apple-shadow)",
+              height: "64px !important",
+              minWidth: "64px !important",
+              padding: "0px !important",
+              width: "64px !important",
               "&:hover": {
-                boxShadow:
-                  "0 26px 64px rgba(15, 23, 42, 0.4), 0 12px 28px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(255,255,255,0.06) inset",
+                boxShadow: "var(--rf-apple-shadow)",
               },
             }}
           >
-            <Box
-              component="span"
-              aria-hidden="true"
-              className="flex h-8 w-8 items-center justify-center"
-            >
               <Box
-                component="svg"
-                viewBox="0 0 24 24"
-                className="h-8 w-8"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                component="span"
+                aria-hidden="true"
+                className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full"
               >
-                <path
-                  d="M12 2.8L13.7 8.3L19.2 10L13.7 11.7L12 17.2L10.3 11.7L4.8 10L10.3 8.3L12 2.8Z"
-                  fill="white"
+                <Image
+                  src="/ai-chatbot-icon-transparent.png"
+                  alt=""
+                  fill
+                  sizes="48px"
+                  className="object-contain p-1"
+                  priority={false}
                 />
-                <path
-                  d="M18.3 4.4L18.9 6.1L20.6 6.7L18.9 7.3L18.3 9L17.7 7.3L16 6.7L17.7 6.1L18.3 4.4Z"
-                  fill="white"
-                  fillOpacity="0.72"
-                />
-                <path
-                  d="M6 15.8L6.5 17.1L7.8 17.6L6.5 18.1L6 19.4L5.5 18.1L4.2 17.6L5.5 17.1L6 15.8Z"
-                  fill="white"
-                  fillOpacity="0.72"
-                />
-              </Box>
             </Box>
           </Button>
       </Stack>

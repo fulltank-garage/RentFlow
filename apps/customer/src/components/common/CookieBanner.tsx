@@ -70,8 +70,8 @@ export default function CookieBanner() {
         className="rounded-2xl border border-slate-200 bg-white"
         sx={{
           width: { xs: "calc(100vw - 24px)", sm: 720 },
-          boxShadow:
-            "0 10px 30px rgba(2,6,23,0.12), 0 2px 10px rgba(2,6,23,0.06)",
+          borderColor: "var(--rf-apple-border)",
+          boxShadow: "var(--rf-apple-shadow-soft)",
           overflow: "hidden",
         }}
       >

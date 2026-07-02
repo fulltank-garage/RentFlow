@@ -28,6 +28,17 @@ const classRoutes = [
   "/classes/van",
 ];
 
+const tenantStaticRoutes = [
+  "",
+  "/cars",
+  "/features",
+  "/reviews",
+  "/contact",
+  "/help",
+  "/privacy",
+  "/terms",
+];
+
 function getTenantSitemapUrl(tenant: {
   domainSlug: string;
   publicDomain?: string;
@@ -43,6 +54,10 @@ function getTenantSitemapUrl(tenant: {
   }
 
   return `https://${tenant.domainSlug}.${rootDomain}/`;
+}
+
+function joinSitemapUrl(baseUrl: string, route: string) {
+  return new URL(route || "/", baseUrl).toString();
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -70,12 +85,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const tenantEntries = tenants
     .filter((tenant) => tenant.domainSlug)
-    .map((tenant) => ({
-      url: getTenantSitemapUrl(tenant, rootDomain),
-      lastModified: tenant.updatedAt ? new Date(tenant.updatedAt) : now,
-      changeFrequency: "daily" as const,
-      priority: 0.9,
-    }));
+    .flatMap((tenant) => {
+      const tenantBaseUrl = getTenantSitemapUrl(tenant, rootDomain);
+      const tenantRoutes = [...tenantStaticRoutes, ...classRoutes];
+
+      return tenantRoutes.map((route) => ({
+        url: joinSitemapUrl(tenantBaseUrl, route),
+        lastModified: tenant.updatedAt ? new Date(tenant.updatedAt) : now,
+        changeFrequency: route === "" ? ("daily" as const) : ("weekly" as const),
+        priority: route === "" ? 0.9 : 0.7,
+      }));
+    });
 
   return [...staticEntries, ...carEntries, ...tenantEntries];
 }

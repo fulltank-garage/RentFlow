@@ -37,8 +37,6 @@ export default function CarsPage() {
   const shopNameFromQuery = searchParams.get("shopName")?.trim() || "";
 
   const {
-    q,
-    setQ,
     type,
     setType,
     sort,
@@ -54,7 +52,7 @@ export default function CarsPage() {
   } = useCarsFilters();
 
   const { cars, loading, error } = useCarsCatalog({
-    q,
+    q: "",
     type,
     sort,
     location,
@@ -121,7 +119,6 @@ export default function CarsPage() {
       </Box>
 
       <CarsFilterBar
-        q={q}
         type={type}
         sort={sort}
         location={location}
@@ -131,10 +128,6 @@ export default function CarsPage() {
         locations={locations}
         carTypesError={directoryCarsError}
         locationsError={branchesError}
-        onQChange={(value) => {
-          setQ(value);
-          updateUrl({ q: value });
-        }}
         onTypeChange={(value) => {
           setType(value);
           updateUrl({ type: value });
@@ -173,6 +166,7 @@ export default function CarsPage() {
         showShop={isMarketplace && !isTenantCarsPage}
         loading={loading}
         error={error}
+        hasAvailableCars={directoryCars.length > 0}
       />
     </Container>
     </Box>

@@ -164,7 +164,7 @@ export default function CarClassSection({
               );
             })
           ) : (
-            <Box className="flex min-h-40 items-center justify-center rounded-[26px] border border-dashed border-black/10 bg-[var(--rf-apple-surface-soft)] px-8 py-12 text-center sm:col-span-2 md:min-h-48 md:px-12 lg:col-span-4">
+            <Box className="flex min-h-40 items-center justify-center rounded-[26px] border border-black/10 bg-[var(--rf-apple-surface-soft)] px-8 py-12 text-center sm:col-span-2 md:min-h-48 md:px-12 lg:col-span-4">
               <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
                 ยังไม่มีการจัดกลุ่มประเภทรถในตอนนี้
               </Typography>

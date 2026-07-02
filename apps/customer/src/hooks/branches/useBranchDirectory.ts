@@ -13,6 +13,7 @@ export function useBranchDirectory() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [reloadTick, setReloadTick] = React.useState(0);
+  const hasLoadedBranchesRef = React.useRef(false);
 
   useRentFlowCarRealtimeRefresh({
     events: ["branch.changed", "tenant.updated"],
@@ -26,31 +27,38 @@ export function useBranchDirectory() {
     let cancelled = false;
 
     async function loadBranches() {
+      const isInitialLoad = !hasLoadedBranchesRef.current;
       const start = Date.now();
 
       try {
-        setLoading(true);
-        setError(null);
+        if (isInitialLoad) {
+          setLoading(true);
+          setError(null);
+        }
 
         const res = await branchesApi.getBranches({
           marketplace: siteMode === "marketplace",
         });
         if (!cancelled) {
           setBranches(res.data);
+          setError(null);
         }
       } catch (err: unknown) {
         if (!cancelled) {
-          setBranches([]);
+          if (isInitialLoad) {
+            setBranches([]);
+          }
           setError(getErrorMessage(err, "โหลดข้อมูลสาขาไม่สำเร็จ"));
         }
       } finally {
-        if (!cancelled) {
+        if (!cancelled && isInitialLoad) {
           const elapsed = Date.now() - start;
           const delay = Math.max(500 - elapsed, 0);
           await new Promise((resolve) => window.setTimeout(resolve, delay));
         }
 
         if (!cancelled) {
+          hasLoadedBranchesRef.current = true;
           setLoading(false);
         }
       }

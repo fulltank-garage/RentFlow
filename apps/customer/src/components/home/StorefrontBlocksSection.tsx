@@ -352,7 +352,7 @@ export default function StorefrontBlocksSection({
                 <Stack
                   direction="row"
                   spacing={1}
-                  className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-1 shadow-[0_10px_30px_rgba(15,23,42,0.16)] backdrop-blur-xl"
+                  className="absolute right-4 top-4 z-10 rounded-full border border-black/10 bg-white/90 p-1 shadow-[var(--rf-apple-shadow-soft)] backdrop-blur-xl"
                 >
                   <Button
                     size="small"
@@ -390,7 +390,7 @@ export default function StorefrontBlocksSection({
               >
                 {imageUrl || builderMode ? (
                   <Box
-                    className={`${getImageFrameClass(block.type)} overflow-hidden ${imageUrl ? "" : "border border-dashed border-slate-300"}`}
+                    className={`${getImageFrameClass(block.type)} overflow-hidden ${imageUrl ? "" : "border border-slate-200"}`}
                   >
                     {imageUrl ? (
                       <Box className={`relative w-full overflow-hidden rounded-[24px] ${getImageAspectClass(block.type)}`}>
@@ -404,7 +404,7 @@ export default function StorefrontBlocksSection({
                           <Stack
                             direction="row"
                             spacing={1}
-                            className="absolute bottom-3 right-3 rounded-full bg-white/90 p-1 shadow-[0_10px_30px_rgba(15,23,42,0.16)] backdrop-blur-xl"
+                            className="absolute bottom-3 right-3 rounded-full border border-black/10 bg-white/90 p-1 shadow-[var(--rf-apple-shadow-soft)] backdrop-blur-xl"
                           >
                             <Button
                               component="label"
@@ -586,7 +586,7 @@ export default function StorefrontBlocksSection({
       </Box>
 
       {builderMode ? (
-        <Box className="mt-5 grid place-items-center rounded-[30px] border border-dashed border-blue-300 bg-blue-50/70 p-6">
+        <Box className="mt-5 grid place-items-center rounded-[30px] border border-blue-200 bg-blue-50/70 p-6">
           <Button
             variant="contained"
             onClick={() => onBuilderAction?.("add")}

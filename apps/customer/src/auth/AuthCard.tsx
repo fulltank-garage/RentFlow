@@ -19,6 +19,7 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import PasswordVisibilityAdornment from "@/src/components/common/PasswordVisibilityAdornment";
 import LoginCardSkeleton from "@/src/components/auth/LoginCardSkeleton";
 import RegisterCardSkeleton from "@/src/components/auth/RegisterCardSkeleton";
 import { getErrorMessage } from "@/src/lib/api-error";
@@ -69,6 +70,8 @@ export default function AuthCard({
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [snackbar, setSnackbar] = React.useState<SnackbarState>({
     open: false,
@@ -244,13 +247,21 @@ export default function AuthCard({
                 id="auth-password"
                 name="password"
                 label="รหัสผ่าน"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 autoComplete={isRegister ? "new-password" : "current-password"}
                 fullWidth
                 sx={fieldSX}
                 helperText={isRegister ? "อย่างน้อย 8 ตัวอักษร" : " "}
+                InputProps={{
+                  endAdornment: (
+                    <PasswordVisibilityAdornment
+                      visible={showPassword}
+                      onToggle={() => setShowPassword((prev) => !prev)}
+                    />
+                  ),
+                }}
               />
 
               {isRegister ? (
@@ -258,7 +269,7 @@ export default function AuthCard({
                   id="auth-confirm-password"
                   name="confirmPassword"
                   label="ยืนยันรหัสผ่าน"
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   autoComplete="new-password"
@@ -270,6 +281,14 @@ export default function AuthCard({
                       : " "
                   }
                   sx={fieldSX}
+                  InputProps={{
+                    endAdornment: (
+                      <PasswordVisibilityAdornment
+                        visible={showConfirmPassword}
+                        onToggle={() => setShowConfirmPassword((prev) => !prev)}
+                      />
+                    ),
+                  }}
                 />
               ) : null}
 

@@ -135,12 +135,26 @@ export default function Footer({
       className="border-t border-black/10 bg-[var(--rf-apple-surface-soft)]"
       aria-label="Site footer"
     >
-      <Container maxWidth="lg" className="py-10 md:py-12">
+      <Container
+        maxWidth="lg"
+        className="py-10 md:py-12"
+        sx={{
+          "@media (min-width: 1200px)": {
+            maxWidth: "1360px",
+            paddingLeft: "24px",
+            paddingRight: "24px",
+          },
+        }}
+      >
         <Box className="grid gap-8 md:grid-cols-3 md:gap-10">
           {/* Brand */}
           <Box className="space-y-3">
             <Stack direction="row" spacing={1} alignItems="center">
-              <Box className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md">
+              <Box
+                className={`relative h-12 shrink-0 overflow-hidden rounded-md ${
+                  siteMode === "marketplace" ? "w-36 sm:w-40" : "w-12"
+                }`}
+              >
                 <FooterBrandLogo src={brandLogoSrc} name={brandName} />
               </Box>
 

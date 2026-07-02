@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import ClassPage from "@/src/components/pages/ClassPage";
 import { buildRentFlowCarClassMetadata } from "@/src/lib/seo";
-import { getRentFlowCarRequestHost } from "@/src/lib/server-tenant";
+import {
+  getInitialRentFlowCarTenantProfile,
+  getRentFlowCarRequestHost,
+} from "@/src/lib/server-tenant";
 
 export async function generateMetadata({
   params,
@@ -12,8 +15,9 @@ export async function generateMetadata({
     params,
     getRentFlowCarRequestHost(),
   ]);
+  const tenant = await getInitialRentFlowCarTenantProfile(host);
 
-  return buildRentFlowCarClassMetadata({ host, slug });
+  return buildRentFlowCarClassMetadata({ host, slug, tenant });
 }
 
 export default async function Page({

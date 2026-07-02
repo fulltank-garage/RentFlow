@@ -1,11 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import {
-  Box,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 export default function ContactFormCard() {
   return (
@@ -32,23 +27,13 @@ export default function ContactFormCard() {
 
         <Box className="apple-card rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
           <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
-            จัดการรายการจอง
+            ช่วยให้ตรวจสอบเร็วขึ้น
           </Typography>
-          <Typography className="apple-body-sm mt-2 text-[var(--rf-apple-muted)]">
-            หากต้องการตรวจสอบสถานะหรือรายละเอียดการจอง สามารถเปิดหน้ารายการจองของคุณได้ทันที
+          <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+            หากติดต่อเรื่องการจอง แนะนำแนบรหัสการจอง วันรับ-คืนรถ และสาขาที่เกี่ยวข้อง เพื่อให้ทีมงานดูแลได้เร็วขึ้น
           </Typography>
-
-          <Box className="mt-4 flex flex-wrap gap-2">
-            <Button
-              component={Link}
-              href="/my-bookings"
-              variant="contained"
-              className="rounded-full! font-semibold!"
-            >
-              ดูรายการจองของฉัน
-            </Button>
-          </Box>
         </Box>
+
       </Box>
     </Box>
   );

@@ -39,8 +39,7 @@ export default function AppSnackbar({
           borderRadius: "8px",
           alignItems: "center",
           fontWeight: 600,
-          boxShadow:
-            "0 12px 30px rgba(15, 23, 42, 0.14), 0 2px 8px rgba(15, 23, 42, 0.08)",
+          boxShadow: "var(--rf-apple-shadow-soft)",
           "& .MuiAlert-icon": {
             mr: 1.25,
           },

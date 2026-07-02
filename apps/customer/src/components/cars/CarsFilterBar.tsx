@@ -12,7 +12,6 @@ import { getMinReturnDate, getTodayLocalDate } from "@/src/lib/rentflow-dates";
 import type { CarType, SortKey } from "@/src/services/cars/cars.types";
 
 type Props = {
-  q: string;
   type: CarType | "all";
   sort: SortKey;
   location: string;
@@ -22,7 +21,6 @@ type Props = {
   locations: readonly LocationOption[];
   carTypesError?: string | null;
   locationsError?: string | null;
-  onQChange: (value: string) => void;
   onTypeChange: (value: CarType | "all") => void;
   onSortChange: (value: SortKey) => void;
   onLocationChange: (value: string) => void;
@@ -32,7 +30,6 @@ type Props = {
 };
 
 export default function CarsFilterBar({
-  q,
   type,
   sort,
   location,
@@ -42,7 +39,6 @@ export default function CarsFilterBar({
   locations,
   carTypesError,
   locationsError,
-  onQChange,
   onTypeChange,
   onSortChange,
   onLocationChange,
@@ -56,6 +52,9 @@ export default function CarsFilterBar({
     "& .MuiOutlinedInput-root": {
       borderRadius: "18px",
     },
+  };
+  const openDatePicker = (event: React.MouseEvent<HTMLInputElement>) => {
+    event.currentTarget.showPicker?.();
   };
 
   return (
@@ -91,23 +90,12 @@ export default function CarsFilterBar({
         </Box>
       ) : null}
 
-      <Box className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <TextField
-          id="cars-filter-search"
-          name="search"
-          label="ค้นหารถ"
-          value={q}
-          onChange={(e) => onQChange(e.target.value)}
-          size="small"
-          fullWidth
-          variant="outlined"
-          sx={fieldSX}
-        />
-
+      <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(180px,1.15fr)_minmax(150px,0.9fr)_minmax(150px,0.9fr)_minmax(150px,0.85fr)_minmax(150px,0.85fr)_minmax(150px,auto)] xl:items-stretch">
         <TextField
           select
           id="cars-filter-type"
           name="type"
+          className="xl:order-4"
           label="ประเภทรถ"
           value={type}
           onChange={(e) => onTypeChange(e.target.value as CarType | "all")}
@@ -130,17 +118,30 @@ export default function CarsFilterBar({
           select
           id="cars-filter-location"
           name="location"
+          className="xl:order-1"
           label="สาขารับรถ"
           value={location}
           onChange={(e) => onLocationChange(e.target.value)}
           size="small"
           fullWidth
           variant="outlined"
-          InputLabelProps={{ htmlFor: undefined }}
-          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
+          InputLabelProps={{ htmlFor: undefined, shrink: true }}
+          SelectProps={{
+            displayEmpty: true,
+            MenuProps: rentFlowSelectMenuProps,
+            renderValue: (selected) =>
+              selected ? (
+                locations.find((loc) => loc.value === selected)?.label ||
+                String(selected)
+              ) : (
+                <Box component="span" className="text-[var(--rf-apple-muted)]">
+                  กรุณาเลือกสาขา
+                </Box>
+              ),
+          }}
           sx={fieldSX}
         >
-          <MenuItem value="">ทั้งหมด</MenuItem>
+          <MenuItem value="">กรุณาเลือกสาขา</MenuItem>
           {locations.map((loc) => (
             <MenuItem key={loc.value} value={loc.value}>
               {loc.label}
@@ -152,13 +153,18 @@ export default function CarsFilterBar({
           type="date"
           id="cars-filter-pickup-date"
           name="pickupDate"
+          className="xl:order-2"
           label="วันรับรถ"
           value={pickupDate}
           onChange={(e) => onPickupDateChange(e.target.value)}
           size="small"
           fullWidth
           InputLabelProps={{ shrink: true }}
-          inputProps={{ min: today }}
+          inputProps={{
+            min: today,
+            onClick: openDatePicker,
+            style: { cursor: "pointer" },
+          }}
           variant="outlined"
           sx={fieldSX}
         />
@@ -167,23 +173,27 @@ export default function CarsFilterBar({
           type="date"
           id="cars-filter-return-date"
           name="returnDate"
+          className="xl:order-3"
           label="วันคืนรถ"
           value={returnDate}
           onChange={(e) => onReturnDateChange(e.target.value)}
           size="small"
           fullWidth
           InputLabelProps={{ shrink: true }}
-          inputProps={{ min: minReturnDate }}
+          inputProps={{
+            min: minReturnDate,
+            onClick: openDatePicker,
+            style: { cursor: "pointer" },
+          }}
           variant="outlined"
           sx={fieldSX}
         />
-      </Box>
 
-      <Box className="mt-4 grid gap-4 sm:grid-cols-2">
         <TextField
           select
           id="cars-filter-sort"
           name="sort"
+          className="xl:order-5"
           label="เรียงตาม"
           value={sort}
           onChange={(e) => onSortChange(e.target.value as SortKey)}
@@ -200,7 +210,11 @@ export default function CarsFilterBar({
 
         <Button
           variant="outlined"
-          className="rounded-full! py-2.5!"
+          className="min-h-10! w-full rounded-full! border-[var(--rf-apple-border)]! bg-[var(--rf-apple-surface-soft)]! px-6! py-2.5! text-sm! text-[var(--rf-apple-ink)]! transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--rf-apple-border-strong)]! hover:bg-white! hover:shadow-[var(--rf-apple-shadow-soft)]! xl:order-6 xl:w-auto"
+          sx={{
+            minWidth: "150px !important",
+            whiteSpace: "nowrap",
+          }}
           onClick={onReset}
         >
           รีเซ็ตตัวกรอง

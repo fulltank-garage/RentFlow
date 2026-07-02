@@ -37,45 +37,37 @@ export default function ContactInfoCard({
       </Typography>
 
       {branches.length ? (
-        <Box className="mt-5 space-y-4">
+        <Box className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {branches.map((branch) => (
             <Box
               key={branch.id}
-              className="apple-card rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
+              className="apple-card relative flex h-full flex-col rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
             >
-              <Box className="flex flex-wrap items-start justify-between gap-3">
-                <Box>
+              <Chip
+                size="small"
+                label={branch.isActive ? "พร้อมให้บริการ" : "ปิดให้บริการ"}
+                className={`absolute right-4 top-4! z-[1] h-6! rounded-full! px-0.5! text-[11px]! font-bold! shadow-none! [&_.MuiChip-label]:px-2! ${
+                  branch.isActive
+                    ? "!border-0 !bg-green-500 !text-[var(--primary-navy)]"
+                    : "!border-0 !bg-rose-500 !text-[var(--primary-navy)]"
+                }`}
+              />
+
+              <Box className="flex items-start">
+                <Box className="min-w-0 pr-32">
                   <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
-                    {branch.name}
+                    {branch.shopName || branch.name}
                   </Typography>
-                  {branch.shopName ? (
+                  {branch.name && branch.shopName ? (
                     <Typography className="apple-label-text mt-1 text-[var(--rf-apple-muted)]">
-                      ร้าน {branch.shopName}
+                      สาขา {branch.name}
                     </Typography>
                   ) : null}
                 </Box>
 
-                <Box className="flex flex-wrap gap-2">
-                  {branch.name ? (
-                    <Chip
-                      size="small"
-                      label={branch.name}
-                      className="!border-0 !bg-slate-100 !text-slate-700"
-                    />
-                  ) : null}
-                  <Chip
-                    size="small"
-                    label={branch.isActive ? "พร้อมให้บริการ" : "ปิดใช้งาน"}
-                    className={
-                      branch.isActive
-                        ? "!border-0 !bg-green-500 !text-white"
-                        : "!border-0 !bg-rose-500 !text-white"
-                    }
-                  />
-                </Box>
               </Box>
 
-              <Box className="mt-4 space-y-3">
+              <Box className="mt-4 flex flex-1 flex-col gap-3 border-t border-[var(--rf-apple-border)] pt-4">
                 <Box>
                   <Typography className="apple-label-text font-semibold text-[var(--rf-apple-ink)]">
                     ที่อยู่
@@ -107,20 +99,10 @@ export default function ContactInfoCard({
           ))}
         </Box>
       ) : (
-        <Box className="apple-body-sm mt-5 rounded-[18px] border border-dashed border-black/10 bg-[var(--rf-apple-surface-soft)] p-5 text-[var(--rf-apple-muted)]">
+        <Box className="apple-body-sm mt-5 rounded-[18px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-5 text-[var(--rf-apple-muted)]">
           ยังไม่พบสาขาให้ติดต่อในตอนนี้
         </Box>
       )}
-
-      <Box className="apple-card mt-5 rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
-        <Typography className="apple-label-text font-semibold text-[var(--rf-apple-ink)]">
-          ทิป
-        </Typography>
-        <Typography className="apple-label-text mt-1 text-[var(--rf-apple-muted)]">
-          หากติดต่อเรื่องการจอง แนะนำแนบรหัสการจอง วันรับ-คืนรถ
-          และสาขาที่เกี่ยวข้อง จะช่วยให้ทีมงานดูแลได้เร็วขึ้น
-        </Typography>
-      </Box>
     </Box>
   );
 }

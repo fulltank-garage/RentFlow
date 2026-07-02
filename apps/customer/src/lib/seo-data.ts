@@ -3,6 +3,7 @@ import {
   resolveRentFlowCarAssetUrl,
 } from "./runtime-api-url";
 import {
+  getRentFlowCarSiteMode,
   getRentFlowCarTenantHeaders,
   getRentFlowCarTenantSlug,
 } from "./tenant";
@@ -61,9 +62,11 @@ export async function getRentFlowCarSeoCarById(
   carId: string,
   options?: { host?: string }
 ): Promise<Car | null> {
+  const marketplace =
+    !options?.host || getRentFlowCarSiteMode(options.host) === "marketplace";
   const cars = await getRentFlowCarSeoCars({
     host: options?.host,
-    marketplace: !options?.host,
+    marketplace,
     limit: 200,
   });
 

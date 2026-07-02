@@ -19,6 +19,7 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import PasswordVisibilityAdornment from "@/src/components/common/PasswordVisibilityAdornment";
 import ForgotPasswordCardSkeleton from "@/src/components/auth/ForgotPasswordCardSkeleton";
 import { getErrorMessage } from "@/src/lib/api-error";
 import usePageReady from "@/src/hooks/usePageReady";
@@ -41,6 +42,8 @@ export default function ForgotPasswordPage() {
   const [phone, setPhone] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [showNewPassword, setShowNewPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [snackbar, setSnackbar] = React.useState<SnackbarState>({
     open: false,
@@ -180,20 +183,28 @@ export default function ForgotPasswordPage() {
                 id="forgot-password-new-password"
                 name="newPassword"
                 label="รหัสผ่านใหม่"
-                type="password"
+                type={showNewPassword ? "text" : "password"}
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
                 autoComplete="new-password"
                 fullWidth
                 sx={fieldSX}
                 helperText="อย่างน้อย 8 ตัวอักษร"
+                InputProps={{
+                  endAdornment: (
+                    <PasswordVisibilityAdornment
+                      visible={showNewPassword}
+                      onToggle={() => setShowNewPassword((prev) => !prev)}
+                    />
+                  ),
+                }}
               />
 
               <TextField
                 id="forgot-password-confirm-password"
                 name="confirmPassword"
                 label="ยืนยันรหัสผ่านใหม่"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 autoComplete="new-password"
@@ -205,6 +216,14 @@ export default function ForgotPasswordPage() {
                     : " "
                 }
                 sx={fieldSX}
+                InputProps={{
+                  endAdornment: (
+                    <PasswordVisibilityAdornment
+                      visible={showConfirmPassword}
+                      onToggle={() => setShowConfirmPassword((prev) => !prev)}
+                    />
+                  ),
+                }}
               />
 
               <Button

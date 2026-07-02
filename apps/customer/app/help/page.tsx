@@ -3,13 +3,18 @@ import type { Metadata } from "next";
 import HelpPage from "@/src/components/pages/HelpPage";
 import HelpPageSkeleton from "@/src/components/help/HelpPageSkeleton";
 import { buildRentFlowCarPageMetadata } from "@/src/lib/seo";
-import { getRentFlowCarRequestHost } from "@/src/lib/server-tenant";
+import {
+  getInitialRentFlowCarTenantProfile,
+  getRentFlowCarRequestHost,
+} from "@/src/lib/server-tenant";
 
 export async function generateMetadata(): Promise<Metadata> {
   const host = await getRentFlowCarRequestHost();
+  const tenant = await getInitialRentFlowCarTenantProfile(host);
 
   return buildRentFlowCarPageMetadata({
     host,
+    tenant,
     pathname: "/help",
     title: "ศูนย์ช่วยเหลือ",
     description:

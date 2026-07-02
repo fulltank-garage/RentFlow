@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Box, Button, InputAdornment, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
+import PasswordVisibilityAdornment from "@/src/components/common/PasswordVisibilityAdornment";
 
 function FieldShell({
   label,
@@ -79,17 +80,10 @@ export function ProfileField({
           InputProps={{
             disableUnderline: true,
             endAdornment: isPasswordField ? (
-              <InputAdornment position="end">
-                <Button
-                  size="small"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  onMouseDown={(event) => event.preventDefault()}
-                  aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
-                  className="min-w-0! rounded-full! px-2! py-1! text-[var(--rf-apple-muted)]!"
-                >
-                  {showPassword ? "ซ่อน" : "แสดง"}
-                </Button>
-              </InputAdornment>
+              <PasswordVisibilityAdornment
+                visible={showPassword}
+                onToggle={() => setShowPassword((prev) => !prev)}
+              />
             ) : undefined,
           }}
           sx={{

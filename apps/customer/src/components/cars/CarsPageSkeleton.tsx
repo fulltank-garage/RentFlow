@@ -141,21 +141,17 @@ function CarsFilterBarSkeleton() {
                 />
             </Box>
 
-            <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(180px,1.15fr)_minmax(150px,0.9fr)_minmax(150px,0.9fr)_minmax(150px,0.85fr)_minmax(150px,0.85fr)_minmax(150px,auto)] xl:items-stretch">
                 <FilterInputSkeleton />
                 <FilterInputSkeleton />
                 <FilterInputSkeleton />
                 <FilterInputSkeleton />
-                <FilterInputSkeleton />
-            </Box>
-
-            <Box className="mt-4 grid gap-4 md:grid-cols-2">
                 <FilterInputSkeleton />
 
                 <Button
                     variant="outlined"
                     disabled
-                    className="rounded-full!"
+                    className="rounded-full! xl:w-auto"
                     sx={{
                         height: 40,
                         color: "transparent",
