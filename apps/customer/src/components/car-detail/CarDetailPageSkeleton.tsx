@@ -220,25 +220,87 @@ function IncludedSectionSkeleton() {
 
 function TermsSectionSkeleton() {
   return (
-    <Box className="apple-card apple-card-no-hover p-5">
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          width: 95,
-          height: 20,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
+    <Box className="apple-card apple-card-no-hover p-5 sm:p-6">
+      <Box className="flex flex-col gap-2">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: 170,
+            height: 34,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: "78%",
+            height: 18,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+      </Box>
 
-      <Box className="mt-3 flex flex-col gap-2">
+      <Box className="mt-4 grid gap-3 sm:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Box
+            key={index}
+            className="rounded-[22px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-4"
+          >
+            <Box className="flex items-start gap-3">
+              <Skeleton
+                variant="circular"
+                animation="wave"
+                sx={{ width: 32, height: 32, flexShrink: 0 }}
+              />
+              <Box className="min-w-0 flex-1">
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: "52%",
+                    height: 20,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: "96%",
+                    height: 18,
+                    borderRadius: "8px",
+                    transform: "none",
+                    mt: 0.5,
+                  }}
+                />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: "74%",
+                    height: 18,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+              </Box>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      <Box className="mt-4 rounded-[22px] border border-[var(--rf-apple-border)] bg-white px-4 py-3">
         <Skeleton
           variant="text"
           animation="wave"
           sx={{
-            width: "76%",
-            height: 18,
+            width: 80,
+            height: 20,
             borderRadius: "8px",
             transform: "none",
           }}
@@ -247,27 +309,18 @@ function TermsSectionSkeleton() {
           variant="text"
           animation="wave"
           sx={{
-            width: "88%",
+            width: "92%",
             height: 18,
             borderRadius: "8px",
             transform: "none",
+            mt: 0.5,
           }}
         />
         <Skeleton
           variant="text"
           animation="wave"
           sx={{
-            width: "82%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: "72%",
+            width: "66%",
             height: 18,
             borderRadius: "8px",
             transform: "none",

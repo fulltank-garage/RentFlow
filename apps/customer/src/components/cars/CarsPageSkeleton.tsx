@@ -141,17 +141,27 @@ function CarsFilterBarSkeleton() {
                 />
             </Box>
 
-            <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(180px,1.15fr)_minmax(150px,0.9fr)_minmax(150px,0.9fr)_minmax(150px,0.85fr)_minmax(150px,0.85fr)_minmax(150px,auto)] xl:items-stretch">
-                <FilterInputSkeleton />
-                <FilterInputSkeleton />
-                <FilterInputSkeleton />
-                <FilterInputSkeleton />
-                <FilterInputSkeleton />
+            <Box className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(180px,1.15fr)_minmax(150px,0.9fr)_minmax(150px,0.9fr)_minmax(150px,0.85fr)_minmax(150px,0.85fr)_minmax(150px,auto)] xl:items-stretch">
+                <Box className="col-span-2 xl:order-4 xl:col-span-1">
+                    <FilterInputSkeleton />
+                </Box>
+                <Box className="col-span-2 xl:order-1 xl:col-span-1">
+                    <FilterInputSkeleton />
+                </Box>
+                <Box className="xl:order-2">
+                    <FilterInputSkeleton />
+                </Box>
+                <Box className="xl:order-3">
+                    <FilterInputSkeleton />
+                </Box>
+                <Box className="col-span-2 xl:order-5 xl:col-span-1">
+                    <FilterInputSkeleton />
+                </Box>
 
                 <Button
                     variant="outlined"
                     disabled
-                    className="rounded-full! xl:w-auto"
+                    className="col-span-2 rounded-full! xl:order-6 xl:col-span-1 xl:w-auto"
                     sx={{
                         height: 40,
                         color: "transparent",
@@ -311,11 +321,32 @@ function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
     );
 }
 
-export default function CarsPageSkeleton({ showShop = false }: { showShop?: boolean }) {
+export default function CarsPageSkeleton({
+    showShop = false,
+    showTenantTitle = false,
+}: {
+    showShop?: boolean;
+    showTenantTitle?: boolean;
+}) {
     return (
         <Box className="apple-page">
             <Container maxWidth="lg" className="apple-section">
                 <HeaderSkeleton />
+                {showTenantTitle ? (
+                    <Skeleton
+                        variant="text"
+                        animation="wave"
+                        sx={{
+                            mx: "auto",
+                            mt: -1,
+                            width: { xs: 210, md: 360 },
+                            maxWidth: "100%",
+                            height: { xs: 42, md: 58 },
+                            borderRadius: "14px",
+                            transform: "none",
+                        }}
+                    />
+                ) : null}
                 <CarsFilterBarSkeleton />
 
                 <Box className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

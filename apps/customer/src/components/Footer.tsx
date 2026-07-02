@@ -21,6 +21,7 @@ const CONTACT = {
 
 const SOCIAL = {
   facebook: "https://facebook.com",
+  line: "https://line.me/R/ti/p/@rentflowcar",
 };
 
 type FooterProps = {
@@ -52,6 +53,18 @@ function FooterBrandLogo({ src, name }: { src?: string; name: string }) {
       alt={name}
       onError={() => setFailed(true)}
       className="h-full w-full object-contain"
+    />
+  );
+}
+
+function FooterLinkIcon({ src, alt }: { src: string; alt: string }) {
+  return (
+    <Box
+      component="img"
+      src={src}
+      alt={alt}
+      aria-hidden="true"
+      className="h-5 w-5 shrink-0 object-contain"
     />
   );
 }
@@ -120,6 +133,7 @@ export default function Footer({
       : SOCIAL.facebook;
   const lineOaQrCodeUrl =
     siteMode === "storefront" ? tenantProfile?.lineOaQrCodeUrl || "" : "";
+  const lineUrl = SOCIAL.line;
   const telHref = contactPhone.replace(/[^\d+]/g, "");
   const navItems = React.useMemo(
     () =>
@@ -146,10 +160,15 @@ export default function Footer({
           },
         }}
       >
-        <Box className="grid gap-8 md:grid-cols-3 md:gap-10">
+        <Box className="grid grid-cols-2 gap-8 md:grid-cols-3 md:gap-10">
           {/* Brand */}
-          <Box className="space-y-3">
-            <Stack direction="row" spacing={1} alignItems="center">
+          <Box className="col-span-2 space-y-3 text-center md:col-span-1 md:text-left">
+            <Stack
+              direction="column"
+              spacing={1.25}
+              alignItems="center"
+              className="mx-auto w-fit md:mx-0"
+            >
               <Box
                 className={`relative h-12 shrink-0 overflow-hidden rounded-md ${
                   siteMode === "marketplace" ? "w-36 sm:w-40" : "w-12"
@@ -158,18 +177,18 @@ export default function Footer({
                 <FooterBrandLogo src={brandLogoSrc} name={brandName} />
               </Box>
 
-              <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+              <Typography className="apple-card-title text-center font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
                 {brandName}
               </Typography>
             </Stack>
 
-            <Typography className="apple-body-sm max-w-sm text-[var(--rf-apple-muted)] md:hidden">
+            <Typography className="apple-body-sm mx-auto max-w-sm text-[var(--rf-apple-muted)] md:mx-0 md:hidden">
               {brandTagline}
             </Typography>
           </Box>
 
           {/* Links */}
-          <Box component="nav" aria-label="Footer navigation">
+          <Box component="nav" aria-label="Footer navigation" className="min-w-0">
             <Typography className="font-semibold! text-[var(--rf-apple-ink)]">
               เมนู
             </Typography>
@@ -188,7 +207,7 @@ export default function Footer({
           </Box>
 
           {/* Contact / Social */}
-          <Box component="address" className="not-italic">
+          <Box component="address" className="min-w-0 not-italic">
             <Typography className="font-semibold! text-[var(--rf-apple-ink)]">
               {contactTitle}
             </Typography>
@@ -212,19 +231,34 @@ export default function Footer({
                   href={facebookPageUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="apple-body-sm text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                  className="apple-body-sm inline-flex w-fit items-center gap-2 text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
                 >
-                  Facebook
+                  <FooterLinkIcon src="/facebook.svg" alt="Facebook" />
+                  <span>Facebook</span>
+                </a>
+              ) : null}
+
+              {lineUrl ? (
+                <a
+                  href={lineUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="apple-body-sm inline-flex w-fit items-center gap-2 text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                >
+                  <FooterLinkIcon src="/line.svg" alt="LINE" />
+                  <span>LINE</span>
                 </a>
               ) : null}
 
               {lineOaQrCodeUrl ? (
-                <Box
-                  component="img"
-                  src={lineOaQrCodeUrl}
-                  alt={`QR Code LINE OA ${brandName}`}
-                  className="mt-3 h-44 w-44 object-contain sm:h-48 sm:w-48 md:h-52 md:w-52"
-                />
+                <>
+                  <Box
+                    component="img"
+                    src={lineOaQrCodeUrl}
+                    alt={`QR Code LINE OA ${brandName}`}
+                    className="mt-1.5 h-44 w-44 object-contain sm:h-48 sm:w-48 md:h-52 md:w-52"
+                  />
+                </>
               ) : null}
             </Stack>
           </Box>

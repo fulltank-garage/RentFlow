@@ -71,14 +71,25 @@ function HeaderSkeleton() {
 
 function HeroBadgesSkeleton() {
   return (
-    <Box className="mt-8 flex flex-wrap justify-center gap-2">
-      {Array.from({ length: 4 }).map((_, index) => (
+    <Box
+      className="mt-8 flex flex-nowrap justify-center gap-1.5 overflow-hidden sm:gap-2"
+      sx={{
+        "& .MuiSkeleton-root": {
+          flex: "0 1 auto",
+          minWidth: 0,
+        },
+      }}
+    >
+      {Array.from({ length: 5 }).map((_, index) => (
         <Skeleton
           key={`feature-badge-skeleton-${index}`}
           variant="rounded"
           animation="wave"
           sx={{
-            width: [142, 170, 150, 158][index] ?? 150,
+            width: {
+              xs: [64, 70, 68, 74, 64][index] ?? 68,
+              sm: [96, 112, 96, 108, 92][index] ?? 96,
+            },
             height: 32,
             borderRadius: "999px",
           }}
@@ -269,7 +280,7 @@ function FeaturesGridSkeleton() {
       </Box>
 
       <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
-        {Array.from({ length: 4 }).map((_, index) => (
+        {Array.from({ length: 6 }).map((_, index) => (
           <FeatureCardSkeleton key={`feature-card-skeleton-${index}`} />
         ))}
       </Box>

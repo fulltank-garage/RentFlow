@@ -148,14 +148,14 @@ function SummarySkeleton() {
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
-      className="apple-card apple-card-no-hover lg:col-span-5"
+      className="apple-card apple-card-no-hover order-3 self-start sm:order-none lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-88px)]"
     >
-      <CardContent className="p-4!">
+      <CardContent className="p-4! sm:p-5! lg:flex lg:h-full lg:flex-col">
         <SummaryTopSkeleton />
 
         <Divider className="my-5! border-black/10!" />
 
-        <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4!">
+        <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4! sm:p-5! lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
           <SummaryImageSkeleton />
 
           <Box className="mt-4 space-y-2.5">
@@ -191,6 +191,45 @@ function SummarySkeleton() {
             <SummaryRowSkeleton leftWidth={52} rightWidth={104} />
           </Box>
         </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
+function MobileCarCardSkeleton() {
+  return (
+    <Card
+      elevation={0}
+      sx={{ boxShadow: "none" }}
+      className="apple-card apple-card-no-hover order-1 sm:hidden"
+    >
+      <CardContent className="p-4!">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: 132,
+            height: 24,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+
+        <Divider className="my-4! border-black/10!" />
+
+        <SummaryImageSkeleton />
+
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            mt: 3,
+            width: "68%",
+            height: 24,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
       </CardContent>
     </Card>
   );
@@ -329,7 +368,7 @@ function FormSkeleton() {
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
-      className="apple-card apple-card-no-hover lg:col-span-7"
+      className="apple-card apple-card-no-hover order-2 sm:order-none lg:col-span-7"
     >
       <CardContent className="p-4!">
         <Skeleton
@@ -512,7 +551,8 @@ export default function BookingPageSkeleton({
       <Container maxWidth="lg" className="apple-section">
         <HeaderSkeleton mode={skeletonMode} />
 
-        <Box className="mt-10 grid gap-6 lg:grid-cols-12">
+        <Box className="mt-10 grid gap-5 lg:grid-cols-12 lg:items-start lg:gap-6">
+          <MobileCarCardSkeleton />
           <SummarySkeleton />
           <FormSkeleton />
         </Box>

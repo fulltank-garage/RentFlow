@@ -210,18 +210,20 @@ export default function HeroSection({
           <Typography
             className="apple-heading apple-display-title"
             sx={{
-              whiteSpace: { xs: "normal", md: "normal" },
-              lineHeight: { xs: 1.08, md: 1.06 },
+              whiteSpace: "normal",
+              lineHeight: { xs: 1.04, md: 1.06 },
               fontSize: {
+                xs: "clamp(1.55rem, 7vw, 2.15rem) !important",
+                sm: "clamp(2rem, 5.4vw, 3rem) !important",
                 md: "clamp(2.55rem, 2.05rem + 1.55vw, 3.55rem)",
                 lg: "clamp(3rem, 2.55rem + 1.2vw, 4.05rem)",
               },
             }}
           >
-            <Box component="span" sx={{ display: "block" }}>
+            <Box component="span" sx={{ display: "block", whiteSpace: "nowrap" }}>
               รถที่ใช่ สำหรับทุกการเดินทาง
             </Box>
-            <Box component="span" sx={{ display: "block" }}>
+            <Box component="span" sx={{ display: "block", whiteSpace: "nowrap" }}>
               พร้อมออกเดินทาง ในไม่กี่คลิก
             </Box>
           </Typography>
@@ -243,16 +245,36 @@ export default function HeroSection({
 
           <Stack
             direction="row"
-            spacing={1}
-            className="mt-7 flex-wrap justify-center"
+            spacing={{ xs: 0.5, sm: 1 }}
+            className="mt-7 flex-nowrap justify-center"
             useFlexGap
+            sx={{
+              width: "100%",
+              overflow: "hidden",
+              "& .MuiChip-root": {
+                flex: "0 1 auto",
+                minWidth: 0,
+              },
+              "& .MuiChip-label": {
+                overflow: "hidden",
+                px: { xs: 0.85, sm: 1.05 },
+                textOverflow: "clip",
+                whiteSpace: "nowrap",
+              },
+            }}
           >
             {["ราคาชัดเจน", "เลือกรับรถได้หลายสาขา", "พร้อมเดินทาง"].map(
               (label) => (
                 <Chip
                   key={label}
                   label={label}
-                  className="apple-pill h-9! px-2! text-[var(--rf-apple-muted)]!"
+                  className="apple-pill h-9! text-[var(--rf-apple-muted)]!"
+                  sx={{
+                    fontSize: {
+                      xs: "clamp(0.68rem, 2.55vw, 0.78rem) !important",
+                      sm: "var(--rf-type-label) !important",
+                    },
+                  }}
                 />
               )
             )}
@@ -318,7 +340,7 @@ export default function HeroSection({
                       />
                     ) : null}
 
-                    <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.95fr_0.95fr_0.9fr_auto] xl:items-stretch">
+                    <Box className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.95fr_0.95fr_0.9fr_auto] xl:items-stretch">
                       <TextField
                         select
                         id="home-search-pickup-branch"
@@ -341,6 +363,7 @@ export default function HeroSection({
                               </Box>
                             ),
                         }}
+                        className="col-span-2 xl:col-span-1"
                         sx={Herotextfield}
                       >
                         <MenuItem value="">กรุณาเลือกสาขา</MenuItem>
@@ -404,6 +427,7 @@ export default function HeroSection({
                         fullWidth
                         InputLabelProps={{ htmlFor: undefined }}
                         SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
+                        className="col-span-2 xl:col-span-1"
                         sx={Herotextfield}
                       >
                         <MenuItem value="All">ทั้งหมด</MenuItem>
@@ -417,7 +441,7 @@ export default function HeroSection({
                       <Button
                         size="large"
                         variant="contained"
-                        className="min-h-12! w-full rounded-full! px-8! text-base! md:col-span-2 xl:col-span-1 xl:w-auto"
+                        className="col-span-2 min-h-12! w-full rounded-full! px-8! text-base! xl:col-span-1 xl:w-auto"
                         sx={{
                           minWidth: "180px !important",
                           whiteSpace: "nowrap",

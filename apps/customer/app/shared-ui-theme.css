@@ -713,6 +713,26 @@
   }
 }
 
+@keyframes rf-apple-marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes rf-apple-marquee-right {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .apple-page .apple-section > * {
   animation-name: rf-apple-fade-lift;
   animation-duration: var(--rf-apple-enter-duration);
@@ -971,6 +991,24 @@
 
 .apple-shelf::-webkit-scrollbar {
   display: none;
+}
+
+.marquee-left,
+.marquee-right {
+  will-change: transform;
+}
+
+.marquee-left {
+  animation: rf-apple-marquee-left 72s linear infinite;
+}
+
+.marquee-right {
+  animation: rf-apple-marquee-right 78s linear infinite;
+}
+
+.marquee-left:hover,
+.marquee-right:hover {
+  animation-play-state: paused;
 }
 
 .apple-pill {
@@ -1302,7 +1340,9 @@
   .apple-page .apple-section-intro,
   .apple-page .apple-pill,
   .apple-page .apple-card,
-  .apple-page .MuiPaper-root {
+  .apple-page .MuiPaper-root,
+  .marquee-left,
+  .marquee-right {
     animation: none !important;
   }
 

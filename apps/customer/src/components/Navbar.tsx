@@ -383,20 +383,6 @@ export default function Navbar({
     closeDrawer();
   }, [closeDrawer, pathname]);
 
-  React.useEffect(() => {
-    if (!open) return;
-
-    const originalBodyOverflow = document.body.style.overflow;
-    const originalHtmlOverflow = document.documentElement.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = originalBodyOverflow;
-      document.documentElement.style.overflow = originalHtmlOverflow;
-    };
-  }, [open]);
-
   const isActive = (href: string) => pathname === href;
 
   return (
@@ -424,8 +410,9 @@ export default function Navbar({
           className="min-h-[52px]! px-0! md:min-h-11!"
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             gap: 3,
+            position: "relative",
             "@media (min-width: 801px)": {
               display: "grid",
               gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)",
@@ -439,6 +426,11 @@ export default function Navbar({
             href="/"
             className="flex min-w-0 items-center no-underline"
             sx={{
+              "@media (max-width: 800px)": {
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
+              },
               "@media (min-width: 801px)": {
                 justifySelf: "start",
               },
@@ -623,8 +615,15 @@ export default function Navbar({
         open={open}
         onClose={closeDrawer}
         transitionDuration={{ enter: 420, exit: 320 }}
-        ModalProps={{ keepMounted: true }}
+        ModalProps={{
+          keepMounted: true,
+          disableAutoFocus: true,
+          disableEnforceFocus: true,
+          disableRestoreFocus: true,
+          disableScrollLock: true,
+        }}
         sx={{
+          zIndex: (theme) => theme.zIndex.modal + 10,
           "@media (min-width: 801px)": {
             display: "none",
           },
@@ -633,8 +632,9 @@ export default function Navbar({
           sx: {
             width: "100vw",
             maxWidth: "100vw",
-            height: "100dvh",
-            maxHeight: "100dvh",
+            top: "52px",
+            height: "calc(100dvh - 52px)",
+            maxHeight: "calc(100dvh - 52px)",
             overflow: "hidden",
             backgroundColor: "var(--rf-apple-surface-soft)",
             borderBottomLeftRadius: "28px",
@@ -642,42 +642,9 @@ export default function Navbar({
           },
         }}
       >
-        <Box className="flex h-full min-h-dvh w-full flex-col overflow-hidden bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-ink)]">
-          <Container maxWidth="lg" className="w-full!">
-          <Box>
-            <Box className="flex items-center justify-between">
-              <Box className="flex min-w-0 items-center">
-                <Box className="relative h-10 w-[174px] shrink-0 overflow-hidden">
-                  <BrandLogo
-                    src={brandLogoSrc}
-                    alt={brandName}
-                    className="h-full w-full object-contain"
-                  />
-                </Box>
-              </Box>
-
-              <Button
-                onClick={closeDrawer}
-                aria-label="ปิดเมนู"
-                disableElevation
-                className="h-11! w-11! min-w-0! rounded-[14px]! p-0!"
-                sx={{
-                  border: "0",
-                  color: "var(--rf-apple-ink)",
-                  backgroundColor: "transparent",
-                  "&:hover": {
-                    backgroundColor: "rgba(0,0,0,0.04)",
-                  },
-                }}
-              >
-                <MobileMenuGlyph open />
-              </Button>
-            </Box>
-          </Box>
-          </Container>
-
+        <Box className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-ink)]">
           <List
-            className="flex-1 px-4! py-4! md:px-5! md:py-5!"
+            className="flex-1 overflow-y-auto px-4! py-4! md:px-5! md:py-5!"
           >
             {navItems.map((n) => {
               const active = isActive(n.href);

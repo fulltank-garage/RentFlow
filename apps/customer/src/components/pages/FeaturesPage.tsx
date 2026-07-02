@@ -103,13 +103,33 @@ export default function FeaturesPage({
         </Box>
       </Box>
 
-      <Box className="mt-8 flex flex-wrap justify-center gap-2">
+      <Box
+        className="mt-8 flex flex-nowrap justify-center gap-1.5 overflow-hidden sm:gap-2"
+        sx={{
+          "& .MuiChip-root": {
+            flex: "0 1 auto",
+            minWidth: 0,
+          },
+          "& .MuiChip-label": {
+            overflow: "hidden",
+            px: { xs: 0.8, sm: 1 },
+            textOverflow: "clip",
+            whiteSpace: "nowrap",
+          },
+        }}
+      >
         {HERO_BADGES.map((b) => (
           <Chip
             key={b}
             label={b}
             className="apple-pill text-[var(--rf-apple-muted)]!"
             variant="outlined"
+            sx={{
+              fontSize: {
+                xs: "clamp(0.64rem, 2.35vw, 0.78rem) !important",
+                sm: "var(--rf-type-label) !important",
+              },
+            }}
           />
         ))}
       </Box>

@@ -90,12 +90,12 @@ export default function CarsFilterBar({
         </Box>
       ) : null}
 
-      <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(180px,1.15fr)_minmax(150px,0.9fr)_minmax(150px,0.9fr)_minmax(150px,0.85fr)_minmax(150px,0.85fr)_minmax(150px,auto)] xl:items-stretch">
+      <Box className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(180px,1.15fr)_minmax(150px,0.9fr)_minmax(150px,0.9fr)_minmax(150px,0.85fr)_minmax(150px,0.85fr)_minmax(150px,auto)] xl:items-stretch">
         <TextField
           select
           id="cars-filter-type"
           name="type"
-          className="xl:order-4"
+          className="col-span-2 xl:order-4 xl:col-span-1"
           label="ประเภทรถ"
           value={type}
           onChange={(e) => onTypeChange(e.target.value as CarType | "all")}
@@ -118,7 +118,7 @@ export default function CarsFilterBar({
           select
           id="cars-filter-location"
           name="location"
-          className="xl:order-1"
+          className="col-span-2 xl:order-1 xl:col-span-1"
           label="สาขารับรถ"
           value={location}
           onChange={(e) => onLocationChange(e.target.value)}
@@ -193,7 +193,7 @@ export default function CarsFilterBar({
           select
           id="cars-filter-sort"
           name="sort"
-          className="xl:order-5"
+          className="col-span-2 xl:order-5 xl:col-span-1"
           label="เรียงตาม"
           value={sort}
           onChange={(e) => onSortChange(e.target.value as SortKey)}
@@ -210,7 +210,7 @@ export default function CarsFilterBar({
 
         <Button
           variant="outlined"
-          className="min-h-10! w-full rounded-full! border-[var(--rf-apple-border)]! bg-[var(--rf-apple-surface-soft)]! px-6! py-2.5! text-sm! text-[var(--rf-apple-ink)]! transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--rf-apple-border-strong)]! hover:bg-white! hover:shadow-[var(--rf-apple-shadow-soft)]! xl:order-6 xl:w-auto"
+          className="col-span-2 min-h-10! w-full rounded-full! border-[var(--rf-apple-border)]! bg-[var(--rf-apple-surface-soft)]! px-6! py-2.5! text-sm! text-[var(--rf-apple-ink)]! transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--rf-apple-border-strong)]! hover:bg-white! hover:shadow-[var(--rf-apple-shadow-soft)]! xl:order-6 xl:col-span-1 xl:w-auto"
           sx={{
             minWidth: "150px !important",
             whiteSpace: "nowrap",

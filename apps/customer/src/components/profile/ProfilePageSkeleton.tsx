@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Box, Container, Skeleton, Typography } from "@mui/material";
+import { Box, Container, Skeleton } from "@mui/material";
 
 function HeadingSkeleton() {
   return (
-    <Box className="mx-auto mb-10 max-w-3xl text-center md:mb-12">
-      <Typography className="apple-heading">
+    <Box className="apple-section-intro mb-10 max-w-3xl md:mb-12">
+      <Box className="flex flex-col gap-3">
         <Skeleton
           variant="text"
           animation="wave"
@@ -18,7 +18,6 @@ function HeadingSkeleton() {
             transform: "none",
           }}
         />
-      </Typography>
 
       <Skeleton
         variant="text"
@@ -33,6 +32,7 @@ function HeadingSkeleton() {
           transform: "none",
         }}
       />
+      </Box>
     </Box>
   );
 }
@@ -277,7 +277,7 @@ export default function ProfilePageSkeleton() {
             />
           </Box>
 
-          <Box className="space-y-5">
+          <Box className="order-first space-y-5 lg:order-none">
             <ActionCardSkeleton />
           </Box>
         </Box>

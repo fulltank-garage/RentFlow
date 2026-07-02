@@ -56,6 +56,9 @@ export default function ShopRecommendationsSection({
   hasAvailableCars = false,
 }: Props) {
   const rootDomain = getRentFlowCarRootDomain();
+  const shelfRef = React.useRef<HTMLDivElement | null>(null);
+  const shopCardRefs = React.useRef<Array<HTMLDivElement | null>>([]);
+  const [activeShopIndex, setActiveShopIndex] = React.useState(0);
   const visibleShops = React.useMemo(
     () => {
       const readyShops = shops.filter((shop) => shop.carCount > 0);
@@ -73,6 +76,40 @@ export default function ShopRecommendationsSection({
       const next = new Set(current);
       next.add(shopKey);
       return next;
+    });
+  }, []);
+
+  const updateActiveShopIndex = React.useCallback(() => {
+    const shelf = shelfRef.current;
+    if (!shelf || visibleShops.length <= 1) return;
+
+    const shelfLeft = shelf.getBoundingClientRect().left;
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    shopCardRefs.current.forEach((card, index) => {
+      if (!card) return;
+
+      const distance = Math.abs(card.getBoundingClientRect().left - shelfLeft);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    setActiveShopIndex(closestIndex);
+  }, [visibleShops.length]);
+
+  React.useEffect(() => {
+    shopCardRefs.current = shopCardRefs.current.slice(0, visibleShops.length);
+    setActiveShopIndex(0);
+  }, [visibleShops.length]);
+
+  const scrollToShop = React.useCallback((index: number) => {
+    shopCardRefs.current[index]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start",
     });
   }, []);
 
@@ -98,7 +135,34 @@ export default function ShopRecommendationsSection({
         />
       </Box>
 
-      <Box className="apple-shelf apple-shelf-wide mt-10 sm:grid sm:grid-cols-2 lg:grid-cols-3">
+      <Box
+        ref={shelfRef}
+        className={
+          isPageLayout
+            ? "mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            : "apple-shelf apple-shelf-wide mt-10 sm:grid sm:grid-cols-2 lg:grid-cols-3"
+        }
+        onScroll={updateActiveShopIndex}
+        sx={
+          isPageLayout
+            ? undefined
+            : {
+                "@media (max-width: 767px)": {
+                  paddingRight: "16vw",
+                },
+                "@media (max-width: 767px) and (min-width: 390px)": {
+                  "& > .shop-recommendation-card": {
+                    flexBasis: "min(80vw, 22rem)",
+                  },
+                },
+                "@media (max-width: 389px)": {
+                  "& > .shop-recommendation-card": {
+                    flexBasis: "min(78vw, 19.5rem)",
+                  },
+                },
+              }
+        }
+      >
         {dataError ? (
           <DataLoadErrorCard
             title="โหลดรายการร้านไม่ได้"
@@ -116,12 +180,15 @@ export default function ShopRecommendationsSection({
               />
             ) : null}
             {visibleShops.length ? (
-              visibleShops.map((shop) => (
+              visibleShops.map((shop, index) => (
             <Card
               key={shop.key}
+              ref={(node) => {
+                shopCardRefs.current[index] = node;
+              }}
               elevation={0}
               sx={{ boxShadow: "none" }}
-              className="apple-card group"
+              className="apple-card shop-recommendation-card group"
             >
               <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
                 {shop.logoUrl && !failedLogoIds.has(shop.key) ? (
@@ -217,6 +284,33 @@ export default function ShopRecommendationsSection({
           </>
         )}
       </Box>
+
+      {!isPageLayout && !dataError && visibleShops.length > 1 ? (
+        <Box className="mt-4 flex items-center justify-center gap-2 sm:hidden">
+          {visibleShops.map((shop, index) => {
+            const active = index === activeShopIndex;
+
+            return (
+              <Box
+                key={`shop-dot-${shop.key}`}
+                component="button"
+                type="button"
+                aria-label={`ไปยังร้านที่ ${index + 1} จาก ${visibleShops.length}`}
+                aria-current={active ? "true" : undefined}
+                onClick={() => scrollToShop(index)}
+                className="h-2.5 rounded-full border-0 p-0 transition-[background-color,width,opacity] duration-200"
+                sx={{
+                  width: active ? 22 : 9,
+                  backgroundColor: active
+                    ? "var(--secondary-navy)"
+                    : "rgba(1, 18, 44, 0.18)",
+                  opacity: active ? 1 : 0.82,
+                }}
+              />
+            );
+          })}
+        </Box>
+      ) : null}
 
       {showDivider ? <Divider className="mt-14! border-black/10!" /> : null}
     </Container>

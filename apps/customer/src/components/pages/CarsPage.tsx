@@ -83,7 +83,12 @@ export default function CarsPage() {
   );
 
   if (loading && cars.length === 0) {
-    return <CarsPageSkeleton showShop={isMarketplace && !isTenantCarsPage} />;
+    return (
+      <CarsPageSkeleton
+        showShop={isMarketplace && !isTenantCarsPage}
+        showTenantTitle={isTenantCarsPage}
+      />
+    );
   }
 
   return (
