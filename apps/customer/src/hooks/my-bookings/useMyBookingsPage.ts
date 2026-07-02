@@ -162,7 +162,10 @@ export default function useMyBookingsPage() {
 
         const [bookingsRes, carsRes] = await Promise.all([
           bookingApi.getMyBookings({ tenantSlug }),
-          getCars(undefined, { tenantSlug }).catch(() => ({ items: [] })),
+          getCars(undefined, {
+            marketplace: !tenantSlug,
+            tenantSlug,
+          }).catch(() => ({ items: [] })),
         ]);
 
         if (cancelled) return;

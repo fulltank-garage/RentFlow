@@ -80,6 +80,8 @@ export default function HeroSection({
   const [heroIndex, setHeroIndex] = React.useState(0);
   const [highlightAnnouncement, setHighlightAnnouncement] = React.useState(true);
   const [loadedHeroImages, setLoadedHeroImages] = React.useState<string[]>([]);
+  const floatingSelectLabelClass =
+    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-[var(--rf-apple-muted)]";
 
   const openDatePicker = (event: React.MouseEvent<HTMLInputElement>) => {
     const input = event.currentTarget as DatePickerInput;
@@ -376,38 +378,51 @@ export default function HeroSection({
                       </Box>
                     ) : (
                     <Box className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.95fr_0.95fr_0.9fr_auto] xl:items-stretch">
-                      <TextField
-                        select
-                        id="home-search-pickup-branch"
-                        name="pickupBranch"
-                        label="สาขารับรถ"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        fullWidth
-                        InputLabelProps={{ htmlFor: undefined, shrink: true }}
-                        SelectProps={{
-                          displayEmpty: true,
-                          MenuProps: rentFlowSelectMenuProps,
-                          renderValue: (selected) =>
-                            selected ? (
-                              locations.find((loc) => loc.value === selected)?.label ||
-                              String(selected)
-                            ) : (
-                              <Box component="span" className="text-[var(--rf-apple-muted)]">
-                                กรุณาเลือกสาขา
-                              </Box>
-                            ),
-                        }}
-                        className="col-span-2 xl:col-span-1"
-                        sx={Herotextfield}
-                      >
-                        <MenuItem value="">กรุณาเลือกสาขา</MenuItem>
-                        {locations.map((loc) => (
-                          <MenuItem key={loc.value} value={loc.value}>
-                            {loc.label}
-                          </MenuItem>
-                        ))}
-                      </TextField>
+                      <Box className="relative col-span-2 xl:col-span-1">
+                        <Box
+                          component="span"
+                          id="home-search-pickup-branch-label"
+                          className={floatingSelectLabelClass}
+                        >
+                          สาขารับรถ
+                        </Box>
+                        <TextField
+                          select
+                          id="home-search-pickup-branch"
+                          name="pickupBranch"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          fullWidth
+                          SelectProps={{
+                            displayEmpty: true,
+                            MenuProps: rentFlowSelectMenuProps,
+                            SelectDisplayProps: {
+                              "aria-labelledby":
+                                "home-search-pickup-branch-label home-search-pickup-branch",
+                            },
+                            inputProps: {
+                              "aria-label": "สาขารับรถ",
+                            },
+                            renderValue: (selected) =>
+                              selected ? (
+                                locations.find((loc) => loc.value === selected)?.label ||
+                                String(selected)
+                              ) : (
+                                <Box component="span" className="text-[var(--rf-apple-muted)]">
+                                  กรุณาเลือกสาขา
+                                </Box>
+                              ),
+                          }}
+                          sx={Herotextfield}
+                        >
+                          <MenuItem value="">กรุณาเลือกสาขา</MenuItem>
+                          {locations.map((loc) => (
+                            <MenuItem key={loc.value} value={loc.value}>
+                              {loc.label}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Box>
 
                       <TextField
                         type="date"
@@ -452,26 +467,41 @@ export default function HeroSection({
                         }}
                         sx={Herotextfield}
                       />
-                      <TextField
-                        select
-                        id="home-search-car-type"
-                        name="carType"
-                        label="ประเภทรถ"
-                        value={type}
-                        onChange={(e) => setType(e.target.value as CarType | "All")}
-                        fullWidth
-                        InputLabelProps={{ htmlFor: undefined }}
-                        SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
-                        className="col-span-2 xl:col-span-1"
-                        sx={Herotextfield}
-                      >
-                        <MenuItem value="All">ทั้งหมด</MenuItem>
-                        {carTypes.map((t) => (
-                          <MenuItem key={t} value={t}>
-                            {getCarTypeLabel(t)}
-                          </MenuItem>
-                        ))}
-                      </TextField>
+                      <Box className="relative col-span-2 xl:col-span-1">
+                        <Box
+                          component="span"
+                          id="home-search-car-type-label"
+                          className={floatingSelectLabelClass}
+                        >
+                          ประเภทรถ
+                        </Box>
+                        <TextField
+                          select
+                          id="home-search-car-type"
+                          name="carType"
+                          value={type}
+                          onChange={(e) => setType(e.target.value as CarType | "All")}
+                          fullWidth
+                          SelectProps={{
+                            MenuProps: rentFlowSelectMenuProps,
+                            SelectDisplayProps: {
+                              "aria-labelledby":
+                                "home-search-car-type-label home-search-car-type",
+                            },
+                            inputProps: {
+                              "aria-label": "ประเภทรถ",
+                            },
+                          }}
+                          sx={Herotextfield}
+                        >
+                          <MenuItem value="All">ทั้งหมด</MenuItem>
+                          {carTypes.map((t) => (
+                            <MenuItem key={t} value={t}>
+                              {getCarTypeLabel(t)}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Box>
 
                       <Button
                         size="large"

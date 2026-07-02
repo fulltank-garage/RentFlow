@@ -23,6 +23,8 @@ export default function MyBookingsFilters({
       borderRadius: "10px",
     },
   };
+  const floatingSelectLabelClass =
+    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-[var(--rf-apple-muted)]";
 
   return (
     <Box className="grid gap-4 md:grid-cols-12 md:items-center">
@@ -40,12 +42,18 @@ export default function MyBookingsFilters({
         />
       </Box>
 
-      <Box className="md:col-span-4">
+      <Box className="relative md:col-span-4">
+        <Box
+          component="span"
+          id="my-bookings-status-label"
+          className={floatingSelectLabelClass}
+        >
+          สถานะ
+        </Box>
         <TextField
           select
           id="my-bookings-status"
           name="bookingStatus"
-          label="สถานะ"
           value={status}
           onChange={(e) =>
             onStatusChange(e.target.value as BookingStatus | "all")
@@ -53,8 +61,15 @@ export default function MyBookingsFilters({
           size="small"
           fullWidth
           variant="outlined"
-          InputLabelProps={{ htmlFor: undefined }}
-          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
+          SelectProps={{
+            MenuProps: rentFlowSelectMenuProps,
+            SelectDisplayProps: {
+              "aria-labelledby": "my-bookings-status-label my-bookings-status",
+            },
+            inputProps: {
+              "aria-label": "สถานะ",
+            },
+          }}
           sx={fieldSX}
         >
           <MenuItem value="all">ทั้งหมด</MenuItem>

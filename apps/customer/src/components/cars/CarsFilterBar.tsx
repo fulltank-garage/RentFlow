@@ -53,6 +53,8 @@ export default function CarsFilterBar({
       borderRadius: "18px",
     },
   };
+  const floatingSelectLabelClass =
+    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-[var(--rf-apple-muted)]";
   const openDatePicker = (event: React.MouseEvent<HTMLInputElement>) => {
     event.currentTarget.showPicker?.();
   };
@@ -91,63 +93,90 @@ export default function CarsFilterBar({
       ) : null}
 
       <Box className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(180px,1.15fr)_minmax(150px,0.9fr)_minmax(150px,0.9fr)_minmax(150px,0.85fr)_minmax(150px,0.85fr)_minmax(150px,auto)] xl:items-stretch">
-        <TextField
-          select
-          id="cars-filter-type"
-          name="type"
-          className="col-span-2 xl:order-4 xl:col-span-1"
-          label="ประเภทรถ"
-          value={type}
-          onChange={(e) => onTypeChange(e.target.value as CarType | "all")}
-          size="small"
-          fullWidth
-          variant="outlined"
-          InputLabelProps={{ htmlFor: undefined }}
-          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
-          sx={fieldSX}
-        >
-          <MenuItem value="all">ทั้งหมด</MenuItem>
-          {carTypes.map((carType) => (
-            <MenuItem key={carType} value={carType}>
-              {getCarTypeLabel(carType)}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Box className="relative col-span-2 xl:order-4 xl:col-span-1">
+          <Box
+            component="span"
+            id="cars-filter-type-label"
+            className={floatingSelectLabelClass}
+          >
+            ประเภทรถ
+          </Box>
+          <TextField
+            select
+            id="cars-filter-type"
+            name="type"
+            value={type}
+            onChange={(e) => onTypeChange(e.target.value as CarType | "all")}
+            size="small"
+            fullWidth
+            variant="outlined"
+            SelectProps={{
+              MenuProps: rentFlowSelectMenuProps,
+              SelectDisplayProps: {
+                "aria-labelledby": "cars-filter-type-label cars-filter-type",
+              },
+              inputProps: {
+                "aria-label": "ประเภทรถ",
+              },
+            }}
+            sx={fieldSX}
+          >
+            <MenuItem value="all">ทั้งหมด</MenuItem>
+            {carTypes.map((carType) => (
+              <MenuItem key={carType} value={carType}>
+                {getCarTypeLabel(carType)}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
 
-        <TextField
-          select
-          id="cars-filter-location"
-          name="location"
-          className="col-span-2 xl:order-1 xl:col-span-1"
-          label="สาขารับรถ"
-          value={location}
-          onChange={(e) => onLocationChange(e.target.value)}
-          size="small"
-          fullWidth
-          variant="outlined"
-          InputLabelProps={{ htmlFor: undefined, shrink: true }}
-          SelectProps={{
-            displayEmpty: true,
-            MenuProps: rentFlowSelectMenuProps,
-            renderValue: (selected) =>
-              selected ? (
-                locations.find((loc) => loc.value === selected)?.label ||
-                String(selected)
-              ) : (
-                <Box component="span" className="text-[var(--rf-apple-muted)]">
-                  กรุณาเลือกสาขา
-                </Box>
-              ),
-          }}
-          sx={fieldSX}
-        >
-          <MenuItem value="">กรุณาเลือกสาขา</MenuItem>
-          {locations.map((loc) => (
-            <MenuItem key={loc.value} value={loc.value}>
-              {loc.label}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Box className="relative col-span-2 xl:order-1 xl:col-span-1">
+          <Box
+            component="span"
+            id="cars-filter-location-label"
+            className={floatingSelectLabelClass}
+          >
+            สาขารับรถ
+          </Box>
+          <TextField
+            select
+            id="cars-filter-location"
+            name="location"
+            value={location}
+            onChange={(e) => onLocationChange(e.target.value)}
+            size="small"
+            fullWidth
+            variant="outlined"
+            SelectProps={{
+              displayEmpty: true,
+              MenuProps: rentFlowSelectMenuProps,
+              SelectDisplayProps: {
+                "aria-labelledby":
+                  "cars-filter-location-label cars-filter-location",
+              },
+              inputProps: {
+                "aria-label": "สาขารับรถ",
+              },
+              renderValue: (selected) =>
+                selected ? (
+                  locations.find((loc) => loc.value === selected)?.label ||
+                  String(selected)
+                ) : (
+                  <Box component="span" className="text-[var(--rf-apple-muted)]">
+                    กรุณาเลือกสาขา
+                  </Box>
+                ),
+            }}
+            sx={fieldSX}
+          >
+            <MenuItem value="">กรุณาเลือกสาขา</MenuItem>
+            {locations.map((loc) => (
+              <MenuItem key={loc.value} value={loc.value}>
+                {loc.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
 
         <TextField
           type="date"
@@ -189,24 +218,38 @@ export default function CarsFilterBar({
           sx={fieldSX}
         />
 
-        <TextField
-          select
-          id="cars-filter-sort"
-          name="sort"
-          className="col-span-2 xl:order-5 xl:col-span-1"
-          label="เรียงตาม"
-          value={sort}
-          onChange={(e) => onSortChange(e.target.value as SortKey)}
-          size="small"
-          fullWidth
-          variant="outlined"
-          InputLabelProps={{ htmlFor: undefined }}
-          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
-          sx={fieldSX}
-        >
-          <MenuItem value="price_asc">ราคาต่ำ → สูง</MenuItem>
-          <MenuItem value="price_desc">ราคาสูง → ต่ำ</MenuItem>
-        </TextField>
+        <Box className="relative col-span-2 xl:order-5 xl:col-span-1">
+          <Box
+            component="span"
+            id="cars-filter-sort-label"
+            className={floatingSelectLabelClass}
+          >
+            เรียงตาม
+          </Box>
+          <TextField
+            select
+            id="cars-filter-sort"
+            name="sort"
+            value={sort}
+            onChange={(e) => onSortChange(e.target.value as SortKey)}
+            size="small"
+            fullWidth
+            variant="outlined"
+            SelectProps={{
+              MenuProps: rentFlowSelectMenuProps,
+              SelectDisplayProps: {
+                "aria-labelledby": "cars-filter-sort-label cars-filter-sort",
+              },
+              inputProps: {
+                "aria-label": "เรียงตาม",
+              },
+            }}
+            sx={fieldSX}
+          >
+            <MenuItem value="price_asc">ราคาต่ำ → สูง</MenuItem>
+            <MenuItem value="price_desc">ราคาสูง → ต่ำ</MenuItem>
+          </TextField>
+        </Box>
 
         <Button
           variant="outlined"

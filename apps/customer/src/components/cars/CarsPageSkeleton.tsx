@@ -10,7 +10,6 @@ import {
     Chip,
     Container,
     Skeleton,
-    TextField,
     Typography,
 } from "@mui/material";
 
@@ -76,38 +75,32 @@ function HeaderSkeleton() {
 
 function FilterInputSkeleton() {
     return (
-        <Box>
-            <TextField
-                id="cars-filter-skeleton"
-                name="carsFilterSkeleton"
-                fullWidth
-                size="small"
-                label=" "
-                disabled
-                value=""
+        <Box
+            aria-hidden="true"
+            className="relative h-10 rounded-[18px] border border-[var(--rf-apple-border)] bg-white px-4"
+        >
+            <Skeleton
+                variant="text"
+                animation="wave"
                 sx={{
-                    "& .MuiOutlinedInput-root": {
-                        borderRadius: "18px",
-                        position: "relative",
-                        overflow: "hidden",
-                        bgcolor: "transparent",
-                    },
-                    "& .MuiInputBase-input.Mui-disabled": {
-                        WebkitTextFillColor: "transparent",
-                    },
+                    position: "absolute",
+                    left: 12,
+                    top: -8,
+                    width: 52,
+                    height: 12,
+                    borderRadius: "6px",
+                    transform: "none",
+                    bgcolor: "var(--rf-apple-surface-soft)",
                 }}
-                InputProps={{
-                    endAdornment: (
-                        <Skeleton
-                            variant="rounded"
-                            animation="wave"
-                            sx={{
-                                width: "100%",
-                                height: 24,
-                                borderRadius: "6px",
-                            }}
-                        />
-                    ),
+            />
+            <Skeleton
+                variant="rounded"
+                animation="wave"
+                sx={{
+                    mt: "10px",
+                    width: "72%",
+                    height: 18,
+                    borderRadius: "6px",
                 }}
             />
         </Box>

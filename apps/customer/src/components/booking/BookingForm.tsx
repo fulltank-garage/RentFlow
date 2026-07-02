@@ -125,6 +125,7 @@ export default function BookingForm({
           fullWidth
           size="small"
           sx={fieldSX}
+          inputProps={{ autoComplete: "name" }}
         />
         <TextField
           id="booking-phone"
@@ -135,6 +136,7 @@ export default function BookingForm({
           fullWidth
           size="small"
           sx={fieldSX}
+          inputProps={{ autoComplete: "tel" }}
         />
       </Box>
 

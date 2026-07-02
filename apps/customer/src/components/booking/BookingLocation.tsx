@@ -39,6 +39,9 @@ export default function BookingLocation({
   returnFreeText,
   setReturnFreeText,
 }: Props) {
+  const floatingSelectLabelClass =
+    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-[var(--rf-apple-muted)]";
+
   return (
     <Box>
       <Typography className="apple-card-title font-semibold text-slate-900">
@@ -61,6 +64,7 @@ export default function BookingLocation({
               fullWidth
               size="small"
               sx={fieldSX}
+              inputProps={{ autoComplete: "street-address" }}
               helperText={
                 pickupFreeText.trim() && pickupFreeText.trim().length < 2
                   ? "อย่างน้อย 2 ตัวอักษร"
@@ -79,6 +83,7 @@ export default function BookingLocation({
               fullWidth
               size="small"
               sx={fieldSX}
+              inputProps={{ autoComplete: "street-address" }}
               helperText={
                 returnFreeText.trim() && returnFreeText.trim().length < 2
                   ? "อย่างน้อย 2 ตัวอักษร"
@@ -99,28 +104,44 @@ export default function BookingLocation({
 
           <Box className="mt-4 grid gap-4 sm:grid-cols-2">
             <Box className="grid gap-3">
-              <TextField
-                select
-                id="booking-pickup-branch"
-                name="pickupBranch"
-                label="สาขารับรถ"
-                value={pickupBranch}
-                onChange={(e) => setPickupBranch(e.target.value)}
-                fullWidth
-                size="small"
-                InputLabelProps={{ htmlFor: undefined }}
-                SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
-                sx={fieldSX}
-              >
-                {branchOptions.map((p) => (
-                  <MenuItem key={p} value={p}>
-                    {p}
+              <Box className="relative">
+                <Box
+                  component="span"
+                  id="booking-pickup-branch-label"
+                  className={floatingSelectLabelClass}
+                >
+                  สาขารับรถ
+                </Box>
+                <TextField
+                  select
+                  id="booking-pickup-branch"
+                  name="pickupBranch"
+                  value={pickupBranch}
+                  onChange={(e) => setPickupBranch(e.target.value)}
+                  fullWidth
+                  size="small"
+                  SelectProps={{
+                    MenuProps: rentFlowSelectMenuProps,
+                    SelectDisplayProps: {
+                      "aria-labelledby":
+                        "booking-pickup-branch-label booking-pickup-branch",
+                    },
+                    inputProps: {
+                      "aria-label": "สาขารับรถ",
+                    },
+                  }}
+                  sx={fieldSX}
+                >
+                  {branchOptions.map((p) => (
+                    <MenuItem key={p} value={p}>
+                      {p}
+                    </MenuItem>
+                  ))}
+                  <MenuItem value={OTHER_OPTION}>
+                    อื่นๆ (ระบุสถานที่เพื่อประเมินค่าส่ง)
                   </MenuItem>
-                ))}
-                <MenuItem value={OTHER_OPTION}>
-                  อื่นๆ (ระบุสถานที่เพื่อประเมินค่าส่ง)
-                </MenuItem>
-              </TextField>
+                </TextField>
+              </Box>
 
               {pickupBranch === OTHER_OPTION ? (
                 <TextField
@@ -132,6 +153,7 @@ export default function BookingLocation({
                   fullWidth
                   size="small"
                   sx={fieldSX}
+                  inputProps={{ autoComplete: "street-address" }}
                   error={
                     pickupOther.trim().length > 0 &&
                     pickupOther.trim().length < 2
@@ -147,28 +169,44 @@ export default function BookingLocation({
             </Box>
 
             <Box className="grid gap-3">
-              <TextField
-                select
-                id="booking-return-branch"
-                name="returnBranch"
-                label="สาขาคืนรถ"
-                value={returnBranch}
-                onChange={(e) => setReturnBranch(e.target.value)}
-                fullWidth
-                size="small"
-                InputLabelProps={{ htmlFor: undefined }}
-                SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
-                sx={fieldSX}
-              >
-                {branchOptions.map((p) => (
-                  <MenuItem key={p} value={p}>
-                    {p}
+              <Box className="relative">
+                <Box
+                  component="span"
+                  id="booking-return-branch-label"
+                  className={floatingSelectLabelClass}
+                >
+                  สาขาคืนรถ
+                </Box>
+                <TextField
+                  select
+                  id="booking-return-branch"
+                  name="returnBranch"
+                  value={returnBranch}
+                  onChange={(e) => setReturnBranch(e.target.value)}
+                  fullWidth
+                  size="small"
+                  SelectProps={{
+                    MenuProps: rentFlowSelectMenuProps,
+                    SelectDisplayProps: {
+                      "aria-labelledby":
+                        "booking-return-branch-label booking-return-branch",
+                    },
+                    inputProps: {
+                      "aria-label": "สาขาคืนรถ",
+                    },
+                  }}
+                  sx={fieldSX}
+                >
+                  {branchOptions.map((p) => (
+                    <MenuItem key={p} value={p}>
+                      {p}
+                    </MenuItem>
+                  ))}
+                  <MenuItem value={OTHER_OPTION}>
+                    อื่นๆ (ระบุสถานที่เพื่อประเมินค่าส่ง)
                   </MenuItem>
-                ))}
-                <MenuItem value={OTHER_OPTION}>
-                  อื่นๆ (ระบุสถานที่เพื่อประเมินค่าส่ง)
-                </MenuItem>
-              </TextField>
+                </TextField>
+              </Box>
 
               {returnBranch === OTHER_OPTION ? (
                 <TextField
@@ -180,6 +218,7 @@ export default function BookingLocation({
                   fullWidth
                   size="small"
                   sx={fieldSX}
+                  inputProps={{ autoComplete: "street-address" }}
                   error={
                     returnOther.trim().length > 0 &&
                     returnOther.trim().length < 2
