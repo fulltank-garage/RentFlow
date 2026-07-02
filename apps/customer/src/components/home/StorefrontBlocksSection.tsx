@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 
 import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
+import MobileScrollHintShelf from "@/src/components/common/MobileScrollHintShelf";
 import type {
   StorefrontBlock,
   StorefrontTheme,
@@ -328,7 +329,10 @@ export default function StorefrontBlocksSection({
 
   return (
     <Container maxWidth="lg" className="apple-section pt-0!">
-      <Box className="apple-shelf apple-shelf-wide md:grid md:grid-cols-2 xl:grid-cols-3">
+      <MobileScrollHintShelf
+        itemCount={visibleBlocks.length}
+        className="apple-shelf apple-shelf-wide md:grid md:grid-cols-2 xl:grid-cols-3"
+      >
         {visibleBlocks.map((block, index) => {
           const isCta = builderMode || block.type === "cta" || block.buttonLabel;
           const toneStyle = getBlockToneStyle(block.tone, theme);
@@ -583,7 +587,7 @@ export default function StorefrontBlocksSection({
             </Card>
           );
         })}
-      </Box>
+      </MobileScrollHintShelf>
 
       {builderMode ? (
         <Box className="mt-5 grid place-items-center rounded-[30px] border border-blue-200 bg-blue-50/70 p-6">

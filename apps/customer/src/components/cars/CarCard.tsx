@@ -125,8 +125,16 @@ export default function CarCard({ car, showShop = false }: Props) {
       </CardContent>
 
       <CardActions
-        sx={{ p: { xs: "0px 20px 20px", sm: "0px 16px 16px" } }}
-        className="flex-col gap-2 sm:flex-row"
+        sx={{
+          p: { xs: "0px 20px 20px", sm: "0px 16px 16px" },
+          "& .MuiButton-root": {
+            flex: "1 1 0",
+            minWidth: 0,
+            px: { xs: 1, sm: 2 },
+            whiteSpace: "nowrap",
+          },
+        }}
+        className="flex-row gap-2"
       >
         <Button
           component={Link}

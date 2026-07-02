@@ -10,6 +10,7 @@ import {
     CardContent,
     Button,
 } from "@mui/material";
+import MobileScrollHintShelf from "@/src/components/common/MobileScrollHintShelf";
 
 type Benefit = {
     title: string;
@@ -39,7 +40,10 @@ export default function BenefitsCTASection() {
     return (
         <Container maxWidth="lg" className="apple-section pt-0!">
             {/* Benefits */}
-            <Box className="apple-shelf mt-1 md:grid md:grid-cols-3">
+            <MobileScrollHintShelf
+                itemCount={BENEFITS.length}
+                className="apple-shelf mt-1 md:grid md:grid-cols-3"
+            >
                 {BENEFITS.map((b) => (
                     <Card
                         key={b.title}
@@ -59,7 +63,7 @@ export default function BenefitsCTASection() {
                         </CardContent>
                     </Card>
                 ))}
-            </Box>
+            </MobileScrollHintShelf>
 
             {/* CTA */}
             <Box className="apple-card mt-8 overflow-hidden!">

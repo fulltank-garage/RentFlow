@@ -13,6 +13,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Skeleton,
   Stack,
 } from "@mui/material";
 
@@ -48,6 +49,7 @@ type Props = {
 
   carTypes: readonly CarType[];
   locations: readonly LocationOption[];
+  catalogLoading?: boolean;
   carTypesError?: string | null;
   locationsError?: string | null;
 };
@@ -68,6 +70,7 @@ export default function HeroSection({
   setReturnDate,
   carTypes,
   locations,
+  catalogLoading = false,
   carTypesError,
   locationsError,
 }: Props) {
@@ -197,7 +200,7 @@ export default function HeroSection({
                   เลือกดูรถเช่าออนไลน์
                 </Box>
                 <Box component="span">
-                  แล้วรับความช่วยเหลือจากทีมงาน พร้อมบริการจองที่ง่ายขึ้นและตัวเลือกรถอีกมากมาย
+                  พร้อมช่วยเลือกและจองรถได้ง่ายขึ้น
                 </Box>
               </Box>
             </Typography>
@@ -340,6 +343,38 @@ export default function HeroSection({
                       />
                     ) : null}
 
+                    {catalogLoading && !locations.length && !carTypes.length ? (
+                      <Box className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.95fr_0.95fr_0.9fr_auto] xl:items-stretch">
+                        <Skeleton
+                          variant="rounded"
+                          animation="wave"
+                          className="col-span-2 xl:col-span-1"
+                          sx={{ height: 56, borderRadius: "18px" }}
+                        />
+                        <Skeleton
+                          variant="rounded"
+                          animation="wave"
+                          sx={{ height: 56, borderRadius: "18px" }}
+                        />
+                        <Skeleton
+                          variant="rounded"
+                          animation="wave"
+                          sx={{ height: 56, borderRadius: "18px" }}
+                        />
+                        <Skeleton
+                          variant="rounded"
+                          animation="wave"
+                          className="col-span-2 xl:col-span-1"
+                          sx={{ height: 56, borderRadius: "18px" }}
+                        />
+                        <Skeleton
+                          variant="rounded"
+                          animation="wave"
+                          className="col-span-2 xl:col-span-1"
+                          sx={{ height: 48, minWidth: "180px", borderRadius: "999px" }}
+                        />
+                      </Box>
+                    ) : (
                     <Box className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.95fr_0.95fr_0.9fr_auto] xl:items-stretch">
                       <TextField
                         select
@@ -451,6 +486,7 @@ export default function HeroSection({
                         ค้นหารถว่าง
                       </Button>
                     </Box>
+                    )}
                   </Box>
                 </Box>
               </CardContent>

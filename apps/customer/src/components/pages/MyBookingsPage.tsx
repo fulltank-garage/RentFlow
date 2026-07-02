@@ -42,7 +42,6 @@ export default function MyBookingsPage() {
 
         <MyBookingsList
           data={bookings.data}
-          onReset={bookings.handleReset}
         />
       </Box>
     </Container>

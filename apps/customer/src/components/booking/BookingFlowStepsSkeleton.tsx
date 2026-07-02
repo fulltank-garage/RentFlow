@@ -112,6 +112,23 @@ export default function BookingFlowStepsSkeleton({
           </Box>
         </Box>
       </Box>
+      {stepCount > 2 ? (
+        <Box aria-hidden className="mt-1 flex justify-center gap-1.5 md:hidden">
+          {Array.from({ length: stepCount }).map((_, index) => (
+            <Box
+              key={`booking-flow-skeleton-scroll-dot-${index}`}
+              className="h-1.5 rounded-full"
+              sx={{
+                width: index === 0 ? 18 : 6,
+                backgroundColor:
+                  index === 0
+                    ? "var(--secondary-navy)"
+                    : "rgba(1,18,44,0.18)",
+              }}
+            />
+          ))}
+        </Box>
+      ) : null}
     </Box>
   );
 }

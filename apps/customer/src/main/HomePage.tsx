@@ -58,6 +58,8 @@ export default function HomePage({
   const [marketplaceTenants, setMarketplaceTenants] = React.useState<
     TenantProfile[]
   >([]);
+  const [marketplaceTenantsLoading, setMarketplaceTenantsLoading] =
+    React.useState(false);
   const [marketplaceTenantsError, setMarketplaceTenantsError] =
     React.useState<string | null>(null);
   const [platformSettings, setPlatformSettings] =
@@ -97,19 +99,25 @@ export default function HomePage({
 
     if (siteMode !== "marketplace") {
       setMarketplaceTenants([]);
+      setMarketplaceTenantsLoading(false);
       setMarketplaceTenantsError(null);
       return;
     }
 
+    setMarketplaceTenantsLoading(true);
     setMarketplaceTenantsError(null);
     tenantApi
       .listTenants()
       .then((res) => {
-        if (!cancelled) setMarketplaceTenants(res.data.items);
+        if (!cancelled) {
+          setMarketplaceTenants(res.data.items);
+          setMarketplaceTenantsLoading(false);
+        }
       })
       .catch(() => {
         if (!cancelled) {
           setMarketplaceTenants([]);
+          setMarketplaceTenantsLoading(false);
           setMarketplaceTenantsError("โหลดข้อมูลร้านไม่สำเร็จ");
         }
       });
@@ -332,6 +340,7 @@ export default function HomePage({
         setReturnDate={setReturnDate}
         carTypes={carTypes}
         locations={locations}
+        catalogLoading={loading}
         carTypesError={carsError}
         locationsError={branchesError}
       />
@@ -353,6 +362,7 @@ export default function HomePage({
             dataError={marketplaceTenantsError}
             supportingError={carsError}
             hasAvailableCars={cars.length > 0}
+            loading={marketplaceTenantsLoading || loading}
           />
         </>
       ) : (
@@ -360,6 +370,7 @@ export default function HomePage({
           <CarsSection
             cars={recommendedCars}
             formatTHB={formatTHB}
+            loading={loading}
             error={carsError}
           />
           <CarClassSection

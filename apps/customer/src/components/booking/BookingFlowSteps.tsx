@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Box, Typography } from "@mui/material";
 
 export type BookingFlowStepKey =
@@ -63,13 +64,50 @@ export default function BookingFlowSteps({
   const desktopCircleSize = 50;
   const mobileConnectorWidth = mode === "chat" ? 110 : 44;
   const desktopConnectorWidth = mode === "chat" ? 220 : 92;
+  const scrollRef = React.useRef<HTMLDivElement | null>(null);
+  const [activeScrollIndex, setActiveScrollIndex] = React.useState(0);
+  const [canScroll, setCanScroll] = React.useState(false);
+
+  const updateScrollHint = React.useCallback(() => {
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+    setCanScroll(maxScroll > 2);
+
+    if (maxScroll <= 2) {
+      setActiveScrollIndex(0);
+      return;
+    }
+
+    const nextIndex = Math.round((scroller.scrollLeft / maxScroll) * (steps.length - 1));
+    setActiveScrollIndex(Math.min(steps.length - 1, Math.max(0, nextIndex)));
+  }, [steps.length]);
+
+  React.useEffect(() => {
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+
+    scroller.addEventListener("scroll", updateScrollHint, { passive: true });
+    window.addEventListener("resize", updateScrollHint);
+    updateScrollHint();
+
+    return () => {
+      scroller.removeEventListener("scroll", updateScrollHint);
+      window.removeEventListener("resize", updateScrollHint);
+    };
+  }, [updateScrollHint]);
 
   return (
     <Box
       aria-label="ลำดับขั้นตอนการจอง"
       className={`relative left-1/2 w-screen -translate-x-1/2 ${className}`.trim()}
     >
-      <Box className="overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <Box
+        ref={scrollRef}
+        className="overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        onScroll={updateScrollHint}
+      >
         <Box className="mx-auto w-fit px-4">
           <Box
             sx={{
@@ -190,6 +228,23 @@ export default function BookingFlowSteps({
           </Box>
         </Box>
       </Box>
+      {canScroll ? (
+        <Box aria-hidden className="mt-1 flex justify-center gap-1.5 md:hidden">
+          {steps.map((step, index) => (
+            <Box
+              key={`booking-flow-scroll-dot-${step.key}`}
+              className="h-1.5 rounded-full transition-all duration-300"
+              sx={{
+                width: index === activeScrollIndex ? 18 : 6,
+                backgroundColor:
+                  index === activeScrollIndex
+                    ? "var(--secondary-navy)"
+                    : "rgba(1,18,44,0.18)",
+              }}
+            />
+          ))}
+        </Box>
+      ) : null}
     </Box>
   );
 }

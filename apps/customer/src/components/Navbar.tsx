@@ -194,18 +194,16 @@ function MobileGuestButtonsSkeleton() {
 
 function MobileProfileSkeleton() {
   return (
-    <>
-      <Box className="rounded-[24px] border border-black/10 bg-white px-4 py-3">
-        <Box className="flex items-center gap-3">
-          <Box className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-black/[0.08]" />
-          <Box className="min-w-0 flex-1">
-            <Box className="h-[15px] w-[124px] animate-pulse rounded-full bg-black/[0.08]" />
-            <Box className="mt-2 h-[12px] w-[164px] max-w-full animate-pulse rounded-full bg-black/[0.055]" />
-          </Box>
+    <Box className="rounded-[24px] border border-black/10 bg-white px-4 py-3">
+      <Box className="flex items-center gap-3">
+        <Box className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-black/[0.08]" />
+        <Box className="min-w-0 flex-1">
+          <Box className="h-[15px] w-[124px] animate-pulse rounded-full bg-black/[0.08]" />
+          <Box className="mt-2 h-[12px] w-[164px] max-w-full animate-pulse rounded-full bg-black/[0.055]" />
         </Box>
       </Box>
-      <Box className="h-[44px] w-full animate-pulse rounded-full border border-black/[0.08] bg-white" />
-    </>
+      <Box className="mt-3 h-9 w-full animate-pulse rounded-full bg-black/[0.055]" />
+    </Box>
   );
 }
 
@@ -637,8 +635,8 @@ export default function Navbar({
             maxHeight: "calc(100dvh - 52px)",
             overflow: "hidden",
             backgroundColor: "var(--rf-apple-surface-soft)",
-            borderBottomLeftRadius: "28px",
-            borderBottomRightRadius: "28px",
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
           },
         }}
       >
@@ -662,9 +660,7 @@ export default function Navbar({
                     backgroundColor: active
                       ? "rgba(0,0,0,0.055)"
                       : "transparent",
-                    border: active
-                      ? "1px solid rgba(0,0,0,0.08)"
-                      : "1px solid transparent",
+                    border: "0",
                     "&:hover": {
                       backgroundColor: "rgba(0,0,0,0.045)",
                     },
@@ -724,6 +720,7 @@ export default function Navbar({
                     component={Link}
                     href="/profile"
                     onClick={closeDrawer}
+                    className="block no-underline"
                     sx={{
                       display: "block",
                       transition:
@@ -750,19 +747,11 @@ export default function Navbar({
                         </Typography>
                       </Box>
                     </Box>
+                    <Box className="mt-3 flex min-h-9 items-center justify-center rounded-full bg-[var(--rf-apple-surface-soft)] px-4 text-center text-[0px] font-bold text-[var(--rf-apple-ink)]">
+                      <span className="text-sm">{"\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e1a\u0e31\u0e0d\u0e0a\u0e35"}</span>
+                    </Box>
                   </Box>
                 </Box>
-
-                <Button
-                  component={Link}
-                  href="/profile"
-                  variant="outlined"
-                  fullWidth
-                  className="rounded-full! py-2.5!"
-                  onClick={closeDrawer}
-                >
-                  จัดการบัญชี
-                </Button>
               </>
             )}
           </Box>

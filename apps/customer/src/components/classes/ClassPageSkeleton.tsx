@@ -121,8 +121,14 @@ function CarCardSkeleton() {
       </CardContent>
 
       <CardActions
-        sx={{ p: { xs: "0px 20px 20px", sm: "0px 16px 16px" } }}
-        className="flex-col gap-2 sm:flex-row"
+        sx={{
+          p: { xs: "0px 20px 20px", sm: "0px 16px 16px" },
+          "& .MuiSkeleton-root": {
+            flex: "1 1 0",
+            minWidth: 0,
+          },
+        }}
+        className="flex-row gap-2"
       >
         <Skeleton
           variant="rounded"

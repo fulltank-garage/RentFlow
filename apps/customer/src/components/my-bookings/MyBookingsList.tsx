@@ -10,27 +10,18 @@ import StatusChip from "./StatusChip";
 
 type Props = {
   data: Booking[];
-  onReset: () => void;
 };
 
-export default function MyBookingsList({ data, onReset }: Props) {
+export default function MyBookingsList({ data }: Props) {
   if (data.length === 0) {
     return (
-        <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-8 text-center">
+      <Box className="rounded-[30px] border border-black/10 bg-white p-10 text-center sm:p-12">
         <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
           ไม่พบรายการจอง
         </Typography>
         <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
           ลองเปลี่ยนคำค้นหา หรือเลือกสถานะอื่น
         </Typography>
-
-        <Button
-          variant="outlined"
-          className="mt-4! rounded-full!"
-          onClick={onReset}
-        >
-          รีเซ็ตตัวกรอง
-        </Button>
       </Box>
     );
   }

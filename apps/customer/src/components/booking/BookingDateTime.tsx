@@ -23,6 +23,10 @@ type CalendarDay = {
   inMonth: boolean;
 };
 
+type TimePickerInput = HTMLInputElement & {
+  showPicker?: () => void;
+};
+
 const THAI_MONTHS = [
   "มกราคม",
   "กุมภาพันธ์",
@@ -228,6 +232,25 @@ export default function BookingDateTime({
   const [visibleMonth, setVisibleMonth] = React.useState(
     () => new Date(selectedBaseDate.getFullYear(), selectedBaseDate.getMonth(), 1)
   );
+  const openTimePicker = React.useCallback(
+    (
+      event:
+        | React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>
+        | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      if (!(event.currentTarget instanceof HTMLInputElement)) return;
+
+      const input = event.currentTarget as TimePickerInput;
+      input.focus();
+
+      try {
+        input.showPicker?.();
+      } catch {
+        // Some browsers only allow native pickers from direct user activation.
+      }
+    },
+    []
+  );
 
   React.useEffect(() => {
     const next = parseDateKey(pickupDate);
@@ -340,7 +363,11 @@ export default function BookingDateTime({
           size="small"
           sx={fieldSX}
           InputLabelProps={{ shrink: true }}
-          inputProps={{ step: 300 }}
+          inputProps={{
+            step: 300,
+            onClick: openTimePicker,
+            onFocus: openTimePicker,
+          }}
         />
 
         <TextField
@@ -354,7 +381,11 @@ export default function BookingDateTime({
           size="small"
           sx={fieldSX}
           InputLabelProps={{ shrink: true }}
-          inputProps={{ step: 300 }}
+          inputProps={{
+            step: 300,
+            onClick: openTimePicker,
+            onFocus: openTimePicker,
+          }}
           error={!!pickupDate && !!returnDate && timeInvalid}
           helperText={
             pickupDate && returnDate && timeInvalid

@@ -17,6 +17,7 @@ import {
   type CatalogCarClass,
 } from "@/src/lib/rentflow-catalog";
 import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
+import MobileScrollHintShelf from "@/src/components/common/MobileScrollHintShelf";
 
 export default function CarClassSection({
   classes,
@@ -27,6 +28,8 @@ export default function CarClassSection({
   loading?: boolean;
   error?: string | null;
 }) {
+  const shelfItemCount = error ? 0 : loading && !classes.length ? 4 : classes.length;
+
   return (
     <Box>
       <Container maxWidth="lg" className="apple-section pt-0!">
@@ -44,7 +47,11 @@ export default function CarClassSection({
         </Box>
 
         <Box className="apple-card mt-10 p-4 sm:p-5 md:p-7">
-          <Box className="apple-shelf apple-shelf-compact sm:grid sm:grid-cols-2 lg:grid-cols-4">
+          <MobileScrollHintShelf
+            itemCount={shelfItemCount}
+            className="apple-shelf apple-shelf-compact sm:grid sm:grid-cols-2 lg:grid-cols-4"
+            dotClassName="mt-3 sm:hidden"
+          >
           {error ? (
             <DataLoadErrorCard
               title="โหลดข้อมูลประเภทรถไม่ได้"
@@ -170,7 +177,7 @@ export default function CarClassSection({
               </Typography>
             </Box>
           )}
-          </Box>
+          </MobileScrollHintShelf>
         </Box>
         <Divider className="mt-14! border-black/10!" />
       </Container>

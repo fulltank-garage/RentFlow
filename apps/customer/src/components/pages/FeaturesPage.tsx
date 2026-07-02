@@ -20,6 +20,102 @@ type FeaturesPageProps = {
   initialTenantProfile?: TenantProfile | null;
 };
 
+function MobileScrollDots({
+  count,
+  activeIndex,
+}: {
+  count: number;
+  activeIndex: number;
+}) {
+  if (count <= 1) return null;
+
+  return (
+    <Box
+      aria-hidden
+      className="mt-3 flex justify-center gap-1.5 md:hidden"
+    >
+      {Array.from({ length: count }).map((_, index) => (
+        <Box
+          key={`feature-scroll-dot-${index}`}
+          className="h-1.5 rounded-full transition-all duration-300"
+          sx={{
+            width: index === activeIndex ? 18 : 6,
+            backgroundColor:
+              index === activeIndex
+                ? "var(--secondary-navy)"
+                : "rgba(1,18,44,0.18)",
+          }}
+        />
+      ))}
+    </Box>
+  );
+}
+
+function HorizontalHintShelf({
+  children,
+  itemCount,
+}: {
+  children: React.ReactNode;
+  itemCount: number;
+}) {
+  const shelfRef = React.useRef<HTMLDivElement | null>(null);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  const updateActiveIndex = React.useCallback(() => {
+    const shelf = shelfRef.current;
+    if (!shelf || itemCount <= 1) return;
+
+    const maxScroll = shelf.scrollWidth - shelf.clientWidth;
+    if (maxScroll <= 0) {
+      setActiveIndex(0);
+      return;
+    }
+
+    const nextIndex = Math.round((shelf.scrollLeft / maxScroll) * (itemCount - 1));
+    setActiveIndex(Math.min(itemCount - 1, Math.max(0, nextIndex)));
+  }, [itemCount]);
+
+  React.useEffect(() => {
+    setActiveIndex(0);
+  }, [itemCount]);
+
+  React.useEffect(() => {
+    const shelf = shelfRef.current;
+    if (!shelf) return;
+
+    shelf.addEventListener("scroll", updateActiveIndex, { passive: true });
+    window.addEventListener("resize", updateActiveIndex);
+    updateActiveIndex();
+
+    return () => {
+      shelf.removeEventListener("scroll", updateActiveIndex);
+      window.removeEventListener("resize", updateActiveIndex);
+    };
+  }, [updateActiveIndex]);
+
+  return (
+    <Box className="relative">
+      <Box
+        ref={shelfRef}
+        className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2"
+        onScroll={updateActiveIndex}
+        sx={{
+          "@media (max-width: 767px)": {
+            paddingRight: "18vw",
+            "& > *": {
+              flexBasis: "min(78vw, 21rem)",
+            },
+          },
+        }}
+      >
+        {children}
+      </Box>
+
+      <MobileScrollDots count={itemCount} activeIndex={activeIndex} />
+    </Box>
+  );
+}
+
 export default function FeaturesPage({
   initialHost,
   initialTenantProfile = null,
@@ -146,7 +242,7 @@ export default function FeaturesPage({
           </Box>
         </Box>
 
-        <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
+        <HorizontalHintShelf itemCount={FEATURES.length}>
           {FEATURES.map((f) => (
             <Box
               key={f.title}
@@ -162,7 +258,7 @@ export default function FeaturesPage({
               </Box>
             </Box>
           ))}
-        </Box>
+        </HorizontalHintShelf>
       </Box>
 
       <Box className="mt-10">
@@ -173,17 +269,20 @@ export default function FeaturesPage({
           {pageCopy.stepsDesc}
         </Typography>
 
-        <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
+        <HorizontalHintShelf itemCount={HOW_IT_WORKS.length}>
           {HOW_IT_WORKS.map((s) => (
             <Box
               key={s.step}
               className="apple-card p-5"
             >
               <Box className="flex items-start gap-3">
-                <Box className="grid h-9 w-9 place-items-center rounded-full bg-[var(--rf-apple-ink)] text-white">
+                <Box
+                  className="grid aspect-square h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--rf-apple-ink)] text-white"
+                  sx={{ minWidth: 36, minHeight: 36 }}
+                >
                   <Typography className="text-sm font-bold">{s.step}</Typography>
                 </Box>
-                <Box>
+                <Box className="min-w-0">
                   <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
                     {s.title}
                   </Typography>
@@ -194,7 +293,7 @@ export default function FeaturesPage({
               </Box>
             </Box>
           ))}
-        </Box>
+        </HorizontalHintShelf>
       </Box>
 
       <Box className="mt-10">
@@ -205,7 +304,7 @@ export default function FeaturesPage({
           {pageCopy.trustDesc}
         </Typography>
 
-        <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
+        <HorizontalHintShelf itemCount={TRUST_POINTS.length}>
           {TRUST_POINTS.map((t) => (
             <Box
               key={t.title}
@@ -219,7 +318,7 @@ export default function FeaturesPage({
               </Typography>
             </Box>
           ))}
-        </Box>
+        </HorizontalHintShelf>
       </Box>
 
       <Box className="apple-card mt-10 p-5">

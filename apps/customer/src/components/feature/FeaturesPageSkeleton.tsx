@@ -272,6 +272,50 @@ function CTASectionSkeleton() {
   );
 }
 
+function SkeletonHorizontalHintShelf({
+  children,
+  itemCount,
+}: {
+  children: React.ReactNode;
+  itemCount: number;
+}) {
+  return (
+    <Box className="relative">
+      <Box
+        className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2"
+        sx={{
+          "@media (max-width: 767px)": {
+            paddingRight: "18vw",
+            "& > *": {
+              flexBasis: "min(78vw, 21rem)",
+            },
+          },
+        }}
+      >
+        {children}
+      </Box>
+
+      {itemCount > 1 ? (
+        <Box aria-hidden className="mt-3 flex justify-center gap-1.5 md:hidden">
+          {Array.from({ length: itemCount }).map((_, index) => (
+            <Box
+              key={`feature-skeleton-scroll-dot-${index}`}
+              className="h-1.5 rounded-full"
+              sx={{
+                width: index === 0 ? 18 : 6,
+                backgroundColor:
+                  index === 0
+                    ? "var(--secondary-navy)"
+                    : "rgba(1,18,44,0.18)",
+              }}
+            />
+          ))}
+        </Box>
+      ) : null}
+    </Box>
+  );
+}
+
 function FeaturesGridSkeleton() {
   return (
     <Box className="mt-8">
@@ -279,11 +323,11 @@ function FeaturesGridSkeleton() {
         <SectionHeadingSkeleton titleWidth={168} descWidth={360} />
       </Box>
 
-      <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
+      <SkeletonHorizontalHintShelf itemCount={6}>
         {Array.from({ length: 6 }).map((_, index) => (
           <FeatureCardSkeleton key={`feature-card-skeleton-${index}`} />
         ))}
-      </Box>
+      </SkeletonHorizontalHintShelf>
     </Box>
   );
 }
@@ -293,11 +337,11 @@ function StepsSectionSkeleton() {
     <Box className="mt-10">
       <SectionHeadingSkeleton titleWidth={138} descWidth={420} />
 
-      <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
+      <SkeletonHorizontalHintShelf itemCount={4}>
         {Array.from({ length: 4 }).map((_, index) => (
           <StepCardSkeleton key={`feature-step-skeleton-${index}`} />
         ))}
-      </Box>
+      </SkeletonHorizontalHintShelf>
     </Box>
   );
 }
@@ -307,11 +351,11 @@ function TrustSectionSkeleton() {
     <Box className="mt-10">
       <SectionHeadingSkeleton titleWidth={232} descWidth={340} />
 
-      <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
+      <SkeletonHorizontalHintShelf itemCount={4}>
         {Array.from({ length: 4 }).map((_, index) => (
           <TrustCardSkeleton key={`feature-trust-skeleton-${index}`} />
         ))}
-      </Box>
+      </SkeletonHorizontalHintShelf>
     </Box>
   );
 }

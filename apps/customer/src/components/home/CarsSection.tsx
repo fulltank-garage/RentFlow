@@ -12,19 +12,113 @@ import {
   Button,
   Chip,
   Divider,
+  Skeleton,
 } from "@mui/material";
 
 import type { Car } from "@/src/services/cars/cars.types";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
+import MobileScrollHintShelf from "@/src/components/common/MobileScrollHintShelf";
 
 type Props = {
   cars: Car[];
   formatTHB: (n: number) => string;
+  loading?: boolean;
   error?: string | null;
 };
 
-export default function CarsSection({ cars, formatTHB, error }: Props) {
+function CarRecommendationSkeletonCard() {
+  return (
+    <Card
+      elevation={0}
+      sx={{ boxShadow: "none" }}
+      className="apple-card apple-card-no-hover"
+    >
+      <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+        <Skeleton
+          variant="rectangular"
+          animation="wave"
+          sx={{ width: "100%", height: "100%", borderRadius: 0 }}
+        />
+      </Box>
+
+      <CardContent className="p-5 sm:p-6">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: "68%",
+            height: 28,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            mt: 0.5,
+            width: "88%",
+            height: 22,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+
+        <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Box className="flex items-end gap-2">
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{ width: 74, height: 20, borderRadius: "8px", transform: "none" }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{ width: 104, height: 32, borderRadius: "8px", transform: "none" }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{ width: 28, height: 20, borderRadius: "8px", transform: "none" }}
+            />
+          </Box>
+        </Box>
+      </CardContent>
+
+      <CardActions
+        sx={{
+          p: { xs: "0px 20px 20px", sm: "0px 16px 16px" },
+          "& .MuiSkeleton-root": {
+            flex: "1 1 0",
+            minWidth: 0,
+          },
+        }}
+        className="flex-row gap-2"
+      >
+        <Skeleton
+          variant="rounded"
+          animation="wave"
+          sx={{ height: 40, borderRadius: "999px" }}
+        />
+        <Skeleton
+          variant="rounded"
+          animation="wave"
+          sx={{ height: 40, borderRadius: "999px" }}
+        />
+      </CardActions>
+    </Card>
+  );
+}
+
+export default function CarsSection({
+  cars,
+  formatTHB,
+  loading = false,
+  error,
+}: Props) {
+  const shelfItemCount = error ? 0 : loading && !cars.length ? 6 : cars.length;
+
   return (
     <Container maxWidth="lg" className="apple-section">
       <Box className="apple-section-intro">
@@ -45,13 +139,20 @@ export default function CarsSection({ cars, formatTHB, error }: Props) {
         />
       </Box>
 
-      <Box className="apple-shelf apple-shelf-wide mt-10 md:grid md:grid-cols-2 lg:grid-cols-3">
+      <MobileScrollHintShelf
+        itemCount={shelfItemCount}
+        className="apple-shelf apple-shelf-wide mt-10 md:grid md:grid-cols-2 lg:grid-cols-3"
+      >
         {error ? (
           <DataLoadErrorCard
             title="โหลดรายการรถแนะนำไม่ได้"
             message={error}
             className="md:col-span-2 lg:col-span-3"
           />
+        ) : loading && !cars.length ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <CarRecommendationSkeletonCard key={`home-car-skeleton-${index}`} />
+          ))
         ) : cars.length ? (
           cars.map((c) => (
             <Card
@@ -101,8 +202,16 @@ export default function CarsSection({ cars, formatTHB, error }: Props) {
               </CardContent>
 
               <CardActions
-                sx={{ p: { xs: "0px 20px 20px", sm: "0px 16px 16px" } }}
-                className="flex-col gap-2 sm:flex-row"
+                sx={{
+                  p: { xs: "0px 20px 20px", sm: "0px 16px 16px" },
+                  "& .MuiButton-root": {
+                    flex: "1 1 0",
+                    minWidth: 0,
+                    px: { xs: 1, sm: 2 },
+                    whiteSpace: "nowrap",
+                  },
+                }}
+                className="flex-row gap-2"
               >
                 <Button
                   component={Link}
@@ -135,7 +244,7 @@ export default function CarsSection({ cars, formatTHB, error }: Props) {
             </Typography>
           </Box>
         )}
-      </Box>
+      </MobileScrollHintShelf>
       <Divider className="mt-14! border-black/10!" />
     </Container>
   );
