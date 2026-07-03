@@ -31,6 +31,7 @@ type rentFlowAssistantCriteria struct {
 	BudgetPerDay      int64  `json:"budgetPerDay,omitempty"`
 	PrioritizeBudget  bool   `json:"prioritizeBudget,omitempty"`
 	PrioritizeComfort bool   `json:"prioritizeComfort,omitempty"`
+	PreferNearBudget  bool   `json:"preferNearBudget,omitempty"`
 }
 
 type rentFlowAssistantScoredCar struct {
@@ -55,6 +56,19 @@ func RentFlowCarStorefrontAssistant(c *gin.Context) {
 	}
 
 	marketplace := rentFlowIsMarketplaceRequest(c)
+	if !rentFlowAssistantIsStorefrontQuery(query) {
+		rentFlowSuccess(c, http.StatusOK, "คำถามอยู่นอกขอบเขตผู้ช่วยเลือกรถ", gin.H{
+			"provider":        "database-rules",
+			"mode":            rentFlowAssistantModeLabel(marketplace),
+			"summary":         "ผู้ช่วย AI นี้ถูกออกแบบมาเพื่อช่วยเรื่องรถเช่า การเลือกประเภทรถ งบประมาณ จำนวนที่นั่ง สาขารับ-คืนรถ และการจองเท่านั้น ลองถามใหม่โดยระบุทริป งบ หรือจำนวนผู้โดยสาร แล้วผมจะช่วยคัดรถที่เหมาะให้",
+			"criteria":        rentFlowAssistantCriteria{RawQuery: query},
+			"quickHints":      []string{"ตัวอย่าง: อยากได้รถ 5 ที่นั่ง งบไม่เกิน 1,500 บาทต่อวัน", "ตัวอย่าง: ช่วยเลือกรถประหยัดน้ำมันสำหรับขับในเมือง", "ตัวอย่าง: มีรถ SUV สำหรับเที่ยวต่างจังหวัดไหม"},
+			"recommendedCars": []gin.H{},
+			"generatedAt":     time.Now(),
+		})
+		return
+	}
+
 	var tenants []models.RentFlowCarTenant
 	if marketplace {
 		items, err := rentFlowMarketplaceTenants()
@@ -105,15 +119,17 @@ func RentFlowCarStorefrontAssistant(c *gin.Context) {
 	}
 
 	recommendations, matched := rentFlowAssistantRecommendCars(cars, tenantMap, imageURLs, criteria)
-	if len(recommendations) == 0 {
+	if len(recommendations) == 0 && criteria.BudgetPerDay > 0 {
+		recommendations = rentFlowAssistantNearBudgetCars(cars, tenantMap, imageURLs, criteria)
+	}
+	if len(recommendations) == 0 && criteria.BudgetPerDay == 0 {
 		recommendations = rentFlowAssistantFallbackCars(cars, tenantMap, imageURLs)
 	}
 
 	provider := "database-rules"
 	summary := rentFlowAssistantStorefrontSummary(marketplace, criteria, recommendations, matched)
-	if generated, err := rentFlowAIStorefrontSummary(c, marketplace, criteria, recommendations); err == nil && generated != "" {
-		summary = generated
-		provider = services.RentFlowCarAIProviderLabel()
+	if len(recommendations) > 0 {
+		summary = rentFlowAssistantStorefrontRecommendationSummary(recommendations)
 	}
 
 	rentFlowSuccess(c, http.StatusOK, "สร้างคำแนะนำสำหรับลูกค้าสำเร็จ", gin.H{
@@ -488,6 +504,63 @@ func rentFlowAssistantTenantIDs(tenants []models.RentFlowCarTenant) []string {
 	return ids
 }
 
+func rentFlowAssistantIsStorefrontQuery(query string) bool {
+	lower := strings.ToLower(strings.TrimSpace(query))
+	if lower == "" {
+		return false
+	}
+
+	if rentFlowAiPartyPattern.MatchString(lower) || rentFlowAiBudgetPattern.MatchString(lower) {
+		return true
+	}
+
+	keywords := []string{
+		"รถ",
+		"เช่า",
+		"จอง",
+		"ราคา",
+		"งบ",
+		"บาท",
+		"ที่นั่ง",
+		"คน",
+		"สาขา",
+		"รับรถ",
+		"คืนรถ",
+		"ร้าน",
+		"ทริป",
+		"เดินทาง",
+		"สนามบิน",
+		"ประหยัด",
+		"น้ำมัน",
+		"เกียร์",
+		"ครอบครัว",
+		"สัมภาระ",
+		"car",
+		"rent",
+		"rental",
+		"booking",
+		"book",
+		"vehicle",
+		"trip",
+		"travel",
+		"budget",
+		"seat",
+		"suv",
+		"van",
+		"sedan",
+		"economy",
+		"eco",
+		"airport",
+	}
+	for _, keyword := range keywords {
+		if strings.Contains(lower, keyword) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func rentFlowAssistantCriteriaFromQuery(query string) rentFlowAssistantCriteria {
 	criteria := rentFlowAssistantCriteria{RawQuery: strings.TrimSpace(query)}
 	lower := strings.ToLower(query)
@@ -518,6 +591,9 @@ func rentFlowAssistantCriteriaFromQuery(query string) rentFlowAssistantCriteria 
 
 	if strings.Contains(lower, "ประหยัด") || strings.Contains(lower, "คุ้ม") || strings.Contains(lower, "budget") || strings.Contains(lower, "ถูก") {
 		criteria.PrioritizeBudget = true
+	}
+	if strings.Contains(lower, "ใกล้") || strings.Contains(lower, "ประมาณ") || strings.Contains(lower, "ราว") || strings.Contains(lower, "แถว") || strings.Contains(lower, "around") || strings.Contains(lower, "near") || strings.Contains(lower, "ดี ๆ") || strings.Contains(lower, "ดีๆ") {
+		criteria.PreferNearBudget = true
 	}
 	if strings.Contains(lower, "ครอบครัว") || strings.Contains(lower, "เดินทางไกล") || strings.Contains(lower, "นั่งสบาย") || strings.Contains(lower, "สัมภาระ") || strings.Contains(lower, "ของเยอะ") {
 		criteria.PrioritizeComfort = true
@@ -561,7 +637,7 @@ func rentFlowAssistantRecommendCars(cars []models.RentFlowCarCar, tenantMap map[
 				reasons = append(reasons, "อยู่ในงบต่อวัน")
 				matched = true
 			} else {
-				score -= 2
+				continue
 			}
 		}
 
@@ -571,7 +647,22 @@ func rentFlowAssistantRecommendCars(cars []models.RentFlowCarCar, tenantMap map[
 			reasons = append(reasons, "ชื่อรถหรือรุ่นตรงกับคำค้นหา")
 		}
 
-		if criteria.PrioritizeBudget {
+		if criteria.PreferNearBudget && criteria.BudgetPerDay > 0 {
+			distance := criteria.BudgetPerDay - car.PricePerDay
+			switch {
+			case distance <= 0:
+				score += 6
+			case distance <= criteria.BudgetPerDay/10:
+				score += 5
+			case distance <= criteria.BudgetPerDay/5:
+				score += 4
+			case distance <= criteria.BudgetPerDay/3:
+				score += 2
+			}
+			reasons = append(reasons, fmt.Sprintf("ราคาใกล้งบ %s/วัน", rentFlowFormatTHB(criteria.BudgetPerDay)))
+		}
+
+		if criteria.PrioritizeBudget && !criteria.PreferNearBudget {
 			score += rentFlowAssistantBudgetBonus(car.PricePerDay)
 			if !containsString(reasons, "ราคาต่อวันเหมาะกับสายคุ้มค่า") {
 				reasons = append(reasons, "ราคาต่อวันเหมาะกับสายคุ้มค่า")
@@ -598,6 +689,14 @@ func rentFlowAssistantRecommendCars(cars []models.RentFlowCarCar, tenantMap map[
 	}
 
 	sort.Slice(scored, func(i, j int) bool {
+		if criteria.PreferNearBudget && criteria.BudgetPerDay > 0 {
+			leftDistance := absInt64(criteria.BudgetPerDay - scored[i].Car.PricePerDay)
+			rightDistance := absInt64(criteria.BudgetPerDay - scored[j].Car.PricePerDay)
+			if leftDistance == rightDistance {
+				return scored[i].Score > scored[j].Score
+			}
+			return leftDistance < rightDistance
+		}
 		if scored[i].Score == scored[j].Score {
 			return scored[i].Car.PricePerDay < scored[j].Car.PricePerDay
 		}
@@ -629,6 +728,103 @@ func rentFlowAssistantRecommendCars(cars []models.RentFlowCarCar, tenantMap map[
 	}
 
 	return result, matched
+}
+
+func rentFlowAssistantNearBudgetCars(cars []models.RentFlowCarCar, tenantMap map[string]models.RentFlowCarTenant, imageURLs map[string][]string, criteria rentFlowAssistantCriteria) []gin.H {
+	if criteria.BudgetPerDay <= 0 {
+		return nil
+	}
+
+	limit := rentFlowAssistantNearBudgetLimit(criteria.BudgetPerDay)
+	items := make([]rentFlowAssistantScoredCar, 0, len(cars))
+
+	for _, car := range cars {
+		if criteria.CarType != "" && !strings.EqualFold(car.Type, criteria.CarType) {
+			continue
+		}
+		if criteria.MinSeats > 0 && car.Seats < criteria.MinSeats {
+			continue
+		}
+		if car.PricePerDay <= criteria.BudgetPerDay || car.PricePerDay > limit {
+			continue
+		}
+
+		images := imageURLs[car.ID]
+		image := ""
+		if len(images) > 0 {
+			image = images[0]
+		}
+
+		overBudget := car.PricePerDay - criteria.BudgetPerDay
+		reasons := []string{
+			fmt.Sprintf("ราคาใกล้เคียงงบ แต่เกินงบ %s/วัน", rentFlowFormatTHB(overBudget)),
+			fmt.Sprintf("เป็นตัวเลือกใกล้งบไม่เกิน %s/วัน", rentFlowFormatTHB(criteria.BudgetPerDay)),
+		}
+		if criteria.MinSeats > 0 {
+			reasons = append(reasons, fmt.Sprintf("รองรับอย่างน้อย %d คน", criteria.MinSeats))
+		}
+		if criteria.CarType != "" {
+			reasons = append(reasons, "ตรงกับประเภทรถที่ถาม")
+		}
+
+		items = append(items, rentFlowAssistantScoredCar{
+			Car:     car,
+			Tenant:  tenantMap[car.TenantID],
+			Image:   image,
+			Score:   int(limit - car.PricePerDay),
+			Reasons: servicesUniqueStrings(reasons),
+		})
+	}
+
+	sort.Slice(items, func(i, j int) bool {
+		leftOver := items[i].Car.PricePerDay - criteria.BudgetPerDay
+		rightOver := items[j].Car.PricePerDay - criteria.BudgetPerDay
+		if leftOver == rightOver {
+			return items[i].Car.PricePerDay < items[j].Car.PricePerDay
+		}
+		return leftOver < rightOver
+	})
+
+	if len(items) > 4 {
+		items = items[:4]
+	}
+
+	result := make([]gin.H, 0, len(items))
+	for _, item := range items {
+		result = append(result, gin.H{
+			"id":           item.Car.ID,
+			"name":         item.Car.Name,
+			"brand":        item.Car.Brand,
+			"model":        item.Car.Model,
+			"type":         item.Car.Type,
+			"seats":        item.Car.Seats,
+			"transmission": item.Car.Transmission,
+			"fuel":         item.Car.Fuel,
+			"pricePerDay":  item.Car.PricePerDay,
+			"image":        item.Image,
+			"shopName":     item.Tenant.ShopName,
+			"domainSlug":   item.Tenant.DomainSlug,
+			"publicDomain": item.Tenant.PublicDomain,
+			"reasons":      item.Reasons,
+		})
+	}
+
+	return result
+}
+
+func rentFlowAssistantNearBudgetLimit(budget int64) int64 {
+	tolerance := budget / 5
+	if tolerance < 300 {
+		tolerance = 300
+	}
+	return budget + tolerance
+}
+
+func absInt64(value int64) int64 {
+	if value < 0 {
+		return -value
+	}
+	return value
 }
 
 func rentFlowAssistantFallbackCars(cars []models.RentFlowCarCar, tenantMap map[string]models.RentFlowCarTenant, imageURLs map[string][]string) []gin.H {
@@ -684,6 +880,9 @@ func rentFlowAssistantBudgetBonus(pricePerDay int64) int {
 
 func rentFlowAssistantStorefrontSummary(marketplace bool, criteria rentFlowAssistantCriteria, recommendations []gin.H, matched bool) string {
 	if len(recommendations) == 0 {
+		if criteria.BudgetPerDay > 0 {
+			return fmt.Sprintf("ตอนนี้ยังไม่มีรถที่ตรงกับงบไม่เกิน %s/วัน ลองเพิ่มงบประมาณหรือปรับประเภทรถ แล้วผมจะช่วยคัดตัวเลือกใหม่ให้", rentFlowFormatTHB(criteria.BudgetPerDay))
+		}
 		return "ตอนนี้ยังไม่มีรถที่พร้อมใช้งานในระบบสำหรับช่วยแนะนำ"
 	}
 
@@ -713,6 +912,115 @@ func rentFlowAssistantStorefrontSummary(marketplace bool, criteria rentFlowAssis
 		return fmt.Sprintf("ผมคัดรถที่น่าเริ่มดูจาก%sให้แล้ว %d คัน โดยเน้นรถที่พร้อมใช้งานและราคาไล่ดูง่าย", scope, len(recommendations))
 	}
 	return fmt.Sprintf("จากเงื่อนไข %s ผมคัดรถจาก%sให้ %d คันที่ใกล้เคียงที่สุด", strings.Join(parts, " • "), scope, len(recommendations))
+}
+
+func rentFlowAssistantStorefrontRecommendationSummary(recommendations []gin.H) string {
+	lines := make([]string, 0, len(recommendations))
+	for index, recommendation := range recommendations {
+		name := strings.TrimSpace(fmt.Sprint(recommendation["name"]))
+		if name == "" {
+			name = "รถที่แนะนำ"
+		}
+
+		seats := rentFlowIntFromAny(recommendation["seats"])
+		pricePerDay := rentFlowInt64FromAny(recommendation["pricePerDay"])
+		reason := rentFlowFirstReason(recommendation["reasons"])
+
+		detailParts := make([]string, 0, 3)
+		if seats > 0 {
+			detailParts = append(detailParts, fmt.Sprintf("รองรับได้ %d คน", seats))
+		}
+		if pricePerDay > 0 {
+			detailParts = append(detailParts, fmt.Sprintf("ราคา %s/วัน", rentFlowFormatTHB(pricePerDay)))
+		}
+		if reason != "" {
+			detailParts = append(detailParts, reason)
+		}
+
+		if len(detailParts) == 0 {
+			lines = append(lines, fmt.Sprintf("%d. %s เป็นตัวเลือกที่พร้อมให้บริการ", index+1, name))
+			continue
+		}
+		lines = append(lines, fmt.Sprintf("%d. %s %s", index+1, name, strings.Join(detailParts, " และ")))
+	}
+
+	return strings.Join(lines, "\n")
+}
+
+func rentFlowFirstReason(value interface{}) string {
+	switch reasons := value.(type) {
+	case []string:
+		if len(reasons) > 0 {
+			return strings.TrimSpace(reasons[0])
+		}
+	case []interface{}:
+		if len(reasons) > 0 {
+			return strings.TrimSpace(fmt.Sprint(reasons[0]))
+		}
+	}
+	return ""
+}
+
+func rentFlowIntFromAny(value interface{}) int {
+	switch typed := value.(type) {
+	case int:
+		return typed
+	case int8:
+		return int(typed)
+	case int16:
+		return int(typed)
+	case int32:
+		return int(typed)
+	case int64:
+		return int(typed)
+	case uint:
+		return int(typed)
+	case uint8:
+		return int(typed)
+	case uint16:
+		return int(typed)
+	case uint32:
+		return int(typed)
+	case uint64:
+		return int(typed)
+	case float32:
+		return int(typed)
+	case float64:
+		return int(typed)
+	default:
+		return 0
+	}
+}
+
+func rentFlowInt64FromAny(value interface{}) int64 {
+	switch typed := value.(type) {
+	case int:
+		return int64(typed)
+	case int8:
+		return int64(typed)
+	case int16:
+		return int64(typed)
+	case int32:
+		return int64(typed)
+	case int64:
+		return typed
+	case uint:
+		return int64(typed)
+	case uint8:
+		return int64(typed)
+	case uint16:
+		return int64(typed)
+	case uint32:
+		return int64(typed)
+	case uint64:
+		return int64(typed)
+	case float32:
+		return int64(typed)
+	case float64:
+		return int64(typed)
+	default:
+		return 0
+	}
 }
 
 func rentFlowAssistantQuickHints(marketplace bool, criteria rentFlowAssistantCriteria, recommendationCount int, matched bool) []string {

@@ -11,12 +11,41 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      ollama:
+        condition: service_healthy
     environment:
       DB_HOST: postgres
       DB_PORT: "5432"
       REDIS_URL: redis://redis:6379/0
+      RENTFLOW_AI_OLLAMA_URL: http://ollama:11434
+      RENTFLOW_AI_MODEL: ${RENTFLOW_AI_MODEL:-qwen2.5:1.5b}
     ports:
       - "${APP_HOST_PORT:-8080}:8080"
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_HOST_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+
+  ollama-model:
+    image: ollama/ollama:latest
+    restart: "no"
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      RENTFLOW_AI_MODEL: ${RENTFLOW_AI_MODEL:-qwen2.5:1.5b}
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["ollama pull \"$${RENTFLOW_AI_MODEL}\""]
 
   postgres:
     image: postgres:17-alpine
@@ -52,3 +81,4 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  ollama_data:

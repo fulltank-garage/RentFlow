@@ -130,9 +130,16 @@ func RentFlowCarGetCars(c *gin.Context) {
 	}
 
 	sortKey := strings.TrimSpace(c.Query("sort"))
-	if sortKey == "price_desc" {
+	switch sortKey {
+	case "price_desc":
 		query = query.Order("price_per_day DESC")
-	} else {
+	case "price_under_1500":
+		query = query.Order("CASE WHEN price_per_day <= 1500 THEN 0 ELSE 1 END ASC, price_per_day ASC")
+	case "price_1500_2500":
+		query = query.Order("CASE WHEN price_per_day >= 1500 AND price_per_day <= 2500 THEN 0 ELSE 1 END ASC, price_per_day ASC")
+	case "price_over_2500":
+		query = query.Order("CASE WHEN price_per_day >= 2500 THEN 0 ELSE 1 END ASC, price_per_day ASC")
+	default:
 		query = query.Order("price_per_day ASC")
 	}
 
