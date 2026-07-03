@@ -10,7 +10,6 @@ import { addonsApi } from "@/src/services/addons/addons.service";
 import type { StorefrontAddon } from "@/src/services/addons/addons.types";
 import { availabilityApi } from "@/src/services/availability/availability.service";
 import { branchesApi } from "@/src/services/branches/branches.service";
-import { OTHER_OPTION } from "@/src/constants/booking.constants";
 import { parseDateTime, diffDaysCeil } from "@/src/utils/booking/booking.date";
 import {
   buildChatHref,
@@ -80,8 +79,8 @@ function resolveBranchPrefill(method: string | null, location: string) {
   }
 
   return {
-    branchValue: OTHER_OPTION,
-    otherValue: location,
+    branchValue: "",
+    otherValue: "",
     freeTextValue: location,
   };
 }
@@ -151,9 +150,6 @@ export default function useBooking() {
   const [returnBranch, setReturnBranch] = React.useState<string>(
     initialReturnPrefill.branchValue
   );
-  const [pickupOther, setPickupOther] = React.useState(initialPickupPrefill.otherValue);
-  const [returnOther, setReturnOther] = React.useState(initialReturnPrefill.otherValue);
-
   const [pickupFreeText, setPickupFreeText] = React.useState(
     initialPickupPrefill.freeTextValue
   );
@@ -233,15 +229,13 @@ export default function useBooking() {
 
   const finalPickupPoint = React.useMemo(() => {
     if (!merchantBranchesEnabled) return pickupFreeText.trim();
-    if (pickupBranch === OTHER_OPTION) return pickupOther.trim();
     return pickupBranch;
-  }, [merchantBranchesEnabled, pickupBranch, pickupOther, pickupFreeText]);
+  }, [merchantBranchesEnabled, pickupBranch, pickupFreeText]);
 
   const finalReturnPoint = React.useMemo(() => {
     if (!merchantBranchesEnabled) return returnFreeText.trim();
-    if (returnBranch === OTHER_OPTION) return returnOther.trim();
     return returnBranch;
-  }, [merchantBranchesEnabled, returnBranch, returnOther, returnFreeText]);
+  }, [merchantBranchesEnabled, returnBranch, returnFreeText]);
 
   const addonsTotal = React.useMemo(
     () => calcAddonsTotal(addonOptions, selectedAddonIds, days),
@@ -332,9 +326,7 @@ export default function useBooking() {
     pickupTime,
     returnTime,
     pickupBranch,
-    pickupOther,
     returnBranch,
-    returnOther,
     pickupFreeText,
     returnFreeText,
     timeInvalid,
@@ -438,31 +430,21 @@ export default function useBooking() {
 
   React.useEffect(() => {
     if (!merchantBranchesEnabled) {
-      if (!pickupFreeText.trim() && pickupBranch && pickupBranch !== OTHER_OPTION) {
+      if (!pickupFreeText.trim() && pickupBranch) {
         setPickupFreeText(pickupBranch);
       }
-      if (!returnFreeText.trim() && returnBranch && returnBranch !== OTHER_OPTION) {
+      if (!returnFreeText.trim() && returnBranch) {
         setReturnFreeText(returnBranch);
       }
       return;
     }
 
     setPickupBranch((prev) => {
-      if (prev === OTHER_OPTION) return prev;
       if (prev && branchOptions.includes(prev)) return prev;
-      if (prev && !branchOptions.includes(prev)) {
-        setPickupOther(prev);
-        return OTHER_OPTION;
-      }
       return branchOptions[0] || "";
     });
     setReturnBranch((prev) => {
-      if (prev === OTHER_OPTION) return prev;
       if (prev && branchOptions.includes(prev)) return prev;
-      if (prev && !branchOptions.includes(prev)) {
-        setReturnOther(prev);
-        return OTHER_OPTION;
-      }
       return branchOptions[0] || "";
     });
   }, [
@@ -753,7 +735,11 @@ export default function useBooking() {
       }
 
       if (!locationOk) {
-        setError("กรุณากรอกสถานที่ให้ถูกต้อง (กรณีเลือก “อื่นๆ” ต้องระบุสถานที่)");
+        setError(
+          merchantBranchesEnabled
+            ? "กรุณาเลือกสาขารับรถและสาขาคืนรถ"
+            : "กรุณากรอกสถานที่ให้ถูกต้อง"
+        );
         return;
       }
 
@@ -800,11 +786,11 @@ export default function useBooking() {
           pickupLocation: finalPickupPoint,
           returnLocation: finalReturnPoint,
           pickupMethod:
-            merchantBranchesEnabled && pickupBranch !== OTHER_OPTION && pickupBranch.trim()
+            merchantBranchesEnabled && pickupBranch.trim()
               ? "branch"
               : "custom",
           returnMethod:
-            merchantBranchesEnabled && returnBranch !== OTHER_OPTION && returnBranch.trim()
+            merchantBranchesEnabled && returnBranch.trim()
               ? "branch"
               : "custom",
           customerName: fullName.trim(),
@@ -948,10 +934,6 @@ export default function useBooking() {
     setPickupBranch,
     returnBranch,
     setReturnBranch,
-    pickupOther,
-    setPickupOther,
-    returnOther,
-    setReturnOther,
     pickupFreeText,
     setPickupFreeText,
     returnFreeText,

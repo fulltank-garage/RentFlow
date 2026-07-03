@@ -67,7 +67,12 @@ export type CarImagesUploadResponse = {
   total: number;
 };
 
-export type SortKey = "price_asc" | "price_desc";
+export type SortKey =
+  | "price_asc"
+  | "price_desc"
+  | "price_under_1500"
+  | "price_1500_2500"
+  | "price_over_2500";
 
 export type GetCarsParams = {
   q?: string;

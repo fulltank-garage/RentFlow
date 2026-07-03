@@ -17,6 +17,7 @@ import { formatTHB } from "@/src/constants/money";
 import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
+import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
 import { aiService } from "@/src/services/ai/ai.service";
 import type {
   StorefrontAssistantRecommendation,
@@ -29,47 +30,222 @@ const SUGGESTIONS = [
   "อยากได้รถประหยัดน้ำมันใช้งานในเมือง",
 ];
 
+const HIGHLIGHT_TERMS = [
+  "ราคา",
+  "งบ",
+  "ประหยัด",
+  "5 ที่นั่ง",
+  "ที่นั่ง",
+  "เหมาะ",
+  "แนะนำ",
+  "สาขา",
+  "ร้าน",
+  "รถ",
+];
+
+type AiSummaryItem = {
+  label: number;
+  text: string;
+};
+
+function cleanAiText(value: string) {
+  return value
+    .replace(/\*\*/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function hasCarName(value: string) {
+  return /\b(Toyota|Honda|Nissan|Mitsubishi|Mazda|Suzuki|Ford|MG|BYD|Isuzu|Hyundai|Kia|BMW|Mercedes|Benz)\b/i.test(
+    value
+  );
+}
+
+function isGenericSummaryIntro(item: AiSummaryItem) {
+  if (item.label !== 1) return false;
+  if (hasCarName(item.text)) return false;
+
+  return /^(ดังนั้น|สรุป|โดยรวม|เรื่องราว|จากข้อมูล)/.test(item.text);
+}
+
+function splitAiSummary(value: string): AiSummaryItem[] {
+  const cleaned = cleanAiText(value);
+  if (!cleaned) return [];
+
+  const normalized = cleaned
+    .replace(/(?:^|\s)(\d+[.)])\s+/g, "\n$1 ")
+    .replace(/\s+-\s+/g, "\n- ");
+
+  const rawItems = normalized
+    .split(/\n+/)
+    .map((part, index) => {
+      const trimmed = part.replace(/^[-•]\s*/, "").trim();
+      const numbered = trimmed.match(/^(\d+)[.)]\s*(.+)$/);
+
+      return {
+        label: numbered ? Number(numbered[1]) : index + 1,
+        text: (numbered ? numbered[2] : trimmed).trim(),
+      };
+    })
+    .filter((item) => item.text);
+
+  const items = rawItems.length > 1 ? rawItems : [{ label: 1, text: cleaned }];
+  const filteredItems = items.filter((item) => !isGenericSummaryIntro(item));
+
+  return filteredItems.length ? filteredItems : items;
+}
+
+function renderHighlightedText(text: string) {
+  const pattern = new RegExp(
+    `(\\d{1,3}(?:,\\d{3})*\\s*บาท|${HIGHLIGHT_TERMS.map((term) =>
+      term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    ).join("|")})`,
+    "gi"
+  );
+
+  return text.split(pattern).map((part, index) => {
+    const isPriceHighlight = /^\d{1,3}(?:,\d{3})*\s*บาท$/i.test(part);
+    const isHighlight = HIGHLIGHT_TERMS.some(
+      (term) => term.toLocaleLowerCase("th-TH") === part.toLocaleLowerCase("th-TH")
+    ) || isPriceHighlight;
+
+    if (!isHighlight) return <React.Fragment key={`${part}-${index}`}>{part}</React.Fragment>;
+
+    return (
+      <Box
+        key={`${part}-${index}`}
+        component="mark"
+        className={`font-semibold ${
+          isPriceHighlight
+            ? "rounded-full bg-[var(--rf-apple-blue)] px-1.5 py-0.5 text-white"
+            : "bg-transparent text-[var(--rf-apple-blue)]"
+        }`}
+      >
+        {part}
+      </Box>
+    );
+  });
+}
+
+function splitSummaryCarName(text: string) {
+  const match = text.match(
+    /^((?:Toyota|Honda|Nissan|Mitsubishi|Mazda|Suzuki|Ford|MG|BYD|Isuzu|Hyundai|Kia|BMW|Mercedes|Benz)\b.*?)(?=\s+(?:รองรับ|มี|ราคา|เหมาะ|เป็น|ตรง|และ))/i
+  );
+
+  if (!match) {
+    return { carName: "", rest: text };
+  }
+
+  return {
+    carName: match[1].trim(),
+    rest: text.slice(match[1].length).trimStart(),
+  };
+}
+
+function AiSummaryItemText({ text }: { text: string }) {
+  const { carName, rest } = splitSummaryCarName(text);
+
+  if (!carName) {
+    return <>{renderHighlightedText(text)}</>;
+  }
+
+  return (
+    <>
+      <Box
+        component="span"
+        className="mr-1 text-[16px] font-extrabold leading-6 text-[var(--rf-apple-ink)]"
+      >
+        {carName}
+      </Box>
+      {renderHighlightedText(rest)}
+    </>
+  );
+}
+
+function AiSummaryList({ summary }: { summary: string }) {
+  const items = splitAiSummary(summary);
+
+  return (
+    <Box className="mt-2 grid gap-2">
+      {items.map((item, index) => (
+        <Box
+          key={`${item.label}-${item.text}-${index}`}
+          className="rounded-[18px] bg-white px-3 py-2 text-sm leading-6 text-[var(--rf-apple-muted)]"
+        >
+          <Box className="flex gap-2">
+            <Box className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[var(--rf-apple-ink)] text-[11px] font-bold text-white">
+              {item.label}
+            </Box>
+            <Typography component="p" className="text-sm leading-6 text-[var(--rf-apple-muted)]">
+              <AiSummaryItemText text={item.text} />
+            </Typography>
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
 function RecommendationItem({
   car,
+  showShopName,
 }: {
   car: StorefrontAssistantRecommendation;
+  showShopName: boolean;
 }) {
+  const imageSrc = resolveRentFlowCarAssetUrl(car.image);
   const detailHref = car.domainSlug
     ? `/cars/${encodeURIComponent(car.id)}?tenant=${encodeURIComponent(car.domainSlug)}`
     : `/cars/${encodeURIComponent(car.id)}`;
 
   return (
     <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-3">
-      <Stack direction="row" spacing={1.5} alignItems="center">
-        <Box className="relative h-14 w-16 shrink-0 overflow-hidden rounded-[18px] bg-white">
-          {car.image ? (
-            <Image src={car.image} alt={car.name} fill className="object-cover" />
-          ) : (
-            <Box className="grid h-full place-items-center px-2 text-center text-xs font-semibold text-[var(--rf-apple-muted)]">
-              ไม่มีรูป
-            </Box>
-          )}
-        </Box>
+      <Box className="relative h-32 overflow-hidden rounded-[18px] bg-white">
+        {imageSrc ? (
+          <Image
+            src={imageSrc}
+            alt={car.name}
+            fill
+            unoptimized
+            sizes="360px"
+            className="object-cover"
+          />
+        ) : (
+          <Box className="grid h-full place-items-center px-2 text-center text-xs font-semibold text-[var(--rf-apple-muted)]">
+            ไม่มีรูป
+          </Box>
+        )}
+      </Box>
 
-        <Box className="min-w-0 flex-1">
-          <Typography className="truncate text-sm font-bold text-[var(--rf-apple-ink)]">
+      <Box className="mt-3 flex min-w-0 flex-col gap-2 pb-2">
+        <Box>
+          <Typography
+            className="text-[15px] font-extrabold! leading-5 text-[var(--rf-apple-ink)]"
+            sx={{ fontWeight: 800 }}
+          >
             {car.name}
           </Typography>
-          <Typography className="text-xs text-[var(--rf-apple-muted)]">
-            {car.seats} ที่นั่ง • {getCarTypeLabel(car.type)} • {formatTHB(car.pricePerDay)}/วัน
-          </Typography>
         </Box>
-      </Stack>
-
-      <Box className="mt-2 flex flex-wrap gap-1.5">
-        {car.reasons.slice(0, 3).map((reason) => (
-          <Chip
-            key={reason}
-            size="small"
-            label={reason}
-            className="apple-label-text h-6! bg-white! text-[var(--rf-apple-muted)]!"
-          />
-        ))}
+        <Typography
+          component="div"
+          className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--rf-apple-muted)]"
+        >
+          <Box component="span">{car.seats} ที่นั่ง</Box>
+          <Box component="span">•</Box>
+          <Box component="span">{getCarTypeLabel(car.type)}</Box>
+          <Box component="span">•</Box>
+          <Box
+            component="span"
+            className="rounded-full bg-[var(--rf-apple-blue)] px-2.5 py-1 font-extrabold text-white shadow-[0_6px_16px_rgba(88,168,71,0.22)]"
+          >
+            {formatTHB(car.pricePerDay)}/วัน
+          </Box>
+        </Typography>
+        {showShopName && car.shopName ? (
+          <Typography className="w-fit max-w-full truncate rounded-full bg-white px-2.5 py-1 text-[11px] font-bold text-[var(--rf-apple-blue)]">
+            ร้าน {car.shopName}
+          </Typography>
+        ) : null}
       </Box>
 
       <Button
@@ -77,12 +253,40 @@ function RecommendationItem({
         href={detailHref}
         size="small"
         fullWidth
-        className="mt-3 rounded-full!"
+        className="mt-5 rounded-full!"
         variant="outlined"
         sx={{ textTransform: "none" }}
       >
         ดูรายละเอียดรถ
       </Button>
+    </Box>
+  );
+}
+
+function AiThinkingState() {
+  return (
+    <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-3">
+      <Box className="flex items-center gap-3 rounded-[18px] bg-white px-3 py-3">
+        <Box className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--rf-apple-ink)]">
+          <Box className="flex gap-1">
+            {[0, 1, 2].map((index) => (
+              <Box
+                key={index}
+                className="h-1.5 w-1.5 animate-bounce rounded-full bg-white"
+                sx={{ animationDelay: `${index * 120}ms` }}
+              />
+            ))}
+          </Box>
+        </Box>
+        <Box className="min-w-0">
+          <Typography className="text-sm font-bold text-[var(--rf-apple-ink)]">
+            AI กำลังคิดคำตอบ
+          </Typography>
+          <Typography className="text-xs text-[var(--rf-apple-muted)]">
+            กำลังค้นรถที่เหมาะกับเงื่อนไขของคุณ
+          </Typography>
+        </Box>
+      </Box>
     </Box>
   );
 }
@@ -96,6 +300,8 @@ export default function FloatingAiChat() {
   const [result, setResult] = React.useState<StorefrontAssistantResult | null>(
     null
   );
+  const panelRef = React.useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
   const siteMode = useRentFlowCarSiteMode();
 
   React.useEffect(() => {
@@ -124,9 +330,66 @@ export default function FloatingAiChat() {
     }
   }, [loading, query]);
 
+  React.useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const handlePanelWheel = (event: WheelEvent) => {
+      const panel = panelRef.current;
+      const scrollContainer = scrollContainerRef.current;
+      const target = event.target;
+
+      if (
+        !panel ||
+        !scrollContainer ||
+        !(target instanceof Node) ||
+        !panel.contains(target)
+      ) {
+        return;
+      }
+
+      const isScrollingUp = event.deltaY < 0;
+      const isScrollingDown = event.deltaY > 0;
+      const isAtTop = scrollContainer.scrollTop <= 0;
+      const isAtBottom =
+        Math.ceil(scrollContainer.scrollTop + scrollContainer.clientHeight) >=
+        scrollContainer.scrollHeight;
+
+      if (scrollContainer.contains(target)) {
+        if ((isScrollingUp && isAtTop) || (isScrollingDown && isAtBottom)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        return;
+      }
+
+      if (target instanceof Element && target.closest("textarea, input, select")) {
+        return;
+      }
+
+      scrollContainer.scrollBy({
+        top: event.deltaY,
+        left: event.deltaX,
+        behavior: "auto",
+      });
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    window.addEventListener("wheel", handlePanelWheel, {
+      capture: true,
+      passive: false,
+    });
+
+    return () => window.removeEventListener("wheel", handlePanelWheel, true);
+  }, [open]);
+
   return (
     <Box className="fixed bottom-5 right-5 z-50 md:bottom-7 md:right-7">
       <Paper
+        ref={panelRef}
         elevation={0}
         className={`absolute bottom-0 right-0 w-[calc(100vw-40px)] max-w-[420px] overflow-hidden rounded-[30px]! border border-black/10 bg-white shadow-[var(--rf-apple-shadow-soft)] transform-gpu will-change-[transform,opacity,filter] transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           open
@@ -163,7 +426,15 @@ export default function FloatingAiChat() {
             </Stack>
           </Box>
 
-          <Box className="min-h-[360px] max-h-[70vh] overflow-y-auto p-5">
+          <Box
+            ref={scrollContainerRef}
+            className="min-h-[360px] max-h-[70vh] overflow-y-auto overscroll-contain p-5"
+            sx={{
+              overscrollBehavior: "contain",
+              WebkitOverflowScrolling: "touch",
+              scrollbarGutter: "stable",
+            }}
+          >
             <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-3">
               <Typography className="text-sm leading-6 text-[var(--rf-apple-muted)]">
                 บอกจำนวนคน งบประมาณ หรือสไตล์ทริป แล้ว AI จะช่วยคัดรถที่เหมาะให้
@@ -197,19 +468,23 @@ export default function FloatingAiChat() {
               ))}
             </Box>
 
+            {loading ? <AiThinkingState /> : null}
+
             {result ? (
               <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-3">
                 <Typography className="text-sm font-bold text-[var(--rf-apple-ink)]">
                   คำแนะนำ
                 </Typography>
-                <Typography className="mt-1 text-sm leading-6 text-[var(--rf-apple-muted)]">
-                  {result.summary}
-                </Typography>
+                <AiSummaryList summary={result.summary} />
 
                 {result.recommendedCars.length ? (
                   <Box className="mt-3 grid gap-2">
-                    {result.recommendedCars.slice(0, 2).map((car) => (
-                      <RecommendationItem key={`${car.id}-${car.domainSlug}`} car={car} />
+                    {result.recommendedCars.map((car) => (
+                      <RecommendationItem
+                        key={`${car.id}-${car.domainSlug}`}
+                        car={car}
+                        showShopName={result.mode === "marketplace"}
+                      />
                     ))}
                   </Box>
                 ) : (

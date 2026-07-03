@@ -24,10 +24,6 @@ type Props = {
   setPickupBranch: (value: string) => void;
   returnBranch: string;
   setReturnBranch: (value: string) => void;
-  pickupOther: string;
-  setPickupOther: (value: string) => void;
-  returnOther: string;
-  setReturnOther: (value: string) => void;
   pickupFreeText: string;
   setPickupFreeText: (value: string) => void;
   returnFreeText: string;
@@ -79,10 +75,6 @@ export default function BookingForm({
   setPickupBranch,
   returnBranch,
   setReturnBranch,
-  pickupOther,
-  setPickupOther,
-  returnOther,
-  setReturnOther,
   pickupFreeText,
   setPickupFreeText,
   returnFreeText,
@@ -148,10 +140,6 @@ export default function BookingForm({
         setPickupBranch={setPickupBranch}
         returnBranch={returnBranch}
         setReturnBranch={setReturnBranch}
-        pickupOther={pickupOther}
-        setPickupOther={setPickupOther}
-        returnOther={returnOther}
-        setReturnOther={setReturnOther}
         pickupFreeText={pickupFreeText}
         setPickupFreeText={setPickupFreeText}
         returnFreeText={returnFreeText}

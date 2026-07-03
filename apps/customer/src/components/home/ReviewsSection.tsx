@@ -159,22 +159,17 @@ export default function ReviewsSection() {
     [canSubmit, comment, firstName, lastName, rating, showSnackbar]
   );
 
-  const marqueeReviews = React.useMemo(() => {
-    const items = reviews.length ? reviews : [];
-    return [...items, ...items];
+  const reviewRows = React.useMemo(() => {
+    const rows = [
+      reviews.filter((_, index) => index % 3 === 0),
+      reviews.filter((_, index) => index % 3 === 1),
+      reviews.filter((_, index) => index % 3 === 2),
+    ];
+
+    return rows.map((row) => [...row, ...row]);
   }, [reviews]);
 
-  const firstReviewRow = React.useMemo(() => {
-    return marqueeReviews.filter((_, index) => index % 3 === 0);
-  }, [marqueeReviews]);
-
-  const secondReviewRow = React.useMemo(() => {
-    return marqueeReviews.filter((_, index) => index % 3 === 1);
-  }, [marqueeReviews]);
-
-  const thirdReviewRow = React.useMemo(() => {
-    return marqueeReviews.filter((_, index) => index % 3 === 2);
-  }, [marqueeReviews]);
+  const [firstReviewRow, secondReviewRow, thirdReviewRow] = reviewRows;
 
   function renderReviewCard(review: Review, key: string) {
     const shopHref = review.domainSlug

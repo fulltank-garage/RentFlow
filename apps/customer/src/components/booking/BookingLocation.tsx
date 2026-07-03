@@ -2,7 +2,6 @@
 
 import { Box, MenuItem, TextField, Typography } from "@mui/material";
 import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
-import { OTHER_OPTION } from "@/src/constants/booking.constants";
 
 type Props = {
   merchantBranchesEnabled: boolean;
@@ -12,10 +11,6 @@ type Props = {
   setPickupBranch: (value: string) => void;
   returnBranch: string;
   setReturnBranch: (value: string) => void;
-  pickupOther: string;
-  setPickupOther: (value: string) => void;
-  returnOther: string;
-  setReturnOther: (value: string) => void;
   pickupFreeText: string;
   setPickupFreeText: (value: string) => void;
   returnFreeText: string;
@@ -30,10 +25,6 @@ export default function BookingLocation({
   setPickupBranch,
   returnBranch,
   setReturnBranch,
-  pickupOther,
-  setPickupOther,
-  returnOther,
-  setReturnOther,
   pickupFreeText,
   setPickupFreeText,
   returnFreeText,
@@ -98,8 +89,7 @@ export default function BookingLocation({
       ) : (
         <>
           <Typography className="apple-label-text mt-1 text-slate-500">
-            เลือกสาขารับรถ/คืนรถ หรือเลือก “อื่นๆ”
-            เพื่อระบุสถานที่สำหรับประเมินค่าส่ง
+            เลือกสาขารับรถและสาขาคืนรถที่ร้านเปิดให้บริการ
           </Typography>
 
           <Box className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -137,35 +127,8 @@ export default function BookingLocation({
                       {p}
                     </MenuItem>
                   ))}
-                  <MenuItem value={OTHER_OPTION}>
-                    อื่นๆ (ระบุสถานที่เพื่อประเมินค่าส่ง)
-                  </MenuItem>
                 </TextField>
               </Box>
-
-              {pickupBranch === OTHER_OPTION ? (
-                <TextField
-                  id="booking-pickup-other"
-                  name="pickupOther"
-                  label="ระบุสถานที่รับรถ"
-                  value={pickupOther}
-                  onChange={(e) => setPickupOther(e.target.value)}
-                  fullWidth
-                  size="small"
-                  sx={fieldSX}
-                  inputProps={{ autoComplete: "street-address" }}
-                  error={
-                    pickupOther.trim().length > 0 &&
-                    pickupOther.trim().length < 2
-                  }
-                  helperText={
-                    pickupOther.trim().length > 0 &&
-                    pickupOther.trim().length < 2
-                      ? "อย่างน้อย 2 ตัวอักษร"
-                      : " "
-                  }
-                />
-              ) : null}
             </Box>
 
             <Box className="grid gap-3">
@@ -202,35 +165,8 @@ export default function BookingLocation({
                       {p}
                     </MenuItem>
                   ))}
-                  <MenuItem value={OTHER_OPTION}>
-                    อื่นๆ (ระบุสถานที่เพื่อประเมินค่าส่ง)
-                  </MenuItem>
                 </TextField>
               </Box>
-
-              {returnBranch === OTHER_OPTION ? (
-                <TextField
-                  id="booking-return-other"
-                  name="returnOther"
-                  label="ระบุสถานที่คืนรถ"
-                  value={returnOther}
-                  onChange={(e) => setReturnOther(e.target.value)}
-                  fullWidth
-                  size="small"
-                  sx={fieldSX}
-                  inputProps={{ autoComplete: "street-address" }}
-                  error={
-                    returnOther.trim().length > 0 &&
-                    returnOther.trim().length < 2
-                  }
-                  helperText={
-                    returnOther.trim().length > 0 &&
-                    returnOther.trim().length < 2
-                      ? "อย่างน้อย 2 ตัวอักษร"
-                      : " "
-                  }
-                />
-              ) : null}
             </Box>
           </Box>
         </>

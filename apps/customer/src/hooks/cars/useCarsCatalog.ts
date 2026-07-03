@@ -5,13 +5,13 @@ import { getErrorMessage } from "@/src/lib/api-error";
 import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getCars } from "@/src/services/cars/cars.service";
-import type { Car } from "@/src/services/cars/cars.types";
+import type { Car, SortKey } from "@/src/services/cars/cars.types";
 import type { RentFlowCarRealtimeEvent } from "@/src/services/realtime/realtime.types";
 
 type Params = {
     q: string;
     type: string;
-    sort: "price_asc" | "price_desc";
+    sort: SortKey;
     location: string;
     pickupDate: string;
     returnDate: string;

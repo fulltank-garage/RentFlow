@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { OTHER_OPTION } from "@/src/constants/booking.constants";
 
 type Params = {
   carExists: boolean;
@@ -14,9 +13,7 @@ type Params = {
   pickupTime: string;
   returnTime: string;
   pickupBranch: string;
-  pickupOther: string;
   returnBranch: string;
-  returnOther: string;
   pickupFreeText: string;
   returnFreeText: string;
   timeInvalid: boolean;
@@ -33,9 +30,7 @@ export default function useBookingValidation({
   pickupTime,
   returnTime,
   pickupBranch,
-  pickupOther,
   returnBranch,
-  returnOther,
   pickupFreeText,
   returnFreeText,
   timeInvalid,
@@ -47,15 +42,11 @@ export default function useBookingValidation({
       return pOk && rOk;
     }
 
-    const pOk = pickupBranch !== OTHER_OPTION || pickupOther.trim().length >= 2;
-    const rOk = returnBranch !== OTHER_OPTION || returnOther.trim().length >= 2;
-    return pOk && rOk;
+    return Boolean(pickupBranch.trim() && returnBranch.trim());
   }, [
     merchantBranchesEnabled,
     pickupBranch,
-    pickupOther,
     returnBranch,
-    returnOther,
     pickupFreeText,
     returnFreeText,
   ]);

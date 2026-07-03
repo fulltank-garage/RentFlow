@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Box, TextField, MenuItem, Button } from "@mui/material";
+import UnfoldMoreRoundedIcon from "@mui/icons-material/UnfoldMoreRounded";
 import DataLoadErrorCard from "@/src/components/common/DataLoadErrorCard";
 import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
 import {
@@ -28,6 +29,20 @@ type Props = {
   onReturnDateChange: (value: string) => void;
   onReset: () => void;
 };
+
+const priceSortOptions: Array<{ value: SortKey; label: string }> = [
+  { value: "price_asc", label: "ราคาต่ำสุดก่อน" },
+  { value: "price_desc", label: "ราคาสูงสุดก่อน" },
+  { value: "price_under_1500", label: "ไม่เกิน 1,500 ก่อน" },
+  { value: "price_1500_2500", label: "1,500 - 2,500 ก่อน" },
+  { value: "price_over_2500", label: "2,500 ขึ้นไปก่อน" },
+];
+
+function SelectChevronIcon(
+  props: React.ComponentProps<typeof UnfoldMoreRoundedIcon>
+) {
+  return <UnfoldMoreRoundedIcon {...props} fontSize="small" />;
+}
 
 export default function CarsFilterBar({
   type,
@@ -111,6 +126,7 @@ export default function CarsFilterBar({
             fullWidth
             variant="outlined"
             SelectProps={{
+              IconComponent: SelectChevronIcon,
               MenuProps: rentFlowSelectMenuProps,
               SelectDisplayProps: {
                 "aria-labelledby": "cars-filter-type-label cars-filter-type",
@@ -148,6 +164,7 @@ export default function CarsFilterBar({
             fullWidth
             variant="outlined"
             SelectProps={{
+              IconComponent: SelectChevronIcon,
               displayEmpty: true,
               MenuProps: rentFlowSelectMenuProps,
               SelectDisplayProps: {
@@ -236,6 +253,7 @@ export default function CarsFilterBar({
             fullWidth
             variant="outlined"
             SelectProps={{
+              IconComponent: SelectChevronIcon,
               MenuProps: rentFlowSelectMenuProps,
               SelectDisplayProps: {
                 "aria-labelledby": "cars-filter-sort-label cars-filter-sort",
@@ -246,8 +264,11 @@ export default function CarsFilterBar({
             }}
             sx={fieldSX}
           >
-            <MenuItem value="price_asc">ราคาต่ำ → สูง</MenuItem>
-            <MenuItem value="price_desc">ราคาสูง → ต่ำ</MenuItem>
+            {priceSortOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
           </TextField>
         </Box>
 

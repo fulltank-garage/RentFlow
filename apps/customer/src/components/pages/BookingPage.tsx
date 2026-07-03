@@ -107,10 +107,6 @@ export default function BookingPage() {
                   setPickupBranch={booking.setPickupBranch}
                   returnBranch={booking.returnBranch}
                   setReturnBranch={booking.setReturnBranch}
-                  pickupOther={booking.pickupOther}
-                  setPickupOther={booking.setPickupOther}
-                  returnOther={booking.returnOther}
-                  setReturnOther={booking.setReturnOther}
                   pickupFreeText={booking.pickupFreeText}
                   setPickupFreeText={booking.setPickupFreeText}
                   returnFreeText={booking.returnFreeText}
