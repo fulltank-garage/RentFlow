@@ -3,6 +3,22 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AddBoxRoundedIcon from "@mui/icons-material/AddBoxRounded";
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
+import ConfirmationNumberRoundedIcon from "@mui/icons-material/ConfirmationNumberRounded";
+import CreditCardRoundedIcon from "@mui/icons-material/CreditCardRounded";
+import DirectionsCarFilledRoundedIcon from "@mui/icons-material/DirectionsCarFilledRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
+import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
+import HomeWorkRoundedIcon from "@mui/icons-material/HomeWorkRounded";
+import InsertChartRoundedIcon from "@mui/icons-material/InsertChartRounded";
+import InventoryRoundedIcon from "@mui/icons-material/InventoryRounded";
+import LineAxisRoundedIcon from "@mui/icons-material/LineAxisRounded";
+import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
+import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
+import type { SvgIconComponent } from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -15,7 +31,7 @@ import {
 } from "@mui/material";
 import { readStoreProfile, type PartnerStoreProfile } from "@/src/lib/partner-store";
 import { PARTNER_NAV } from "./partnerNav";
-import type { PartnerNavGroup } from "./partnerNav";
+import type { PartnerNavGroup, PartnerNavIcon } from "./partnerNav";
 
 type Props = {
   mobileOpen: boolean;
@@ -38,6 +54,29 @@ const GROUPS: PartnerNavGroup[] = [
   "Analytics",
   "Settings",
 ];
+
+const MENU_ICON: Record<PartnerNavIcon, SvgIconComponent> = {
+  dashboard: LineAxisRoundedIcon,
+  store: StorefrontRoundedIcon,
+  builder: EditRoundedIcon,
+  car: DirectionsCarFilledRoundedIcon,
+  location: LocationOnRoundedIcon,
+  bookings: CalendarMonthRoundedIcon,
+  customers: GroupsRoundedIcon,
+  payments: CreditCardRoundedIcon,
+  calendar: InventoryRoundedIcon,
+  promotions: ConfirmationNumberRoundedIcon,
+  addons: AddBoxRoundedIcon,
+  reports: InsertChartRoundedIcon,
+  line: HomeWorkRoundedIcon,
+  ai: AutoAwesomeRoundedIcon,
+  support: HelpRoundedIcon,
+};
+
+function PartnerMenuIcon({ name }: { name: PartnerNavIcon }) {
+  const Icon = MENU_ICON[name];
+  return <Icon aria-hidden fontSize="inherit" />;
+}
 
 export default function PartnerSidebar({
   mobileOpen,
@@ -82,7 +121,13 @@ export default function PartnerSidebar({
         }}
       >
         <Stack direction="row" spacing={1.5} alignItems="center" className="min-w-0">
-          <Box className="grid h-[42px] w-[42px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-[var(--rf-partner-blue-deep)] text-sm font-black tracking-[-0.05em] text-white shadow-[0_10px_28px_rgba(15,23,42,0.14)]">
+          <Box
+            className="grid h-[42px] w-[42px] shrink-0 place-items-center overflow-hidden rounded-[18px] text-sm font-black tracking-[-0.05em] text-white shadow-[var(--rf-partner-shadow-soft)]"
+            sx={{
+              background:
+                "linear-gradient(135deg, var(--rf-partner-green-dark), var(--rf-partner-gold))",
+            }}
+          >
             {storeProfile?.logoUrl ? (
               <Box
                 component="img"
@@ -95,14 +140,14 @@ export default function PartnerSidebar({
             )}
           </Box>
           <Box className="min-w-0">
-            <Typography className="truncate text-[1.02rem] font-extrabold tracking-[-0.03em] text-slate-950">
+            <Typography className="truncate text-[1.02rem] font-extrabold tracking-[-0.03em] text-[var(--rf-partner-sidebar-text)]">
               {storeProfile?.shopName || "ศูนย์จัดการร้าน"}
             </Typography>
           </Box>
         </Stack>
       </Box>
 
-      <Divider className="border-white/60!" />
+      <Divider sx={{ borderColor: "color-mix(in srgb, var(--navy-gray) 48%, transparent)" }} />
 
       <Box
         className="partner-scrollbar px-3 py-3"
@@ -127,7 +172,7 @@ export default function PartnerSidebar({
               }}
             >
               <Typography
-                className="px-2 pb-2 pt-3 text-[13px] tracking-[-0.035em] text-slate-600"
+                className="px-2 pb-2 pt-3 text-[13px] tracking-[-0.035em] text-[var(--rf-partner-sidebar-muted)]"
                 sx={{ fontWeight: "900 !important" }}
               >
                 {GROUP_LABEL[group]}
@@ -163,11 +208,22 @@ export default function PartnerSidebar({
                         minHeight: { xs: 52, md: 48 },
                         px: 2.25,
                         py: 1.35,
-                        bgcolor: active ? "#eef1f5" : "transparent",
+                        bgcolor: active ? "var(--rf-partner-sidebar-active)" : "transparent",
+                        color: active
+                          ? "var(--rf-partner-ink)"
+                          : "var(--rf-partner-sidebar-text)",
                         border: 0,
                         boxShadow: "none",
+                        "&.Mui-selected": {
+                          backgroundColor: "var(--rf-partner-sidebar-active)",
+                        },
+                        "&.Mui-selected:hover": {
+                          backgroundColor: "var(--rf-partner-sidebar-active)",
+                        },
                         "&:hover": {
-                          backgroundColor: "#eef1f5",
+                          backgroundColor: active
+                            ? "var(--rf-partner-sidebar-active)"
+                            : "var(--rf-partner-sidebar-hover)",
                           border: 0,
                           boxShadow: "none",
                         },
@@ -176,24 +232,41 @@ export default function PartnerSidebar({
                       }}
                       selected={active}
                     >
-                      <ListItemText
-                        sx={{ my: 0 }}
-                        primary={
-                          <Typography
-                            sx={{
-                              fontSize: { xs: 16.5, md: 15.2 },
-                              fontWeight: "400 !important",
-                              lineHeight: 1.3,
-                              letterSpacing: "-0.02em",
-                              color: "rgb(30 41 59)",
-                            }}
-                          >
-                            {item.label}
-                          </Typography>
-                        }
-                      />
+                      <Stack direction="row" spacing={1.35} alignItems="center" className="min-w-0">
+                        <Box
+                          className="grid h-8 w-8 shrink-0 place-items-center"
+                          sx={{
+                            color: active
+                              ? "var(--rf-partner-green-dark)"
+                              : "var(--rf-partner-sidebar-muted)",
+                            fontSize: { xs: 27, md: 25 },
+                          }}
+                        >
+                          <PartnerMenuIcon name={item.icon} />
+                        </Box>
+                        <ListItemText
+                          sx={{ my: 0, minWidth: 0 }}
+                          primary={
+                            <Typography
+                              sx={{
+                                fontSize: { xs: 16.5, md: 15.2 },
+                                fontWeight: active
+                                  ? "800 !important"
+                                  : "500 !important",
+                                lineHeight: 1.3,
+                                letterSpacing: "-0.02em",
+                                color: active
+                                  ? "var(--rf-partner-ink)"
+                                  : "var(--rf-partner-sidebar-text)",
+                              }}
+                            >
+                              {item.label}
+                            </Typography>
+                          }
+                        />
+                      </Stack>
                       {item.badge ? (
-                        <Box className="rounded-full bg-[var(--rf-partner-blue-deep)] px-2 py-0.5 text-[0.68rem] font-bold leading-tight text-white">
+                        <Box className="rounded-full bg-[var(--rf-partner-gold)] px-2 py-0.5 text-[0.68rem] font-bold leading-tight text-[var(--rf-partner-blue-deep)]">
                           {item.badge}
                         </Box>
                       ) : null}
@@ -212,7 +285,7 @@ export default function PartnerSidebar({
     width: drawerWidth,
     height: "100dvh",
     borderRight: 0,
-    bgcolor: "#ffffff",
+    bgcolor: "var(--rf-partner-sidebar-top)",
     boxShadow: "none",
     overflow: "hidden",
     overscrollBehavior: "contain",

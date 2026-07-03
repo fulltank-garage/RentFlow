@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 
 import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealtimeRefresh";
+import { useInitialLoading } from "@/src/hooks/useInitialLoading";
 import { supportService } from "@/src/services/support/support.service";
 import type {
   PartnerSupportOwner,
@@ -100,7 +101,7 @@ function useSnack() {
 export function PartnerSupportPage() {
   const [tickets, setTickets] = React.useState<PartnerSupportTicket[]>([]);
   const [owners, setOwners] = React.useState<PartnerSupportOwner[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [selectedId, setSelectedId] = React.useState("");
   const [q, setQ] = React.useState("");
   const [status, setStatus] = React.useState<PartnerSupportTicket["status"] | "all">("all");
@@ -112,7 +113,7 @@ export function PartnerSupportPage() {
   const { snack, setSnack, close } = useSnack();
 
   const load = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const response = await supportService.getSupportTickets();
       setTickets(response.items);
@@ -130,9 +131,9 @@ export function PartnerSupportPage() {
         severity: "error",
       });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, [setSnack]);
+  }, [beginLoading, finishLoading, setSnack]);
 
   React.useEffect(() => {
     load();

@@ -19,6 +19,7 @@ import {
 
 import { lineService } from "@/src/services/line/line.service";
 import type { PartnerLineConnection } from "@/src/services/line/line.types";
+import { useInitialLoading } from "@/src/hooks/useInitialLoading";
 import { PartnerFormSkeleton } from "./PartnerLoadingSkeletons";
 
 type Snack = {
@@ -130,7 +131,7 @@ function connectionChipClass(status?: string) {
 export function PartnerLineMessagingPage() {
   const [connection, setConnection] = React.useState<PartnerLineConnection | null>(null);
   const [preview, setPreview] = React.useState<PartnerLineConnection | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [saving, setSaving] = React.useState(false);
   const [testing, setTesting] = React.useState(false);
   const [testingWebhook, setTestingWebhook] = React.useState(false);
@@ -153,7 +154,7 @@ export function PartnerLineMessagingPage() {
   }, [connection?.channelId, form.accessToken, form.channelId, form.channelSecret]);
 
   const load = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const data = await lineService.getLineMessaging();
       setConnection(data);
@@ -170,9 +171,9 @@ export function PartnerLineMessagingPage() {
         severity: "error",
       });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, [setSnack]);
+  }, [beginLoading, finishLoading, setSnack]);
 
   React.useEffect(() => {
     load();
@@ -340,9 +341,9 @@ export function PartnerLineMessagingPage() {
               <Box
                 className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl text-base font-black text-white shadow-[0_18px_45px_rgba(5,150,105,0.25)]"
                 sx={{
-                  bgcolor: "#047857",
+                  bgcolor: "var(--rf-partner-green)",
                   backgroundImage: current?.pictureUrl
-                    ? `linear-gradient(rgba(4,120,87,0.18), rgba(4,120,87,0.18)), url(${current.pictureUrl})`
+                    ? `linear-gradient(color-mix(in srgb, var(--rf-partner-green) 18%, transparent), color-mix(in srgb, var(--rf-partner-green) 18%, transparent)), url(${current.pictureUrl})`
                     : undefined,
                   backgroundPosition: "center",
                   backgroundSize: "cover",
@@ -392,7 +393,7 @@ export function PartnerLineMessagingPage() {
                 variant="contained"
                 onClick={verifyConnection}
                 disabled={testing}
-                sx={{ textTransform: "none", bgcolor: "#047857" }}
+                sx={{ textTransform: "none", bgcolor: "var(--rf-partner-green)" }}
               >
                 ตรวจสอบการเชื่อมต่อ
               </Button>

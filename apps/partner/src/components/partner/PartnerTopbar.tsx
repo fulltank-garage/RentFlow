@@ -93,13 +93,17 @@ export default function PartnerTopbar({
   return (
     <>
       <AppBar
+        className="partner-topbar"
         position="fixed"
         elevation={0}
         sx={{
-          bgcolor: "#ffffff",
-          color: "rgb(15 23 42)",
-          borderBottom: 0,
-          boxShadow: "none",
+          bgcolor: "var(--rf-partner-surface)",
+          background:
+            "linear-gradient(90deg, var(--rf-partner-surface) 0%, color-mix(in srgb, var(--rf-partner-highlight) 34%, var(--rf-partner-surface)) 100%)",
+          color: "var(--rf-partner-ink)",
+          borderBottom:
+            "2px solid color-mix(in srgb, var(--rf-partner-gold) 42%, var(--rf-partner-green) 58%)",
+          boxShadow: "var(--rf-partner-shadow-soft)",
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
         }}
@@ -111,9 +115,9 @@ export default function PartnerTopbar({
             sx={{
               display: { xs: "inline-flex", md: "none" },
               minWidth: 0,
-              bgcolor: "#ffffff",
+              bgcolor: "var(--rf-partner-surface)",
               border: 0,
-              "&:hover": { bgcolor: "#ffffff" },
+              "&:hover": { bgcolor: "var(--rf-partner-hover)" },
             }}
           >
             <MobileMenuGlyph open={false} />
@@ -142,18 +146,18 @@ export default function PartnerTopbar({
                       bgcolor: "transparent",
                       background:
                         "linear-gradient(135deg, var(--rf-partner-blue), var(--rf-partner-green))",
-                      border: "2px solid rgba(255,255,255,0.82)",
-                      boxShadow: "0 10px 28px rgba(15,23,42,0.14)",
+                      border: "2px solid var(--rf-partner-surface)",
+                      boxShadow: "var(--rf-partner-shadow-soft)",
                     }}
                   >
                     {storeProfile?.shopName?.charAt(0) || "ร"}
                   </Avatar>
 
                   <Box className="hidden text-left md:block">
-                    <Typography className="text-sm font-bold text-slate-950">
+                    <Typography className="text-sm font-bold text-[var(--rf-partner-ink)]">
                       บัญชีร้าน
                     </Typography>
-                    <Typography className="text-xs text-slate-500">
+                    <Typography className="text-xs text-[var(--rf-partner-muted)]">
                       จัดการโปรไฟล์
                     </Typography>
                   </Box>
@@ -171,10 +175,11 @@ export default function PartnerTopbar({
         PaperProps={{
           sx: {
             width: { xs: "78vw", sm: 320 },
-            bgcolor: "#ffffff",
-            borderLeft: "1px solid rgba(148,163,184,0.16)",
+            bgcolor: "var(--rf-partner-surface-soft)",
+            borderLeft: "1px solid var(--rf-partner-line)",
             boxShadow: "none",
           },
+          className: "partner-profile-drawer",
         }}
       >
         <Box
@@ -197,7 +202,7 @@ export default function PartnerTopbar({
               fontWeight: 700,
               fontSize: 20,
               letterSpacing: "-0.03em",
-              color: "rgb(15 23 42)",
+              color: "var(--rf-partner-ink)",
             }}
           >
             โปรไฟล์
@@ -208,9 +213,9 @@ export default function PartnerTopbar({
               sx={{
                 minWidth: 0,
                 px: 2,
-                bgcolor: "#ffffff",
-                border: "1px solid rgba(148,163,184,0.16)",
-                "&:hover": { bgcolor: "#ffffff" },
+                bgcolor: "var(--rf-partner-surface)",
+                border: "1px solid var(--rf-partner-line)",
+                "&:hover": { bgcolor: "var(--rf-partner-hover)" },
               }}
               onClick={() => setOpenProfile(false)}
             >
@@ -219,9 +224,16 @@ export default function PartnerTopbar({
           </Box>
         </Box>
 
-        <Divider className="border-white/60!" />
+        <Divider sx={{ borderColor: "var(--rf-partner-line)" }} />
 
-        <Box sx={{ px: 2, py: 3 }}>
+        <Box
+          sx={{
+            px: 2,
+            py: 3,
+            background:
+              "linear-gradient(135deg, var(--rf-partner-surface) 0%, var(--rf-partner-highlight) 100%)",
+          }}
+        >
           <Stack direction="row" spacing={1.5} alignItems="center">
             <Avatar
               src={storeProfile?.logoUrl || undefined}
@@ -232,8 +244,8 @@ export default function PartnerTopbar({
                 bgcolor: "transparent",
                 background:
                   "linear-gradient(135deg, var(--rf-partner-blue), var(--rf-partner-green))",
-                border: "2px solid rgba(255,255,255,0.82)",
-                boxShadow: "0 10px 28px rgba(15,23,42,0.14)",
+                border: "2px solid var(--rf-partner-surface)",
+                boxShadow: "var(--rf-partner-shadow-soft)",
               }}
             >
               {storeProfile?.shopName?.charAt(0) || "ร"}
@@ -244,7 +256,7 @@ export default function PartnerTopbar({
                 sx={{
                   fontWeight: 700,
                   lineHeight: 1.15,
-                  color: "rgb(15 23 42)",
+                  color: "var(--rf-partner-ink)",
                 }}
               >
                 {storeProfile?.shopName || "เจ้าของร้าน"}
@@ -253,7 +265,7 @@ export default function PartnerTopbar({
               <Box
                 sx={{
                   fontSize: 12,
-                  color: "rgb(100 116 139)",
+                  color: "var(--rf-partner-muted)",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -287,7 +299,7 @@ export default function PartnerTopbar({
                     height: 24,
                     fontSize: 12,
                     bgcolor: "var(--rf-partner-chip) !important",
-                    color: "rgb(6 95 70) !important",
+                    color: "var(--rf-partner-green) !important",
                   }}
                 />
               </Stack>
@@ -295,7 +307,7 @@ export default function PartnerTopbar({
           </Stack>
         </Box>
 
-        <Divider className="border-white/60!" />
+        <Divider sx={{ borderColor: "var(--rf-partner-line)" }} />
 
         <List disablePadding sx={{ px: 1.5, py: 1.5 }}>
           <ListItemButton
@@ -311,17 +323,17 @@ export default function PartnerTopbar({
               py: 1.5,
               bgcolor: "transparent",
               "&:hover": {
-                bgcolor: "#ffffff",
-                borderColor: "rgba(255,255,255,0.82)",
-                boxShadow: "0 12px 30px rgba(15,23,42,0.06)",
+                bgcolor: "var(--rf-partner-hover)",
+                borderColor: "var(--rf-partner-line)",
+                boxShadow: "var(--rf-partner-shadow-soft)",
               },
             }}
           >
             <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Box sx={{ fontWeight: 700, color: "rgb(15 23 42)", lineHeight: 1.2 }}>
+              <Box sx={{ fontWeight: 700, color: "var(--rf-partner-ink)", lineHeight: 1.2 }}>
                 ตั้งค่าโปรไฟล์
               </Box>
-              <Box sx={{ fontSize: 12, color: "rgb(100 116 139)", mt: 0.25 }}>
+              <Box sx={{ fontSize: 12, color: "var(--rf-partner-muted)", mt: 0.25 }}>
                 แก้ไขข้อมูลส่วนตัวและรหัสผ่าน
               </Box>
             </Box>
@@ -340,17 +352,17 @@ export default function PartnerTopbar({
               py: 1.5,
               mt: 1,
               "&:hover": {
-                bgcolor: "#ffffff",
-                borderColor: "rgba(255,255,255,0.82)",
-                boxShadow: "0 12px 30px rgba(15,23,42,0.06)",
+                bgcolor: "var(--rf-partner-hover)",
+                borderColor: "var(--rf-partner-line)",
+                boxShadow: "var(--rf-partner-shadow-soft)",
               },
             }}
           >
             <Box sx={{ flex: 1 }}>
-              <Box sx={{ fontWeight: 700, color: "rgb(15 23 42)" }}>
+              <Box sx={{ fontWeight: 700, color: "var(--rf-partner-ink)" }}>
                 เปลี่ยนรหัสผ่าน
               </Box>
-              <Box sx={{ fontSize: 12, color: "rgb(100 116 139)" }}>
+              <Box sx={{ fontSize: 12, color: "var(--rf-partner-muted)" }}>
                 อัปเดตรหัสผ่านบัญชีของคุณ
               </Box>
             </Box>
@@ -359,7 +371,7 @@ export default function PartnerTopbar({
 
         <Box sx={{ flex: 1 }} />
 
-        <Divider className="border-white/60!" />
+        <Divider sx={{ borderColor: "var(--rf-partner-line)" }} />
 
         <Box sx={{ p: 1.5 }}>
           <Button
@@ -368,10 +380,12 @@ export default function PartnerTopbar({
             sx={{
               p: 1.5,
               borderRadius: 999,
-              bgcolor: "rgb(244 63 94)",
-              boxShadow: "0 14px 34px rgba(244,63,94,0.18)",
+              bgcolor: "var(--rf-partner-rose)",
+              boxShadow:
+                "0 14px 34px color-mix(in srgb, var(--rf-partner-rose) 18%, transparent)",
               "&:hover": {
-                bgcolor: "rgb(225 29 72)",
+                bgcolor: "var(--rf-partner-rose)",
+                filter: "brightness(0.94)",
               },
             }}
             onClick={() => {

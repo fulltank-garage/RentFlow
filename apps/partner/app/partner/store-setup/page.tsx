@@ -88,7 +88,7 @@ export default function StoreSetupPage() {
         }
 
         tenantService
-            .getMyTenant()
+            .getMyTenant({ force: true })
             .then((tenant) => {
                 if (!active) return;
                 writeStoreProfile({
@@ -414,7 +414,7 @@ export default function StoreSetupPage() {
     }
 
     return (
-        <Box className="partner-page mx-auto max-w-6xl">
+        <Box className="partner-page">
             <Box className="partner-page-header">
                 <Typography className="partner-page-title">
                     ตั้งค่าหน้าร้านให้พร้อมใช้งาน

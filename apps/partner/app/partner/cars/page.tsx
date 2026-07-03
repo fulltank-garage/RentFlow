@@ -28,6 +28,7 @@ import type {
 } from "@/src/services/cars/cars.types";
 import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealtimeRefresh";
 import { PartnerCarRowsSkeleton } from "@/src/components/partner/PartnerLoadingSkeletons";
+import { useInitialLoading } from "@/src/hooks/useInitialLoading";
 
 type CarForm = PartnerCarPayload;
 
@@ -143,7 +144,7 @@ function StatusChip({ status }: { status: PartnerCarAvailabilityStatus }) {
 export default function PartnerCarsPage() {
   const [cars, setCars] = React.useState<PartnerCar[]>([]);
   const [branches, setBranches] = React.useState<PartnerBranch[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [saving, setSaving] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [selectedCar, setSelectedCar] = React.useState<PartnerCar | null>(null);
@@ -158,7 +159,7 @@ export default function PartnerCarsPage() {
   }>({ open: false, message: "", severity: "success" });
 
   const loadData = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const [carsResponse, branchesResponse] = await Promise.all([
         carsService.getCars(),
@@ -174,9 +175,9 @@ export default function PartnerCarsPage() {
         severity: "error",
       });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, []);
+  }, [beginLoading, finishLoading]);
 
   React.useEffect(() => {
     loadData();

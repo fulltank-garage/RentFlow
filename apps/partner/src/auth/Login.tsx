@@ -79,7 +79,7 @@ export default function Login() {
       const safeNext = next.startsWith("/partner") ? next : "/partner/dashboard";
 
       try {
-        const tenant = await tenantService.getMyTenant();
+        const tenant = await tenantService.getMyTenant({ force: true });
         writeStoreProfile({
           tenantId: tenant.id,
           shopName: tenant.shopName,

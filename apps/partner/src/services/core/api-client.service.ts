@@ -1,5 +1,7 @@
 import type { ApiResponse } from "../types/types";
 
+const inFlightGetRequests = new Map<string, Promise<unknown>>();
+
 export class RentFlowCarApiError extends Error {
   status: number;
 
@@ -55,6 +57,7 @@ export async function requestPartner<T>(
   path: string,
   init?: RequestInit
 ): Promise<T> {
+  const method = (init?.method || "GET").toUpperCase();
   const headers = new Headers(init?.headers);
   const body = init?.body;
   const isFormData =
@@ -73,8 +76,24 @@ export async function requestPartner<T>(
   }
   headers.set("X-RentFlowCar-App", "partner");
 
+  const requestUrl = `${getPartnerApiBaseUrl()}${path}`;
+  const canDedupe =
+    method === "GET" &&
+    !body &&
+    typeof window !== "undefined" &&
+    !headers.has("Authorization");
+  const dedupeKey = canDedupe ? requestUrl : "";
+  if (dedupeKey) {
+    const existing = inFlightGetRequests.get(dedupeKey);
+    if (existing) {
+      return existing as Promise<T>;
+    }
+  }
+
+  const request = (async () => {
   const response = await fetch(`${getPartnerApiBaseUrl()}${path}`, {
     ...init,
+    method,
     headers,
     credentials: "include",
   });
@@ -95,4 +114,14 @@ export async function requestPartner<T>(
   }
 
   return payload as T;
+  })();
+
+  if (dedupeKey) {
+    inFlightGetRequests.set(dedupeKey, request);
+    request.finally(() => {
+      inFlightGetRequests.delete(dedupeKey);
+    });
+  }
+
+  return request;
 }

@@ -15,10 +15,8 @@ function AiSparkle() {
     >
       <defs>
         <linearGradient id="partner-ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#38bdf8" />
-          <stop offset="38%" stopColor="var(--rf-brand)" />
-          <stop offset="70%" stopColor="#a855f7" />
-          <stop offset="100%" stopColor="#f97316" />
+          <stop offset="0%" stopColor="var(--rf-partner-green)" />
+          <stop offset="100%" stopColor="var(--rf-partner-blue)" />
         </linearGradient>
       </defs>
       <path
@@ -66,10 +64,10 @@ export default function FloatingAiLauncher() {
             display: { xs: "none", sm: "block" },
           }}
         >
-          <Typography className="text-xs font-bold text-slate-950">
+          <Typography className="text-xs font-bold text-[var(--rf-partner-ink)]">
             ผู้ช่วยร้าน
           </Typography>
-          <Typography className="text-[11px] text-slate-500">
+          <Typography className="text-[11px] text-[var(--rf-partner-muted)]">
             วิเคราะห์ยอดจอง รถ และงานที่ควรทำต่อ
           </Typography>
         </Box>
@@ -83,16 +81,14 @@ export default function FloatingAiLauncher() {
             width: { xs: 66, md: 74 },
             height: { xs: 66, md: 74 },
             borderRadius: "999px",
-            bgcolor: "rgb(18 18 22)",
-            color: "white",
-            boxShadow:
-              "0 28px 60px rgba(15,23,42,0.28), 0 10px 24px rgba(15,23,42,0.16)",
-            border: "1px solid rgba(255,255,255,0.28)",
+            bgcolor: "var(--rf-partner-blue-deep)",
+            color: "var(--white)",
+            boxShadow: "var(--rf-partner-shadow)",
+            border: "1px solid color-mix(in srgb, var(--white) 28%, transparent)",
             "&:hover": {
-              bgcolor: "rgb(18 18 22)",
+              bgcolor: "var(--rf-partner-blue)",
               transform: "scale(1.035)",
-              boxShadow:
-                "0 34px 72px rgba(15,23,42,0.32), 0 14px 30px rgba(15,23,42,0.18)",
+              boxShadow: "0 18px 44px color-mix(in srgb, var(--primary-navy) 18%, transparent)",
             },
             transition:
               "transform 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1)",

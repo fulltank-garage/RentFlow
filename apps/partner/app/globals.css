@@ -1,13 +1,57 @@
 @import "tailwindcss";
 @import "./shared-ui-theme.css";
 
+:root {
+  --rf-partner-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--off-white) 86%, var(--primary-green) 14%) 0%,
+    var(--soft-white) 42%,
+    var(--off-white) 100%
+  );
+  --rf-partner-surface: var(--white);
+  --rf-partner-surface-soft: color-mix(in srgb, var(--section-gray) 78%, var(--green-muted) 22%);
+  --rf-partner-surface-warm: var(--light-gray);
+  --rf-partner-ink: var(--secondary-navy);
+  --rf-partner-muted: var(--gray-dark);
+  --rf-partner-line: color-mix(in srgb, var(--navy-gray) 14%, transparent);
+  --rf-partner-line-strong: color-mix(in srgb, var(--navy-gray) 26%, transparent);
+  --rf-partner-card: var(--rf-partner-surface);
+  --rf-partner-card-strong: var(--white);
+  --rf-partner-card-soft: var(--rf-partner-surface-soft);
+  --rf-partner-shadow: 0 16px 42px color-mix(in srgb, var(--primary-navy) 9%, transparent);
+  --rf-partner-shadow-soft: 0 9px 26px color-mix(in srgb, var(--primary-navy) 6%, transparent);
+  --rf-partner-blue: var(--primary-navy);
+  --rf-partner-blue-deep: var(--navy-deep);
+  --rf-partner-blue-soft: var(--navy-soft);
+  --rf-partner-blue-gray: var(--navy-gray);
+  --rf-partner-green: var(--primary-green);
+  --rf-partner-green-hover: var(--secondary-green);
+  --rf-partner-green-dark: var(--green-dark);
+  --rf-partner-green-muted: var(--green-muted);
+  --rf-partner-gold: var(--accent-gold);
+  --rf-partner-gray: var(--gray);
+  --rf-partner-chip: color-mix(in srgb, var(--gray) 34%, var(--white));
+  --rf-partner-chip-green: color-mix(in srgb, var(--primary-green) 16%, var(--white));
+  --rf-partner-chip-gold: color-mix(in srgb, var(--accent-gold) 18%, var(--white));
+  --rf-partner-sidebar-top: var(--navy-deep);
+  --rf-partner-sidebar-mid: var(--secondary-navy);
+  --rf-partner-sidebar-bottom: var(--navy-soft);
+  --rf-partner-sidebar-text: var(--off-white);
+  --rf-partner-sidebar-muted: color-mix(in srgb, var(--gray) 74%, var(--white) 26%);
+  --rf-partner-sidebar-active: color-mix(in srgb, var(--off-white) 92%, var(--primary-green) 8%);
+  --rf-partner-sidebar-hover: color-mix(in srgb, var(--white) 10%, transparent);
+  --rf-partner-hover: color-mix(in srgb, var(--primary-green) 10%, var(--white));
+  --rf-partner-active: color-mix(in srgb, var(--primary-green) 15%, var(--white));
+  --rf-partner-highlight: color-mix(in srgb, var(--accent-gold) 16%, var(--white));
+}
+
 * {
   box-sizing: border-box;
 }
 
 html {
   min-height: 100%;
-  background: var(--rf-partner-bg) !important;
+  background: var(--off-white) !important;
   color: var(--rf-partner-ink);
 }
 
@@ -33,4 +77,119 @@ a {
 
 .font-latin {
   font-family: var(--font-english), system-ui, sans-serif;
+}
+
+.partner-shell {
+  background:
+    linear-gradient(180deg, var(--rf-partner-sidebar-top) 0%, var(--rf-partner-sidebar-mid) 58%, var(--rf-partner-sidebar-bottom) 100%) !important;
+  color: var(--rf-partner-sidebar-text) !important;
+  border-right: 1px solid color-mix(in srgb, var(--navy-gray) 38%, transparent) !important;
+}
+
+.partner-topbar,
+.partner-profile-drawer {
+  background: var(--rf-partner-surface) !important;
+  color: var(--rf-partner-ink) !important;
+}
+
+.partner-page .MuiCard-root,
+.partner-card,
+.partner-surface {
+  background: var(--rf-partner-card) !important;
+  border: 1px solid var(--rf-partner-line) !important;
+  box-shadow: var(--rf-partner-shadow-soft) !important;
+  position: relative;
+}
+
+.partner-page .partner-card::before,
+.partner-page .MuiCard-root.partner-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 3px solid var(
+    --partner-card-accent,
+    color-mix(in srgb, var(--primary-green) 58%, var(--accent-gold) 42%)
+  );
+  pointer-events: none;
+}
+
+.partner-card-soft,
+.partner-surface-soft {
+  background: var(--rf-partner-card-soft) !important;
+  border: 1px solid var(--rf-partner-line) !important;
+  box-shadow: var(--rf-partner-shadow-soft) !important;
+}
+
+.partner-page .MuiButton-contained:not(.MuiButton-colorError),
+.partner-profile-drawer .MuiButton-contained:not(.MuiButton-colorError) {
+  background-color: var(--rf-partner-green-dark) !important;
+  color: var(--white) !important;
+}
+
+.partner-page .MuiButton-contained:not(.MuiButton-colorError):hover,
+.partner-profile-drawer .MuiButton-contained:not(.MuiButton-colorError):hover {
+  background-color: var(--rf-partner-green-hover) !important;
+}
+
+.partner-page .MuiButton-outlined,
+.partner-profile-drawer .MuiButton-outlined {
+  border-color: var(--rf-partner-line-strong) !important;
+  background: var(--rf-partner-surface) !important;
+  color: var(--rf-partner-ink) !important;
+}
+
+.partner-page .MuiOutlinedInput-root {
+  background: var(--rf-partner-surface) !important;
+}
+
+.partner-page .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: var(--rf-partner-line-strong) !important;
+}
+
+.partner-page .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: color-mix(in srgb, var(--primary-green) 38%, var(--navy-gray)) !important;
+}
+
+.partner-page .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--rf-partner-green) !important;
+}
+
+.partner-page .MuiChip-root.partner-chip-green,
+.partner-page .MuiChip-root.partner-status-pill.partner-chip-green {
+  background: var(--rf-partner-green-dark) !important;
+  color: var(--white) !important;
+}
+
+.partner-page .MuiChip-root.partner-chip-orange,
+.partner-page .MuiChip-root.partner-status-pill.partner-chip-orange {
+  background: var(--rf-partner-chip-gold) !important;
+  color: var(--rf-partner-blue-deep) !important;
+}
+
+.partner-page .MuiChip-root.partner-chip-blue,
+.partner-page .MuiChip-root.partner-status-pill.partner-chip-blue {
+  background: color-mix(in srgb, var(--navy-gray) 15%, var(--white)) !important;
+  color: var(--rf-partner-blue-deep) !important;
+}
+
+.partner-page .MuiAlert-root {
+  border: 1px solid var(--rf-partner-line) !important;
+  background: var(--rf-partner-highlight) !important;
+  color: var(--rf-partner-blue-deep) !important;
+}
+
+.partner-page .MuiLinearProgress-root {
+  background-color: var(--rf-partner-surface-warm) !important;
+}
+
+.partner-page .MuiLinearProgress-bar {
+  background-color: var(--rf-partner-green-dark) !important;
+}
+
+.partner-theme-text {
+  color: var(--rf-partner-ink) !important;
+}
+
+.partner-theme-muted {
+  color: var(--rf-partner-muted) !important;
 }

@@ -20,6 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealtimeRefresh";
+import { useInitialLoading } from "@/src/hooks/useInitialLoading";
 import { branchesService } from "@/src/services/branches/branches.service";
 import type {
   PartnerBranch,
@@ -98,7 +99,7 @@ function StatusChip({ active }: { active: boolean }) {
 
 export default function PartnerLocationsPage() {
   const [branches, setBranches] = React.useState<PartnerBranch[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [saving, setSaving] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [selectedBranch, setSelectedBranch] =
@@ -115,7 +116,7 @@ export default function PartnerLocationsPage() {
   }>({ open: false, message: "", severity: "success" });
 
   const loadBranches = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const response = await branchesService.getBranches();
       setBranches(response.items);
@@ -127,9 +128,9 @@ export default function PartnerLocationsPage() {
         severity: "error",
       });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, []);
+  }, [beginLoading, finishLoading]);
 
   React.useEffect(() => {
     loadBranches();

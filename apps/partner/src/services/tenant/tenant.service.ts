@@ -21,6 +21,18 @@ type SaveMyTenantInput = {
   clearPromoImages?: boolean;
 };
 
+type GetMyTenantOptions = {
+  force?: boolean;
+};
+
+const tenantCache = {
+  item: null as PartnerTenant | null,
+  expiresAt: 0,
+  inFlight: null as Promise<PartnerTenant> | null,
+};
+
+const TENANT_CACHE_TTL_MS = 60_000;
+
 function normalizeTenant(tenant: PartnerTenant): PartnerTenant {
   const promoImageUrls = (tenant.promoImageUrls || [])
     .map((url) => resolvePartnerAssetUrl(url))
@@ -34,6 +46,18 @@ function normalizeTenant(tenant: PartnerTenant): PartnerTenant {
     promoImageUrls,
     lineOaQrCodeUrl: resolvePartnerAssetUrl(tenant.lineOaQrCodeUrl),
   };
+}
+
+function cacheTenant(tenant: PartnerTenant) {
+  tenantCache.item = tenant;
+  tenantCache.expiresAt = Date.now() + TENANT_CACHE_TTL_MS;
+  return tenant;
+}
+
+function clearTenantCache() {
+  tenantCache.item = null;
+  tenantCache.expiresAt = 0;
+  tenantCache.inFlight = null;
 }
 
 async function saveTenantAsJson(input: SaveMyTenantInput) {
@@ -59,16 +83,31 @@ async function saveTenantAsJson(input: SaveMyTenantInput) {
         : {}),
     }),
   });
-  return normalizeTenant(tenant);
+  return cacheTenant(normalizeTenant(tenant));
 }
 
 export const tenantService = {
-  async getMyTenant() {
-    const tenant = await requestPartner<PartnerTenant>("/tenants/me");
-    return normalizeTenant(tenant);
+  async getMyTenant(options?: GetMyTenantOptions) {
+    if (!options?.force && tenantCache.item && Date.now() < tenantCache.expiresAt) {
+      return tenantCache.item;
+    }
+
+    if (!options?.force && tenantCache.inFlight) {
+      return tenantCache.inFlight;
+    }
+
+    const request = requestPartner<PartnerTenant>("/tenants/me")
+      .then((tenant) => cacheTenant(normalizeTenant(tenant)))
+      .finally(() => {
+        tenantCache.inFlight = null;
+      });
+
+    tenantCache.inFlight = request;
+    return request;
   },
 
   async saveMyTenant(input: SaveMyTenantInput) {
+    clearTenantCache();
     const hasMediaChange =
       input.logoFile ||
       input.promoImageFile ||
@@ -123,7 +162,7 @@ export const tenantService = {
           method: "POST",
           body: formData,
         });
-        return normalizeTenant(tenant);
+        return cacheTenant(normalizeTenant(tenant));
       } catch (error) {
         const canRetryAsJson =
           error instanceof RentFlowCarApiError &&

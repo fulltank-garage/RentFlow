@@ -16,6 +16,7 @@ import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealti
 import { dashboardService } from "@/src/services/dashboard/dashboard.service";
 import type { PartnerDashboard } from "@/src/services/dashboard/dashboard.types";
 import { PartnerDashboardSkeleton } from "@/src/components/partner/PartnerLoadingSkeletons";
+import { useInitialLoading } from "@/src/hooks/useInitialLoading";
 
 function formatTHB(value: number) {
   return `${new Intl.NumberFormat("th-TH", {
@@ -63,13 +64,19 @@ function StatCard({
   title,
   value,
   detail,
+  accent,
 }: {
   title: string;
   value: string | number;
   detail: string;
+  accent: string;
 }) {
   return (
-    <Card elevation={0} className="partner-card rounded-[30px]!">
+    <Card
+      elevation={0}
+      className="partner-card rounded-[30px]!"
+      style={{ "--partner-card-accent": accent } as React.CSSProperties}
+    >
       <CardContent className="p-5!">
         <Typography className="text-sm font-semibold text-slate-500">
           {title}
@@ -89,7 +96,7 @@ export default function PartnerDashboardPage() {
   const [dashboard, setDashboard] = React.useState<PartnerDashboard | null>(
     null
   );
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [error, setError] = React.useState("");
   const [reloadTick, setReloadTick] = React.useState(0);
 
@@ -123,7 +130,7 @@ export default function PartnerDashboardPage() {
 
     async function loadDashboard() {
       try {
-        setLoading(true);
+        beginLoading();
         setError("");
         const data = await dashboardService.getDashboard();
         if (active) setDashboard(data);
@@ -133,7 +140,7 @@ export default function PartnerDashboardPage() {
           err instanceof Error ? err.message : "ไม่สามารถโหลดข้อมูลแดชบอร์ดได้"
         );
       } finally {
-        if (active) setLoading(false);
+        if (active) finishLoading();
       }
     }
 
@@ -141,7 +148,7 @@ export default function PartnerDashboardPage() {
     return () => {
       active = false;
     };
-  }, [reloadTick]);
+  }, [beginLoading, finishLoading, reloadTick]);
 
   if (loading) {
     return <PartnerDashboardSkeleton />;
@@ -174,21 +181,25 @@ export default function PartnerDashboardPage() {
           title="รถทั้งหมด"
           value={dashboard.summary.totalCars}
           detail={`พร้อมให้เช่า ${dashboard.summary.availableCars} คัน`}
+          accent="var(--rf-partner-green)"
         />
         <StatCard
           title="สาขาทั้งหมด"
           value={dashboard.summary.totalBranches}
           detail={`เปิดใช้งาน ${dashboard.summary.activeBranches} สาขา`}
+          accent="var(--rf-partner-blue-gray)"
         />
         <StatCard
           title="การจองทั้งหมด"
           value={dashboard.summary.totalBookings}
           detail={`รับรถวันนี้ ${dashboard.summary.todayPickups} / คืนรถวันนี้ ${dashboard.summary.todayReturns}`}
+          accent="var(--rf-partner-gold)"
         />
         <StatCard
           title="รายได้ที่ชำระแล้ว"
           value={formatTHB(dashboard.summary.totalRevenue)}
           detail={`รีวิวทั้งหมด ${dashboard.summary.totalReviews} รายการ`}
+          accent="var(--rf-partner-green-muted)"
         />
       </Box>
 
@@ -219,10 +230,10 @@ export default function PartnerDashboardPage() {
                     sx={{
                       height: 10,
                       borderRadius: 999,
-                      bgcolor: "rgb(241 245 249)",
+                      bgcolor: "var(--rf-partner-surface-warm)",
                       "& .MuiLinearProgress-bar": {
                         borderRadius: 999,
-                        bgcolor: "rgb(15 23 42)",
+                        bgcolor: "var(--rf-partner-green-dark)",
                       },
                     }}
                   />
@@ -254,7 +265,7 @@ export default function PartnerDashboardPage() {
                     sx={{
                       height: 9,
                       borderRadius: 999,
-                      bgcolor: "rgb(241 245 249)",
+                      bgcolor: "var(--rf-partner-surface-warm)",
                     }}
                   />
                 </Box>

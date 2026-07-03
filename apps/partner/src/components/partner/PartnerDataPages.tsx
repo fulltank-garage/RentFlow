@@ -37,6 +37,7 @@ import type { PartnerLead } from "@/src/services/leads/leads.types";
 import { membersService } from "@/src/services/members/members.service";
 import type { PartnerMember } from "@/src/services/members/members.types";
 import { usePartnerRealtimeRefresh } from "@/src/hooks/realtime/usePartnerRealtimeRefresh";
+import { useInitialLoading } from "@/src/hooks/useInitialLoading";
 import { paymentsService } from "@/src/services/payments/payments.service";
 import type { PartnerPayment } from "@/src/services/payments/payments.types";
 import { promotionsService } from "@/src/services/promotions/promotions.service";
@@ -309,7 +310,7 @@ function useSnack() {
 
 export function PartnerBookingsPage() {
   const [items, setItems] = React.useState<PartnerBooking[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [status, setStatus] = React.useState("all");
   const [operationDraft, setOperationDraft] = React.useState<{
     booking: PartnerBooking;
@@ -324,16 +325,16 @@ export function PartnerBookingsPage() {
   const { snack, setSnack, close } = useSnack();
 
   const load = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const response = await bookingsService.getBookings(status);
       setItems(response.items);
     } catch (error: unknown) {
       setSnack({ open: true, message: error instanceof Error ? error.message : "โหลดการจองไม่สำเร็จ", severity: "error" });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, [setSnack, status]);
+  }, [beginLoading, finishLoading, setSnack, status]);
 
   React.useEffect(() => {
     load();
@@ -569,23 +570,23 @@ export function PartnerPaymentsPage({
   verificationOnly?: boolean;
 }) {
   const [items, setItems] = React.useState<PartnerPayment[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [filter, setFilter] = React.useState<PartnerPaymentFilter>(
     verificationOnly ? "needs_review" : "all"
   );
   const { snack, setSnack, close } = useSnack();
 
   const load = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const response = await paymentsService.getPayments();
       setItems(response.items);
     } catch (error: unknown) {
       setSnack({ open: true, message: error instanceof Error ? error.message : "โหลดการชำระเงินไม่สำเร็จ", severity: "error" });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, [setSnack]);
+  }, [beginLoading, finishLoading, setSnack]);
 
   React.useEffect(() => {
     load();
@@ -773,13 +774,13 @@ function Metric({ label, value, detail }: { label: string; value: React.ReactNod
 export function PartnerCalendarPage() {
   const [bookings, setBookings] = React.useState<PartnerBooking[]>([]);
   const [blocks, setBlocks] = React.useState<PartnerAvailabilityBlock[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
   const [reason, setReason] = React.useState("maintenance");
   const { snack, setSnack, close } = useSnack();
   const load = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const response = await calendarService.getCalendar();
       setBookings(response.bookings);
@@ -787,9 +788,9 @@ export function PartnerCalendarPage() {
     } catch (error: unknown) {
       setSnack({ open: true, message: error instanceof Error ? error.message : "โหลดปฏิทินไม่สำเร็จ", severity: "error" });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, [setSnack]);
+  }, [beginLoading, finishLoading, setSnack]);
   React.useEffect(() => { load(); }, [load]);
   usePartnerRealtimeRefresh({
     events: [
@@ -899,12 +900,12 @@ function CrudPage<T extends CrudBase>({
   const [items, setItems] = React.useState<T[]>([]);
   const [form, setForm] = React.useState<Omit<T, "id" | "createdAt">>(defaults);
   const [editingId, setEditingId] = React.useState("");
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const { snack, setSnack, close } = useSnack();
   const reload = React.useCallback(async () => {
-    setLoading(true);
-    try { setItems((await load()).items); } catch (error: unknown) { setSnack({ open: true, message: error instanceof Error ? error.message : "โหลดข้อมูลไม่สำเร็จ", severity: "error" }); } finally { setLoading(false); }
-  }, [load, setSnack]);
+    beginLoading();
+    try { setItems((await load()).items); } catch (error: unknown) { setSnack({ open: true, message: error instanceof Error ? error.message : "โหลดข้อมูลไม่สำเร็จ", severity: "error" }); } finally { finishLoading(); }
+  }, [beginLoading, finishLoading, load, setSnack]);
   React.useEffect(() => { reload(); }, [reload]);
   usePartnerRealtimeRefresh({
     events: realtimeEvents,
@@ -1005,10 +1006,10 @@ export function PartnerSettingsProductionPage() {
     "branches.write",
     "bookings.write",
   ]);
-  const [loading, setLoading] = React.useState(true);
+  const { loading, beginLoading, finishLoading } = useInitialLoading();
   const { snack, setSnack, close } = useSnack();
   const load = React.useCallback(async () => {
-    setLoading(true);
+    beginLoading();
     try {
       const [domainData, memberData, auditData] = await Promise.all([
         domainsService.listDomains(),
@@ -1021,9 +1022,9 @@ export function PartnerSettingsProductionPage() {
     } catch (error: unknown) {
       setSnack({ open: true, message: error instanceof Error ? error.message : "โหลดการตั้งค่าไม่สำเร็จ", severity: "error" });
     } finally {
-      setLoading(false);
+      finishLoading();
     }
-  }, [setSnack]);
+  }, [beginLoading, finishLoading, setSnack]);
   React.useEffect(() => { load(); }, [load]);
   async function addDomain() {
     try { await domainsService.createDomain(domain); setDomain(""); load(); } catch (error: unknown) { setSnack({ open: true, message: error instanceof Error ? error.message : "เพิ่มโดเมนไม่สำเร็จ", severity: "error" }); }

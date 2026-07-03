@@ -14,6 +14,15 @@ import {
 } from "@/src/lib/partner-browser-identity";
 import { tenantService } from "@/src/services/tenant/tenant.service";
 
+type WindowWithIdleCallback = Window &
+  typeof globalThis & {
+    requestIdleCallback?: (
+      callback: IdleRequestCallback,
+      options?: IdleRequestOptions
+    ) => number;
+    cancelIdleCallback?: (handle: number) => void;
+  };
+
 function withCacheVersion(url: string, version?: string) {
   if (!version || url.startsWith("data:") || url.startsWith("blob:")) {
     return url;
@@ -71,6 +80,8 @@ function applyPartnerIdentity(profile: PartnerStoreProfile | null) {
 export default function PartnerBrowserIdentity() {
   React.useEffect(() => {
     let cancelled = false;
+    let timeoutId: number | undefined;
+    let idleId: number | undefined;
 
     const syncFromCookie = () => {
       applyPartnerIdentity(readStoreProfile());
@@ -78,40 +89,57 @@ export default function PartnerBrowserIdentity() {
 
     syncFromCookie();
 
-    tenantService
-      .getMyTenant()
-      .then((tenant) => {
-        if (cancelled) return;
+    const refreshTenantIdentity = () => {
+      tenantService
+        .getMyTenant()
+        .then((tenant) => {
+          if (cancelled) return;
 
-        writeStoreProfile({
-          tenantId: tenant.id,
-          shopName: tenant.shopName,
-          domainSlug: tenant.domainSlug,
-          storefrontDomain: tenant.publicDomain,
-          ownerEmail: tenant.ownerEmail,
-          status: tenant.status,
-          plan: tenant.plan,
-          logoUrl: tenant.logoUrl || null,
-          promoImageUrl: tenant.promoImageUrl || null,
-          promoImageUrls: tenant.promoImageUrls || [],
-          contactPhone: tenant.contactPhone || "",
-          facebookPageUrl: tenant.facebookPageUrl || "",
-          lineOaQrCodeUrl: tenant.lineOaQrCodeUrl || null,
-          createdAt: tenant.createdAt,
-          updatedAt: tenant.updatedAt,
+          writeStoreProfile({
+            tenantId: tenant.id,
+            shopName: tenant.shopName,
+            domainSlug: tenant.domainSlug,
+            storefrontDomain: tenant.publicDomain,
+            ownerEmail: tenant.ownerEmail,
+            status: tenant.status,
+            plan: tenant.plan,
+            logoUrl: tenant.logoUrl || null,
+            promoImageUrl: tenant.promoImageUrl || null,
+            promoImageUrls: tenant.promoImageUrls || [],
+            contactPhone: tenant.contactPhone || "",
+            facebookPageUrl: tenant.facebookPageUrl || "",
+            lineOaQrCodeUrl: tenant.lineOaQrCodeUrl || null,
+            createdAt: tenant.createdAt,
+            updatedAt: tenant.updatedAt,
+          });
+        })
+        .catch(() => {
+          if (!cancelled) {
+            syncFromCookie();
+          }
         });
-      })
-      .catch(() => {
-        if (!cancelled) {
-          syncFromCookie();
-        }
+    };
+
+    const browserWindow = window as WindowWithIdleCallback;
+    if (browserWindow.requestIdleCallback) {
+      idleId = browserWindow.requestIdleCallback(refreshTenantIdentity, {
+        timeout: 1800,
       });
+    } else {
+      timeoutId = browserWindow.setTimeout(refreshTenantIdentity, 700);
+    }
 
     window.addEventListener("storage", syncFromCookie);
     window.addEventListener("rentflow-store-profile-updated", syncFromCookie);
 
     return () => {
       cancelled = true;
+      if (idleId !== undefined && browserWindow.cancelIdleCallback) {
+        browserWindow.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
       window.removeEventListener("storage", syncFromCookie);
       window.removeEventListener(
         "rentflow-store-profile-updated",

@@ -323,7 +323,7 @@ function StorefrontFramePreview({
           {usingDefault ? (
             <Chip
               label="โครงหน้าเว็บหลัก"
-              className="bg-blue-50! text-sm! font-bold! text-blue-700!"
+              className="bg-[var(--rf-partner-active)]! text-sm! font-bold! text-[var(--rf-partner-green)]!"
             />
           ) : null}
           <Chip
@@ -349,7 +349,7 @@ function StorefrontFramePreview({
                 target="_blank"
                 rel="noreferrer"
                 variant="contained"
-                className="h-10 rounded-full! bg-slate-950! px-5! text-sm! font-bold!"
+                className="h-10 rounded-full! bg-[var(--rf-partner-green)]! px-5! text-sm! font-bold!"
               >
                 เปิดหน้าร้านจริง
               </Button>
@@ -427,7 +427,7 @@ function StorefrontTemplatePicker({
           </Box>
           <Chip
             label="เลือก 1 แบบเพื่อเพิ่มลงหน้าร้าน"
-            className="bg-blue-50! text-sm! font-bold! text-blue-700!"
+            className="bg-[var(--rf-partner-active)]! text-sm! font-bold! text-[var(--rf-partner-green)]!"
           />
         </Stack>
 
@@ -445,7 +445,7 @@ function StorefrontTemplatePicker({
                 <Typography className="mt-2 text-sm font-normal leading-6 text-slate-500">
                   {template.helper}
                 </Typography>
-                <Typography className="mt-4 text-xs font-bold text-blue-700">
+                <Typography className="mt-4 text-xs font-bold text-[var(--rf-partner-green)]">
                   เพิ่มส่วนนี้
                 </Typography>
               </Box>
@@ -504,7 +504,7 @@ export default function Page() {
     async function loadPage() {
       const [pageResult, tenantResult] = await Promise.allSettled([
         storefrontService.getHomePage(),
-        tenantService.getMyTenant(),
+        tenantService.getMyTenant({ force: true }),
       ]);
 
       if (cancelled) return;
@@ -782,7 +782,7 @@ export default function Page() {
               variant="contained"
               onClick={save}
               disabled={saving}
-              className="h-11 rounded-full! bg-slate-950! px-7! text-sm! font-bold! max-sm:w-full"
+              className="h-11 rounded-full! bg-[var(--rf-partner-green)]! px-7! text-sm! font-bold! max-sm:w-full"
             >
               {saving ? "กำลังบันทึก" : "บันทึกหน้าเว็บ"}
             </Button>

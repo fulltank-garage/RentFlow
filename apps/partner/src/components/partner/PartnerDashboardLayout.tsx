@@ -1,11 +1,15 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { Box, Container } from "@mui/material";
 import PartnerSidebar from "./PartnerSidebar";
 import PartnerTopbar from "./PartnerTopbar";
-import FloatingAiLauncher from "./FloatingAiLauncher";
 import PartnerBrowserIdentity from "./PartnerBrowserIdentity";
+
+const FloatingAiLauncher = dynamic(() => import("./FloatingAiLauncher"), {
+  ssr: false,
+});
 
 type Props = {
   children: React.ReactNode;
@@ -22,7 +26,7 @@ export default function PartnerDashboardLayout({
   const closeMobile = () => setMobileOpen(false);
 
   return (
-    <Box className="relative min-h-screen overflow-hidden bg-[var(--rf-partner-bg)] text-slate-950">
+    <Box className="relative min-h-screen overflow-hidden bg-[var(--rf-partner-bg)] text-[var(--rf-partner-ink)]">
       <PartnerBrowserIdentity />
       <PartnerTopbar onOpenMobile={openMobile} drawerWidth={drawerWidth} />
       <PartnerSidebar
