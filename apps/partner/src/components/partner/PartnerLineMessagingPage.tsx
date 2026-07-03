@@ -330,8 +330,7 @@ export function PartnerLineMessagingPage() {
         elevation={0}
         className="partner-card overflow-hidden rounded-[30px]!"
         sx={{
-          background:
-            "linear-gradient(135deg, rgba(236,253,245,1) 0%, rgba(240,253,250,1) 45%, rgba(255,255,255,1) 100%)",
+          background: "var(--rf-partner-surface)",
         }}
       >
         {(saving || testing || testingWebhook) && <LinearProgress />}
@@ -342,9 +341,7 @@ export function PartnerLineMessagingPage() {
                 className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl text-base font-black text-white shadow-[0_18px_45px_rgba(5,150,105,0.25)]"
                 sx={{
                   bgcolor: "var(--rf-partner-green)",
-                  backgroundImage: current?.pictureUrl
-                    ? `linear-gradient(color-mix(in srgb, var(--rf-partner-green) 18%, transparent), color-mix(in srgb, var(--rf-partner-green) 18%, transparent)), url(${current.pictureUrl})`
-                    : undefined,
+                  backgroundImage: current?.pictureUrl ? `url(${current.pictureUrl})` : undefined,
                   backgroundPosition: "center",
                   backgroundSize: "cover",
                 }}

@@ -21,7 +21,6 @@ import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import type { SvgIconComponent } from "@mui/icons-material";
 import {
   Box,
-  Divider,
   Drawer,
   List,
   ListItemButton,
@@ -114,6 +113,7 @@ export default function PartnerSidebar({
       <Box
         sx={{
           flex: "0 0 auto",
+          height: 72,
           minHeight: 72,
           display: "flex",
           alignItems: "center",
@@ -124,8 +124,7 @@ export default function PartnerSidebar({
           <Box
             className="grid h-[42px] w-[42px] shrink-0 place-items-center overflow-hidden rounded-[18px] text-sm font-black tracking-[-0.05em] text-white shadow-[var(--rf-partner-shadow-soft)]"
             sx={{
-              background:
-                "linear-gradient(135deg, var(--rf-partner-green-dark), var(--rf-partner-gold))",
+              background: "var(--rf-partner-green-dark)",
             }}
           >
             {storeProfile?.logoUrl ? (
@@ -146,8 +145,6 @@ export default function PartnerSidebar({
           </Box>
         </Stack>
       </Box>
-
-      <Divider sx={{ borderColor: "color-mix(in srgb, var(--navy-gray) 48%, transparent)" }} />
 
       <Box
         className="partner-scrollbar px-3 py-3"
@@ -208,21 +205,24 @@ export default function PartnerSidebar({
                         minHeight: { xs: 52, md: 48 },
                         px: 2.25,
                         py: 1.35,
-                        bgcolor: active ? "var(--rf-partner-sidebar-active)" : "transparent",
+                        bgcolor: active ? "var(--rf-partner-sidebar-active) !important" : "transparent",
                         color: active
                           ? "var(--rf-partner-ink)"
                           : "var(--rf-partner-sidebar-text)",
                         border: 0,
                         boxShadow: "none",
                         "&.Mui-selected": {
-                          backgroundColor: "var(--rf-partner-sidebar-active)",
+                          backgroundColor: "var(--rf-partner-sidebar-active) !important",
                         },
                         "&.Mui-selected:hover": {
-                          backgroundColor: "var(--rf-partner-sidebar-active)",
+                          backgroundColor: "var(--rf-partner-sidebar-active) !important",
+                        },
+                        "&.Mui-selected.Mui-focusVisible": {
+                          backgroundColor: "var(--rf-partner-sidebar-active) !important",
                         },
                         "&:hover": {
                           backgroundColor: active
-                            ? "var(--rf-partner-sidebar-active)"
+                            ? "var(--rf-partner-sidebar-active) !important"
                             : "var(--rf-partner-sidebar-hover)",
                           border: 0,
                           boxShadow: "none",
@@ -237,7 +237,7 @@ export default function PartnerSidebar({
                           className="grid h-8 w-8 shrink-0 place-items-center"
                           sx={{
                             color: active
-                              ? "var(--rf-partner-green-dark)"
+                              ? "var(--accent-gold)"
                               : "var(--rf-partner-sidebar-muted)",
                             fontSize: { xs: 27, md: 25 },
                           }}

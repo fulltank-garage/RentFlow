@@ -190,7 +190,7 @@ export default function CarsSection({
                       ราคาเริ่มต้น
                     </Typography>
 
-                    <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-apple-ink)">
+                    <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-brand-dark)">
                       {formatTHB(c.pricePerDay)}
                     </Typography>
 

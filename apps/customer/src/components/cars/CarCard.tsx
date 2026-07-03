@@ -60,7 +60,7 @@ export default function CarCard({ car, showShop = false }: Props) {
           <Box className="absolute left-4 top-4 z-1">
             <Chip
               label={unavailableLabel}
-              className="apple-pill bg-white/92! font-bold! text-(--rf-apple-ink)!"
+              className="apple-pill bg-(--rf-danger)! font-bold! text-white!"
             />
           </Box>
         ) : null}
@@ -91,11 +91,11 @@ export default function CarCard({ car, showShop = false }: Props) {
             href={shopHref || undefined}
             className="mt-5 block rounded-[22px] bg-(--rf-apple-surface-soft) p-4 text-(--rf-apple-muted) no-underline transition hover:bg-white"
           >
-            <Box className="flex flex-wrap items-end gap-x-2 gap-y-1">
-              <Typography className="text-base font-black tracking-[-0.02em] text-(--rf-apple-muted)">
+            <Box className="flex min-w-0 flex-nowrap items-baseline gap-2">
+              <Typography className="shrink-0 text-base font-black tracking-[-0.02em] text-(--rf-apple-muted)">
                 ร้านให้เช่า
               </Typography>
-              <Typography className="apple-card-title-lg truncate font-black tracking-[-0.04em] text-(--rf-apple-ink)">
+              <Typography className="min-w-0 flex-1 truncate text-lg font-black tracking-[-0.02em] text-(--rf-apple-ink)">
                 {car.shopName}
               </Typography>
             </Box>
@@ -108,7 +108,7 @@ export default function CarCard({ car, showShop = false }: Props) {
               ราคาเริ่มต้น
             </Typography>
 
-            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-apple-ink)">
+            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-brand-dark)">
               {formatTHB(car.pricePerDay)}
             </Typography>
 
@@ -116,10 +116,24 @@ export default function CarCard({ car, showShop = false }: Props) {
               /วัน
             </Typography>
           </Box>
-          {!isBooked && (car.unitCount || 0) > 1 ? (
-            <Typography className="mt-2 text-sm font-semibold text-(--rf-apple-muted)">
-              เหลือให้จอง {availableUnits} จาก {car.unitCount} คัน
-            </Typography>
+          {(car.unitCount || 0) > 0 ? (
+            <Box className="mt-2 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-(--rf-apple-muted)">
+              <Typography component="span" className="text-sm font-bold">
+                เหลือให้จอง
+              </Typography>
+              <Typography component="span" className="text-base font-black text-(--rf-apple-ink)">
+                {availableUnits}
+              </Typography>
+              <Typography component="span" className="text-sm font-bold">
+                จาก
+              </Typography>
+              <Typography component="span" className="text-base font-black text-(--rf-apple-ink)">
+                {car.unitCount}
+              </Typography>
+              <Typography component="span" className="text-sm font-bold">
+                คัน
+              </Typography>
+            </Box>
           ) : null}
         </Box>
       </CardContent>

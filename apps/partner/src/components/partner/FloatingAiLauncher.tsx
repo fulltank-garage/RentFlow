@@ -13,18 +13,12 @@ function AiSparkle() {
       height="34"
       className="block"
     >
-      <defs>
-        <linearGradient id="partner-ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="var(--rf-partner-green)" />
-          <stop offset="100%" stopColor="var(--rf-partner-blue)" />
-        </linearGradient>
-      </defs>
       <path
-        fill="url(#partner-ai-gradient)"
+        fill="var(--rf-partner-green)"
         d="M30.6 5.2c1.1-2.4 4.7-2.4 5.8 0l5.2 11.4c.3.8.9 1.4 1.7 1.7l11.4 5.2c2.4 1.1 2.4 4.7 0 5.8l-11.4 5.2c-.8.3-1.4.9-1.7 1.7l-5.2 11.4c-1.1 2.4-4.7 2.4-5.8 0l-5.2-11.4c-.3-.8-.9-1.4-1.7-1.7L12.3 29.3c-2.4-1.1-2.4-4.7 0-5.8l11.4-5.2c.8-.3 1.4-.9 1.7-1.7l5.2-11.4Z"
       />
       <path
-        fill="url(#partner-ai-gradient)"
+        fill="var(--rf-partner-green)"
         d="M12.7 41.3c.8-1.8 3.5-1.8 4.3 0l1.8 4c.3.6.7 1 1.3 1.3l4 1.8c1.8.8 1.8 3.5 0 4.3l-4 1.8c-.6.3-1 .7-1.3 1.3l-1.8 4c-.8 1.8-3.5 1.8-4.3 0l-1.8-4c-.3-.6-.7-1-1.3-1.3l-4-1.8c-1.8-.8-1.8-3.5 0-4.3l4-1.8c.6-.3 1-.7 1.3-1.3l1.8-4Z"
       />
     </svg>

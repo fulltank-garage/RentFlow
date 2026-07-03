@@ -2,12 +2,7 @@
 @import "./shared-ui-theme.css";
 
 :root {
-  --rf-partner-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--off-white) 86%, var(--primary-green) 14%) 0%,
-    var(--soft-white) 42%,
-    var(--off-white) 100%
-  );
+  --rf-partner-bg: color-mix(in srgb, var(--off-white) 92%, var(--primary-green) 8%);
   --rf-partner-surface: var(--white);
   --rf-partner-surface-soft: color-mix(in srgb, var(--section-gray) 78%, var(--green-muted) 22%);
   --rf-partner-surface-warm: var(--light-gray);
@@ -38,7 +33,7 @@
   --rf-partner-sidebar-bottom: var(--navy-soft);
   --rf-partner-sidebar-text: var(--off-white);
   --rf-partner-sidebar-muted: color-mix(in srgb, var(--gray) 74%, var(--white) 26%);
-  --rf-partner-sidebar-active: color-mix(in srgb, var(--off-white) 92%, var(--primary-green) 8%);
+  --rf-partner-sidebar-active: var(--white);
   --rf-partner-sidebar-hover: color-mix(in srgb, var(--white) 10%, transparent);
   --rf-partner-hover: color-mix(in srgb, var(--primary-green) 10%, var(--white));
   --rf-partner-active: color-mix(in srgb, var(--primary-green) 15%, var(--white));
@@ -80,8 +75,7 @@ a {
 }
 
 .partner-shell {
-  background:
-    linear-gradient(180deg, var(--rf-partner-sidebar-top) 0%, var(--rf-partner-sidebar-mid) 58%, var(--rf-partner-sidebar-bottom) 100%) !important;
+  background: var(--rf-partner-sidebar-mid) !important;
   color: var(--rf-partner-sidebar-text) !important;
   border-right: 1px solid color-mix(in srgb, var(--navy-gray) 38%, transparent) !important;
 }

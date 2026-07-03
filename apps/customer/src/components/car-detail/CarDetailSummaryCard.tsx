@@ -79,17 +79,31 @@ export default function CarDetailSummaryCard({ detail }: Props) {
             ราคาเริ่มต้น
           </Typography>
           <Box className="mt-1 flex items-end gap-2">
-            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-apple-ink)">
+            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-brand-dark)">
               {toTHBText(detail.pricePerDay)}
             </Typography>
             <Typography className="text-sm font-medium text-(--rf-apple-muted)">
               / วัน
             </Typography>
           </Box>
-          {!isUnavailable && (detail.unitCount || 0) > 1 ? (
-            <Typography className="mt-3 text-sm font-semibold text-(--rf-apple-muted)">
-              เหลือให้จอง {availableUnits} จาก {detail.unitCount} คัน
-            </Typography>
+          {(detail.unitCount || 0) > 0 ? (
+            <Box className="mt-3 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-(--rf-apple-muted)">
+              <Typography component="span" className="text-sm font-bold">
+                เหลือให้จอง
+              </Typography>
+              <Typography component="span" className="text-base font-black text-(--rf-apple-ink)">
+                {availableUnits}
+              </Typography>
+              <Typography component="span" className="text-sm font-bold">
+                จาก
+              </Typography>
+              <Typography component="span" className="text-base font-black text-(--rf-apple-ink)">
+                {detail.unitCount}
+              </Typography>
+              <Typography component="span" className="text-sm font-bold">
+                คัน
+              </Typography>
+            </Box>
           ) : null}
         </Box>
 

@@ -38,7 +38,7 @@ export default function CarDetailHero({ image, name, isAvailable = true, status 
             <Box className="absolute left-5 top-5 z-1">
               <Chip
                 label={unavailableLabel}
-                className="apple-pill bg-white/94! font-bold! text-(--rf-apple-ink)!"
+                className="apple-pill bg-(--rf-danger)! font-bold! text-white!"
               />
             </Box>
             <Box className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent px-6 py-5">

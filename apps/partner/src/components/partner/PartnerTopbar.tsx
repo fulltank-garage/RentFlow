@@ -13,7 +13,6 @@ import {
   ListItemButton,
   Stack,
   Toolbar,
-  Chip,
   Typography,
 } from "@mui/material";
 import {
@@ -98,8 +97,7 @@ export default function PartnerTopbar({
         elevation={0}
         sx={{
           bgcolor: "var(--rf-partner-surface)",
-          background:
-            "linear-gradient(90deg, var(--rf-partner-surface) 0%, color-mix(in srgb, var(--rf-partner-highlight) 34%, var(--rf-partner-surface)) 100%)",
+          background: "var(--rf-partner-surface)",
           color: "var(--rf-partner-ink)",
           borderBottom:
             "2px solid color-mix(in srgb, var(--rf-partner-gold) 42%, var(--rf-partner-green) 58%)",
@@ -108,7 +106,7 @@ export default function PartnerTopbar({
           ml: { md: `${drawerWidth}px` },
         }}
       >
-        <Toolbar sx={{ minHeight: 72, px: { xs: 2, md: 3 } }}>
+        <Toolbar sx={{ height: 72, minHeight: "72px !important", px: { xs: 2, md: 3 } }}>
           <Button
             onClick={onOpenMobile}
             aria-label="เปิดเมนู"
@@ -144,8 +142,7 @@ export default function PartnerTopbar({
                       width: 42,
                       height: 42,
                       bgcolor: "transparent",
-                      background:
-                        "linear-gradient(135deg, var(--rf-partner-blue), var(--rf-partner-green))",
+                      background: "var(--rf-partner-blue)",
                       border: "2px solid var(--rf-partner-surface)",
                       boxShadow: "var(--rf-partner-shadow-soft)",
                     }}
@@ -175,7 +172,7 @@ export default function PartnerTopbar({
         PaperProps={{
           sx: {
             width: { xs: "78vw", sm: 320 },
-            bgcolor: "var(--rf-partner-surface-soft)",
+            bgcolor: "var(--rf-partner-surface)",
             borderLeft: "1px solid var(--rf-partner-line)",
             boxShadow: "none",
           },
@@ -230,8 +227,7 @@ export default function PartnerTopbar({
           sx={{
             px: 2,
             py: 3,
-            background:
-              "linear-gradient(135deg, var(--rf-partner-surface) 0%, var(--rf-partner-highlight) 100%)",
+            background: "var(--rf-partner-surface)",
           }}
         >
           <Stack direction="row" spacing={1.5} alignItems="center">
@@ -242,8 +238,7 @@ export default function PartnerTopbar({
                 width: 46,
                 height: 46,
                 bgcolor: "transparent",
-                background:
-                  "linear-gradient(135deg, var(--rf-partner-blue), var(--rf-partner-green))",
+                background: "var(--rf-partner-blue)",
                 border: "2px solid var(--rf-partner-surface)",
                 boxShadow: "var(--rf-partner-shadow-soft)",
               }}
@@ -275,34 +270,6 @@ export default function PartnerTopbar({
                 {storeProfile?.ownerEmail || "บัญชีเจ้าของร้าน"}
               </Box>
 
-              <Stack
-                direction="row"
-                spacing={0.75}
-                sx={{ mt: 1 }}
-                useFlexGap
-                flexWrap="wrap"
-              >
-                <Chip
-                  size="small"
-                  label="เจ้าของร้าน"
-                  className="partner-status-pill"
-                  sx={{
-                    height: 24,
-                    fontSize: 12,
-                  }}
-                />
-                <Chip
-                  size="small"
-                  label="ออนไลน์"
-                  className="partner-status-pill"
-                  sx={{
-                    height: 24,
-                    fontSize: 12,
-                    bgcolor: "var(--rf-partner-chip) !important",
-                    color: "var(--rf-partner-green) !important",
-                  }}
-                />
-              </Stack>
             </Box>
           </Stack>
         </Box>
@@ -371,20 +338,21 @@ export default function PartnerTopbar({
 
         <Box sx={{ flex: 1 }} />
 
-        <Divider sx={{ borderColor: "var(--rf-partner-line)" }} />
-
-        <Box sx={{ p: 1.5 }}>
+        <Box sx={{ p: 1.5, bgcolor: "var(--rf-partner-surface)" }}>
           <Button
             fullWidth
             variant="contained"
+            color="error"
             sx={{
               p: 1.5,
               borderRadius: 999,
-              bgcolor: "var(--rf-partner-rose)",
+              bgcolor: "var(--rf-danger)",
+              color: "var(--white)",
               boxShadow:
-                "0 14px 34px color-mix(in srgb, var(--rf-partner-rose) 18%, transparent)",
+                "0 14px 34px color-mix(in srgb, var(--rf-danger) 18%, transparent)",
               "&:hover": {
-                bgcolor: "var(--rf-partner-rose)",
+                bgcolor: "var(--rf-danger)",
+                color: "var(--white)",
                 filter: "brightness(0.94)",
               },
             }}
