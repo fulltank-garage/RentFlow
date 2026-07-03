@@ -5,19 +5,19 @@ import { Box, Typography } from "@mui/material";
 export default function ContactFormCard() {
   return (
     <Box>
-      <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+      <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
         เตรียมข้อมูลก่อนติดต่อ
       </Typography>
-      <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+      <Typography className="apple-body-sm mt-1 text-(--rf-apple-muted)">
         เพื่อให้ทีมงานช่วยตรวจสอบได้เร็วขึ้น กรุณาเตรียมรายละเอียดต่อไปนี้
       </Typography>
 
       <Box className="mt-5 space-y-4">
-        <Box className="apple-card rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
-          <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
+        <Box className="apple-card rounded-[18px] bg-(--rf-apple-surface-soft) p-4">
+          <Typography className="apple-card-title font-semibold text-(--rf-apple-ink)">
             ข้อมูลที่ควรแจ้ง
           </Typography>
-          <Box className="apple-body-sm mt-3 space-y-2 text-[var(--rf-apple-muted)]">
+          <Box className="apple-body-sm mt-3 space-y-2 text-(--rf-apple-muted)">
             <Typography>1. รหัสการจองหรือชื่อผู้จอง</Typography>
             <Typography>2. วันรับรถ วันคืนรถ และสาขาที่เกี่ยวข้อง</Typography>
             <Typography>3. รายละเอียดปัญหาหรือคำขอที่ต้องการให้ช่วย</Typography>
@@ -25,11 +25,11 @@ export default function ContactFormCard() {
           </Box>
         </Box>
 
-        <Box className="apple-card rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
-          <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
+        <Box className="apple-card rounded-[18px] bg-(--rf-apple-surface-soft) p-4">
+          <Typography className="apple-card-title font-semibold text-(--rf-apple-ink)">
             ช่วยให้ตรวจสอบเร็วขึ้น
           </Typography>
-          <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+          <Typography className="apple-body-sm mt-1 text-(--rf-apple-muted)">
             หากติดต่อเรื่องการจอง แนะนำแนบรหัสการจอง วันรับ-คืนรถ และสาขาที่เกี่ยวข้อง เพื่อให้ทีมงานดูแลได้เร็วขึ้น
           </Typography>
         </Box>

@@ -47,7 +47,7 @@ export default function CarCard({ car, showShop = false }: Props) {
       sx={{ boxShadow: "none" }}
       className="apple-card group"
     >
-      <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+      <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
         <Box
           component="img"
           src={car.imageUrl || car.image || "/RentFlowCar.png"}
@@ -57,15 +57,15 @@ export default function CarCard({ car, showShop = false }: Props) {
           className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
         />
         {isBooked ? (
-          <Box className="absolute left-4 top-4 z-[1]">
+          <Box className="absolute left-4 top-4 z-1">
             <Chip
               label={unavailableLabel}
-              className="apple-pill bg-white/92! font-bold! text-[var(--rf-apple-ink)]!"
+              className="apple-pill bg-white/92! font-bold! text-(--rf-apple-ink)!"
             />
           </Box>
         ) : null}
         {isBooked ? (
-          <Box className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent px-5 py-4">
+          <Box className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/55 to-transparent px-5 py-4">
             <Typography className="text-sm font-semibold text-white">
               รถคันนี้{unavailableLabel} ยังไม่สามารถกดจองได้ในตอนนี้
             </Typography>
@@ -76,10 +76,10 @@ export default function CarCard({ car, showShop = false }: Props) {
       <CardContent className="p-5 sm:p-6">
         <Box className="flex items-start justify-between gap-3">
           <Box className="min-w-0">
-            <Typography className="apple-card-title truncate font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+            <Typography className="apple-card-title truncate font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
               {car.name}
             </Typography>
-            <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+            <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
               {getCarTypeLabel(car.type)} • {car.seats} ที่นั่ง • {car.transmission} • {car.fuel}
             </Typography>
           </Box>
@@ -89,35 +89,35 @@ export default function CarCard({ car, showShop = false }: Props) {
           <Box
             component={shopHref ? "a" : "span"}
             href={shopHref || undefined}
-            className="mt-5 block rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4 text-[var(--rf-apple-muted)] no-underline transition hover:bg-white"
+            className="mt-5 block rounded-[22px] bg-(--rf-apple-surface-soft) p-4 text-(--rf-apple-muted) no-underline transition hover:bg-white"
           >
             <Box className="flex flex-wrap items-end gap-x-2 gap-y-1">
-              <Typography className="text-base font-black tracking-[-0.02em] text-[var(--rf-apple-muted)]">
+              <Typography className="text-base font-black tracking-[-0.02em] text-(--rf-apple-muted)">
                 ร้านให้เช่า
               </Typography>
-              <Typography className="apple-card-title-lg truncate font-black tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+              <Typography className="apple-card-title-lg truncate font-black tracking-[-0.04em] text-(--rf-apple-ink)">
                 {car.shopName}
               </Typography>
             </Box>
           </Box>
         ) : null}
 
-        <Box className="mt-3 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-3 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
           <Box className="flex items-end gap-2">
-            <Typography className="text-sm text-[var(--rf-apple-muted)]">
+            <Typography className="text-sm text-(--rf-apple-muted)">
               ราคาเริ่มต้น
             </Typography>
 
-            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-apple-ink)">
               {formatTHB(car.pricePerDay)}
             </Typography>
 
-            <Typography className="text-sm text-[var(--rf-apple-muted)]">
+            <Typography className="text-sm text-(--rf-apple-muted)">
               /วัน
             </Typography>
           </Box>
           {!isBooked && (car.unitCount || 0) > 1 ? (
-            <Typography className="mt-2 text-sm font-semibold text-[var(--rf-apple-muted)]">
+            <Typography className="mt-2 text-sm font-semibold text-(--rf-apple-muted)">
               เหลือให้จอง {availableUnits} จาก {car.unitCount} คัน
             </Typography>
           ) : null}

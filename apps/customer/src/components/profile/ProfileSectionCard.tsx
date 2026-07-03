@@ -16,11 +16,11 @@ export default function ProfileSectionCard({
     <Box className="apple-card p-5! md:p-6!">
       <Box className="mb-5 flex items-center gap-3">
         {icon ? (
-          <Box className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-blue)]">
+          <Box className="flex h-9 w-9 items-center justify-center rounded-full bg-(--rf-apple-surface-soft) text-(--rf-apple-blue)">
             {icon}
           </Box>
         ) : null}
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           {title}
         </Typography>
       </Box>

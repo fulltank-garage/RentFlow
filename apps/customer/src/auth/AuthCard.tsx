@@ -315,11 +315,11 @@ export default function AuthCard({
               </Button>
 
               {!isRegister && forgotPasswordHref ? (
-                <Box className="flex items-center justify-center gap-1.5 text-sm text-[var(--rf-apple-muted)]">
+                <Box className="flex items-center justify-center gap-1.5 text-sm text-(--rf-apple-muted)">
                   <span>มีปัญหาในการเข้าสู่ระบบ?</span>
                   <Link
                     href={forgotPasswordHref}
-                    className="font-semibold text-[var(--rf-apple-blue)] transition-opacity duration-300 hover:opacity-80"
+                    className="font-semibold text-(--rf-apple-blue) transition-opacity duration-300 hover:opacity-80"
                     style={{
                       textDecorationLine: "underline",
                       textDecorationThickness: "1.5px",
@@ -333,7 +333,7 @@ export default function AuthCard({
             </Box>
 
             <Box className="p-4">
-              <Typography className="text-center text-xs! leading-5 text-[var(--rf-apple-muted)]">
+              <Typography className="text-center text-xs! leading-5 text-(--rf-apple-muted)">
                 {agreementText}
               </Typography>
             </Box>

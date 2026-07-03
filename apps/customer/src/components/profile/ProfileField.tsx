@@ -15,9 +15,9 @@ function FieldShell({
 }) {
   return (
     <Box
-      className={`rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5 md:py-4.5 ${className || ""}`}
+      className={`rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-4 md:px-5 md:py-4.5 ${className || ""}`}
     >
-      <Typography className="apple-label-text mb-1.5 font-medium uppercase text-[var(--rf-apple-muted)]">
+      <Typography className="apple-label-text mb-1.5 font-medium uppercase text-(--rf-apple-muted)">
         {label}
       </Typography>
       {children}
@@ -116,7 +116,7 @@ export function ProfileField({
           }}
         />
       ) : (
-        <Typography className="min-h-7.5 wrap-break-word text-base font-bold leading-7 text-[var(--rf-apple-ink)]">
+        <Typography className="min-h-7.5 wrap-break-word text-base font-bold leading-7 text-(--rf-apple-ink)">
           {value || "-"}
         </Typography>
       )}

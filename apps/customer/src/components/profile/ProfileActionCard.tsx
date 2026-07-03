@@ -35,7 +35,7 @@ export default function ProfileActionCard({
 
   return (
     <Box className="apple-card p-5 md:p-6">
-      <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+      <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
         จัดการบัญชี
       </Typography>
 
@@ -85,8 +85,8 @@ export default function ProfileActionCard({
 
       <Box className="space-y-3">
         <Box className="flex items-center justify-between">
-          <Typography className="text-sm text-[var(--rf-apple-muted)]">บัญชี</Typography>
-          <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
+          <Typography className="text-sm text-(--rf-apple-muted)">บัญชี</Typography>
+          <Typography className="text-sm font-semibold text-(--rf-apple-ink)">
             ใช้งานได้
           </Typography>
         </Box>

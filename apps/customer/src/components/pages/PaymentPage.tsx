@@ -51,12 +51,12 @@ export default function PaymentPage() {
               <Chip
                 size="small"
                 label={`รหัสการจอง: ${payment.bookingId}`}
-                className="apple-pill text-[var(--rf-apple-muted)]!"
+                className="apple-pill text-(--rf-apple-muted)!"
               />
               <Chip
                 size="small"
                 label={`ยอดชำระ: ${formatTHB(payment.amount)}`}
-                className="apple-pill text-[var(--rf-apple-muted)]!"
+                className="apple-pill text-(--rf-apple-muted)!"
               />
             </Box>
           </Box>
@@ -89,11 +89,11 @@ export default function PaymentPage() {
               className="apple-card order-1 lg:order-2 lg:col-span-7"
             >
               <CardContent className="p-5! md:p-6!">
-                <Box className="apple-card apple-card-no-hover rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4! md:p-5!">
-                  <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+                <Box className="apple-card apple-card-no-hover rounded-[26px] bg-(--rf-apple-surface-soft) p-4! md:p-5!">
+                  <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                     ก่อนยืนยันการชำระเงิน
                   </Typography>
-                  <Typography className="mt-2 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                  <Typography className="mt-2 text-sm leading-6 text-(--rf-apple-muted)">
                     ตรวจสอบชื่อผู้ชำระเงิน ช่องทางการติดต่อ และวิธีชำระให้ถูกต้อง
                     เมื่อยืนยันแล้วระบบจะบันทึกข้อมูลเพื่อตรวจสอบสถานะการชำระเงินต่อไป
                   </Typography>
@@ -146,7 +146,7 @@ export default function PaymentPage() {
                     variant="contained"
                     disabled={!payment.canPay}
                     onClick={payment.handleConfirm}
-                    className="rounded-full! px-5! py-2.5! font-semibold! sm:min-w-[220px]"
+                    className="rounded-full! px-5! py-2.5! font-semibold! sm:min-w-55"
                     sx={{
                       textTransform: "none",
                       backgroundColor: "rgb(15 23 42)",

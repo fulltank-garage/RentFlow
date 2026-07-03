@@ -53,7 +53,7 @@ export function BookingMobileCarCard({ car }: { car?: Car | null }) {
         <Divider className="my-4! border-black/10!" />
 
         <StableImage
-          className="aspect-4/3 rounded-[18px] bg-[var(--rf-apple-surface-soft)]"
+          className="aspect-4/3 rounded-[18px] bg-(--rf-apple-surface-soft)"
           src={car.image || "/RentFlowCar.png"}
           alt={car.name}
           sizes="100vw"
@@ -99,7 +99,7 @@ export default function BookingSummaryCard({
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
-      className="apple-card order-3 self-start sm:order-none lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-88px)]"
+      className="apple-card order-3 self-start sm:order-0 lg:sticky lg:top-16 lg:col-span-5 lg:h-[calc(100svh-88px)]"
     >
       <CardContent className="p-4! sm:p-5! lg:flex lg:h-full lg:flex-col">
         <Typography className="apple-card-title font-semibold text-slate-900">
@@ -112,7 +112,7 @@ export default function BookingSummaryCard({
         <Divider className="my-5! border-black/10!" />
 
         {!car ? (
-          <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Box className="rounded-[18px] bg-(--rf-apple-surface-soft) p-4">
             <Typography className="apple-body-sm text-slate-700">
               ไม่พบข้อมูลรถ (รหัสรถ: <span className="font-semibold">{carId || "-"}</span>)
             </Typography>
@@ -130,7 +130,7 @@ export default function BookingSummaryCard({
             </Link>
           </Box>
         ) : (
-          <Box className="rounded-[18px]! bg-[var(--rf-apple-surface-soft)] p-4! sm:p-5! lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+          <Box className="rounded-[18px]! bg-(--rf-apple-surface-soft) p-4! sm:p-5! lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
             <Box>
               <StableImage
                 className="aspect-4/3 rounded-[18px] sm:aspect-4/3 lg:h-[clamp(120px,20svh,220px)] lg:shrink-0 lg:aspect-auto"

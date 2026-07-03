@@ -166,18 +166,18 @@ export default function ReviewsPage() {
                   <CardContent className="flex h-full min-h-[230px] flex-col p-4!">
                     <Box className="flex flex-wrap items-start justify-between gap-4">
                       <Box className="min-w-0">
-                        <Typography className="apple-card-title font-bold text-[var(--rf-apple-ink)]">
+                        <Typography className="apple-card-title font-bold text-(--rf-apple-ink)">
                           {review.firstName} {review.lastName}
                         </Typography>
                         <Typography
                           component="div"
-                          className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]"
+                          className="apple-body-sm mt-1 text-(--rf-apple-muted)"
                         >
                           {shopHref ? (
                             <Box
                               component={Link}
                               href={shopHref}
-                              className="font-semibold text-[var(--rf-apple-blue)] no-underline hover:underline"
+                              className="font-semibold text-(--rf-apple-blue) no-underline hover:underline"
                             >
                               {review.shopName}
                             </Box>
@@ -192,7 +192,7 @@ export default function ReviewsPage() {
                     </Box>
 
                     <Typography
-                      className="apple-body mt-4 leading-7 text-[var(--rf-apple-muted)]"
+                      className="apple-body mt-4 leading-7 text-(--rf-apple-muted)"
                       sx={{
                         display: "-webkit-box",
                         WebkitLineClamp: 3,
@@ -222,7 +222,7 @@ export default function ReviewsPage() {
           </Box>
         ) : (
           <Box className="apple-card apple-card-no-hover mt-10 flex min-h-80 items-center justify-center p-8 text-center">
-            <Typography className="apple-body-sm text-[var(--rf-apple-muted)]">
+            <Typography className="apple-body-sm text-(--rf-apple-muted)">
               ยังไม่มีรีวิวในตอนนี้
             </Typography>
           </Box>

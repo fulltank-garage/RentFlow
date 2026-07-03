@@ -91,7 +91,7 @@ function MobileMenuGlyph({ open }: { open: boolean }) {
   return (
     <Box className="relative block h-4 w-5" aria-hidden="true">
       <Box
-        className="absolute left-0 top-[4px] h-[1.5px] w-5 rounded-full bg-[var(--rf-apple-ink)]/75"
+        className="absolute left-0 top-1 h-[1.5px] w-5 rounded-full bg-(--rf-apple-ink)/75"
         sx={{
           transform: open
             ? "translateY(3px) rotate(45deg)"
@@ -101,7 +101,7 @@ function MobileMenuGlyph({ open }: { open: boolean }) {
         }}
       />
       <Box
-        className="absolute left-0 top-[10px] h-[1.5px] w-5 rounded-full bg-[var(--rf-apple-ink)]/75"
+        className="absolute left-0 top-2.5 h-[1.5px] w-5 rounded-full bg-(--rf-apple-ink)/75"
         sx={{
           transform: open
             ? "translateY(-3px) rotate(-45deg)"
@@ -143,14 +143,14 @@ function DesktopGuestButtonsSkeleton() {
     <>
       <Box
         sx={desktopLoginButtonSx}
-        className="relative inline-flex items-center justify-center overflow-hidden rounded-full border border-black/[0.1] bg-white"
+        className="relative inline-flex items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white"
       >
         <span className="invisible whitespace-nowrap">เข้าสู่ระบบ</span>
-        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/[0.04]" />
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/4" />
       </Box>
       <Box
         sx={desktopRegisterButtonSx}
-        className="relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[var(--rf-apple-blue)]"
+        className="relative inline-flex items-center justify-center overflow-hidden rounded-full bg-(--rf-apple-blue)"
       >
         <span className="invisible whitespace-nowrap font-semibold">
           สมัครสมาชิก
@@ -165,10 +165,10 @@ function DesktopProfileSkeleton() {
   return (
     <Box className="h-10! w-full max-w-[220px] rounded-full! px-0! py-0!">
       <Box className="flex h-full w-full items-center justify-end gap-2.5">
-        <Box className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-black/[0.08]" />
+        <Box className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-black/8" />
         <Box className="min-w-0 flex-1 text-left">
-          <Box className="h-[14px] w-[108px] animate-pulse rounded-full bg-black/[0.08]" />
-          <Box className="mt-1.5 h-[10px] w-[72px] animate-pulse rounded-full bg-black/[0.055]" />
+          <Box className="h-3.5 w-[108px] animate-pulse rounded-full bg-black/8" />
+          <Box className="mt-1.5 h-2.5 w-[72px] animate-pulse rounded-full bg-black/5.5" />
         </Box>
       </Box>
     </Box>
@@ -178,11 +178,11 @@ function DesktopProfileSkeleton() {
 function MobileGuestButtonsSkeleton() {
   return (
     <>
-      <Box className="relative inline-flex min-h-[44px] w-full items-center justify-center overflow-hidden rounded-full border border-black/[0.08] bg-white px-4 py-2.5">
+      <Box className="relative inline-flex min-h-11 w-full items-center justify-center overflow-hidden rounded-full border border-black/8 bg-white px-4 py-2.5">
         <span className="invisible whitespace-nowrap">เข้าสู่ระบบ</span>
-        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/[0.04]" />
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/4" />
       </Box>
-      <Box className="relative inline-flex min-h-[44px] w-full items-center justify-center overflow-hidden rounded-full bg-[var(--rf-apple-blue)] px-4 py-2.5">
+      <Box className="relative inline-flex min-h-11 w-full items-center justify-center overflow-hidden rounded-full bg-(--rf-apple-blue) px-4 py-2.5">
         <span className="invisible whitespace-nowrap font-semibold">
           สมัครสมาชิก
         </span>
@@ -194,15 +194,15 @@ function MobileGuestButtonsSkeleton() {
 
 function MobileProfileSkeleton() {
   return (
-    <Box className="rounded-[24px] border border-black/10 bg-white px-4 py-3">
+    <Box className="rounded-3xl border border-black/10 bg-white px-4 py-3">
       <Box className="flex items-center gap-3">
-        <Box className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-black/[0.08]" />
+        <Box className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-black/8" />
         <Box className="min-w-0 flex-1">
-          <Box className="h-[15px] w-[124px] animate-pulse rounded-full bg-black/[0.08]" />
-          <Box className="mt-2 h-[12px] w-[164px] max-w-full animate-pulse rounded-full bg-black/[0.055]" />
+          <Box className="h-[15px] w-[124px] animate-pulse rounded-full bg-black/8" />
+          <Box className="mt-2 h-3 w-[164px] max-w-full animate-pulse rounded-full bg-black/5.5" />
         </Box>
       </Box>
-      <Box className="mt-3 h-9 w-full animate-pulse rounded-full bg-black/[0.055]" />
+      <Box className="mt-3 h-9 w-full animate-pulse rounded-full bg-black/5.5" />
     </Box>
   );
 }
@@ -227,7 +227,7 @@ function BrandLogo({
 
     return (
       <Box
-        className={`${className} grid place-items-center rounded-full bg-[var(--rf-apple-ink)] text-[10px] font-bold leading-none text-white`}
+        className={`${className} grid place-items-center rounded-full bg-(--rf-apple-ink) text-[10px] font-bold leading-none text-white`}
         aria-label={alt}
       >
         {fallbackText}
@@ -463,7 +463,7 @@ export default function Navbar({
                     component={Link}
                     href={n.href}
                     disableElevation
-                    className="apple-nav-link min-w-0! rounded-full! px-2.5! py-1! !font-normal"
+                    className="apple-nav-link min-w-0! rounded-full! px-2.5! py-1! font-normal!"
                     sx={{
                       fontWeight: "400 !important",
                       minHeight: "30px !important",
@@ -566,16 +566,16 @@ export default function Navbar({
                     <Box className="flex w-full items-center justify-end gap-2.5">
                       <Avatar
                         src={user.avatarUrl || undefined}
-                        className="h-8! w-8! bg-[var(--rf-apple-ink)]! text-sm! text-white!"
+                        className="h-8! w-8! bg-(--rf-apple-ink)! text-sm! text-white!"
                       >
                         {user.name[0].toUpperCase()}
                       </Avatar>
 
                       <Box className="min-w-0 flex-1 text-left">
-                        <Typography className="apple-nav-link truncate font-semibold! leading-tight! text-[var(--rf-apple-ink)]!">
+                        <Typography className="apple-nav-link truncate font-semibold! leading-tight! text-(--rf-apple-ink)!">
                           {user.name}
                         </Typography>
-                        <Typography className="apple-nav-caption mt-0.5! truncate font-medium! leading-none! text-[var(--rf-apple-muted)]!">
+                        <Typography className="apple-nav-caption mt-0.5! truncate font-medium! leading-none! text-(--rf-apple-muted)!">
                           {user.username || "บัญชีผู้ใช้"}
                         </Typography>
                       </Box>
@@ -640,7 +640,7 @@ export default function Navbar({
           },
         }}
       >
-        <Box className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-ink)]">
+        <Box className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-(--rf-apple-surface-soft) text-(--rf-apple-ink)">
           <List
             className="flex-1 overflow-y-auto px-4! py-4! md:px-5! md:py-5!"
           >
@@ -653,7 +653,7 @@ export default function Navbar({
                   component={Link}
                   href={n.href}
                   onClick={closeDrawer}
-                  className="mb-2! rounded-[24px]!"
+                  className="mb-2! rounded-3xl!"
                   sx={{
                     px: 2.2,
                     py: 1.5,
@@ -715,7 +715,7 @@ export default function Navbar({
               </>
             ) : (
               <>
-                <Box className="rounded-[24px] border border-black/10 bg-white px-4 py-3">
+                <Box className="rounded-3xl border border-black/10 bg-white px-4 py-3">
                   <Box
                     component={Link}
                     href="/profile"
@@ -734,20 +734,20 @@ export default function Navbar({
                     <Box className="flex items-center gap-3">
                       <Avatar
                         src={user.avatarUrl || undefined}
-                        className="h-11! w-11! bg-[var(--rf-apple-ink)]! text-white!"
+                        className="h-11! w-11! bg-(--rf-apple-ink)! text-white!"
                       >
                         {user.name[0].toUpperCase()}
                       </Avatar>
                       <Box className="min-w-0">
-                        <Typography className="apple-nav-link truncate font-semibold! text-[var(--rf-apple-ink)]!">
+                        <Typography className="apple-nav-link truncate font-semibold! text-(--rf-apple-ink)!">
                           {user.name}
                         </Typography>
-                        <Typography className="apple-body-sm text-[var(--rf-apple-muted)]!">
+                        <Typography className="apple-body-sm text-(--rf-apple-muted)!">
                           {user.username || "ผู้ใช้งาน"}
                         </Typography>
                       </Box>
                     </Box>
-                    <Box className="mt-3 flex min-h-9 items-center justify-center rounded-full bg-[var(--rf-apple-surface-soft)] px-4 text-center text-[0px] font-bold text-[var(--rf-apple-ink)]">
+                    <Box className="mt-3 flex min-h-9 items-center justify-center rounded-full bg-(--rf-apple-surface-soft) px-4 text-center text-[0px] font-bold text-(--rf-apple-ink)">
                       <span className="text-sm">{"\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e1a\u0e31\u0e0d\u0e0a\u0e35"}</span>
                     </Box>
                   </Box>

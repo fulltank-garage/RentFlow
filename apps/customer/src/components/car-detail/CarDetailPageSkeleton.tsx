@@ -7,7 +7,7 @@ function HeroSkeleton() {
   return (
     <Box className="lg:col-span-7">
       <Box className="apple-card apple-card-no-hover overflow-hidden">
-        <Box className="aspect-[16/10] min-h-[260px]">
+        <Box className="aspect-16/10 min-h-[260px]">
           <Skeleton
             variant="rectangular"
             animation="wave"
@@ -63,7 +63,7 @@ function SummaryCardSkeleton() {
 
       <Box className="my-5 h-px bg-black/10" />
 
-      <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-5">
+      <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-5">
         <Box className="flex flex-col gap-2.5">
           <Skeleton
             variant="text"
@@ -167,7 +167,7 @@ function OverviewSkeleton() {
 
 function IncludedCardSkeleton() {
   return (
-    <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+    <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
       <Box className="flex flex-col gap-2.5">
         <Skeleton
           variant="text"
@@ -248,7 +248,7 @@ function TermsSectionSkeleton() {
         {Array.from({ length: 4 }).map((_, index) => (
           <Box
             key={index}
-            className="rounded-[22px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-4"
+            className="rounded-[22px] border border-black/10 bg-(--rf-apple-surface-soft) p-4"
           >
             <Box className="flex items-start gap-3">
               <Skeleton
@@ -294,7 +294,7 @@ function TermsSectionSkeleton() {
         ))}
       </Box>
 
-      <Box className="mt-4 rounded-[22px] border border-[var(--rf-apple-border)] bg-white px-4 py-3">
+      <Box className="mt-4 rounded-[22px] border border-(--rf-apple-border) bg-white px-4 py-3">
         <Skeleton
           variant="text"
           animation="wave"

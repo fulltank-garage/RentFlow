@@ -62,7 +62,7 @@ export default function CarClassSection({
             Array.from({ length: 4 }).map((_, index) => (
               <Box
                 key={`class-skeleton-${index}`}
-                className="overflow-hidden rounded-[var(--rf-apple-card-radius-sm)]! bg-[var(--rf-apple-surface-soft)]!"
+                className="overflow-hidden rounded-(--rf-apple-card-radius-sm)! bg-(--rf-apple-surface-soft)!"
               >
                 <Skeleton
                   variant="rectangular"
@@ -139,7 +139,7 @@ export default function CarClassSection({
                   href={`/classes/${x.slug}`}
                   elevation={0}
                   sx={{ boxShadow: "none" }}
-                  className="group cursor-pointer overflow-hidden rounded-[var(--rf-apple-card-radius-sm)]! border-0! bg-[var(--rf-apple-surface-soft)]! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006]"
+                  className="group cursor-pointer overflow-hidden rounded-(--rf-apple-card-radius-sm)! border-0! bg-(--rf-apple-surface-soft)! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006]"
                 >
                   <Box className="relative h-44 w-full overflow-hidden bg-white sm:h-48">
                     <Box
@@ -152,18 +152,18 @@ export default function CarClassSection({
                       className="absolute inset-0 h-full w-full object-contain transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                     />
                     <Box className="absolute left-5 top-5">
-                      <Typography className="apple-card-title font-black tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+                      <Typography className="apple-card-title font-black tracking-[-0.04em] text-(--rf-apple-ink)">
                         {x.title}
                       </Typography>
                     </Box>
                   </Box>
 
                   <CardContent className="p-5">
-                    <Typography className="text-xs text-[var(--rf-apple-muted)]">
+                    <Typography className="text-xs text-(--rf-apple-muted)">
                       รถประเภทนี้ {x.count} คัน
                     </Typography>
 
-                    <Typography className="mt-2 text-xs leading-5 text-[var(--rf-apple-muted)]">
+                    <Typography className="mt-2 text-xs leading-5 text-(--rf-apple-muted)">
                       {x.desc}
                     </Typography>
                   </CardContent>
@@ -171,8 +171,8 @@ export default function CarClassSection({
               );
             })
           ) : (
-            <Box className="flex min-h-40 items-center justify-center rounded-[26px] border border-black/10 bg-[var(--rf-apple-surface-soft)] px-8 py-12 text-center sm:col-span-2 md:min-h-48 md:px-12 lg:col-span-4">
-              <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
+            <Box className="flex min-h-40 items-center justify-center rounded-[26px] border border-black/10 bg-(--rf-apple-surface-soft) px-8 py-12 text-center sm:col-span-2 md:min-h-48 md:px-12 lg:col-span-4">
+              <Typography className="text-base font-semibold text-(--rf-apple-muted) md:text-lg">
                 ยังไม่มีการจัดกลุ่มประเภทรถในตอนนี้
               </Typography>
             </Box>

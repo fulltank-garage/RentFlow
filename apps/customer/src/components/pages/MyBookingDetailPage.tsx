@@ -72,13 +72,13 @@ export default function MyBookingDetailPage() {
               <Chip
                 size="small"
                 label={`รหัสที่ค้นหา: ${booking.id}`}
-                className="apple-pill text-[var(--rf-apple-muted)]!"
+                className="apple-pill text-(--rf-apple-muted)!"
               />
             </Box>
           </Box>
 
           <Box className="apple-card apple-card-no-hover mx-auto mt-10 max-w-2xl p-6 text-center">
-            <Typography className="text-sm leading-6 text-[var(--rf-apple-muted)]">
+            <Typography className="text-sm leading-6 text-(--rf-apple-muted)">
               หากเพิ่งทำรายการ อาจใช้เวลาเล็กน้อยก่อนข้อมูลจะแสดงในระบบ
             </Typography>
 
@@ -121,15 +121,15 @@ export default function MyBookingDetailPage() {
             <Box className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <Box className="space-y-3">
                 <Box>
-                  <Typography className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--rf-apple-muted)]">
+                  <Typography className="text-xs font-semibold uppercase tracking-[0.16em] text-(--rf-apple-muted)">
                     ภาพรวมรายการ
                   </Typography>
-                  <Typography className="apple-card-title-lg mt-2 font-black tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+                  <Typography className="apple-card-title-lg mt-2 font-black tracking-[-0.04em] text-(--rf-apple-ink)">
                     {local.carName}
                   </Typography>
-                  <Typography className="mt-2 text-sm text-[var(--rf-apple-muted)]">
+                  <Typography className="mt-2 text-sm text-(--rf-apple-muted)">
                     รหัสการจอง:{" "}
-                    <span className="font-semibold text-[var(--rf-apple-ink)]">
+                    <span className="font-semibold text-(--rf-apple-ink)">
                       {local.id}
                     </span>
                   </Typography>
@@ -138,15 +138,15 @@ export default function MyBookingDetailPage() {
                 <Box className="flex flex-wrap items-center gap-2">
                   <StatusChip s={local.status} />
                   <Box className="flex flex-col gap-2 text-left">
-                    <Typography className="text-sm text-[var(--rf-apple-muted)]">
+                    <Typography className="text-sm text-(--rf-apple-muted)">
                       วันรับรถ:{" "}
-                      <span className="font-semibold text-[var(--rf-apple-ink)]">
+                      <span className="font-semibold text-(--rf-apple-ink)">
                         {formatBookingDateTime(local.pickupDate)}
                       </span>
                     </Typography>
-                    <Typography className="text-sm text-[var(--rf-apple-muted)]">
+                    <Typography className="text-sm text-(--rf-apple-muted)">
                       วันคืนรถ:{" "}
-                      <span className="font-semibold text-[var(--rf-apple-ink)]">
+                      <span className="font-semibold text-(--rf-apple-ink)">
                         {formatBookingDateTime(local.returnDate)}
                       </span>
                     </Typography>
@@ -188,7 +188,7 @@ export default function MyBookingDetailPage() {
         <Box className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
           <Box className="space-y-5 md:col-span-2">
             <Paper elevation={0} className="apple-card p-5">
-              <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+              <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                 <StatusTimeline status={local.status} />
               </Box>
 
@@ -197,13 +197,13 @@ export default function MyBookingDetailPage() {
               <Typography className="text-sm font-semibold tracking-[-0.03em] text-slate-900">
                 ข้อมูลรับ-คืนรถ
               </Typography>
-              <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                 ดูสถานที่และวันที่สำหรับการรับรถและคืนรถของรายการนี้
               </Typography>
               <Divider className="my-4! border-black/10!" />
 
               <Box className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                   <Typography className="text-xs text-slate-500">
                     สถานที่รับรถ
                   </Typography>
@@ -215,7 +215,7 @@ export default function MyBookingDetailPage() {
                   </Typography>
                 </Box>
 
-                <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                   <Typography className="text-xs text-slate-500">
                     สถานที่คืนรถ
                   </Typography>
@@ -233,27 +233,27 @@ export default function MyBookingDetailPage() {
               <Typography className="text-sm font-semibold tracking-[-0.03em] text-slate-900">
                 ข้อมูลผู้จอง
               </Typography>
-              <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                 ข้อมูลอ้างอิงสำหรับผู้จองและการประสานงาน
               </Typography>
               <Divider className="my-4! border-black/10!" />
 
               <Box className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                   <Typography className="text-xs text-slate-500">ชื่อ</Typography>
                   <Typography className="mt-1 text-sm font-semibold text-slate-900">
                     {local.customerName ?? "-"}
                   </Typography>
                 </Box>
 
-                <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                   <Typography className="text-xs text-slate-500">เบอร์โทร</Typography>
                   <Typography className="mt-1 text-sm font-semibold text-slate-900">
                     {local.phone ?? "-"}
                   </Typography>
                 </Box>
 
-                <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                   <Typography className="text-xs text-slate-500">หมายเหตุ</Typography>
                   <Typography className="mt-1 text-sm font-semibold text-slate-900">
                     {local.notes ?? "-"}
@@ -266,7 +266,7 @@ export default function MyBookingDetailPage() {
               <Typography className="text-sm font-semibold tracking-[-0.03em] text-slate-900">
                 เงื่อนไขสำคัญ
               </Typography>
-              <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                 ข้อมูลสำคัญที่ควรทราบก่อนถึงวันรับรถ
               </Typography>
               <Divider className="my-4! border-black/10!" />
@@ -279,7 +279,7 @@ export default function MyBookingDetailPage() {
                 ].map((item) => (
                   <Box
                     key={item}
-                    className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3"
+                    className="rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-3"
                   >
                     <Typography className="text-sm text-slate-600">
                       {item}
@@ -295,12 +295,12 @@ export default function MyBookingDetailPage() {
               <Typography className="text-sm font-semibold tracking-[-0.03em] text-slate-900">
                 สรุปราคา
               </Typography>
-              <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                 ตรวจสอบยอดรวมและเอกสารยืนยันของรายการนี้
               </Typography>
               <Divider className="my-4! border-black/10!" />
 
-              <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+              <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                 <Box className="space-y-2">
                   <Box className="flex items-center justify-between">
                     <Typography className="text-sm text-slate-600">
@@ -346,7 +346,7 @@ export default function MyBookingDetailPage() {
                 </Box>
               </Box>
 
-              <Box className="mt-4 rounded-[22px]! bg-[var(--rf-apple-surface-soft)] p-4">
+              <Box className="mt-4 rounded-[22px]! bg-(--rf-apple-surface-soft) p-4">
                 <Typography className="text-xs leading-6 text-slate-600">
                   ใบเสร็จหรือเอกสารยืนยันจะพร้อมหลังสถานะ “ยืนยันแล้ว”
                 </Typography>
@@ -370,11 +370,11 @@ export default function MyBookingDetailPage() {
               <Typography className="text-sm font-semibold tracking-[-0.03em] text-slate-900">
                 การช่วยเหลือ
               </Typography>
-              <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                 ติดต่อทีมงานได้ทันทีหากต้องการแก้ไขข้อมูลหรือมีปัญหาระหว่างการใช้งาน
               </Typography>
               <Divider className="my-4! border-black/10!" />
-              <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+              <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                 <Typography className="text-sm text-slate-600">
                   หากพบปัญหาเรื่องการรับรถ คืนรถ หรืออยากเปลี่ยนข้อมูล
                   กรุณาติดต่อแอดมินเพื่อให้ทีมงานช่วยดูแลต่อ

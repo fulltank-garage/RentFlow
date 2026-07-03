@@ -79,13 +79,13 @@ export default function BookingPage() {
             <Card
               elevation={0}
               sx={{ boxShadow: "none" }}
-              className="apple-card order-2 sm:order-none lg:col-span-7"
+              className="apple-card order-2 sm:order-0 lg:col-span-7"
             >
               <CardContent className="p-4!">
-                <Typography className="text-base font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+                <Typography className="text-base font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                   ข้อมูลการจอง
                 </Typography>
-                <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+                <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                   เลือกจุดรับ-คืนรถ วันเวลา และกรอกข้อมูลผู้จอง
                 </Typography>
 

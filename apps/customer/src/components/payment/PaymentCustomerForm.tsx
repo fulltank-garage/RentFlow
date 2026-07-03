@@ -20,10 +20,10 @@ export default function PaymentCustomerForm({
 }: Props) {
   return (
     <>
-      <Typography className="apple-card-title font-semibold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+      <Typography className="apple-card-title font-semibold tracking-[-0.03em] text-(--rf-apple-ink)">
         ข้อมูลผู้ชำระเงิน
       </Typography>
-      <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+      <Typography className="apple-body-sm mt-1 text-(--rf-apple-muted)">
         กรอกข้อมูลติดต่อสำหรับยืนยันรายการและการประสานงานกรณีจำเป็น
       </Typography>
 
@@ -48,8 +48,8 @@ export default function PaymentCustomerForm({
         />
       </Box>
 
-      <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
-        <Typography className="apple-label-text leading-6 text-[var(--rf-apple-muted)]">
+      <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-3">
+        <Typography className="apple-label-text leading-6 text-(--rf-apple-muted)">
           ใช้สำหรับอ้างอิงการชำระเงินและการติดต่อกลับจากร้าน
         </Typography>
       </Box>

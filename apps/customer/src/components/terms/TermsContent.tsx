@@ -2,9 +2,9 @@ import { Divider, Stack, Typography } from "@mui/material";
 
 export default function TermsContent() {
   return (
-    <Stack spacing={5} className="text-[var(--rf-apple-muted)]">
+    <Stack spacing={5} className="text-(--rf-apple-muted)">
       <section id="intro" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           1) ข้อตกลงเบื้องต้น
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -14,7 +14,7 @@ export default function TermsContent() {
       </section>
 
       <section id="account" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           2) บัญชีผู้ใช้
         </Typography>
         <ul className="apple-body-copy mt-3 list-disc space-y-2 pl-5">
@@ -25,7 +25,7 @@ export default function TermsContent() {
       </section>
 
       <section id="booking" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           3) การจองและการชำระเงิน
         </Typography>
         <ul className="apple-body-copy mt-3 list-disc space-y-2 pl-5">
@@ -36,7 +36,7 @@ export default function TermsContent() {
       </section>
 
       <section id="cancel" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           4) การยกเลิก / คืนเงิน
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -46,7 +46,7 @@ export default function TermsContent() {
       </section>
 
       <section id="use" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           5) การใช้งานที่เหมาะสม
         </Typography>
         <ul className="apple-body-copy mt-3 list-disc space-y-2 pl-5">
@@ -57,7 +57,7 @@ export default function TermsContent() {
       </section>
 
       <section id="liability" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           6) ข้อจำกัดความรับผิด
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -67,7 +67,7 @@ export default function TermsContent() {
       </section>
 
       <section id="changes" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           7) การเปลี่ยนแปลงเงื่อนไข
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -77,7 +77,7 @@ export default function TermsContent() {
       </section>
 
       <section id="contact" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           8) ติดต่อเรา
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -87,7 +87,7 @@ export default function TermsContent() {
 
       <Divider className="my-1! border-black/10!" />
 
-      <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
+      <Typography className="apple-label-text text-(--rf-apple-muted)">
         RentFlowCar อาจปรับปรุงเงื่อนไขการใช้งานตามความเหมาะสม
       </Typography>
     </Stack>

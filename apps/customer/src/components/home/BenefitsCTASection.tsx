@@ -53,10 +53,10 @@ export default function BenefitsCTASection() {
                     >
                         <CardContent className="p-5! sm:p-6!">
                             <Box className="min-w-0">
-                                <Typography variant="h6" className="text-lg font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+                                <Typography variant="h6" className="text-lg font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                                     {b.title}
                                 </Typography>
-                                <Typography className="mt-1 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                                <Typography className="mt-1 text-sm leading-6 text-(--rf-apple-muted)">
                                     {b.desc}
                                 </Typography>
                             </Box>
@@ -70,14 +70,14 @@ export default function BenefitsCTASection() {
                 <Box className="p-5 sm:p-6 md:p-8">
                     <Box className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <Box className="max-w-2xl">
-                            <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-[var(--rf-apple-ink)]">
+                            <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-(--rf-apple-ink)">
                                 พร้อมจองรถสำหรับทริปถัดไปแล้วใช่ไหม?
                             </Typography>
-                            <Typography className="mt-2 text-base text-[var(--rf-apple-muted)]">
+                            <Typography className="mt-2 text-base text-(--rf-apple-muted)">
                                 เลือกช่วงวันและรุ่นรถที่ต้องการ แล้วเริ่มจองได้ทันที
                             </Typography>
 
-                            <Box className="mt-5 flex flex-wrap items-center gap-2 text-xs text-[var(--rf-apple-muted)]">
+                            <Box className="mt-5 flex flex-wrap items-center gap-2 text-xs text-(--rf-apple-muted)">
                                 <span className="apple-pill px-3 py-2">
                                     ยกเลิกฟรี (ตามเงื่อนไข)
                                 </span>
@@ -90,7 +90,7 @@ export default function BenefitsCTASection() {
                             </Box>
                         </Box>
 
-                        <Box className="flex flex-col gap-2 sm:flex-row md:min-w-[232px]">
+                        <Box className="flex flex-col gap-2 sm:flex-row md:min-w-58">
                             <Button
                                 size="large"
                                 variant="contained"

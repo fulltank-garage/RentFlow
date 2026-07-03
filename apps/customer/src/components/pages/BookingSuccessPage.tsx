@@ -75,23 +75,23 @@ export default function BookingSuccessPage({
                 <Chip
                   size="small"
                   label={`รหัสการจอง: ${bookingId || "BK-XXXX"}`}
-                  className="apple-pill text-[var(--rf-apple-muted)]!"
+                  className="apple-pill text-(--rf-apple-muted)!"
                 />
                 <Chip
                   size="small"
                   label={`${isChatBooking ? "ยอดประมาณการ" : "ยอดชำระ"}: ${formatTHB(amount || 0)}`}
-                  className="apple-pill text-[var(--rf-apple-muted)]!"
+                  className="apple-pill text-(--rf-apple-muted)!"
                 />
               </Box>
             </Box>
           </Box>
 
           <Box className="apple-card apple-card-no-hover mx-auto mt-10 max-w-3xl p-5 md:p-6">
-            <Box className="rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-5">
-              <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+            <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
+              <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                 ขั้นตอนถัดไป
               </Typography>
-              <Typography className="mt-3 text-sm leading-6 text-[var(--rf-apple-muted)]">
+              <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
                 {isChatBooking
                   ? "คำขอจองถูกส่งให้ร้านเรียบร้อยแล้ว เก็บรหัสการจองไว้สำหรับอ้างอิง และรอร้านติดต่อกลับเพื่อยืนยันเงื่อนไขก่อนชำระเงิน"
                   : "การจองของคุณถูกส่งเข้าระบบเรียบร้อยแล้ว เก็บรหัสการจองไว้สำหรับอ้างอิง ตรวจสอบสถานะจากหน้าการจองของฉัน และเตรียมเอกสารที่จำเป็นก่อนวันรับรถได้เลย"}
@@ -99,21 +99,21 @@ export default function BookingSuccessPage({
             </Box>
 
             <Box className="mt-6 grid gap-4 md:grid-cols-2">
-              <Box className="rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-5">
-                <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+              <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
+                <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                   ตรวจสอบรายการ
                 </Typography>
-                <Typography className="mt-3 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
                   ดูสถานะการจอง วันรับ-คืนรถ
                   และข้อมูลสรุปทั้งหมดได้จากหน้าเดียวตลอดเวลา
                 </Typography>
               </Box>
 
-              <Box className="rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-5">
-                <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+              <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
+                <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                   เตรียมตัวก่อนรับรถ
                 </Typography>
-                <Typography className="mt-3 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
                   หากต้องการแก้ไขรายละเอียดหรือตรวจสอบข้อมูลเพิ่มเติม
                   สามารถติดต่อทีมงานได้ทันที
                 </Typography>

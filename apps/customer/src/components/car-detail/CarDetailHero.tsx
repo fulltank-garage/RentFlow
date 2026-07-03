@@ -19,7 +19,7 @@ export default function CarDetailHero({ image, name, isAvailable = true, status 
     <Box className="lg:col-span-7">
       <Box className="apple-card relative overflow-hidden">
         <StableImage
-          className="aspect-[16/10] min-h-[260px]"
+          className="aspect-16/10 min-h-[260px]"
           src={image || "/RentFlowCar.png"}
           alt={name}
           priority
@@ -35,13 +35,13 @@ export default function CarDetailHero({ image, name, isAvailable = true, status 
         />
         {!isAvailable ? (
           <>
-            <Box className="absolute left-5 top-5 z-[1]">
+            <Box className="absolute left-5 top-5 z-1">
               <Chip
                 label={unavailableLabel}
-                className="apple-pill bg-white/94! font-bold! text-[var(--rf-apple-ink)]!"
+                className="apple-pill bg-white/94! font-bold! text-(--rf-apple-ink)!"
               />
             </Box>
-            <Box className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-6 py-5">
+            <Box className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent px-6 py-5">
               <Typography className="text-base font-semibold text-white">
                 รถคันนี้{unavailableLabel} ยังไม่สามารถกดจองได้ในตอนนี้
               </Typography>

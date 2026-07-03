@@ -441,20 +441,20 @@ export default function ProfilePage() {
             <ProfileSectionCard
               title="ข้อมูลบัญชี"
             >
-              <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5">
+              <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-4 md:px-5">
                 <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <Box className="flex min-w-0 items-center gap-4">
                     <Avatar
                       src={draft.avatarUrl || undefined}
-                      className="h-16! w-16! bg-[var(--rf-apple-ink)]! text-xl! font-bold! text-white!"
+                      className="h-16! w-16! bg-(--rf-apple-ink)! text-xl! font-bold! text-white!"
                     >
                       {draft.displayName?.charAt(0) || "ผ"}
                     </Avatar>
                     <Box className="min-w-0">
-                      <Typography className="apple-label-text mb-1 font-medium uppercase text-[var(--rf-apple-muted)]">
+                      <Typography className="apple-label-text mb-1 font-medium uppercase text-(--rf-apple-muted)">
                         รูปโปรไฟล์
                       </Typography>
-                      <Typography className="wrap-break-word text-base font-bold leading-7 text-[var(--rf-apple-ink)]">
+                      <Typography className="wrap-break-word text-base font-bold leading-7 text-(--rf-apple-ink)">
                         {avatarFileName || (draft.avatarUrl ? "มีรูปโปรไฟล์แล้ว" : "ยังไม่มีรูปโปรไฟล์")}
                       </Typography>
                     </Box>
@@ -509,7 +509,7 @@ export default function ProfilePage() {
             </ProfileSectionCard>
 
             <ProfileSectionCard title="เปลี่ยนรหัสผ่าน">
-              <Typography className="apple-body-sm text-[var(--rf-apple-muted)]">
+              <Typography className="apple-body-sm text-(--rf-apple-muted)">
                 อัปเดตรหัสผ่านของบัญชีนี้ได้จากส่วนนี้ทันที
               </Typography>
 
@@ -565,7 +565,7 @@ export default function ProfilePage() {
             </ProfileSectionCard>
           </Box>
 
-          <Box className="order-first space-y-5 lg:order-none">
+          <Box className="order-first space-y-5 lg:order-0">
             {saving ? (
               <Box className="apple-card flex items-center justify-center p-6">
                 <CircularProgress size={22} />

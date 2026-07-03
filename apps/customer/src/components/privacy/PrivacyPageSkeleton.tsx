@@ -157,7 +157,7 @@ export default function PrivacyPageSkeleton() {
           className="apple-card apple-card-no-hover mt-10"
         >
           <CardContent className="p-5! md:p-7!">
-            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4! md:p-5!">
+            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-(--rf-apple-surface-soft) p-4! md:p-5!">
               <Skeleton
                 variant="text"
                 animation="wave"

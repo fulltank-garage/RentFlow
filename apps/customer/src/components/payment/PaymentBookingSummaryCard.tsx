@@ -68,11 +68,11 @@ export default function PaymentBookingSummaryCard({
         <Typography className="apple-card-title font-semibold tracking-[-0.03em] text-slate-900">
           สรุปการจอง
         </Typography>
-        <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+        <Typography className="apple-body-sm mt-1 text-(--rf-apple-muted)">
           ตรวจสอบรายละเอียดรถ ช่วงเวลา และยอดรวมก่อนยืนยันการชำระเงิน
         </Typography>
 
-        <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
           <Box className="flex items-center justify-between">
             <Typography className="text-sm text-slate-600">
               รหัสการจอง
@@ -259,7 +259,7 @@ export default function PaymentBookingSummaryCard({
         <Divider className="my-5! border-black/10!" />
 
         {car ? (
-          <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
             <StableImage
               className="aspect-4/3 rounded-[18px]"
               src={car.image || "/RentFlowCar.png"}
@@ -306,7 +306,7 @@ export default function PaymentBookingSummaryCard({
             </Link>
           </Box>
         ) : (
-          <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
             <Typography className="apple-body-sm text-slate-600">
               ไม่พบข้อมูลรถ (carId:{" "}
               <span className="font-semibold">{carId || "-"}</span>)
@@ -326,7 +326,7 @@ export default function PaymentBookingSummaryCard({
 
         <Divider className="my-5! border-black/10!" />
 
-        <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
+        <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-3">
           <Typography className="apple-label-text leading-6 text-slate-500">
             แนะนำ: หากชำระแล้วไม่ขึ้นสถานะ ให้ติดต่อทีมงานพร้อมรหัสการจอง
           </Typography>

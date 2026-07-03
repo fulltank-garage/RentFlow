@@ -218,7 +218,7 @@ export default function FeaturesPage({
           <Chip
             key={b}
             label={b}
-            className="apple-pill text-[var(--rf-apple-muted)]!"
+            className="apple-pill text-(--rf-apple-muted)!"
             variant="outlined"
             sx={{
               fontSize: {
@@ -233,10 +233,10 @@ export default function FeaturesPage({
       <Box className="mt-8">
         <Box className="flex items-end justify-between gap-3">
           <Box>
-            <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-[var(--rf-apple-ink)]">
+            <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-(--rf-apple-ink)">
               {pageCopy.featuresTitle}
             </Typography>
-            <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+            <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
               {pageCopy.featuresDesc}
             </Typography>
           </Box>
@@ -249,10 +249,10 @@ export default function FeaturesPage({
               className="apple-card p-5"
             >
               <Box className="min-w-0">
-                <Typography className="text-base font-bold text-[var(--rf-apple-ink)]">
+                <Typography className="text-base font-bold text-(--rf-apple-ink)">
                   {f.title}
                 </Typography>
-                <Typography className="mt-1 text-sm leading-relaxed text-[var(--rf-apple-muted)]">
+                <Typography className="mt-1 text-sm leading-relaxed text-(--rf-apple-muted)">
                   {f.desc}
                 </Typography>
               </Box>
@@ -262,10 +262,10 @@ export default function FeaturesPage({
       </Box>
 
       <Box className="mt-10">
-        <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-(--rf-apple-ink)">
           ขั้นตอนการจอง
         </Typography>
-        <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+        <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
           {pageCopy.stepsDesc}
         </Typography>
 
@@ -277,16 +277,16 @@ export default function FeaturesPage({
             >
               <Box className="flex items-start gap-3">
                 <Box
-                  className="grid aspect-square h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--rf-apple-ink)] text-white"
+                  className="grid aspect-square h-9 w-9 shrink-0 place-items-center rounded-full bg-(--rf-apple-ink) text-white"
                   sx={{ minWidth: 36, minHeight: 36 }}
                 >
                   <Typography className="text-sm font-bold">{s.step}</Typography>
                 </Box>
                 <Box className="min-w-0">
-                  <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
+                  <Typography className="text-sm font-semibold text-(--rf-apple-ink)">
                     {s.title}
                   </Typography>
-                  <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+                  <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                     {s.desc}
                   </Typography>
                 </Box>
@@ -297,10 +297,10 @@ export default function FeaturesPage({
       </Box>
 
       <Box className="mt-10">
-        <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title-lg font-black tracking-[-0.05em] text-(--rf-apple-ink)">
           ความน่าเชื่อถือ & ความปลอดภัย
         </Typography>
-        <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+        <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
           {pageCopy.trustDesc}
         </Typography>
 
@@ -310,10 +310,10 @@ export default function FeaturesPage({
               key={t.title}
               className="apple-card p-5"
             >
-              <Typography className="text-base font-bold text-[var(--rf-apple-ink)]">
+              <Typography className="text-base font-bold text-(--rf-apple-ink)">
                 {t.title}
               </Typography>
-              <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                 {t.desc}
               </Typography>
             </Box>
@@ -322,10 +322,10 @@ export default function FeaturesPage({
       </Box>
 
       <Box className="apple-card mt-10 p-5">
-        <Typography className="text-base font-bold text-[var(--rf-apple-ink)]">
+        <Typography className="text-base font-bold text-(--rf-apple-ink)">
           {pageCopy.ctaTitle}
         </Typography>
-        <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+        <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
           {pageCopy.ctaDesc}
         </Typography>
 

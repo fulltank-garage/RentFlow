@@ -53,10 +53,10 @@ export default function CarDetailSummaryCard({ detail }: Props) {
       <CardContent className="p-4! sm:p-5!">
         <Box className="flex items-start justify-between gap-3">
           <Box className="min-w-0">
-            <Typography className="apple-card-title-lg truncate font-black tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+            <Typography className="apple-card-title-lg truncate font-black tracking-[-0.04em] text-(--rf-apple-ink)">
               {detail.name}
             </Typography>
-            <Typography className="mt-2 text-sm text-[var(--rf-apple-muted)]">
+            <Typography className="mt-2 text-sm text-(--rf-apple-muted)">
               {getCarTypeLabel(detail.type)} • {detail.seats} ที่นั่ง • {detail.transmission} •{" "}
               {detail.fuel}
             </Typography>
@@ -68,26 +68,26 @@ export default function CarDetailSummaryCard({ detail }: Props) {
             size="small"
             label={isUnavailable ? unavailableLabel : "ตรวจเช็คก่อนส่งมอบ"}
             variant="outlined"
-            className="apple-pill text-[var(--rf-apple-muted)]!"
+            className="apple-pill text-(--rf-apple-muted)!"
           />
         </Box>
 
         <Divider className="my-5! border-black/10!" />
 
-        <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-5">
-          <Typography className="text-sm text-[var(--rf-apple-muted)]">
+        <Box className="rounded-[18px] bg-(--rf-apple-surface-soft) p-5">
+          <Typography className="text-sm text-(--rf-apple-muted)">
             ราคาเริ่มต้น
           </Typography>
           <Box className="mt-1 flex items-end gap-2">
-            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+            <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-apple-ink)">
               {toTHBText(detail.pricePerDay)}
             </Typography>
-            <Typography className="text-sm font-medium text-[var(--rf-apple-muted)]">
+            <Typography className="text-sm font-medium text-(--rf-apple-muted)">
               / วัน
             </Typography>
           </Box>
           {!isUnavailable && (detail.unitCount || 0) > 1 ? (
-            <Typography className="mt-3 text-sm font-semibold text-[var(--rf-apple-muted)]">
+            <Typography className="mt-3 text-sm font-semibold text-(--rf-apple-muted)">
               เหลือให้จอง {availableUnits} จาก {detail.unitCount} คัน
             </Typography>
           ) : null}
@@ -127,7 +127,7 @@ export default function CarDetailSummaryCard({ detail }: Props) {
         </Box>
 
         {isUnavailable ? (
-          <Typography className="mt-3 text-sm font-medium text-[var(--rf-apple-muted)]">
+          <Typography className="mt-3 text-sm font-medium text-(--rf-apple-muted)">
             รถคันนี้{unavailableLabel} กรุณาเลือกรถคันอื่นหรือกลับมาตรวจสอบอีกครั้งภายหลัง
           </Typography>
         ) : null}

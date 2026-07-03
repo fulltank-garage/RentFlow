@@ -42,10 +42,10 @@ export default function PaymentMethodSection({
 }: Props) {
   return (
     <>
-      <Typography className="apple-card-title font-semibold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+      <Typography className="apple-card-title font-semibold tracking-[-0.03em] text-(--rf-apple-ink)">
         วิธีชำระเงิน
       </Typography>
-      <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+      <Typography className="apple-body-sm mt-1 text-(--rf-apple-muted)">
         เลือกช่องทางที่สะดวกที่สุดสำหรับการชำระรายการนี้
       </Typography>
 
@@ -68,7 +68,7 @@ export default function PaymentMethodSection({
         </TextField>
       </Box>
 
-      <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+      <Box className="mt-5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
         {method === "promptpay" ? (
           <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <Box className="flex flex-col gap-2.5">
@@ -214,8 +214,8 @@ export default function PaymentMethodSection({
         ) : null}
       </Box>
 
-      <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
-        <Typography className="apple-label-text leading-6 text-[var(--rf-apple-muted)]">
+      <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-3">
+        <Typography className="apple-label-text leading-6 text-(--rf-apple-muted)">
           เมื่อชำระเงินแล้ว กรุณาตรวจสอบความถูกต้องของยอดและหลักฐานให้ครบถ้วน
           เพื่อช่วยให้การตรวจสอบสถานะเป็นไปได้รวดเร็วขึ้น
         </Typography>

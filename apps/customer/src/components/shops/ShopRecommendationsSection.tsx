@@ -86,7 +86,7 @@ function ShopRecommendationSkeletonCard() {
       sx={{ boxShadow: "none" }}
       className="apple-card apple-card-no-hover shop-recommendation-card"
     >
-      <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+      <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
         <Skeleton
           variant="rectangular"
           animation="wave"
@@ -130,7 +130,7 @@ function ShopRecommendationSkeletonCard() {
           ))}
         </Box>
 
-        <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
           <Box className="flex items-end justify-between gap-3">
             <Box className="grid gap-1">
               <Skeleton
@@ -264,7 +264,7 @@ export default function ShopRecommendationsSection({
           size="small"
           label={`${visibleShops.length} ${isPageLayout ? "รายการ" : "ร้าน"}`}
           variant={isPageLayout ? "outlined" : "filled"}
-          className="apple-pill w-min! text-[var(--rf-apple-muted)]!"
+          className="apple-pill w-min! text-(--rf-apple-muted)!"
           sx={{
             "& .MuiChip-label": {
               display: "flex",
@@ -333,7 +333,7 @@ export default function ShopRecommendationsSection({
               sx={{ boxShadow: "none" }}
               className="apple-card shop-recommendation-card group"
             >
-              <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+              <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
                 {shop.logoUrl && !failedLogoIds.has(shop.key) ? (
                   <Box
                     component="img"
@@ -345,7 +345,7 @@ export default function ShopRecommendationsSection({
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                   />
                 ) : (
-                  <Box className="grid h-full place-items-center px-6 text-center text-sm font-semibold text-[var(--rf-apple-muted)]">
+                  <Box className="grid h-full place-items-center px-6 text-center text-sm font-semibold text-(--rf-apple-muted)">
                     {shop.name}
                   </Box>
                 )}
@@ -369,26 +369,26 @@ export default function ShopRecommendationsSection({
                       key={`${shop.key}-${type}`}
                       size="small"
                       label={getCarTypeLabel(type)}
-                      className="h-7! rounded-full! bg-[var(--rf-apple-surface-soft)]! text-[var(--rf-apple-muted)]!"
+                      className="h-7! rounded-full! bg-(--rf-apple-surface-soft)! text-(--rf-apple-muted)!"
                     />
                   ))}
                 </Box>
 
-                <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                   <Box className="flex items-end justify-between gap-3">
                     <Box className="grid gap-1">
-                      <Typography className="text-xs text-[var(--rf-apple-muted)]">
+                      <Typography className="text-xs text-(--rf-apple-muted)">
                         รถพร้อมให้เลือก
                       </Typography>
-                      <Typography className="apple-card-title font-bold text-[var(--rf-apple-ink)]">
+                      <Typography className="apple-card-title font-bold text-(--rf-apple-ink)">
                         {shop.carCount} คัน
                       </Typography>
                     </Box>
                     <Box className="grid gap-1 text-right">
-                      <Typography className="text-xs text-[var(--rf-apple-muted)]">
+                      <Typography className="text-xs text-(--rf-apple-muted)">
                         เริ่มต้น
                       </Typography>
-                      <Typography className="apple-card-title font-bold text-[var(--rf-apple-ink)]">
+                      <Typography className="apple-card-title font-bold text-(--rf-apple-ink)">
                         {formatTHB(shop.startingPrice)}
                       </Typography>
                     </Box>
@@ -412,12 +412,12 @@ export default function ShopRecommendationsSection({
               ))
             ) : (
               <Box className="flex min-h-40 flex-col items-center justify-center rounded-[30px] border border-black/10 bg-white px-8 py-10 text-center sm:col-span-2 lg:col-span-3">
-                <Typography className="text-base font-semibold text-[var(--rf-apple-ink)] md:text-lg">
+                <Typography className="text-base font-semibold text-(--rf-apple-ink) md:text-lg">
                   {hasAvailableCars
                     ? "ไม่พบร้านที่ตรงกับเงื่อนไข"
                     : "ยังไม่มีร้านที่พร้อมแสดงในตอนนี้"}
                 </Typography>
-                <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+                <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                   {hasAvailableCars
                     ? "ลองเปลี่ยนคำค้นหา หรือเลือกประเภทอื่น"
                     : "เมื่อมีรถพร้อมให้เช่า ร้านจะแสดงในหน้านี้"}

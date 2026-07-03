@@ -177,7 +177,7 @@ export default function BookingFlowSteps({
               return (
                 <Box key={step.key} sx={{ display: "contents" }}>
                   <Box
-                    className="relative z-[1] flex items-center justify-center rounded-full border font-semibold leading-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    className="relative z-1 flex items-center justify-center rounded-full border font-semibold leading-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                     sx={{
                       ...circleStyle,
                       width: { xs: mobileCircleSize, md: desktopCircleSize },
@@ -206,7 +206,7 @@ export default function BookingFlowSteps({
                   ) : null}
 
                   <Typography
-                    className="text-center font-semibold tracking-[-0.03em] text-[var(--rf-apple-ink)]"
+                    className="text-center font-semibold tracking-[-0.03em] text-(--rf-apple-ink)"
                     sx={{
                       gridColumn: circleColumn,
                       gridRow: 2,

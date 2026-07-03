@@ -81,7 +81,7 @@ export default function HeroSection({
   const [highlightAnnouncement, setHighlightAnnouncement] = React.useState(true);
   const [loadedHeroImages, setLoadedHeroImages] = React.useState<string[]>([]);
   const floatingSelectLabelClass =
-    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-[var(--rf-apple-muted)]";
+    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-(--rf-apple-muted)";
 
   const openDatePicker = (event: React.MouseEvent<HTMLInputElement>) => {
     const input = event.currentTarget as DatePickerInput;
@@ -148,7 +148,7 @@ export default function HeroSection({
     : false;
 
   return (
-    <Box component="section" className="bg-[var(--rf-apple-bg)]">
+    <Box component="section" className="bg-(--rf-apple-bg)">
       <Box
         sx={{
           backgroundColor: highlightAnnouncement
@@ -210,7 +210,7 @@ export default function HeroSection({
         </Container>
       </Box>
 
-      <Container maxWidth="lg" className="apple-section pt-[56px]!">
+      <Container maxWidth="lg" className="apple-section pt-14!">
         <Box className="apple-section-intro max-w-4xl md:max-w-none">
           <Typography
             className="apple-heading apple-display-title"
@@ -273,7 +273,7 @@ export default function HeroSection({
                 <Chip
                   key={label}
                   label={label}
-                  className="apple-pill h-9! text-[var(--rf-apple-muted)]!"
+                  className="apple-pill h-9! text-(--rf-apple-muted)!"
                   sx={{
                     fontSize: {
                       xs: "clamp(0.68rem, 2.55vw, 0.78rem) !important",
@@ -287,7 +287,7 @@ export default function HeroSection({
         </Box>
 
         <Box className="mt-10 grid gap-5">
-          <Box className="apple-card relative aspect-[16/9] min-h-0 overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,1),rgba(248,249,251,0.98)_48%,rgba(229,232,238,0.94))]">
+          <Box className="apple-card relative aspect-video min-h-0 overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,1),rgba(248,249,251,0.98)_48%,rgba(229,232,238,0.94))]">
             {heroImages.length ? (
               <Box
                 key={heroImages[heroIndex]}
@@ -408,7 +408,7 @@ export default function HeroSection({
                                 locations.find((loc) => loc.value === selected)?.label ||
                                 String(selected)
                               ) : (
-                                <Box component="span" className="text-[var(--rf-apple-muted)]">
+                                <Box component="span" className="text-(--rf-apple-muted)">
                                   กรุณาเลือกสาขา
                                 </Box>
                               ),

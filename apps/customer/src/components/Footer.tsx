@@ -40,7 +40,7 @@ function FooterBrandLogo({ src, name }: { src?: string; name: string }) {
     const fallbackText = name.trim().slice(0, 1).toUpperCase() || "R";
 
     return (
-      <Box className="grid h-full w-full place-items-center rounded-md bg-[var(--rf-apple-ink)] text-xs font-bold leading-none text-white">
+      <Box className="grid h-full w-full place-items-center rounded-md bg-(--rf-apple-ink) text-xs font-bold leading-none text-white">
         {fallbackText}
       </Box>
     );
@@ -146,7 +146,7 @@ export default function Footer({
   return (
     <Box
       component="footer"
-      className="border-t border-black/10 bg-[var(--rf-apple-surface-soft)]"
+      className="border-t border-black/10 bg-(--rf-apple-surface-soft)"
       aria-label="Site footer"
     >
       <Container
@@ -177,19 +177,19 @@ export default function Footer({
                 <FooterBrandLogo src={brandLogoSrc} name={brandName} />
               </Box>
 
-              <Typography className="apple-card-title text-center font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+              <Typography className="apple-card-title text-center font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                 {brandName}
               </Typography>
             </Stack>
 
-            <Typography className="apple-body-sm mx-auto max-w-sm text-[var(--rf-apple-muted)] md:mx-0 md:hidden">
+            <Typography className="apple-body-sm mx-auto max-w-sm text-(--rf-apple-muted) md:mx-0 md:hidden">
               {brandTagline}
             </Typography>
           </Box>
 
           {/* Links */}
           <Box component="nav" aria-label="Footer navigation" className="min-w-0">
-            <Typography className="font-semibold! text-[var(--rf-apple-ink)]">
+            <Typography className="font-semibold! text-(--rf-apple-ink)">
               เมนู
             </Typography>
 
@@ -198,7 +198,7 @@ export default function Footer({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="apple-body-sm w-fit text-[var(--rf-apple-muted)] outline-none transition hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:ring-2 focus-visible:ring-black/20"
+                  className="apple-body-sm w-fit text-(--rf-apple-muted) outline-none transition hover:text-(--rf-apple-ink) focus-visible:rounded focus-visible:ring-2 focus-visible:ring-black/20"
                 >
                   {item.label}
                 </Link>
@@ -208,19 +208,19 @@ export default function Footer({
 
           {/* Contact / Social */}
           <Box component="address" className="min-w-0 not-italic">
-            <Typography className="font-semibold! text-[var(--rf-apple-ink)]">
+            <Typography className="font-semibold! text-(--rf-apple-ink)">
               {contactTitle}
             </Typography>
 
             <Stack spacing={1.5} className="mt-3">
-              <Typography className="apple-body-sm text-[var(--rf-apple-muted)]">
+              <Typography className="apple-body-sm text-(--rf-apple-muted)">
                 {contactText}
               </Typography>
 
               {contactPhone ? (
                 <a
                   href={`tel:${telHref}`}
-                  className="apple-body-sm text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                  className="apple-body-sm text-(--rf-apple-muted) hover:text-(--rf-apple-ink) focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
                 >
                   โทร: {contactPhone}
                 </a>
@@ -231,7 +231,7 @@ export default function Footer({
                   href={facebookPageUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="apple-body-sm inline-flex w-fit items-center gap-2 text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                  className="apple-body-sm inline-flex w-fit items-center gap-2 text-(--rf-apple-muted) hover:text-(--rf-apple-ink) focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
                 >
                   <FooterLinkIcon src="/facebook.svg" alt="Facebook" />
                   <span>Facebook</span>
@@ -243,7 +243,7 @@ export default function Footer({
                   href={lineUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="apple-body-sm inline-flex w-fit items-center gap-2 text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                  className="apple-body-sm inline-flex w-fit items-center gap-2 text-(--rf-apple-muted) hover:text-(--rf-apple-ink) focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
                 >
                   <FooterLinkIcon src="/line.svg" alt="LINE" />
                   <span>LINE</span>
@@ -267,7 +267,7 @@ export default function Footer({
         <Divider className="my-6! border-black/10!" />
 
         <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
+          <Typography className="apple-label-text text-(--rf-apple-muted)">
             © {year} {brandName} • แพลตฟอร์มให้บริการเช่ารถยนต์ออนไลน์
           </Typography>
 
@@ -278,13 +278,13 @@ export default function Footer({
           >
             <Link
               href="/terms"
-              className="text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)]"
+              className="text-(--rf-apple-muted) hover:text-(--rf-apple-ink)"
             >
               เงื่อนไขการใช้งาน
             </Link>
             <Link
               href="/privacy"
-              className="text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)]"
+              className="text-(--rf-apple-muted) hover:text-(--rf-apple-ink)"
             >
               นโยบายความเป็นส่วนตัว
             </Link>

@@ -54,12 +54,12 @@ export default function TermsPage() {
             <Chip
               size="small"
               label={`อัปเดตล่าสุด: ${updatedAt}`}
-              className="apple-pill text-[var(--rf-apple-muted)]!"
+              className="apple-pill text-(--rf-apple-muted)!"
             />
             <Chip
               size="small"
               label="มีผลกับการใช้งานเว็บไซต์และการจองทั้งหมด"
-              className="apple-pill text-[var(--rf-apple-muted)]!"
+              className="apple-pill text-(--rf-apple-muted)!"
             />
           </Box>
         </Box>
@@ -69,11 +69,11 @@ export default function TermsPage() {
           className="apple-card mt-10"
         >
           <CardContent className="p-5! md:p-7!">
-            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4! md:p-5!">
-              <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-(--rf-apple-surface-soft) p-4! md:p-5!">
+              <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                 สรุปสั้น ๆ
               </Typography>
-              <Typography className="mt-2 text-sm leading-6 text-[var(--rf-apple-muted)]">
+              <Typography className="mt-2 text-sm leading-6 text-(--rf-apple-muted)">
                 การใช้งานบริการต่อไปหมายถึงคุณยอมรับเงื่อนไขเหล่านี้ รวมถึงข้อกำหนดด้านการจอง
                 การชำระเงิน การยกเลิก และการใช้งานบัญชีผู้ใช้
               </Typography>

@@ -40,17 +40,17 @@ export default function ContactPage() {
         <Chip
           label={`${branches.length} สาขาในระบบ`}
           variant="outlined"
-          className="apple-pill text-[var(--rf-apple-muted)]!"
+          className="apple-pill text-(--rf-apple-muted)!"
         />
         <Chip
           label={`${phoneReadyCount} เบอร์โทรพร้อมติดต่อ`}
           variant="outlined"
-          className="apple-pill text-[var(--rf-apple-muted)]!"
+          className="apple-pill text-(--rf-apple-muted)!"
         />
         <Chip
           label="แนบรหัสการจองจะช่วยให้ตรวจสอบได้เร็วขึ้น"
           variant="outlined"
-          className="apple-pill text-[var(--rf-apple-muted)]!"
+          className="apple-pill text-(--rf-apple-muted)!"
         />
       </Box>
 

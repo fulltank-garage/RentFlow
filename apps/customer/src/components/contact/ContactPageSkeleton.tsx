@@ -134,7 +134,7 @@ function ContactInfoSkeleton() {
         {Array.from({ length: 3 }).map((_, index) => (
           <Box
             key={`contact-branch-skeleton-${index}`}
-            className="apple-card relative flex h-full flex-col rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
+            className="apple-card relative flex h-full flex-col rounded-[18px] bg-(--rf-apple-surface-soft) p-4"
           >
             <Skeleton
               variant="rounded"
@@ -177,7 +177,7 @@ function ContactInfoSkeleton() {
               </Box>
             </Box>
 
-            <Box className="mt-4 flex flex-1 flex-col gap-3 border-t border-[var(--rf-apple-border)] pt-4">
+            <Box className="mt-4 flex flex-1 flex-col gap-3 border-t border-(--rf-apple-border) pt-4">
               <BranchInfoRowSkeleton />
               <BranchInfoRowSkeleton />
               <BranchInfoRowSkeleton />
@@ -195,7 +195,7 @@ function ContactPreparationSkeleton() {
       <SectionHeadingSkeleton titleWidth={214} descriptionWidth={620} />
 
       <Box className="mt-5 space-y-4">
-        <Box className="apple-card rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="apple-card rounded-[18px] bg-(--rf-apple-surface-soft) p-4">
           <Skeleton
             variant="text"
             animation="wave"
@@ -223,7 +223,7 @@ function ContactPreparationSkeleton() {
           </Box>
         </Box>
 
-        <Box className="apple-card rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="apple-card rounded-[18px] bg-(--rf-apple-surface-soft) p-4">
           <Skeleton
             variant="text"
             animation="wave"

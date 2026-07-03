@@ -26,10 +26,10 @@ export default function CarDetailTermsSection() {
   return (
     <Box className="apple-card p-5! sm:p-6!">
       <Box className="flex flex-col gap-1.5">
-        <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-semibold text-(--rf-apple-ink)">
           เงื่อนไขการเช่า
         </Typography>
-        <Typography className="text-sm text-[var(--rf-apple-muted)]">
+        <Typography className="text-sm text-(--rf-apple-muted)">
           ตรวจสอบข้อมูลสำคัญก่อนยืนยันการจอง เพื่อให้วันรับรถเป็นไปอย่างราบรื่น
         </Typography>
       </Box>
@@ -38,17 +38,17 @@ export default function CarDetailTermsSection() {
         {rentalTerms.map((term, index) => (
           <Box
             key={term.title}
-            className="rounded-[22px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-4"
+            className="rounded-[22px] border border-black/10 bg-(--rf-apple-surface-soft) p-4"
           >
             <Box className="flex items-start gap-3">
-              <Box className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--rf-apple-blue)] text-sm font-bold text-white">
+              <Box className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--rf-apple-blue) text-sm font-bold text-white">
                 {index + 1}
               </Box>
               <Box className="min-w-0">
-                <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
+                <Typography className="text-sm font-semibold text-(--rf-apple-ink)">
                   {term.title}
                 </Typography>
-                <Typography className="mt-1 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                <Typography className="mt-1 text-sm leading-6 text-(--rf-apple-muted)">
                   {term.desc}
                 </Typography>
               </Box>
@@ -57,11 +57,11 @@ export default function CarDetailTermsSection() {
         ))}
       </Box>
 
-      <Box className="mt-4 rounded-[22px] border border-[var(--rf-apple-border)] bg-white px-4 py-3">
-        <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
+      <Box className="mt-4 rounded-[22px] border border-(--rf-apple-border) bg-white px-4 py-3">
+        <Typography className="text-sm font-semibold text-(--rf-apple-ink)">
           หมายเหตุ
         </Typography>
-        <Typography className="mt-1 text-sm leading-6 text-[var(--rf-apple-muted)]">
+        <Typography className="mt-1 text-sm leading-6 text-(--rf-apple-muted)">
           เงื่อนไขจริงอาจแตกต่างกันตามร้านและรุ่นรถ โปรดตรวจสอบยอดชำระ มัดจำ
           และรายละเอียดประกันกับร้านอีกครั้งก่อนรับรถ
         </Typography>

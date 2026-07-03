@@ -77,7 +77,7 @@ function FilterInputSkeleton() {
     return (
         <Box
             aria-hidden="true"
-            className="relative h-10 rounded-[18px] border border-[var(--rf-apple-border)] bg-white px-4"
+            className="relative h-10 rounded-[18px] border border-(--rf-apple-border) bg-white px-4"
         >
             <Skeleton
                 variant="text"
@@ -178,7 +178,7 @@ function CarsFilterBarSkeleton() {
 
 function ShopBoxSkeleton() {
     return (
-        <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
             <Box className="flex items-end gap-2">
                 <Skeleton
                     variant="text"
@@ -208,7 +208,7 @@ function ShopBoxSkeleton() {
 
 function PriceBoxSkeleton() {
     return (
-        <Box className="mt-3 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-3 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
             <Box className="flex items-end gap-2">
                 <Skeleton
                     variant="text"
@@ -254,7 +254,7 @@ function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
             sx={{ boxShadow: "none" }}
             className="apple-card apple-card-no-hover"
         >
-            <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+            <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
                 <Skeleton
                     variant="rectangular"
                     animation="wave"

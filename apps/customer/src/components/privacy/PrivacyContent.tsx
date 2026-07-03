@@ -2,9 +2,9 @@ import { Divider, Stack, Typography } from "@mui/material";
 
 export default function PrivacyContent() {
   return (
-    <Stack spacing={5} className="text-[var(--rf-apple-muted)]">
+    <Stack spacing={5} className="text-(--rf-apple-muted)">
       <section id="overview" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           1) ภาพรวม
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -15,7 +15,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="collect" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           2) ข้อมูลที่เราเก็บ
         </Typography>
         <ul className="apple-body-copy mt-3 list-disc space-y-2 pl-5">
@@ -37,7 +37,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="use" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           3) วัตถุประสงค์การใช้ข้อมูล
         </Typography>
         <ul className="apple-body-copy mt-3 list-disc space-y-2 pl-5">
@@ -51,7 +51,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="share" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           4) การเปิดเผยข้อมูล
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -62,7 +62,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="cookies" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           5) คุกกี้และการติดตาม
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -73,7 +73,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="security" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           6) ความปลอดภัย
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -83,7 +83,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="rights" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           7) สิทธิของเจ้าของข้อมูล
         </Typography>
         <ul className="apple-body-copy mt-3 list-disc space-y-2 pl-5">
@@ -97,7 +97,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="retain" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           8) ระยะเวลาการเก็บรักษา
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -107,7 +107,7 @@ export default function PrivacyContent() {
       </section>
 
       <section id="contact" className="scroll-mt-28">
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           9) ติดต่อเรา
         </Typography>
         <Typography className="apple-body-copy mt-2">
@@ -118,7 +118,7 @@ export default function PrivacyContent() {
 
       <Divider className="my-1! border-black/10!" />
 
-      <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
+      <Typography className="apple-label-text text-(--rf-apple-muted)">
         RentFlowCar ให้ความสำคัญกับความเป็นส่วนตัวและความปลอดภัยของข้อมูลผู้ใช้งาน
       </Typography>
     </Stack>

@@ -13,7 +13,7 @@ function IncludedCard({
   desc: string;
 }) {
   const bgClass = positive
-    ? "bg-[var(--rf-apple-surface-soft)]"
+    ? "bg-(--rf-apple-surface-soft)"
     : "bg-white";
 
   return (

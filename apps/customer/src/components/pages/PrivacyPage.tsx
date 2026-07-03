@@ -55,12 +55,12 @@ export default function PrivacyPage() {
             <Chip
               size="small"
               label={`อัปเดตล่าสุด: ${updatedAt}`}
-              className="apple-pill text-[var(--rf-apple-muted)]!"
+              className="apple-pill text-(--rf-apple-muted)!"
             />
             <Chip
               size="small"
               label="ครอบคลุมการใช้งานบัญชี การจอง และข้อมูลการติดต่อ"
-              className="apple-pill text-[var(--rf-apple-muted)]!"
+              className="apple-pill text-(--rf-apple-muted)!"
             />
           </Box>
         </Box>
@@ -70,11 +70,11 @@ export default function PrivacyPage() {
           className="apple-card mt-10"
         >
           <CardContent className="p-5! md:p-7!">
-            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4! md:p-5!">
-              <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-(--rf-apple-surface-soft) p-4! md:p-5!">
+              <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                 สรุปสั้น ๆ
               </Typography>
-              <Typography className="mt-2 text-sm leading-6 text-[var(--rf-apple-muted)]">
+              <Typography className="mt-2 text-sm leading-6 text-(--rf-apple-muted)">
                 เราเก็บและใช้ข้อมูลเท่าที่จำเป็นต่อการให้บริการ การยืนยันตัวตน การจอง
                 การติดต่อช่วยเหลือ และการดูแลความปลอดภัยของระบบ
               </Typography>

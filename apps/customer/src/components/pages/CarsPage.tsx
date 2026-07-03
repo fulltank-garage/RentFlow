@@ -103,7 +103,7 @@ export default function CarsPage() {
           </Typography>
           {isTenantCarsPage && scopedShopName ? (
             <Typography
-              className="apple-tenant-title text-center font-black tracking-[-0.05em] text-[var(--rf-apple-ink)]"
+              className="apple-tenant-title text-center font-black tracking-[-0.05em] text-(--rf-apple-ink)"
             >
               {scopedShopName}
             </Typography>
@@ -119,7 +119,7 @@ export default function CarsPage() {
           size="small"
           label={`${cars.length} รายการ`}
           variant="outlined"
-          className="apple-pill w-min! text-[var(--rf-apple-muted)]!"
+          className="apple-pill w-min! text-(--rf-apple-muted)!"
         />
       </Box>
 
@@ -162,7 +162,7 @@ export default function CarsPage() {
           size="small"
           label="กำลังโหลดตัวกรอง"
           variant="outlined"
-          className="apple-pill mt-6! text-[var(--rf-apple-muted)]!"
+          className="apple-pill mt-6! text-(--rf-apple-muted)!"
         />
       ) : null}
 

@@ -13,10 +13,10 @@ export default function PrivacyTableOfContents({
   return (
     <Box className="flex flex-col gap-4">
       <Box>
-        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
           สารบัญ
         </Typography>
-        <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+        <Typography className="apple-body-sm mt-1 text-(--rf-apple-muted)">
           เลือกหัวข้อที่ต้องการอ่านได้ทันที
         </Typography>
       </Box>
@@ -26,7 +26,7 @@ export default function PrivacyTableOfContents({
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="apple-card apple-body-sm rounded-[18px]! border border-black/10 bg-[var(--rf-apple-surface-soft)] px-4 py-3 font-semibold text-[var(--rf-apple-ink)]"
+            className="apple-card apple-body-sm rounded-[18px]! border border-black/10 bg-(--rf-apple-surface-soft) px-4 py-3 font-semibold text-(--rf-apple-ink)"
           >
             {section.title}
           </a>

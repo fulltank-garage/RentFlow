@@ -34,7 +34,7 @@ function CarRecommendationSkeletonCard() {
       sx={{ boxShadow: "none" }}
       className="apple-card apple-card-no-hover"
     >
-      <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+      <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
         <Skeleton
           variant="rectangular"
           animation="wave"
@@ -65,7 +65,7 @@ function CarRecommendationSkeletonCard() {
           }}
         />
 
-        <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
           <Box className="flex items-end gap-2">
             <Skeleton
               variant="text"
@@ -135,7 +135,7 @@ export default function CarsSection({
 
         <Chip
           label={`${cars.length} คัน`}
-          className="apple-pill w-min! text-[var(--rf-apple-muted)]!"
+          className="apple-pill w-min! text-(--rf-apple-muted)!"
         />
       </Box>
 
@@ -161,7 +161,7 @@ export default function CarsSection({
               sx={{ boxShadow: "none" }}
               className="apple-card group"
             >
-              <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+              <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
                 <Box
                   component="img"
                   src={c.imageUrl || c.image || "/RentFlowCar.png"}
@@ -175,26 +175,26 @@ export default function CarsSection({
               <CardContent className="p-5 sm:p-6">
                 <Box className="flex items-start justify-between gap-3">
                   <Box>
-                    <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+                    <Typography className="apple-card-title font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
                       {c.name}
                     </Typography>
-                    <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+                    <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                       {getCarTypeLabel(c.type)} • {c.seats} ที่นั่ง • {c.transmission} • {c.fuel}
                     </Typography>
                   </Box>
                 </Box>
 
-                <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="mt-5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
                   <Box className="flex items-end gap-2">
-                    <Typography className="text-sm text-[var(--rf-apple-muted)]">
+                    <Typography className="text-sm text-(--rf-apple-muted)">
                       ราคาเริ่มต้น
                     </Typography>
 
-                    <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+                    <Typography className="apple-price-text font-extrabold tracking-[-0.04em] text-(--rf-apple-ink)">
                       {formatTHB(c.pricePerDay)}
                     </Typography>
 
-                    <Typography className="text-sm text-[var(--rf-apple-muted)]">
+                    <Typography className="text-sm text-(--rf-apple-muted)">
                       /วัน
                     </Typography>
                   </Box>
@@ -239,7 +239,7 @@ export default function CarsSection({
           ))
         ) : (
           <Box className="flex min-h-48 items-center justify-center rounded-[30px] border border-black/10 bg-white px-8 py-12 text-center md:col-span-2 md:px-12 lg:col-span-3">
-            <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
+            <Typography className="text-base font-semibold text-(--rf-apple-muted) md:text-lg">
               ยังไม่มีรถแนะนำในตอนนี้
             </Typography>
           </Box>

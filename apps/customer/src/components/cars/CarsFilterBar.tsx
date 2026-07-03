@@ -69,7 +69,7 @@ export default function CarsFilterBar({
     },
   };
   const floatingSelectLabelClass =
-    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-[var(--rf-apple-muted)]";
+    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-(--rf-apple-muted)";
   const openDatePicker = (event: React.MouseEvent<HTMLInputElement>) => {
     event.currentTarget.showPicker?.();
   };
@@ -77,10 +77,10 @@ export default function CarsFilterBar({
   return (
     <Box className="apple-card mt-8 p-4 sm:p-5">
       <Box className="mb-4 flex flex-col gap-2">
-        <Box className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
+        <Box className="apple-card-title font-semibold text-(--rf-apple-ink)">
           ค้นหาและกรองรถ
         </Box>
-        <Box className="apple-body-sm text-[var(--rf-apple-muted)]">
+        <Box className="apple-body-sm text-(--rf-apple-muted)">
           ปรับสาขา ช่วงวัน และประเภทรถให้ตรงกับการเดินทางของคุณ
         </Box>
       </Box>
@@ -179,7 +179,7 @@ export default function CarsFilterBar({
                   locations.find((loc) => loc.value === selected)?.label ||
                   String(selected)
                 ) : (
-                  <Box component="span" className="text-[var(--rf-apple-muted)]">
+                  <Box component="span" className="text-(--rf-apple-muted)">
                     กรุณาเลือกสาขา
                   </Box>
                 ),
@@ -274,7 +274,7 @@ export default function CarsFilterBar({
 
         <Button
           variant="outlined"
-          className="col-span-2 min-h-10! w-full rounded-full! border-[var(--rf-apple-border)]! bg-[var(--rf-apple-surface-soft)]! px-6! py-2.5! text-sm! text-[var(--rf-apple-ink)]! transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--rf-apple-border-strong)]! hover:bg-white! hover:shadow-[var(--rf-apple-shadow-soft)]! xl:order-6 xl:col-span-1 xl:w-auto"
+          className="col-span-2 min-h-10! w-full rounded-full! border-(--rf-apple-border)! bg-(--rf-apple-surface-soft)! px-6! py-2.5! text-sm! text-(--rf-apple-ink)! transition-[background-color,border-color,box-shadow] duration-200 hover:border-(--rf-apple-border-strong)! hover:bg-white! hover:shadow-(--rf-apple-shadow-soft)! xl:order-6 xl:col-span-1 xl:w-auto"
           sx={{
             minWidth: "150px !important",
             whiteSpace: "nowrap",

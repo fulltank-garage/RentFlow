@@ -22,7 +22,7 @@ export default function PasswordVisibilityAdornment({
         onClick={onToggle}
         onMouseDown={(event) => event.preventDefault()}
         disableRipple
-        className="min-w-0! rounded-full! px-1! py-0.5! text-[11px]! font-semibold! leading-none! text-[var(--rf-apple-muted)]! transition-colors duration-200 hover:bg-transparent! hover:text-[var(--rf-apple-ink)]!"
+        className="min-w-0! rounded-full! px-1! py-0.5! text-[11px]! font-semibold! leading-none! text-(--rf-apple-muted)! transition-colors duration-200 hover:bg-transparent! hover:text-(--rf-apple-ink)!"
       >
         {label}
       </Button>

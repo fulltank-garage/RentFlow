@@ -167,7 +167,7 @@ function SectionCardSkeleton({
         {Array.from({ length: rows }).map((_, index) => (
           <Box
             key={`detail-section-row-${columns}-${index}`}
-            className="space-y-2.5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4"
+            className="space-y-2.5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4"
           >
             <Skeleton
               variant="text"
@@ -327,7 +327,7 @@ function PriceCardSkeleton() {
         </Box>
       </Box>
 
-      <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+      <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
         <Skeleton
           variant="text"
           animation="wave"

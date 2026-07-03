@@ -187,22 +187,22 @@ export default function ReviewsSection() {
         <CardContent className="p-4!">
           <Box className="flex flex-wrap items-start justify-between gap-3">
             <Box>
-              <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
+              <Typography className="text-sm font-semibold text-(--rf-apple-ink)">
                 {review.firstName} {review.lastName}
               </Typography>
-              <Typography className="text-xs text-[var(--rf-apple-muted)]">
+              <Typography className="text-xs text-(--rf-apple-muted)">
                 {review.shopName ? (
                   <>
                     {shopHref ? (
                       <Box
                         component="a"
                         href={shopHref}
-                        className="font-semibold text-[var(--rf-apple-blue)] transition hover:text-[var(--rf-apple-blue-hover)]"
+                        className="font-semibold text-(--rf-apple-blue) transition hover:text-(--rf-apple-blue-hover)"
                       >
                         {review.shopName}
                       </Box>
                     ) : (
-                      <Box component="span" className="font-semibold text-[var(--rf-apple-muted)]">
+                      <Box component="span" className="font-semibold text-(--rf-apple-muted)">
                         {review.shopName}
                       </Box>
                     )}
@@ -215,7 +215,7 @@ export default function ReviewsSection() {
             </Box>
             <Rating value={review.rating} readOnly size="small" />
           </Box>
-          <Typography className="mt-3 text-sm leading-6 text-[var(--rf-apple-muted)]">
+          <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
             {review.comment || "ให้คะแนนการใช้งาน"}
           </Typography>
         </CardContent>
@@ -234,13 +234,13 @@ export default function ReviewsSection() {
         <CardContent className="p-4!">
           <Box className="flex flex-wrap items-start justify-between gap-3">
             <Box className="min-w-0 flex-1">
-              <Box className="h-[22px] w-32 rounded-lg bg-black/[0.08]" />
-              <Box className="mt-2 h-[16px] w-40 rounded-lg bg-black/[0.08]" />
+              <Box className="h-5.5 w-32 rounded-lg bg-black/8" />
+              <Box className="mt-2 h-4 w-40 rounded-lg bg-black/8" />
             </Box>
-            <Box className="h-[22px] w-24 rounded-full bg-black/[0.08]" />
+            <Box className="h-5.5 w-24 rounded-full bg-black/8" />
           </Box>
-          <Box className="mt-4 h-[18px] w-full rounded-lg bg-black/[0.08]" />
-          <Box className="mt-2 h-[18px] w-3/4 rounded-lg bg-black/[0.08]" />
+          <Box className="mt-4 h-4.5 w-full rounded-lg bg-black/8" />
+          <Box className="mt-2 h-4.5 w-3/4 rounded-lg bg-black/8" />
         </CardContent>
       </Card>
     );
@@ -323,11 +323,11 @@ export default function ReviewsSection() {
               </Box>
             </Box>
           ) : (
-            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-8 text-center">
-              <Typography className="mt-4 text-sm font-semibold text-[var(--rf-apple-ink)]">
+            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-black/10 bg-(--rf-apple-surface-soft) p-8 text-center">
+              <Typography className="mt-4 text-sm font-semibold text-(--rf-apple-ink)">
                 ยังไม่มีรีวิว
               </Typography>
-              <Typography className="mx-auto mt-1 max-w-md text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mx-auto mt-1 max-w-md text-sm text-(--rf-apple-muted)">
                 เมื่อมีรีวิวจากผู้ใช้งาน รายการจะแสดงในส่วนนี้
               </Typography>
             </Box>
@@ -369,10 +369,10 @@ export default function ReviewsSection() {
         >
           <CardContent className="p-5!">
             <Box>
-              <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
+              <Typography className="text-sm font-semibold text-(--rf-apple-ink)">
                 เขียนรีวิว
               </Typography>
-              <Typography className="text-xs text-[var(--rf-apple-muted)]">
+              <Typography className="text-xs text-(--rf-apple-muted)">
                 ไม่ต้องเข้าสู่ระบบหรือมีรายการจอง
               </Typography>
             </Box>
@@ -407,9 +407,9 @@ export default function ReviewsSection() {
                 />
               </Box>
 
-              <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
+              <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-3">
                 <Box className="flex flex-wrap items-center gap-3">
-                  <Typography className="text-xs text-[var(--rf-apple-muted)]">
+                  <Typography className="text-xs text-(--rf-apple-muted)">
                     คะแนน
                   </Typography>
                   <Rating
@@ -430,7 +430,7 @@ export default function ReviewsSection() {
                 aria-label="รีวิวของคุณ"
                 placeholder="เล่าประสบการณ์ที่อยากแบ่งปัน"
                 rows={4}
-                className="min-h-32 w-full resize-y rounded-[18px] border border-black/15 bg-white px-4 py-3 text-sm leading-6 text-[var(--rf-apple-ink)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[var(--rf-apple-muted)] focus:border-[var(--rf-apple-blue)] focus:shadow-[0_0_0_3px_rgba(0,113,227,0.12)]"
+                className="min-h-32 w-full resize-y rounded-[18px] border border-black/15 bg-white px-4 py-3 text-sm leading-6 text-(--rf-apple-ink) outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-(--rf-apple-muted) focus:border-(--rf-apple-blue) focus:shadow-[0_0_0_3px_rgba(0,113,227,0.12)]"
                 sx={{
                   font: "inherit",
                 }}
@@ -478,21 +478,21 @@ export default function ReviewsSection() {
                   key={review.id}
                   elevation={0}
                   sx={{ boxShadow: "none" }}
-                  className="apple-card rounded-[24px]! border border-black/10 bg-white"
+                  className="apple-card rounded-3xl! border border-black/10 bg-white"
                 >
                   <CardContent className="p-4!">
                     <Box className="flex flex-wrap items-start justify-between gap-3">
                       <Box>
-                        <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
+                        <Typography className="text-sm font-semibold text-(--rf-apple-ink)">
                           {review.firstName} {review.lastName}
                         </Typography>
-                        <Typography className="text-xs text-[var(--rf-apple-muted)]">
+                        <Typography className="text-xs text-(--rf-apple-muted)">
                           {formatReviewDate(review.createdAt)}
                         </Typography>
                       </Box>
                       <Rating value={review.rating} readOnly size="small" />
                     </Box>
-                    <Typography className="mt-3 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                    <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
                       {review.comment || "ให้คะแนนการใช้งาน"}
                     </Typography>
                   </CardContent>
@@ -500,11 +500,11 @@ export default function ReviewsSection() {
               ))}
             </Box>
           ) : (
-            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-black/10 bg-[var(--rf-apple-surface-soft)] p-8 text-center">
-              <Typography className="mt-4 text-sm font-semibold text-[var(--rf-apple-ink)]">
+            <Box className="flex min-h-72 flex-col items-center justify-center rounded-[26px] border border-black/10 bg-(--rf-apple-surface-soft) p-8 text-center">
+              <Typography className="mt-4 text-sm font-semibold text-(--rf-apple-ink)">
                 ยังไม่มีรีวิว
               </Typography>
-              <Typography className="mx-auto mt-1 max-w-md text-sm text-[var(--rf-apple-muted)]">
+              <Typography className="mx-auto mt-1 max-w-md text-sm text-(--rf-apple-muted)">
                 เมื่อมีรีวิวจากผู้ใช้งาน รายการจะแสดงในส่วนนี้
               </Typography>
             </Box>

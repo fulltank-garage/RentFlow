@@ -16,7 +16,7 @@ type Props = {
 
 function ShopBoxSkeleton() {
     return (
-        <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
             <Box className="flex flex-wrap items-end gap-x-2 gap-y-1">
                 <Skeleton variant="text" animation="wave" sx={{ width: 82, height: 24, borderRadius: "8px", transform: "none" }} />
                 <Skeleton variant="text" animation="wave" sx={{ width: 130, height: 30, borderRadius: "8px", transform: "none" }} />
@@ -27,7 +27,7 @@ function ShopBoxSkeleton() {
 
 function PriceBoxSkeleton() {
     return (
-        <Box className="mt-3 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-3 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
             <Box className="flex items-end gap-2">
                 <Skeleton variant="text" animation="wave" sx={{ width: 74, height: 20, borderRadius: "8px", transform: "none" }} />
                 <Skeleton variant="text" animation="wave" sx={{ width: 104, height: 32, borderRadius: "8px", transform: "none" }} />
@@ -40,7 +40,7 @@ function PriceBoxSkeleton() {
 function CarGridSkeletonCard({ showShop = false }: { showShop?: boolean }) {
     return (
         <Card elevation={0} className="apple-card apple-card-no-hover">
-            <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+            <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
                 <Skeleton variant="rectangular" animation="wave" sx={{ width: "100%", height: "100%", borderRadius: 0 }} />
             </Box>
             <CardContent className="p-5! sm:p-6!">
@@ -96,12 +96,12 @@ export default function CarGrid({
     if (cars.length === 0) {
         return (
             <Box className="mt-8 rounded-[30px] border border-black/10 bg-white p-12 text-center">
-                <Typography className="text-base font-semibold text-[var(--rf-apple-ink)]">
+                <Typography className="text-base font-semibold text-(--rf-apple-ink)">
                     {hasAvailableCars
                         ? "ไม่พบรถที่ตรงกับเงื่อนไข"
                         : "ยังไม่มีรถที่พร้อมแสดงในตอนนี้"}
                 </Typography>
-                <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+                <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
                     {hasAvailableCars
                         ? "ลองเปลี่ยนคำค้นหา หรือเลือกประเภทอื่น"
                         : "เมื่อมีรถพร้อมให้เช่า รถจะแสดงในหน้านี้"}

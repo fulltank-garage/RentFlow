@@ -64,7 +64,7 @@ function SummaryCardSkeleton() {
         }}
       />
 
-      <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+      <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
         <Box className="flex items-center justify-between gap-3">
           <Skeleton
             variant="text"
@@ -337,7 +337,7 @@ function SummaryCardSkeleton() {
 
       <Box className="my-5 h-px bg-black/10" />
 
-      <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+      <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
         <Skeleton
           variant="rectangular"
           animation="wave"
@@ -429,7 +429,7 @@ function SummaryCardSkeleton() {
 function PaymentFormSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover order-1 p-6 lg:order-2 lg:col-span-7">
-      <Box className="rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4 md:p-5">
+      <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-4 md:p-5">
         <Skeleton
           variant="text"
           animation="wave"
@@ -526,7 +526,7 @@ function PaymentFormSkeleton() {
         />
       </Box>
 
-      <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+      <Box className="mt-5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
         <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Box className="flex flex-1 flex-col gap-1.5">
             <Skeleton

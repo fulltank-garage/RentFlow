@@ -95,25 +95,25 @@ export default function HelpPage() {
           <Chip
             label="คู่มือใช้งาน"
             variant="outlined"
-            className="apple-pill text-[var(--rf-apple-muted)]!"
+            className="apple-pill text-(--rf-apple-muted)!"
           />
           <Chip
             label="คำถามที่พบบ่อย"
             variant="outlined"
-            className="apple-pill text-[var(--rf-apple-muted)]!"
+            className="apple-pill text-(--rf-apple-muted)!"
           />
           <Chip
             label="แก้ปัญหาเบื้องต้น"
             variant="outlined"
-            className="apple-pill text-[var(--rf-apple-muted)]!"
+            className="apple-pill text-(--rf-apple-muted)!"
           />
         </Box>
 
         <Box className="mt-10">
-          <Typography className="apple-card-title-lg font-black text-[var(--rf-apple-ink)]">
+          <Typography className="apple-card-title-lg font-black text-(--rf-apple-ink)">
             เริ่มจากตรงนี้
           </Typography>
-          <Typography className="apple-body-sm mt-1 max-w-3xl text-[var(--rf-apple-muted)]">
+          <Typography className="apple-body-sm mt-1 max-w-3xl text-(--rf-apple-muted)">
             ขั้นตอนหลักที่ช่วยให้ค้นหาและจองรถได้เร็วขึ้นโดยไม่ต้องรอทีมงานตอบกลับ
           </Typography>
 
@@ -123,13 +123,13 @@ export default function HelpPage() {
                 key={item.title}
                 className="apple-card flex h-full flex-col p-5"
               >
-                <Box className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--rf-apple-ink)] text-sm font-black text-white">
+                <Box className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-(--rf-apple-ink) text-sm font-black text-white">
                   {index + 1}
                 </Box>
-                <Typography className="apple-card-title font-bold text-[var(--rf-apple-ink)]">
+                <Typography className="apple-card-title font-bold text-(--rf-apple-ink)">
                   {item.title}
                 </Typography>
-                <Typography className="apple-body-sm mt-2 text-[var(--rf-apple-muted)]">
+                <Typography className="apple-body-sm mt-2 text-(--rf-apple-muted)">
                   {item.description}
                 </Typography>
               </Box>
@@ -138,20 +138,20 @@ export default function HelpPage() {
         </Box>
 
         <Box className="mt-10">
-          <Typography className="apple-card-title-lg font-black text-[var(--rf-apple-ink)]">
+          <Typography className="apple-card-title-lg font-black text-(--rf-apple-ink)">
             คำถามที่พบบ่อย
           </Typography>
-          <Typography className="apple-body-sm mt-1 max-w-3xl text-[var(--rf-apple-muted)]">
+          <Typography className="apple-body-sm mt-1 max-w-3xl text-(--rf-apple-muted)">
             คำตอบสั้น ๆ สำหรับเรื่องที่ผู้เช่ารถมักต้องการรู้ก่อนและหลังส่งคำขอจอง
           </Typography>
 
           <Box className="mt-5 grid gap-4 md:grid-cols-2">
             {FAQ_ITEMS.map((item) => (
               <Box key={item.question} className="apple-card p-5">
-                <Typography className="apple-card-title font-bold text-[var(--rf-apple-ink)]">
+                <Typography className="apple-card-title font-bold text-(--rf-apple-ink)">
                   {item.question}
                 </Typography>
-                <Typography className="apple-body-sm mt-2 text-[var(--rf-apple-muted)]">
+                <Typography className="apple-body-sm mt-2 text-(--rf-apple-muted)">
                   {item.answer}
                 </Typography>
               </Box>
@@ -162,10 +162,10 @@ export default function HelpPage() {
         <Box className="apple-card mt-10 p-5">
           <Box className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <Box>
-              <Typography className="apple-card-title font-bold text-[var(--rf-apple-ink)]">
+              <Typography className="apple-card-title font-bold text-(--rf-apple-ink)">
                 ยังต้องให้ทีมงานช่วยดูต่อ?
               </Typography>
-              <Typography className="apple-body-sm mt-1 max-w-2xl text-[var(--rf-apple-muted)]">
+              <Typography className="apple-body-sm mt-1 max-w-2xl text-(--rf-apple-muted)">
                 ถ้าลองเช็กข้อมูลแล้วยังไม่ชัดเจน ให้ไปที่หน้าติดต่อเราเพื่อดูช่องทางติดต่อและเตรียมข้อมูลให้ครบก่อนส่งเรื่อง
               </Typography>
             </Box>

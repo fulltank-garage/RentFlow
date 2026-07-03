@@ -49,7 +49,7 @@ export default function BookingSuccessPageSkeleton() {
         </Box>
 
         <Box className="apple-card apple-card-no-hover mx-auto mt-10 max-w-3xl p-5 md:p-6">
-          <Box className="rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-5">
+          <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
             <Skeleton
               variant="text"
               animation="wave"
@@ -88,7 +88,7 @@ export default function BookingSuccessPageSkeleton() {
             {Array.from({ length: 2 }).map((_, index) => (
               <Box
                 key={`booking-success-card-skeleton-${index}`}
-                className="rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-5"
+                className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5"
               >
                 <Skeleton
                   variant="text"
@@ -174,7 +174,7 @@ export default function BookingSuccessPageSkeleton() {
             />
           </Box>
 
-          <Box className="mt-6 rounded-[28px] bg-[var(--rf-apple-surface-soft)] p-5 md:p-6">
+          <Box className="mt-6 rounded-[28px] bg-(--rf-apple-surface-soft) p-5 md:p-6">
             <Box className="grid gap-4 sm:grid-cols-2">
               {Array.from({ length: 8 }).map((_, index) => (
                 <Box

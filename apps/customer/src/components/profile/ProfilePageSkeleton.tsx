@@ -39,7 +39,7 @@ function HeadingSkeleton() {
 
 function FieldSkeleton() {
   return (
-    <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5 md:py-4.5">
+    <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-4 md:px-5 md:py-4.5">
       <Box className="space-y-2.5">
       <Skeleton
         variant="text"
@@ -68,7 +68,7 @@ function FieldSkeleton() {
 
 function AvatarFieldSkeleton() {
   return (
-    <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5">
+    <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-4 md:px-5">
       <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Box className="flex min-w-0 items-center gap-4">
           <Skeleton
@@ -277,7 +277,7 @@ export default function ProfilePageSkeleton() {
             />
           </Box>
 
-          <Box className="order-first space-y-5 lg:order-none">
+          <Box className="order-first space-y-5 lg:order-0">
             <ActionCardSkeleton />
           </Box>
         </Box>

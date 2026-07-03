@@ -246,11 +246,11 @@ export default function ForgotPasswordPage() {
                 )}
               </Button>
 
-              <Box className="flex items-center justify-center gap-1.5 text-sm text-[var(--rf-apple-muted)]">
+              <Box className="flex items-center justify-center gap-1.5 text-sm text-(--rf-apple-muted)">
                 <span>กลับไปที่หน้า</span>
                 <Link
                   href="/login"
-                  className="font-semibold text-[var(--rf-apple-blue)]"
+                  className="font-semibold text-(--rf-apple-blue)"
                   style={{
                     textDecorationLine: "underline",
                     textDecorationThickness: "1.5px",

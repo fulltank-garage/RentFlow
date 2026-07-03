@@ -78,7 +78,7 @@ function ShopCardSkeleton() {
       sx={{ boxShadow: "none" }}
       className="apple-card apple-card-no-hover"
     >
-      <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
+      <Box className="relative h-52 w-full overflow-hidden bg-(--rf-apple-surface-soft) sm:h-56">
         <Skeleton
           variant="rectangular"
           animation="wave"
@@ -131,7 +131,7 @@ function ShopCardSkeleton() {
           ))}
         </Box>
 
-        <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
           <Box className="flex items-end justify-between gap-3">
             <Box className="grid gap-1.5">
               <Skeleton

@@ -227,7 +227,7 @@ function getImageAspectClass(type?: StorefrontBlock["type"]) {
   if (type === "hero") return "aspect-[21/9]";
   if (type === "testimonial") return "aspect-[5/2]";
   if (type === "promo" || type === "announcement") return "aspect-[16/8]";
-  return "aspect-[16/9]";
+  return "aspect-video";
 }
 
 function getBlockAccent(
@@ -356,7 +356,7 @@ export default function StorefrontBlocksSection({
                 <Stack
                   direction="row"
                   spacing={1}
-                  className="absolute right-4 top-4 z-10 rounded-full border border-black/10 bg-white/90 p-1 shadow-[var(--rf-apple-shadow-soft)] backdrop-blur-xl"
+                  className="absolute right-4 top-4 z-10 rounded-full border border-black/10 bg-white/90 p-1 shadow-(--rf-apple-shadow-soft) backdrop-blur-xl"
                 >
                   <Button
                     size="small"
@@ -397,7 +397,7 @@ export default function StorefrontBlocksSection({
                     className={`${getImageFrameClass(block.type)} overflow-hidden ${imageUrl ? "" : "border border-slate-200"}`}
                   >
                     {imageUrl ? (
-                      <Box className={`relative w-full overflow-hidden rounded-[24px] ${getImageAspectClass(block.type)}`}>
+                      <Box className={`relative w-full overflow-hidden rounded-3xl ${getImageAspectClass(block.type)}`}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={imageUrl}
@@ -408,7 +408,7 @@ export default function StorefrontBlocksSection({
                           <Stack
                             direction="row"
                             spacing={1}
-                            className="absolute bottom-3 right-3 rounded-full border border-black/10 bg-white/90 p-1 shadow-[var(--rf-apple-shadow-soft)] backdrop-blur-xl"
+                            className="absolute bottom-3 right-3 rounded-full border border-black/10 bg-white/90 p-1 shadow-(--rf-apple-shadow-soft) backdrop-blur-xl"
                           >
                             <Button
                               component="label"
@@ -443,7 +443,7 @@ export default function StorefrontBlocksSection({
                         ) : null}
                       </Box>
                     ) : (
-                      <Box className="grid min-h-[190px] place-items-center p-6 text-center">
+                      <Box className="grid min-h-47.5 place-items-center p-6 text-center">
                         <Box>
                           <Typography className="text-sm font-bold text-slate-600">
                             ยังไม่มีรูปสำหรับส่วนนี้

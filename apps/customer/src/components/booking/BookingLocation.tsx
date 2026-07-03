@@ -31,7 +31,7 @@ export default function BookingLocation({
   setReturnFreeText,
 }: Props) {
   const floatingSelectLabelClass =
-    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-[var(--rf-apple-muted)]";
+    "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[11px] leading-none text-(--rf-apple-muted)";
 
   return (
     <Box>

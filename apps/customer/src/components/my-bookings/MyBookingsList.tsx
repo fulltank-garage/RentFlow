@@ -16,10 +16,10 @@ export default function MyBookingsList({ data }: Props) {
   if (data.length === 0) {
     return (
       <Box className="rounded-[30px] border border-black/10 bg-white p-10 text-center sm:p-12">
-        <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
+        <Typography className="apple-card-title font-semibold text-(--rf-apple-ink)">
           ไม่พบรายการจอง
         </Typography>
-        <Typography className="apple-body-sm mt-1 text-[var(--rf-apple-muted)]">
+        <Typography className="apple-body-sm mt-1 text-(--rf-apple-muted)">
           ลองเปลี่ยนคำค้นหา หรือเลือกสถานะอื่น
         </Typography>
       </Box>
@@ -35,21 +35,21 @@ export default function MyBookingsList({ data }: Props) {
         >
           <Box className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <Box className="min-w-0">
-              <Typography className="apple-card-title truncate font-semibold text-[var(--rf-apple-ink)]">
-                {b.carName} <span className="text-[var(--rf-apple-muted)]">•</span>{" "}
-                <span className="text-[var(--rf-apple-muted)]">{b.id}</span>
+              <Typography className="apple-card-title truncate font-semibold text-(--rf-apple-ink)">
+                {b.carName} <span className="text-(--rf-apple-muted)">•</span>{" "}
+                <span className="text-(--rf-apple-muted)">{b.id}</span>
               </Typography>
 
               <Box className="mt-2 flex flex-col gap-2">
-                <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
+                <Typography className="apple-label-text text-(--rf-apple-muted)">
                   วันรับรถ:{" "}
-                  <span className="font-semibold text-[var(--rf-apple-ink)]">
+                  <span className="font-semibold text-(--rf-apple-ink)">
                     {formatBookingDateTime(b.pickupDate)}
                   </span>
                 </Typography>
-                <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
+                <Typography className="apple-label-text text-(--rf-apple-muted)">
                   วันคืนรถ:{" "}
-                  <span className="font-semibold text-[var(--rf-apple-ink)]">
+                  <span className="font-semibold text-(--rf-apple-ink)">
                     {formatBookingDateTime(b.returnDate)}
                   </span>
                 </Typography>
@@ -58,11 +58,11 @@ export default function MyBookingsList({ data }: Props) {
 
             <Box className="flex flex-col gap-2 md:items-end">
               <Box className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4! md:justify-end md:gap-2">
-                <Box className="flex items-center justify-between gap-1 rounded-full bg-[var(--rf-apple-surface-soft)] px-3 py-2">
-                  <Typography className="apple-body-sm text-[var(--rf-apple-muted)]">
+                <Box className="flex items-center justify-between gap-1 rounded-full bg-(--rf-apple-surface-soft) px-3 py-2">
+                  <Typography className="apple-body-sm text-(--rf-apple-muted)">
                     ยอดรวม
                   </Typography>
-                  <Typography className="apple-body-sm font-bold text-[var(--rf-apple-ink)]">
+                  <Typography className="apple-body-sm font-bold text-(--rf-apple-ink)">
                     {formatTHB(b.totalPrice)}
                   </Typography>
                 </Box>
@@ -90,7 +90,7 @@ export default function MyBookingsList({ data }: Props) {
 
               <StatusChip
                 s={b.status}
-                className="!flex !w-full !justify-center md:!w-auto md:!min-w-[168px] md:!px-7 lg:!min-w-[184px] lg:!px-8 [&_.MuiChip-label]:!w-full [&_.MuiChip-label]:!text-center"
+                className="flex! w-full! justify-center! md:w-auto! md:min-w-[168px]! md:px-7! lg:min-w-[184px]! lg:px-8! [&_.MuiChip-label]:w-full! [&_.MuiChip-label]:text-center!"
               />
             </Box>
           </Box>
