@@ -129,11 +129,11 @@ export default function Login() {
     >
       <Box className="relative z-10 mx-auto grid w-full max-w-5xl items-center justify-center gap-5 lg:grid-cols-2">
         <Card elevation={0} className="partner-card order-2 flex w-full rounded-[34px]! bg-white/82! lg:order-1 lg:aspect-square">
-          <CardContent className="flex w-full flex-col gap-6 p-6! md:p-8!">
+          <CardContent className="flex w-full flex-col gap-4 p-6! md:gap-5 md:p-8!">
             <Box className="partner-page-header">
               <Typography className="partner-page-title partner-login-title">
                 จัดการร้าน รถ{" "}
-                <span className="whitespace-nowrap">และการจองในที่เดียว</span>
+                <span>และการจองในที่เดียว</span>
               </Typography>
               <Typography className="partner-page-subtitle">
                 หลังบ้านสำหรับดูแลร้าน รถ การจอง และการชำระเงินในที่เดียว

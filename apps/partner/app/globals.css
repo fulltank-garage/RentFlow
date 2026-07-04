@@ -172,6 +172,28 @@ a {
   color: var(--rf-partner-blue-deep) !important;
 }
 
+.partner-login-title {
+  max-width: 100%;
+  font-size: clamp(1.95rem, 3.7vw, 3.65rem) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.035em !important;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+@media (max-width: 1024px) {
+  .partner-login-title {
+    font-size: clamp(2.2rem, 6.8vw, 3.65rem) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .partner-login-title {
+    font-size: clamp(1.95rem, 9vw, 2.7rem) !important;
+    letter-spacing: -0.03em !important;
+  }
+}
+
 .partner-page .MuiLinearProgress-root {
   background-color: var(--rf-partner-surface-warm) !important;
 }
