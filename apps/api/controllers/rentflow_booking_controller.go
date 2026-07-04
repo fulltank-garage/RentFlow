@@ -268,14 +268,18 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 			return
 		}
 	}
+	if method == "promptpay" && !rentFlowValidPromptPayID(tenant.PromptPayType, tenant.PromptPayID) {
+		rentFlowError(c, http.StatusBadRequest, "ร้านยังไม่ได้ตั้งค่าพร้อมเพย์สำหรับรับชำระเงิน")
+		return
+	}
 
 	slipBlob, slipMimeType, err := rentFlowImageBlobFromSource(payload.SlipImage)
 	if err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ไฟล์สลิปไม่ถูกต้อง")
 		return
 	}
-	if method == "bank_transfer" && len(slipBlob) == 0 {
-		rentFlowError(c, http.StatusBadRequest, "กรุณาแนบสลิปโอนเงิน")
+	if (method == "bank_transfer" || method == "promptpay") && len(slipBlob) == 0 {
+		rentFlowError(c, http.StatusBadRequest, "กรุณาแนบสลิปชำระเงิน")
 		return
 	}
 
@@ -293,9 +297,6 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 		SlipMimeType:     slipMimeType,
 		SlipBlob:         slipBlob,
 		SettlementPeriod: time.Now().Format("2006-01"),
-	}
-	if method == "promptpay" {
-		payment.QRCodeURL = "/QR-CODE.jpg"
 	}
 	if method == "card" {
 		payment.CardHolder = strings.TrimSpace(payload.CardHolder)

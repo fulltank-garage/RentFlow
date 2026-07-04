@@ -89,16 +89,21 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 	}
 
 	var payload struct {
-		ShopName         string    `json:"shopName"`
-		DomainSlug       string    `json:"domainSlug"`
-		ChatThresholdTHB int64     `json:"chatThresholdTHB"`
-		ContactPhone     string    `json:"contactPhone"`
-		FacebookPageURL  string    `json:"facebookPageUrl"`
-		LogoURL          *string   `json:"logoUrl"`
-		PromoImageURL    *string   `json:"promoImageUrl"`
-		PromoImageURLs   *[]string `json:"promoImageUrls"`
-		LineOAQRCodeURL  *string   `json:"lineOaQrCodeUrl"`
-		ClearPromoImages bool      `json:"clearPromoImages"`
+		ShopName          string    `json:"shopName"`
+		DomainSlug        string    `json:"domainSlug"`
+		ChatThresholdTHB  int64     `json:"chatThresholdTHB"`
+		ContactPhone      string    `json:"contactPhone"`
+		PromptPayID       string    `json:"promptPayId"`
+		PromptPayType     string    `json:"promptPayType"`
+		BankName          string    `json:"bankName"`
+		BankAccountName   string    `json:"bankAccountName"`
+		BankAccountNumber string    `json:"bankAccountNumber"`
+		FacebookPageURL   string    `json:"facebookPageUrl"`
+		LogoURL           *string   `json:"logoUrl"`
+		PromoImageURL     *string   `json:"promoImageUrl"`
+		PromoImageURLs    *[]string `json:"promoImageUrls"`
+		LineOAQRCodeURL   *string   `json:"lineOaQrCodeUrl"`
+		ClearPromoImages  bool      `json:"clearPromoImages"`
 	}
 
 	var logoBlob []byte
@@ -123,6 +128,11 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 		payload.DomainSlug = c.PostForm("domainSlug")
 		payload.ChatThresholdTHB = rentFlowParseThreshold(c.PostForm("chatThresholdTHB"))
 		payload.ContactPhone = c.PostForm("contactPhone")
+		payload.PromptPayID = c.PostForm("promptPayId")
+		payload.PromptPayType = c.PostForm("promptPayType")
+		payload.BankName = c.PostForm("bankName")
+		payload.BankAccountName = c.PostForm("bankAccountName")
+		payload.BankAccountNumber = c.PostForm("bankAccountNumber")
 		payload.FacebookPageURL = c.PostForm("facebookPageUrl")
 		clearPromoImages = strings.EqualFold(strings.TrimSpace(c.PostForm("clearPromoImages")), "true")
 
@@ -231,6 +241,11 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 	domainSlug := rentFlowNormalizeDomainSlug(payload.DomainSlug)
 	chatThresholdTHB := payload.ChatThresholdTHB
 	contactPhone := rentFlowNormalizePhone(payload.ContactPhone)
+	promptPayType := rentFlowNormalizePromptPayType(payload.PromptPayType)
+	promptPayID := rentFlowNormalizePromptPayID(payload.PromptPayID)
+	bankName := strings.TrimSpace(payload.BankName)
+	bankAccountName := strings.TrimSpace(payload.BankAccountName)
+	bankAccountNumber := rentFlowNormalizePromptPayID(payload.BankAccountNumber)
 	facebookPageURL := rentFlowNormalizeExternalURL(payload.FacebookPageURL)
 	if chatThresholdTHB < 0 {
 		chatThresholdTHB = 0
@@ -241,6 +256,13 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 	}
 	if message := rentFlowValidateDomainSlug(domainSlug); message != "" {
 		rentFlowError(c, http.StatusBadRequest, message)
+		return
+	}
+	if promptPayID != "" && promptPayType == "" {
+		promptPayType = rentFlowInferPromptPayType(promptPayID)
+	}
+	if promptPayID != "" && !rentFlowValidPromptPayID(promptPayType, promptPayID) {
+		rentFlowError(c, http.StatusBadRequest, "ข้อมูลพร้อมเพย์ของร้านไม่ถูกต้อง")
 		return
 	}
 
@@ -332,6 +354,11 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 			PromoImageMimeType: promoImageMimeType,
 			PromoImageBlob:     promoImageBlob,
 			ContactPhone:       contactPhone,
+			PromptPayID:        promptPayID,
+			PromptPayType:      promptPayType,
+			BankName:           bankName,
+			BankAccountName:    bankAccountName,
+			BankAccountNumber:  bankAccountNumber,
 			FacebookPageURL:    facebookPageURL,
 			LineOAQRMimeType:   lineOAQRMimeType,
 			LineOAQRBlob:       lineOAQRBlob,
@@ -366,16 +393,21 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 
 	now := time.Now()
 	updates := map[string]interface{}{
-		"owner_user_id":      ownerUserID,
-		"owner_email":        user.Email,
-		"shop_name":          shopName,
-		"domain_slug":        domainSlug,
-		"public_domain":      publicDomain,
-		"contact_phone":      contactPhone,
-		"facebook_page_url":  facebookPageURL,
-		"status":             "active",
-		"chat_threshold_thb": chatThresholdTHB,
-		"updated_at":         now,
+		"owner_user_id":       ownerUserID,
+		"owner_email":         user.Email,
+		"shop_name":           shopName,
+		"domain_slug":         domainSlug,
+		"public_domain":       publicDomain,
+		"contact_phone":       contactPhone,
+		"prompt_pay_id":       promptPayID,
+		"prompt_pay_type":     promptPayType,
+		"bank_name":           bankName,
+		"bank_account_name":   bankAccountName,
+		"bank_account_number": bankAccountNumber,
+		"facebook_page_url":   facebookPageURL,
+		"status":              "active",
+		"chat_threshold_thb":  chatThresholdTHB,
+		"updated_at":          now,
 	}
 	if existing.Plan == "" {
 		updates["plan"] = "starter"
@@ -413,6 +445,11 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 	existing.DomainSlug = domainSlug
 	existing.PublicDomain = publicDomain
 	existing.ContactPhone = contactPhone
+	existing.PromptPayID = promptPayID
+	existing.PromptPayType = promptPayType
+	existing.BankName = bankName
+	existing.BankAccountName = bankAccountName
+	existing.BankAccountNumber = bankAccountNumber
 	existing.FacebookPageURL = facebookPageURL
 	existing.Status = "active"
 	existing.ChatThresholdTHB = chatThresholdTHB
@@ -750,6 +787,62 @@ func rentFlowNormalizeExternalURL(value string) string {
 	return value
 }
 
+func rentFlowNormalizePromptPayType(value string) string {
+	switch strings.TrimSpace(strings.ToLower(value)) {
+	case "phone", "mobile", "tel":
+		return "phone"
+	case "national_id", "citizen_id", "id_card", "idcard":
+		return "national_id"
+	case "tax_id", "tax":
+		return "tax_id"
+	case "e_wallet", "ewallet", "wallet":
+		return "e_wallet"
+	default:
+		return ""
+	}
+}
+
+func rentFlowNormalizePromptPayID(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return ""
+	}
+	var builder strings.Builder
+	for _, r := range value {
+		if r >= '0' && r <= '9' {
+			builder.WriteRune(r)
+		}
+	}
+	return builder.String()
+}
+
+func rentFlowInferPromptPayType(value string) string {
+	digits := rentFlowNormalizePromptPayID(value)
+	switch len(digits) {
+	case 10:
+		return "phone"
+	case 13:
+		return "national_id"
+	case 15:
+		return "e_wallet"
+	default:
+		return ""
+	}
+}
+
+func rentFlowValidPromptPayID(promptPayType, promptPayID string) bool {
+	switch promptPayType {
+	case "phone":
+		return len(promptPayID) == 10 && strings.HasPrefix(promptPayID, "0")
+	case "national_id", "tax_id":
+		return len(promptPayID) == 13
+	case "e_wallet":
+		return len(promptPayID) == 15
+	default:
+		return false
+	}
+}
+
 func rentFlowNormalizeTenantHost(value string) string {
 	value = strings.TrimSpace(strings.ToLower(value))
 	if value == "" {
@@ -820,22 +913,27 @@ func rentFlowPublicTenantResponse(tenant models.RentFlowCarTenant) gin.H {
 	}
 
 	response := gin.H{
-		"id":               tenant.ID,
-		"shopName":         tenant.ShopName,
-		"domainSlug":       tenant.DomainSlug,
-		"publicDomain":     tenant.PublicDomain,
-		"logoUrl":          rentFlowTenantLogoURL(tenant),
-		"promoImageUrl":    promoImageUrl,
-		"promoImageUrls":   promoImageUrls,
-		"contactPhone":     tenant.ContactPhone,
-		"facebookPageUrl":  tenant.FacebookPageURL,
-		"lineOaQrCodeUrl":  rentFlowTenantLineOAQRCodeURL(tenant),
-		"status":           tenant.Status,
-		"bookingMode":      rentFlowNormalizeBookingMode(tenant.BookingMode),
-		"chatThresholdTHB": tenant.ChatThresholdTHB,
-		"plan":             tenant.Plan,
-		"createdAt":        tenant.CreatedAt,
-		"updatedAt":        tenant.UpdatedAt,
+		"id":                tenant.ID,
+		"shopName":          tenant.ShopName,
+		"domainSlug":        tenant.DomainSlug,
+		"publicDomain":      tenant.PublicDomain,
+		"logoUrl":           rentFlowTenantLogoURL(tenant),
+		"promoImageUrl":     promoImageUrl,
+		"promoImageUrls":    promoImageUrls,
+		"contactPhone":      tenant.ContactPhone,
+		"promptPayId":       tenant.PromptPayID,
+		"promptPayType":     tenant.PromptPayType,
+		"bankName":          tenant.BankName,
+		"bankAccountName":   tenant.BankAccountName,
+		"bankAccountNumber": tenant.BankAccountNumber,
+		"facebookPageUrl":   tenant.FacebookPageURL,
+		"lineOaQrCodeUrl":   rentFlowTenantLineOAQRCodeURL(tenant),
+		"status":            tenant.Status,
+		"bookingMode":       rentFlowNormalizeBookingMode(tenant.BookingMode),
+		"chatThresholdTHB":  tenant.ChatThresholdTHB,
+		"plan":              tenant.Plan,
+		"createdAt":         tenant.CreatedAt,
+		"updatedAt":         tenant.UpdatedAt,
 	}
 	if lineSummary := rentFlowPublicLineSummary(tenant.ID); lineSummary != nil {
 		response["lineOfficialAccount"] = lineSummary

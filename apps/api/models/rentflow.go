@@ -49,6 +49,11 @@ type RentFlowCarTenant struct {
 	PromoImageMimeType string         `gorm:"size:80" json:"-"`
 	PromoImageBlob     []byte         `gorm:"type:bytea" json:"-"`
 	ContactPhone       string         `gorm:"size:40" json:"contactPhone,omitempty"`
+	PromptPayID        string         `gorm:"size:40" json:"promptPayId,omitempty"`
+	PromptPayType      string         `gorm:"size:30" json:"promptPayType,omitempty"`
+	BankName           string         `gorm:"size:120" json:"bankName,omitempty"`
+	BankAccountName    string         `gorm:"size:150" json:"bankAccountName,omitempty"`
+	BankAccountNumber  string         `gorm:"size:40" json:"bankAccountNumber,omitempty"`
 	FacebookPageURL    string         `gorm:"size:500" json:"facebookPageUrl,omitempty"`
 	LineOAQRCodeURL    string         `gorm:"-" json:"lineOaQrCodeUrl,omitempty"`
 	LineOAQRMimeType   string         `gorm:"size:80" json:"-"`
