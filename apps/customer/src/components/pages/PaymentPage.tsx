@@ -11,7 +11,6 @@ import {
   Stack,
   Button,
   Alert,
-  Chip,
 } from "@mui/material";
 import BookingFlowScreen from "@/src/components/booking/BookingFlowScreen";
 import BookingFlowSteps from "@/src/components/booking/BookingFlowSteps";
@@ -20,7 +19,6 @@ import PaymentBookingSummaryCard from "@/src/components/payment/PaymentBookingSu
 import PaymentCustomerForm from "@/src/components/payment/PaymentCustomerForm";
 import PaymentMethodSection from "@/src/components/payment/PaymentMethodSection";
 import usePaymentPage from "@/src/hooks/payment/usePaymentPage";
-import { formatTHB } from "@/src/constants/money";
 
 export default function PaymentPage() {
   const payment = usePaymentPage();
@@ -33,7 +31,11 @@ export default function PaymentPage() {
     <Box className="apple-page">
       <BookingFlowScreen>
         <Container maxWidth="lg" className="apple-section">
-          <BookingFlowSteps currentStep="payment" className="mb-8" />
+          <BookingFlowSteps
+            currentStep="payment"
+            mode="payment"
+            className="mb-8"
+          />
 
           <Box className="apple-section-intro max-w-3xl">
             <Box className="flex flex-col gap-4">
@@ -47,18 +49,6 @@ export default function PaymentPage() {
               </Typography>
             </Box>
 
-            <Box className="mt-6 flex flex-wrap justify-center gap-3">
-              <Chip
-                size="small"
-                label={`รหัสการจอง: ${payment.bookingId}`}
-                className="apple-pill text-(--rf-apple-muted)!"
-              />
-              <Chip
-                size="small"
-                label={`ยอดชำระ: ${formatTHB(payment.amount)}`}
-                className="apple-pill text-(--rf-apple-muted)!"
-              />
-            </Box>
           </Box>
 
           <Box className="mt-10 grid gap-5 lg:grid-cols-12 lg:gap-6">
@@ -86,14 +76,22 @@ export default function PaymentPage() {
 
             <Card
               elevation={0}
-              className="apple-card order-1 lg:order-2 lg:col-span-7"
+              className="apple-card order-2 lg:col-span-7"
             >
               <CardContent className="p-5! md:p-6!">
-                <Box className="apple-card apple-card-no-hover rounded-[26px] bg-(--rf-apple-surface-soft) p-4! md:p-5!">
-                  <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
+                <Box
+                  className="apple-card apple-card-no-hover rounded-[26px] border p-4! md:p-5!"
+                  sx={{
+                    borderColor:
+                      "color-mix(in srgb, var(--rf-brand) 32%, var(--rf-apple-border))",
+                    backgroundColor:
+                      "color-mix(in srgb, var(--rf-brand) 7%, var(--white))",
+                  }}
+                >
+                  <Typography className="apple-card-title font-black tracking-[-0.03em] text-(--rf-apple-ink)">
                     ก่อนยืนยันการชำระเงิน
                   </Typography>
-                  <Typography className="mt-2 text-sm leading-6 text-(--rf-apple-muted)">
+                  <Typography className="mt-3 text-[15px] font-medium leading-7 text-(--rf-apple-muted)">
                     ตรวจสอบชื่อผู้ชำระเงิน ช่องทางการติดต่อ และวิธีชำระให้ถูกต้อง
                     เมื่อยืนยันแล้วระบบจะบันทึกข้อมูลเพื่อตรวจสอบสถานะการชำระเงินต่อไป
                   </Typography>
@@ -127,20 +125,24 @@ export default function PaymentPage() {
                 <Divider className="my-6! border-black/10!" />
 
                 <PaymentMethodSection
-                  method={payment.method}
-                  setMethod={payment.setMethod}
                   amount={payment.amount}
-                  cardDetails={payment.cardDetails}
-                  setCardDetails={payment.setCardDetails}
+                  shopName={payment.tenantProfile?.shopName || payment.shopName}
+                  promptPayId={payment.tenantProfile?.promptPayId}
+                  promptPayType={payment.tenantProfile?.promptPayType}
+                  promptPayQrDataUrl={payment.promptPayQrDataUrl}
+                  hasPromptPaySettings={payment.hasPromptPaySettings}
+                  bankName={payment.tenantProfile?.bankName}
+                  bankAccountName={payment.tenantProfile?.bankAccountName}
+                  bankAccountNumber={payment.tenantProfile?.bankAccountNumber}
+                  hasBankTransferSettings={payment.hasBankTransferSettings}
                   slipFile={payment.slipFile}
                   setSlipFile={payment.setSlipFile}
-                  roundedFieldSX={payment.roundedFieldSX}
                 />
 
                 <Stack
                   direction="row"
                   spacing={1.5}
-                  className="mt-6 flex-wrap items-center"
+                  className="mt-6 flex-wrap items-center justify-end"
                 >
                   <Button
                     variant="contained"

@@ -656,7 +656,7 @@ export default function BookingReceiptCard({
           : "เมื่อเข้าหน้านี้ ระบบจะสร้างไฟล์ใบเสร็จให้โดยอัตโนมัติ และยังสามารถกดดาวน์โหลดซ้ำได้ทุกเมื่อ";
 
   return (
-    <Box className="apple-card apple-card-no-hover mx-auto mt-8 max-w-4xl p-5 md:p-6">
+    <Box className="apple-card apple-card-no-hover mt-8 w-full p-5 md:p-6">
       <Box className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <Box className="min-w-0">
           <Typography className="text-lg font-bold tracking-[-0.03em] text-(--rf-apple-ink)">

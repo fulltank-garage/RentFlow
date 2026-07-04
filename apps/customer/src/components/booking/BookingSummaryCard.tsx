@@ -5,6 +5,7 @@ import { Box, Button, Card, CardContent, Divider, Typography } from "@mui/materi
 import type { Car } from "@/src/services/cars/cars.types";
 import { formatTHB } from "@/src/constants/money";
 import StableImage from "@/src/components/common/StableImage";
+import { formatBookingDateTimeParts } from "@/src/lib/booking-datetime";
 
 type Props = {
   car?: Car | null;
@@ -166,7 +167,7 @@ export default function BookingSummaryCard({
                     {finalPickupPoint || "-"}
                   </Typography>
                   <Typography component="div" className="apple-label-text font-normal text-slate-500">
-                    {pickupDate && pickupTime ? `${pickupDate} ${pickupTime}` : "-"}
+                    {formatBookingDateTimeParts(pickupDate, pickupTime)}
                   </Typography>
                 </Box>
               </Box>
@@ -178,7 +179,7 @@ export default function BookingSummaryCard({
                     {finalReturnPoint || "-"}
                   </Typography>
                   <Typography component="div" className="apple-label-text font-normal text-slate-500">
-                    {returnDate && returnTime ? `${returnDate} ${returnTime}` : "-"}
+                    {formatBookingDateTimeParts(returnDate, returnTime)}
                   </Typography>
                 </Box>
               </Box>

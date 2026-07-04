@@ -14,6 +14,7 @@ import type { StorefrontAddon } from "@/src/services/addons/addons.types";
 import type { Car } from "@/src/services/cars/cars.types";
 import { formatTHB } from "@/src/constants/money";
 import StableImage from "@/src/components/common/StableImage";
+import { formatBookingDateTimeParts } from "@/src/lib/booking-datetime";
 import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 
 type Props = {
@@ -59,10 +60,12 @@ export default function PaymentBookingSummaryCard({
   discountPct,
   extraCharge,
 }: Props) {
+  const carImageSrc = car?.image || car?.imageUrl || car?.images?.[0] || "/RentFlowCar.png";
+
   return (
     <Card
       elevation={0}
-      className="apple-card order-2 lg:order-1 lg:col-span-5"
+      className="apple-card order-1 lg:col-span-5"
     >
       <CardContent className="p-4! sm:p-5! md:p-6!">
         <Typography className="apple-card-title font-semibold tracking-[-0.03em] text-slate-900">
@@ -77,7 +80,7 @@ export default function PaymentBookingSummaryCard({
             <Typography className="text-sm text-slate-600">
               รหัสการจอง
             </Typography>
-            <Typography className="apple-body-sm font-semibold text-slate-900">
+            <Typography className="apple-card-title font-black text-slate-900">
               {bookingId}
             </Typography>
           </Box>
@@ -100,9 +103,7 @@ export default function PaymentBookingSummaryCard({
                       component="div"
                       className="apple-label-text text-slate-500"
                     >
-                      {pickupDate
-                        ? `${pickupDate}${pickupTime ? ` ${pickupTime}` : ""}`
-                        : "-"}
+                      {formatBookingDateTimeParts(pickupDate, pickupTime)}
                     </Typography>
                   </Box>
                 </Box>
@@ -124,9 +125,7 @@ export default function PaymentBookingSummaryCard({
                       component="div"
                       className="apple-label-text text-slate-500"
                     >
-                      {returnDate
-                        ? `${returnDate}${returnTime ? ` ${returnTime}` : ""}`
-                        : "-"}
+                      {formatBookingDateTimeParts(returnDate, returnTime)}
                     </Typography>
                   </Box>
                 </Box>
@@ -261,11 +260,12 @@ export default function PaymentBookingSummaryCard({
         {car ? (
           <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
             <StableImage
-              className="aspect-4/3 rounded-[18px]"
-              src={car.image || "/RentFlowCar.png"}
+              className="aspect-4/3 rounded-[18px] bg-white"
+              src={carImageSrc}
               alt={car.name}
+              fallbackSrc="/RentFlowCar.png"
               sizes="(min-width: 1200px) 34vw, (min-width: 640px) 50vw, 100vw"
-              imageClassName="object-cover"
+              imageClassName="object-contain"
             />
 
             <Box className="mt-3 flex items-start justify-between gap-3">
@@ -280,30 +280,6 @@ export default function PaymentBookingSummaryCard({
               </Box>
             </Box>
 
-            <Divider className="my-4! border-black/10!" />
-
-            <Box className="flex items-center justify-between">
-              <Typography className="apple-body-sm text-slate-600">
-                ราคา/วัน
-              </Typography>
-              <Typography className="apple-body-sm font-semibold text-slate-900">
-                {formatTHB(car.pricePerDay)}
-              </Typography>
-            </Box>
-
-            <Link
-              href={`/cars/${encodeURIComponent(car.id)}`}
-              className="mt-4 block"
-            >
-              <Button
-                fullWidth
-                variant="outlined"
-                className="rounded-full!"
-                sx={{ textTransform: "none" }}
-              >
-                ดูรายละเอียดรถ
-              </Button>
-            </Link>
           </Box>
         ) : (
           <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
@@ -324,13 +300,6 @@ export default function PaymentBookingSummaryCard({
           </Box>
         )}
 
-        <Divider className="my-5! border-black/10!" />
-
-        <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-3">
-          <Typography className="apple-label-text leading-6 text-slate-500">
-            แนะนำ: หากชำระแล้วไม่ขึ้นสถานะ ให้ติดต่อทีมงานพร้อมรหัสการจอง
-          </Typography>
-        </Box>
       </CardContent>
     </Card>
   );

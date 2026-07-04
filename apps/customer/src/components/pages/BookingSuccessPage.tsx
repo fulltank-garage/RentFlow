@@ -2,12 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Box, Button, Chip, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import BookingReceiptCard from "@/src/components/booking/BookingReceiptCard";
 import BookingFlowScreen from "@/src/components/booking/BookingFlowScreen";
 import BookingFlowSteps from "@/src/components/booking/BookingFlowSteps";
 import BookingSuccessPageSkeleton from "@/src/components/booking/BookingSuccessPageSkeleton";
-import { formatTHB } from "@/src/constants/money";
 import usePageReady from "@/src/hooks/usePageReady";
 
 export default function BookingSuccessPage({
@@ -41,7 +40,7 @@ export default function BookingSuccessPage({
   const isChatBooking = bookingMode === "chat";
 
   if (!ready) {
-    return <BookingSuccessPageSkeleton />;
+    return <BookingSuccessPageSkeleton mode={isChatBooking ? "chat" : "payment"} />;
   }
 
   const myBookingsHref = tenantSlug
@@ -71,27 +70,15 @@ export default function BookingSuccessPage({
                   : "ระบบบันทึกรายการของคุณเรียบร้อยแล้ว สามารถตรวจสอบสถานะและรายละเอียดเพิ่มเติมได้จากหน้าการจองของฉัน"}
               </Typography>
 
-              <Box className="mt-2 flex flex-wrap justify-center gap-3">
-                <Chip
-                  size="small"
-                  label={`รหัสการจอง: ${bookingId || "BK-XXXX"}`}
-                  className="apple-pill text-(--rf-apple-muted)!"
-                />
-                <Chip
-                  size="small"
-                  label={`${isChatBooking ? "ยอดประมาณการ" : "ยอดชำระ"}: ${formatTHB(amount || 0)}`}
-                  className="apple-pill text-(--rf-apple-muted)!"
-                />
-              </Box>
             </Box>
           </Box>
 
-          <Box className="apple-card apple-card-no-hover mx-auto mt-10 max-w-3xl p-5 md:p-6">
+          <Box className="apple-card apple-card-no-hover mt-10 w-full p-5 md:p-6">
             <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
-              <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
+              <Typography className="text-base font-black tracking-[-0.03em] text-(--rf-apple-ink) md:text-lg">
                 ขั้นตอนถัดไป
               </Typography>
-              <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
+              <Typography className="mt-3 text-[15px] font-semibold leading-7 text-(--rf-apple-ink) opacity-80 md:text-base">
                 {isChatBooking
                   ? "คำขอจองถูกส่งให้ร้านเรียบร้อยแล้ว เก็บรหัสการจองไว้สำหรับอ้างอิง และรอร้านติดต่อกลับเพื่อยืนยันเงื่อนไขก่อนชำระเงิน"
                   : "การจองของคุณถูกส่งเข้าระบบเรียบร้อยแล้ว เก็บรหัสการจองไว้สำหรับอ้างอิง ตรวจสอบสถานะจากหน้าการจองของฉัน และเตรียมเอกสารที่จำเป็นก่อนวันรับรถได้เลย"}
@@ -100,20 +87,20 @@ export default function BookingSuccessPage({
 
             <Box className="mt-6 grid gap-4 md:grid-cols-2">
               <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
-                <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
+                <Typography className="text-base font-black tracking-[-0.03em] text-(--rf-apple-ink) md:text-lg">
                   ตรวจสอบรายการ
                 </Typography>
-                <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
+                <Typography className="mt-3 text-[15px] font-semibold leading-7 text-(--rf-apple-ink) opacity-80 md:text-base">
                   ดูสถานะการจอง วันรับ-คืนรถ
                   และข้อมูลสรุปทั้งหมดได้จากหน้าเดียวตลอดเวลา
                 </Typography>
               </Box>
 
               <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
-                <Typography className="text-sm font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
+                <Typography className="text-base font-black tracking-[-0.03em] text-(--rf-apple-ink) md:text-lg">
                   เตรียมตัวก่อนรับรถ
                 </Typography>
-                <Typography className="mt-3 text-sm leading-6 text-(--rf-apple-muted)">
+                <Typography className="mt-3 text-[15px] font-semibold leading-7 text-(--rf-apple-ink) opacity-80 md:text-base">
                   หากต้องการแก้ไขรายละเอียดหรือตรวจสอบข้อมูลเพิ่มเติม
                   สามารถติดต่อทีมงานได้ทันที
                 </Typography>

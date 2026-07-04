@@ -1,5 +1,3 @@
-export type Method = "promptpay" | "card" | "transfer";
-
 type AddonLike = {
   id: string;
   price: number;

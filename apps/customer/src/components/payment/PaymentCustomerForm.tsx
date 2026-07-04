@@ -48,11 +48,6 @@ export default function PaymentCustomerForm({
         />
       </Box>
 
-      <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) px-4 py-3">
-        <Typography className="apple-label-text leading-6 text-(--rf-apple-muted)">
-          ใช้สำหรับอ้างอิงการชำระเงินและการติดต่อกลับจากร้าน
-        </Typography>
-      </Box>
     </>
   );
 }

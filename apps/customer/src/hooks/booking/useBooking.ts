@@ -6,6 +6,10 @@ import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowC
 import { useRentFlowCarSiteMode } from "@/src/hooks/useRentFlowCarSiteMode";
 import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
 import { navigateBookingFlow } from "@/src/lib/booking-flow-navigation";
+import {
+  buildPendingBookingPaymentHref,
+  isSameBookingWindow,
+} from "@/src/lib/pending-booking-payment";
 import { addonsApi } from "@/src/services/addons/addons.service";
 import type { StorefrontAddon } from "@/src/services/addons/addons.types";
 import { availabilityApi } from "@/src/services/availability/availability.service";
@@ -767,6 +771,37 @@ export default function useBooking() {
       }
 
       try {
+        if (!forceChatBooking) {
+          try {
+            const pendingBookingsRes = await bookingApi.getMyBookings({
+              tenantSlug: effectiveTenantSlug,
+            });
+            const existingPendingBooking = pendingBookingsRes.data.find(
+              (booking) =>
+                booking.status === "pending" &&
+                booking.carId === car.id &&
+                isSameBookingWindow(booking, pickupDate, returnDate)
+            );
+
+            if (existingPendingBooking) {
+              navigateBookingFlow(
+                router,
+                buildPendingBookingPaymentHref({
+                  ...existingPendingBooking,
+                  carName: existingPendingBooking.carName || car.name,
+                  shopName: existingPendingBooking.shopName || car.shopName,
+                  tenantSlug:
+                    effectiveTenantSlug || existingPendingBooking.domainSlug,
+                }),
+                "replace"
+              );
+              return;
+            }
+          } catch {
+            // If this lightweight duplicate check fails, continue with the normal booking flow.
+          }
+        }
+
         const availabilityRes = await availabilityApi.check(
           {
             carId: car.id,

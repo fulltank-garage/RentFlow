@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowCarRealtimeRefresh";
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
+import { buildPendingBookingPaymentHref } from "@/src/lib/pending-booking-payment";
 import { clearCachedSessionUser } from "@/src/services/auth/auth.service";
 import { bookingApi } from "@/src/services/booking/booking.service";
 import type { BookingAddon as BookingAddonItem } from "@/src/services/booking/booking.types";
@@ -41,86 +42,8 @@ export type Booking = {
   note?: string;
   addons?: BookingAddonItem[];
   resumeHref?: string;
+  paymentHref?: string;
 };
-
-function normalizeDateForInput(value?: string) {
-  if (!value) return "";
-  const match = value.match(/^\d{4}-\d{2}-\d{2}/);
-  if (match) return match[0];
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function buildResumeBookingHref(booking: {
-  carId: string;
-  tenantSlug?: string;
-  pickupDate: string;
-  returnDate: string;
-  pickupLocation?: string;
-  returnLocation?: string;
-  pickupLocationValue?: string;
-  returnLocationValue?: string;
-  pickupMethod?: "branch" | "custom";
-  returnMethod?: "branch" | "custom";
-  customerName?: string;
-  customerPhone?: string;
-  addons?: BookingAddonItem[];
-}) {
-  const params = new URLSearchParams();
-
-  params.set("carId", booking.carId);
-  params.set("pickupDate", normalizeDateForInput(booking.pickupDate));
-  params.set("returnDate", normalizeDateForInput(booking.returnDate));
-
-  if (booking.tenantSlug) {
-    params.set("tenant", booking.tenantSlug);
-  }
-
-  const pickupLocation =
-    booking.pickupLocationValue || booking.pickupLocation || "";
-  const returnLocation =
-    booking.returnLocationValue || booking.returnLocation || "";
-
-  if (pickupLocation) {
-    params.set("pickupLocation", pickupLocation);
-  }
-
-  if (returnLocation) {
-    params.set("returnLocation", returnLocation);
-  }
-
-  if (booking.pickupMethod) {
-    params.set("pickupMethod", booking.pickupMethod);
-  }
-
-  if (booking.returnMethod) {
-    params.set("returnMethod", booking.returnMethod);
-  }
-
-  if (booking.customerName) {
-    params.set("fullName", booking.customerName);
-  }
-
-  if (booking.customerPhone) {
-    params.set("phone", booking.customerPhone);
-  }
-
-  const addonIds =
-    booking.addons
-      ?.map((addon) => addon.id || addon.key)
-      .filter((value): value is string => Boolean(value)) ?? [];
-  if (addonIds.length) {
-    params.set("addons", JSON.stringify(addonIds));
-  }
-
-  return `/booking?${params.toString()}`;
-}
 
 export default function useMyBookingsPage() {
   const router = useRouter();
@@ -173,52 +96,44 @@ export default function useMyBookingsPage() {
         const carMap = new Map(carsRes.items.map((car) => [car.id, car]));
 
         setRows(
-          bookingsRes.data.map((booking) => ({
-            id: booking.bookingCode,
-            carId: booking.carId,
-            carName:
-              booking.carName || carMap.get(booking.carId)?.name || booking.carId,
-            shopName: carMap.get(booking.carId)?.shopName || booking.shopName,
-            tenantSlug:
-              carMap.get(booking.carId)?.domainSlug ||
-              booking.domainSlug ||
-              tenantSlug,
-            pickupDate: booking.pickupDate,
-            returnDate: booking.returnDate,
-            totalPrice: booking.totalAmount,
-            status: booking.status,
-            pickupLocation: booking.pickupLocation,
-            returnLocation: booking.returnLocation,
-            pickupLocationValue: booking.pickupLocationValue,
-            returnLocationValue: booking.returnLocationValue,
-            pickupMethod: booking.pickupMethod,
-            returnMethod: booking.returnMethod,
-            customerName: booking.customerName,
-            customerPhone: booking.customerPhone,
-            note: booking.note,
-            addons: booking.addons,
-            resumeHref:
-              booking.status === "pending"
-                ? buildResumeBookingHref({
-                    carId: booking.carId,
-                    tenantSlug:
-                      carMap.get(booking.carId)?.domainSlug ||
-                      booking.domainSlug ||
-                      tenantSlug,
-                    pickupDate: booking.pickupDate,
-                    returnDate: booking.returnDate,
-                    pickupLocation: booking.pickupLocation,
-                    returnLocation: booking.returnLocation,
-                    pickupLocationValue: booking.pickupLocationValue,
-                    returnLocationValue: booking.returnLocationValue,
-                    pickupMethod: booking.pickupMethod,
-                    returnMethod: booking.returnMethod,
-                    customerName: booking.customerName,
-                    customerPhone: booking.customerPhone,
-                    addons: booking.addons,
-                  })
-                : undefined,
-          }))
+          bookingsRes.data.map((booking) => {
+            const car = carMap.get(booking.carId);
+            const bookingTenantSlug =
+              car?.domainSlug || booking.domainSlug || tenantSlug;
+            const carName = booking.carName || car?.name || booking.carId;
+            const shopName = car?.shopName || booking.shopName;
+
+            return {
+              id: booking.bookingCode,
+              carId: booking.carId,
+              carName,
+              shopName,
+              tenantSlug: bookingTenantSlug,
+              pickupDate: booking.pickupDate,
+              returnDate: booking.returnDate,
+              totalPrice: booking.totalAmount,
+              status: booking.status,
+              pickupLocation: booking.pickupLocation,
+              returnLocation: booking.returnLocation,
+              pickupLocationValue: booking.pickupLocationValue,
+              returnLocationValue: booking.returnLocationValue,
+              pickupMethod: booking.pickupMethod,
+              returnMethod: booking.returnMethod,
+              customerName: booking.customerName,
+              customerPhone: booking.customerPhone,
+              note: booking.note,
+              addons: booking.addons,
+              paymentHref:
+                booking.status === "pending"
+                  ? buildPendingBookingPaymentHref({
+                      ...booking,
+                      carName,
+                      shopName,
+                      tenantSlug: bookingTenantSlug,
+                    })
+                  : undefined,
+            };
+          })
         );
         setIsAuthenticated(true);
       } catch (err: unknown) {

@@ -3,11 +3,17 @@
 import { Box, Container, Skeleton } from "@mui/material";
 import BookingFlowStepsSkeleton from "@/src/components/booking/BookingFlowStepsSkeleton";
 
-export default function BookingSuccessPageSkeleton() {
+type BookingSuccessPageSkeletonProps = {
+  mode?: "payment" | "chat";
+};
+
+export default function BookingSuccessPageSkeleton({
+  mode = "chat",
+}: BookingSuccessPageSkeletonProps) {
   return (
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
-        <BookingFlowStepsSkeleton className="mb-8" />
+        <BookingFlowStepsSkeleton className="mb-8" mode={mode} />
 
         <Box className="mx-auto max-w-3xl text-center">
           <Box className="flex flex-col items-center gap-4">
@@ -48,14 +54,14 @@ export default function BookingSuccessPageSkeleton() {
           </Box>
         </Box>
 
-        <Box className="apple-card apple-card-no-hover mx-auto mt-10 max-w-3xl p-5 md:p-6">
+        <Box className="apple-card apple-card-no-hover mt-10 w-full p-5 md:p-6">
           <Box className="rounded-[26px] bg-(--rf-apple-surface-soft) p-5">
             <Skeleton
               variant="text"
               animation="wave"
               sx={{
                 width: 110,
-                height: 22,
+                height: 26,
                 borderRadius: "8px",
                 transform: "none",
               }}
@@ -66,7 +72,7 @@ export default function BookingSuccessPageSkeleton() {
                 animation="wave"
                 sx={{
                   width: "100%",
-                  height: 18,
+                  height: 21,
                   borderRadius: "8px",
                   transform: "none",
                 }}
@@ -76,7 +82,7 @@ export default function BookingSuccessPageSkeleton() {
                 animation="wave"
                 sx={{
                   width: "82%",
-                  height: 18,
+                  height: 21,
                   borderRadius: "8px",
                   transform: "none",
                 }}
@@ -95,7 +101,7 @@ export default function BookingSuccessPageSkeleton() {
                   animation="wave"
                   sx={{
                     width: 88,
-                    height: 20,
+                    height: 26,
                     borderRadius: "8px",
                     transform: "none",
                   }}
@@ -106,7 +112,7 @@ export default function BookingSuccessPageSkeleton() {
                     animation="wave"
                     sx={{
                       width: "100%",
-                      height: 18,
+                      height: 21,
                       borderRadius: "8px",
                       transform: "none",
                     }}
@@ -116,7 +122,7 @@ export default function BookingSuccessPageSkeleton() {
                     animation="wave"
                     sx={{
                       width: "76%",
-                      height: 18,
+                      height: 21,
                       borderRadius: "8px",
                       transform: "none",
                     }}
@@ -140,7 +146,7 @@ export default function BookingSuccessPageSkeleton() {
           </Box>
         </Box>
 
-        <Box className="apple-card apple-card-no-hover mx-auto mt-8 max-w-3xl p-5 md:p-6">
+        <Box className="apple-card apple-card-no-hover mt-8 w-full p-5 md:p-6">
           <Box className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <Box className="min-w-0">
                 <Skeleton

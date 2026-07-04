@@ -246,7 +246,7 @@ export default function BookingForm({
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1.5}
-          className="items-stretch sm:items-center"
+          className="items-stretch sm:items-center sm:justify-end"
         >
           <Button
             type="submit"

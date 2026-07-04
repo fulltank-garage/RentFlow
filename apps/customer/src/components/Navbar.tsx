@@ -137,15 +137,47 @@ function mapCustomerToNavbarUser(user: Customer | null): User | null {
   };
 }
 
+function AuthStateTransition({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <Box
+      className={className}
+      sx={{
+        animation: "rentflowAuthStateIn .22s cubic-bezier(0.22, 1, 0.36, 1)",
+        "@keyframes rentflowAuthStateIn": {
+          from: {
+            opacity: 0.55,
+            transform: "translateY(2px)",
+          },
+          to: {
+            opacity: 1,
+            transform: "translateY(0)",
+          },
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          animation: "none",
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
 function DesktopGuestButtonsSkeleton() {
   return (
-    <>
+    <AuthStateTransition className="flex w-full items-center justify-end gap-2">
       <Box
         sx={desktopLoginButtonSx}
         className="relative inline-flex items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white"
       >
         <span className="invisible whitespace-nowrap">เข้าสู่ระบบ</span>
-        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/4" />
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/4 [animation-duration:1.8s]" />
       </Box>
       <Box
         sx={desktopRegisterButtonSx}
@@ -154,55 +186,55 @@ function DesktopGuestButtonsSkeleton() {
         <span className="invisible whitespace-nowrap font-semibold">
           สมัครสมาชิก
         </span>
-        <Box className="absolute inset-0 animate-pulse rounded-full bg-white/14" />
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-white/14 [animation-duration:1.8s]" />
       </Box>
-    </>
+    </AuthStateTransition>
   );
 }
 
 function DesktopProfileSkeleton() {
   return (
-    <Box className="h-10! w-full max-w-[220px] rounded-full! px-0! py-0!">
+    <AuthStateTransition className="h-10! w-full max-w-[220px] rounded-full! px-0! py-0!">
       <Box className="flex h-full w-full items-center justify-end gap-2.5">
-        <Box className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-black/8" />
+        <Box className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-black/8 [animation-duration:1.8s]" />
         <Box className="min-w-0 flex-1 text-left">
-          <Box className="h-3.5 w-[108px] animate-pulse rounded-full bg-black/8" />
-          <Box className="mt-1.5 h-2.5 w-[72px] animate-pulse rounded-full bg-black/5.5" />
+          <Box className="h-3.5 w-[108px] animate-pulse rounded-full bg-black/8 [animation-duration:1.8s]" />
+          <Box className="mt-1.5 h-2.5 w-[72px] animate-pulse rounded-full bg-black/5.5 [animation-duration:1.8s]" />
         </Box>
       </Box>
-    </Box>
+    </AuthStateTransition>
   );
 }
 
 function MobileGuestButtonsSkeleton() {
   return (
-    <>
+    <AuthStateTransition className="flex flex-col gap-3">
       <Box className="relative inline-flex min-h-11 w-full items-center justify-center overflow-hidden rounded-full border border-black/8 bg-white px-4 py-2.5">
         <span className="invisible whitespace-nowrap">เข้าสู่ระบบ</span>
-        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/4" />
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/4 [animation-duration:1.8s]" />
       </Box>
       <Box className="relative inline-flex min-h-11 w-full items-center justify-center overflow-hidden rounded-full bg-(--rf-apple-blue) px-4 py-2.5">
         <span className="invisible whitespace-nowrap font-semibold">
           สมัครสมาชิก
         </span>
-        <Box className="absolute inset-0 animate-pulse rounded-full bg-white/14" />
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-white/14 [animation-duration:1.8s]" />
       </Box>
-    </>
+    </AuthStateTransition>
   );
 }
 
 function MobileProfileSkeleton() {
   return (
-    <Box className="rounded-3xl border border-black/10 bg-white px-4 py-3">
+    <AuthStateTransition className="rounded-3xl border border-black/10 bg-white px-4 py-3">
       <Box className="flex items-center gap-3">
-        <Box className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-black/8" />
+        <Box className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-black/8 [animation-duration:1.8s]" />
         <Box className="min-w-0 flex-1">
-          <Box className="h-[15px] w-[124px] animate-pulse rounded-full bg-black/8" />
-          <Box className="mt-2 h-3 w-[164px] max-w-full animate-pulse rounded-full bg-black/5.5" />
+          <Box className="h-[15px] w-[124px] animate-pulse rounded-full bg-black/8 [animation-duration:1.8s]" />
+          <Box className="mt-2 h-3 w-[164px] max-w-full animate-pulse rounded-full bg-black/5.5 [animation-duration:1.8s]" />
         </Box>
       </Box>
-      <Box className="mt-3 h-9 w-full animate-pulse rounded-full bg-black/5.5" />
-    </Box>
+      <Box className="mt-3 h-9 w-full animate-pulse rounded-full bg-black/5.5 [animation-duration:1.8s]" />
+    </AuthStateTransition>
   );
 }
 
@@ -306,6 +338,7 @@ export default function Navbar({
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(initialTenantProfile);
   const verifyingSessionRef = React.useRef(false);
+  const hasVerifiedSessionRef = React.useRef(false);
 
   const { siteMode } = useRentFlowCarSiteModeStatus(initialHost);
   const brandName = tenantProfile?.shopName || "RentFlowCar";
@@ -351,8 +384,9 @@ export default function Navbar({
     setAuthResolved(resolved);
   }, []);
 
-  const verifySession = React.useCallback(async () => {
+  const verifySession = React.useCallback(async (force = false) => {
     if (verifyingSessionRef.current) return;
+    if (hasVerifiedSessionRef.current && !force) return;
 
     const cachedUser = getCachedSessionUser();
     if (!cachedUser) {
@@ -360,6 +394,7 @@ export default function Navbar({
       setAuthSkeletonVariant("guest");
       setAuthResolved(true);
       setAuthShellReady(true);
+      hasVerifiedSessionRef.current = true;
       return;
     }
 
@@ -379,6 +414,7 @@ export default function Navbar({
       setAuthSkeletonVariant("guest");
     } finally {
       verifyingSessionRef.current = false;
+      hasVerifiedSessionRef.current = true;
       setAuthResolved(true);
     }
   }, []);
@@ -390,7 +426,7 @@ export default function Navbar({
 
   React.useEffect(() => {
     const handleSessionChanged = () => {
-      void verifySession();
+      void verifySession(true);
     };
 
     window.addEventListener(AUTH_SESSION_CHANGED_EVENT, handleSessionChanged);
@@ -410,7 +446,7 @@ export default function Navbar({
 
   React.useEffect(() => {
     void verifySession();
-  }, [pathname, verifySession]);
+  }, [verifySession]);
 
   React.useEffect(() => {
     closeDrawer();
@@ -537,6 +573,25 @@ export default function Navbar({
                 justifyContent: "flex-end",
                 maxWidth: 220,
                 width: "100%",
+              },
+              "& > *": {
+                animation:
+                  "rentflowAuthStateIn .22s cubic-bezier(0.22, 1, 0.36, 1)",
+              },
+              "@keyframes rentflowAuthStateIn": {
+                from: {
+                  opacity: 0.55,
+                  transform: "translateY(2px)",
+                },
+                to: {
+                  opacity: 1,
+                  transform: "translateY(0)",
+                },
+              },
+              "@media (prefers-reduced-motion: reduce)": {
+                "& > *": {
+                  animation: "none",
+                },
               },
             }}
           >
@@ -720,7 +775,30 @@ export default function Navbar({
             })}
           </List>
 
-          <Box className="flex flex-col gap-3 border-t border-black/10 p-4 md:px-5 md:pb-6">
+          <Box
+            className="flex flex-col gap-3 border-t border-black/10 p-4 md:px-5 md:pb-6"
+            sx={{
+              "& > *": {
+                animation:
+                  "rentflowAuthStateIn .22s cubic-bezier(0.22, 1, 0.36, 1)",
+              },
+              "@keyframes rentflowAuthStateIn": {
+                from: {
+                  opacity: 0.55,
+                  transform: "translateY(2px)",
+                },
+                to: {
+                  opacity: 1,
+                  transform: "translateY(0)",
+                },
+              },
+              "@media (prefers-reduced-motion: reduce)": {
+                "& > *": {
+                  animation: "none",
+                },
+              },
+            }}
+          >
             {!authShellReady ? (
               <Box className="h-[91px] w-full opacity-0" />
             ) : !authResolved ? (

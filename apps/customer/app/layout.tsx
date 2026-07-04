@@ -5,6 +5,7 @@ import "./globals.css";
 import Providers from "./providers";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
+import PendingBookingReminder from "@/src/components/booking/PendingBookingReminder";
 import CookieBanner from "@/src/components/common/CookieBanner";
 import FloatingAiChat from "@/src/components/ai/FloatingAiChat";
 import {
@@ -63,6 +64,10 @@ export default async function RootLayout({
           <Navbar
             initialHost={host}
             initialTenantProfile={initialTenantProfile}
+          />
+          <PendingBookingReminder
+            tenantSlug={initialTenantProfile?.domainSlug}
+            waitForTenant={Boolean(initialTenantProfile)}
           />
           {children}
           <Footer

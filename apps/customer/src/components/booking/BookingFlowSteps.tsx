@@ -46,7 +46,7 @@ function buildTrackColumns({
 
 export default function BookingFlowSteps({
   currentStep,
-  mode = "chat",
+  mode = "payment",
   className = "",
 }: {
   currentStep: BookingFlowStepKey;
@@ -135,6 +135,12 @@ export default function BookingFlowSteps({
             }}
           >
             {steps.map((step, index) => {
+              const stepLabel =
+                mode === "chat" &&
+                currentStep === "success" &&
+                step.key === "booking"
+                  ? "ส่งคำขอจองแล้ว"
+                  : step.label;
               const isCompleted =
                 index < currentIndex ||
                 (currentStep === "success" && index === currentIndex);
@@ -220,7 +226,7 @@ export default function BookingFlowSteps({
                       lineHeight: 1.2,
                     }}
                   >
-                    {step.label}
+                    {stepLabel}
                   </Typography>
                 </Box>
               );

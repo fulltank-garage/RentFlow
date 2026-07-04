@@ -7,6 +7,11 @@ export type TenantProfile = {
   promoImageUrl?: string;
   promoImageUrls?: string[];
   contactPhone?: string;
+  promptPayId?: string;
+  promptPayType?: "phone" | "national_id" | "tax_id" | "e_wallet" | string;
+  bankName?: string;
+  bankAccountName?: string;
+  bankAccountNumber?: string;
   facebookPageUrl?: string;
   lineOaQrCodeUrl?: string;
   status?: string;

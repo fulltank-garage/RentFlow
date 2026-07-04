@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { formatBookingDate } from "@/src/lib/booking-datetime";
 
 type Props = {
   fieldSX: object;
@@ -293,9 +294,9 @@ export default function BookingDateTime({
 
   const rangeLabel =
     pickupDate && returnDate
-      ? `${pickupDate} ถึง ${returnDate}`
+      ? `${formatBookingDate(pickupDate)} ถึง ${formatBookingDate(returnDate)}`
       : pickupDate
-        ? `รับรถ ${pickupDate} แล้วเลือกวันคืนรถ`
+        ? `รับรถ ${formatBookingDate(pickupDate)} แล้วเลือกวันคืนรถ`
         : "เลือกวันรับรถก่อน แล้วเลือกวันคืนรถ";
 
   return (

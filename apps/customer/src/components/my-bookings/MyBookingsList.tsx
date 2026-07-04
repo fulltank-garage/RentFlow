@@ -102,14 +102,14 @@ export default function MyBookingsList({ data }: Props) {
                 ดูรายละเอียดการจองของคุณ
               </Button>
 
-              {b.resumeHref ? (
+              {b.paymentHref || b.resumeHref ? (
                 <Button
                   component={Link}
-                  href={b.resumeHref}
+                  href={b.paymentHref || b.resumeHref || "/my-bookings"}
                   variant="contained"
                   className="w-full! rounded-full! font-semibold!"
                 >
-                  กลับไปที่การจอง
+                  {b.paymentHref ? "ชำระเงินต่อ" : "กลับไปทำรายการต่อ"}
                 </Button>
               ) : null}
             </Box>

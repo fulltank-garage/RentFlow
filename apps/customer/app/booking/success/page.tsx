@@ -17,11 +17,10 @@ function readParam(
 }
 
 async function BookingSuccessPageContent({
-  searchParams,
+  params,
 }: {
-  searchParams: SearchParams;
+  params: Record<string, string | string[] | undefined>;
 }) {
-  const params = await searchParams;
   const bookingId = readParam(params.bookingId, "BK-XXXX");
   const tenantSlug = readParam(params.tenant, "");
   const amount = Number(readParam(params.amount, "0")) || 0;
@@ -33,7 +32,7 @@ async function BookingSuccessPageContent({
   const pickupPoint = readParam(params.pickupPoint, "");
   const returnPoint = readParam(params.returnPoint, "");
   const shopName = readParam(params.shopName, "");
-  const bookingMode = readParam(params.bookingMode, "chat");
+  const bookingMode = readParam(params.bookingMode, "payment");
 
   return (
     <BookingSuccessPage
@@ -53,14 +52,18 @@ async function BookingSuccessPageContent({
   );
 }
 
-export default function Page({
+export default async function Page({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
+  const params = await searchParams;
+  const bookingMode = readParam(params.bookingMode, "payment");
+  const skeletonMode = bookingMode === "payment" ? "payment" : "chat";
+
   return (
-    <Suspense fallback={<BookingSuccessPageSkeleton />}>
-      <BookingSuccessPageContent searchParams={searchParams} />
+    <Suspense fallback={<BookingSuccessPageSkeleton mode={skeletonMode} />}>
+      <BookingSuccessPageContent params={params} />
     </Suspense>
   );
 }

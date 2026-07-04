@@ -7,6 +7,7 @@ import { Box } from "@mui/material";
 type StableImageProps = {
   src: string;
   alt: string;
+  fallbackSrc?: string;
   priority?: boolean;
   sizes?: string;
   className?: string;
@@ -26,6 +27,7 @@ function isRentFlowCarApiImage(src: string) {
 export default function StableImage({
   src,
   alt,
+  fallbackSrc = "/RentFlowCar.png",
   priority = false,
   sizes = "100vw",
   className = "",
@@ -33,10 +35,12 @@ export default function StableImage({
   onLoadedChange,
 }: StableImageProps) {
   const [loaded, setLoaded] = React.useState(false);
+  const [currentSrc, setCurrentSrc] = React.useState(src || fallbackSrc);
 
   React.useEffect(() => {
     setLoaded(false);
-  }, [src]);
+    setCurrentSrc(src || fallbackSrc);
+  }, [fallbackSrc, src]);
 
   React.useEffect(() => {
     onLoadedChange?.(loaded);
@@ -52,15 +56,23 @@ export default function StableImage({
       />
 
       <Image
-        src={src}
+        src={currentSrc}
         alt={alt}
         fill
         priority={priority}
         loading={priority ? "eager" : "lazy"}
-        unoptimized={isRentFlowCarApiImage(src)}
+        unoptimized={isRentFlowCarApiImage(currentSrc)}
         sizes={sizes}
         className={`transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"} ${imageClassName}`}
         onLoad={() => setLoaded(true)}
+        onError={() => {
+          if (currentSrc !== fallbackSrc) {
+            setLoaded(false);
+            setCurrentSrc(fallbackSrc);
+            return;
+          }
+          setLoaded(true);
+        }}
       />
     </Box>
   );

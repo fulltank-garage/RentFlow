@@ -507,7 +507,7 @@ function FormSkeleton() {
           <ChatSuggestSkeleton />
 
           <Box className="mt-6 space-y-4">
-            <Box className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Box className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
               <Skeleton
                 variant="rounded"
                 animation="wave"

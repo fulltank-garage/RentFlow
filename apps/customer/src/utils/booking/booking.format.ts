@@ -1,4 +1,5 @@
 import { formatTHB } from "@/src/constants/money";
+import { formatBookingDateTimeParts } from "@/src/lib/booking-datetime";
 
 type BuildChatMessageParams = {
   bookingCode?: string;
@@ -29,12 +30,14 @@ export function buildChatMessage(params: BuildChatMessageParams) {
     params.bookingCode ? `รหัสการจอง: ${params.bookingCode}` : null,
     params.shopName ? `ร้าน: ${params.shopName}` : null,
     `รถ: ${params.carName || "-"} (${params.carId || "-"})`,
-    `รับรถ: ${params.finalPickupPoint || "-"} ${params.pickupDate || "-"} ${
-      params.pickupTime || ""
-    }`.trim(),
-    `คืนรถ: ${params.finalReturnPoint || "-"} ${params.returnDate || "-"} ${
-      params.returnTime || ""
-    }`.trim(),
+    `รับรถ: ${params.finalPickupPoint || "-"} ${formatBookingDateTimeParts(
+      params.pickupDate,
+      params.pickupTime
+    )}`.trim(),
+    `คืนรถ: ${params.finalReturnPoint || "-"} ${formatBookingDateTimeParts(
+      params.returnDate,
+      params.returnTime
+    )}`.trim(),
     `จำนวนวัน: ${params.days || 0} วัน`,
     `บริการเสริม: ${addonsText}`,
     typeof params.subtotal === "number" ? `ยอดก่อนส่วนลด: ${formatTHB(params.subtotal)}` : null,

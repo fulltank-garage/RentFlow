@@ -1,5 +1,7 @@
 import api from "@/src/lib/axios";
 import { resolveRentFlowCarAssetUrl } from "@/src/lib/runtime-api-url";
+import { getRentFlowCarTenantHeaders } from "@/src/lib/tenant";
+import type { RentFlowCarRequestOptions } from "../types/types";
 import type { ApiResponse } from "../types/types";
 import type { TenantProfile } from "./tenant.types";
 
@@ -20,8 +22,13 @@ function normalizeTenantProfile(tenant: TenantProfile): TenantProfile {
 }
 
 export const tenantApi = {
-  async resolveTenant() {
-    const res = await api.get<ApiResponse<TenantProfile>>("/tenants/resolve");
+  async resolveTenant(options?: RentFlowCarRequestOptions) {
+    const res = await api.get<ApiResponse<TenantProfile>>("/tenants/resolve", {
+      headers:
+        options?.tenantSlug !== undefined
+          ? getRentFlowCarTenantHeaders({ tenantSlug: options.tenantSlug })
+          : undefined,
+    });
     return {
       ...res.data,
       data: normalizeTenantProfile(res.data.data),
