@@ -2,395 +2,192 @@
 
 import { Box, Container, Divider, Skeleton } from "@mui/material";
 
-function HeaderSkeleton() {
-  return (
-    <Box className="mx-auto max-w-3xl text-center">
-      <Box className="flex flex-col items-center gap-4">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: { xs: 260, md: 420 },
-            maxWidth: "100%",
-            height: { xs: 56, md: 78 },
-            borderRadius: "16px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: { xs: "100%", sm: 420 },
-            maxWidth: "100%",
-            height: 26,
-            borderRadius: "12px",
-            transform: "none",
-          }}
-        />
-      </Box>
-    </Box>
-  );
-}
-
-function TopCardSkeleton() {
-  return (
-    <Box className="apple-card apple-card-no-hover mt-10 p-5! md:p-6!">
-      <Box className="flex flex-col gap-5">
-        <Box className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <Box className="min-w-0 flex-1 space-y-3">
-            <Box className="space-y-2">
-              <Skeleton
-                variant="text"
-                animation="wave"
-                sx={{
-                  width: 84,
-                  height: 16,
-                  borderRadius: "8px",
-                  transform: "none",
-                }}
-              />
-              <Skeleton
-                variant="text"
-                animation="wave"
-                sx={{
-                  width: "52%",
-                  height: 34,
-                  borderRadius: "10px",
-                  transform: "none",
-                }}
-              />
-              <Skeleton
-                variant="text"
-                animation="wave"
-                sx={{
-                  width: "42%",
-                  height: 18,
-                  borderRadius: "8px",
-                  transform: "none",
-                }}
-              />
-            </Box>
-
-            <Box className="flex flex-wrap items-start gap-2">
-              <Skeleton
-                variant="rounded"
-                animation="wave"
-                sx={{ width: 132, height: 44, borderRadius: "999px" }}
-              />
-              <Box className="grid gap-1">
-                <Skeleton
-                  variant="text"
-                  animation="wave"
-                  sx={{
-                    width: 220,
-                    height: 18,
-                    borderRadius: "8px",
-                    transform: "none",
-                  }}
-                />
-                <Skeleton
-                  variant="text"
-                  animation="wave"
-                  sx={{
-                    width: 214,
-                    height: 18,
-                    borderRadius: "8px",
-                    transform: "none",
-                  }}
-                />
-              </Box>
-            </Box>
-          </Box>
-
-          <Box className="flex flex-wrap items-center gap-2">
-            <Skeleton
-              variant="rounded"
-              animation="wave"
-              sx={{ width: 92, height: 36, borderRadius: "999px" }}
-            />
-            <Skeleton
-              variant="rounded"
-              animation="wave"
-              sx={{ width: 118, height: 36, borderRadius: "999px" }}
-            />
-            <Skeleton
-              variant="rounded"
-              animation="wave"
-              sx={{ width: 124, height: 36, borderRadius: "999px" }}
-            />
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-  );
-}
-
-function SectionCardSkeleton({
-  rows = 2,
-  columns = 2,
+function TextSkeleton({
+  width,
+  height = 18,
 }: {
-  rows?: number;
-  columns?: 2 | 3;
+  width: number | string | Record<string, number | string>;
+  height?: number;
 }) {
   return (
-    <Box className="apple-card apple-card-no-hover p-5">
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          width: 110,
-          height: 20,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          mt: 1,
-          width: 220,
-          maxWidth: "100%",
-          height: 18,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
-      <Divider className="my-4! border-black/10!" />
+    <Skeleton
+      variant="text"
+      animation="wave"
+      sx={{
+        width,
+        height,
+        borderRadius: "10px",
+        transform: "none",
+      }}
+    />
+  );
+}
 
-      <Box
-        className={`grid grid-cols-1 gap-4 ${
-          columns === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"
-        }`}
-      >
-        {Array.from({ length: rows }).map((_, index) => (
-          <Box
-            key={`detail-section-row-${columns}-${index}`}
-            className="space-y-2.5 rounded-[22px] bg-(--rf-apple-surface-soft) p-4"
-          >
-            <Skeleton
-              variant="text"
-              animation="wave"
-              sx={{
-                width: 76,
-                height: 16,
-                borderRadius: "8px",
-                transform: "none",
-              }}
-            />
-            <Skeleton
-              variant="text"
-              animation="wave"
-              sx={{
-                width: "76%",
-                height: 18,
-                borderRadius: "8px",
-                transform: "none",
-              }}
-            />
-            <Skeleton
-              variant="text"
-              animation="wave"
-              sx={{
-                width: "58%",
-                height: 16,
-                borderRadius: "8px",
-                transform: "none",
-              }}
-            />
-          </Box>
-        ))}
+function PillSkeleton({ width = 120 }: { width?: number }) {
+  return (
+    <Skeleton
+      variant="rounded"
+      animation="wave"
+      sx={{ width, height: 36, borderRadius: "999px" }}
+    />
+  );
+}
+
+function ActionButtonSkeleton({
+  variant = "outlined",
+}: {
+  variant?: "contained" | "outlined";
+}) {
+  return (
+    <Skeleton
+      variant="rounded"
+      animation="wave"
+      sx={{
+        width: "100%",
+        height: 44,
+        borderRadius: "999px",
+        bgcolor:
+          variant === "contained"
+            ? "var(--rf-apple-ink)"
+            : "rgba(15, 23, 42, 0.08)",
+      }}
+    />
+  );
+}
+
+function InfoTileSkeleton() {
+  return (
+    <Box className="rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
+      <TextSkeleton width={86} height={16} />
+      <TextSkeleton width="78%" height={20} />
+      <TextSkeleton width="58%" height={16} />
+    </Box>
+  );
+}
+
+function PageHeaderSkeleton() {
+  return (
+    <Box className="apple-section-intro mx-auto max-w-3xl text-center">
+      <Box className="flex flex-col items-center gap-4">
+        <TextSkeleton width={{ xs: 260, md: 420 }} height={72} />
+        <TextSkeleton width={{ xs: "92%", sm: 560 }} height={26} />
       </Box>
     </Box>
   );
 }
 
-function TermsSkeleton() {
+function BookingOverviewSkeleton() {
   return (
-    <Box className="apple-card apple-card-no-hover p-5">
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          width: 95,
-          height: 20,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
-      <Divider className="my-4! border-black/10!" />
-
-      <Box className="space-y-2">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: "84%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: "80%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: "72%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-      </Box>
-    </Box>
-  );
-}
-
-function PriceCardSkeleton() {
-  return (
-    <Box className="apple-card apple-card-no-hover p-5">
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          width: 80,
-          height: 20,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
-      <Divider className="my-4! border-black/10!" />
-
-      <Box className="space-y-3">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <Box
-            key={`detail-price-row-${index}`}
-            className="flex items-center justify-between"
-          >
-            <Skeleton
-              variant="text"
-              animation="wave"
-              sx={{
-                width: 70,
-                height: 18,
-                borderRadius: "8px",
-                transform: "none",
-              }}
-            />
-            <Skeleton
-              variant="text"
-              animation="wave"
-              sx={{
-                width: 84,
-                height: 18,
-                borderRadius: "8px",
-                transform: "none",
-              }}
-            />
+    <Box className="apple-card apple-card-no-hover overflow-hidden p-0">
+      <Box className="bg-(--rf-apple-surface-soft) p-5 md:p-6">
+        <Box className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <Box className="min-w-0 flex-1">
+            <TextSkeleton width={130} height={20} />
+            <TextSkeleton width={{ xs: "78%", sm: 300 }} height={34} />
           </Box>
-        ))}
-
-        <Divider className="my-3! border-black/10!" />
-
-        <Box className="flex items-center justify-between">
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: 60,
-              height: 18,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: 100,
-              height: 22,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
+          <Box className="shrink-0">
+            <PillSkeleton width={112} />
+          </Box>
         </Box>
       </Box>
 
-      <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: "94%",
-            height: 16,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-      </Box>
+      <Box className="p-5 md:p-6">
+        <Box className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <InfoTileSkeleton />
+          <InfoTileSkeleton />
+        </Box>
 
-      <Skeleton
-        variant="rounded"
-        animation="wave"
-        sx={{ mt: 2, width: "100%", height: 36, borderRadius: "999px" }}
-      />
+        <Divider className="my-5! border-black/10!" />
+
+        <Box className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <InfoTileSkeleton />
+          <InfoTileSkeleton />
+        </Box>
+      </Box>
     </Box>
   );
 }
 
-function HelpCardSkeleton() {
+function CustomerCardSkeleton() {
   return (
-    <Box className="apple-card apple-card-no-hover p-5">
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          width: 88,
-          height: 20,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
-      <Divider className="my-4! border-black/10!" />
-      <Box className="space-y-2.5">
+    <Box className="apple-card apple-card-no-hover p-5 md:p-6">
+      <TextSkeleton width={130} height={24} />
+      <Box className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <InfoTileSkeleton />
+        <InfoTileSkeleton />
+      </Box>
+    </Box>
+  );
+}
+
+function PaymentCardSkeleton() {
+  return (
+    <Box className="apple-card apple-card-no-hover overflow-hidden p-0">
+      <Box className="bg-(--rf-brand-dark) p-5 md:p-6">
         <Skeleton
           variant="text"
           animation="wave"
           sx={{
-            width: "100%",
-            height: 18,
-            borderRadius: "8px",
+            width: 132,
+            height: 16,
+            borderRadius: "10px",
             transform: "none",
+            bgcolor: "rgba(255,255,255,0.22)",
           }}
         />
         <Skeleton
           variant="text"
           animation="wave"
           sx={{
-            width: "76%",
-            height: 18,
-            borderRadius: "8px",
+            mt: 0.5,
+            width: 190,
+            height: 42,
+            borderRadius: "14px",
             transform: "none",
+            bgcolor: "rgba(255,255,255,0.24)",
           }}
         />
       </Box>
 
-      <Skeleton
-        variant="rounded"
-        animation="wave"
-        sx={{ mt: 3, width: "100%", height: 36, borderRadius: "999px" }}
-      />
+      <Box className="p-5 md:p-6">
+        <TextSkeleton width={120} height={24} />
+        <Box className="mt-4 rounded-[22px] bg-(--rf-apple-surface-soft) p-4">
+          <Box className="space-y-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Box
+                key={`payment-row-skeleton-${index}`}
+                className="flex items-center justify-between gap-3"
+              >
+                <TextSkeleton width={86} height={18} />
+                <TextSkeleton width={92} height={18} />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+
+        <Box className="mt-4 grid gap-2">
+          <ActionButtonSkeleton variant="contained" />
+          <ActionButtonSkeleton />
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+function PrepCardSkeleton() {
+  return (
+    <Box className="apple-card apple-card-no-hover p-5 md:p-6">
+      <TextSkeleton width={140} height={24} />
+      <Box className="mt-4 grid gap-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Box
+            key={`prep-row-skeleton-${index}`}
+            className="rounded-[18px] bg-(--rf-apple-surface-soft) px-4 py-3"
+          >
+            <TextSkeleton width={index === 2 ? "82%" : "94%"} height={18} />
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }
@@ -399,19 +196,17 @@ export default function MyBookingDetailPageSkeleton() {
   return (
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
-        <HeaderSkeleton />
-        <TopCardSkeleton />
+        <PageHeaderSkeleton />
 
-        <Box className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
-          <Box className="space-y-5 md:col-span-2">
-            <SectionCardSkeleton rows={2} columns={2} />
-            <SectionCardSkeleton rows={3} columns={3} />
-            <TermsSkeleton />
+        <Box className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+          <Box className="space-y-5">
+            <BookingOverviewSkeleton />
+            <CustomerCardSkeleton />
           </Box>
 
-          <Box className="space-y-5">
-            <PriceCardSkeleton />
-            <HelpCardSkeleton />
+          <Box className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+            <PaymentCardSkeleton />
+            <PrepCardSkeleton />
           </Box>
         </Box>
       </Container>

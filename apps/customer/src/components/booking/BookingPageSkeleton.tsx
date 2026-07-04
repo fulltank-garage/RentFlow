@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams } from "next/navigation";
 import {
   Box,
   Card,
@@ -14,10 +13,10 @@ import BookingFlowStepsSkeleton from "@/src/components/booking/BookingFlowStepsS
 
 type BookingSkeletonMode = "payment" | "chat";
 
-function HeaderSkeleton({ mode }: { mode: BookingSkeletonMode }) {
+function HeaderSkeleton({ mode }: { mode?: BookingSkeletonMode | null }) {
   return (
     <>
-      <BookingFlowStepsSkeleton mode={mode} className="mb-8" />
+      {mode ? <BookingFlowStepsSkeleton mode={mode} className="mb-8" /> : null}
 
       <Box className="mx-auto max-w-3xl text-center">
         <Skeleton
@@ -540,16 +539,12 @@ function FormSkeleton() {
 export default function BookingPageSkeleton({
   mode,
 }: {
-  mode?: BookingSkeletonMode;
+  mode?: BookingSkeletonMode | null;
 }) {
-  const params = useSearchParams();
-  const skeletonMode: BookingSkeletonMode =
-    mode || (params.get("bookingMode") === "payment" ? "payment" : "chat");
-
   return (
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
-        <HeaderSkeleton mode={skeletonMode} />
+        <HeaderSkeleton mode={mode} />
 
         <Box className="mt-10 grid gap-5 lg:grid-cols-12 lg:items-start lg:gap-6">
           <MobileCarCardSkeleton />

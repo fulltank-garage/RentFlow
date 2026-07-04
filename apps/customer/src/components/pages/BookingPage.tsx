@@ -22,11 +22,7 @@ export default function BookingPage() {
   const bookingFormId = "booking-request-form";
 
   if (!booking.ready) {
-    return (
-      <BookingPageSkeleton
-        mode={booking.forceChatBooking ? "chat" : "payment"}
-      />
-    );
+    return <BookingPageSkeleton mode={booking.bookingMode} />;
   }
 
   return (

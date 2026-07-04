@@ -208,6 +208,7 @@ function RecommendationItem({
             fill
             unoptimized
             sizes="360px"
+            loading="eager"
             className="object-cover"
           />
         ) : (

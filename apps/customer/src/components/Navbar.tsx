@@ -9,7 +9,6 @@ import {
   Container,
   Typography,
   Button,
-  Drawer,
   List,
   ListItemButton,
   ListItemText,
@@ -259,10 +258,46 @@ export default function Navbar({
   const pathname = usePathname();
 
   const [open, setOpen] = React.useState(false);
-  const closeDrawer = React.useCallback(() => setOpen(false), []);
-  const toggleDrawer = React.useCallback(() => {
-    setOpen((current) => !current);
+  const menuButtonRef = React.useRef<HTMLButtonElement | null>(null);
+  const blurActiveElement = React.useCallback(() => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement) {
+      activeElement.blur();
+    }
   }, []);
+  const closeDrawer = React.useCallback(() => {
+    blurActiveElement();
+    setOpen(false);
+  }, [blurActiveElement]);
+  const toggleDrawer = React.useCallback(() => {
+    blurActiveElement();
+    setOpen((current) => !current);
+  }, [blurActiveElement]);
+  React.useLayoutEffect(() => {
+    if (!open) return;
+
+    const preventPageScroll = (event: WheelEvent | TouchEvent) => {
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        target.closest("#customer-mobile-menu")
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+    };
+
+    window.addEventListener("wheel", preventPageScroll, { passive: false });
+    window.addEventListener("touchmove", preventPageScroll, {
+      passive: false,
+    });
+
+    return () => {
+      window.removeEventListener("wheel", preventPageScroll);
+      window.removeEventListener("touchmove", preventPageScroll);
+    };
+  }, [open]);
   const [user, setUser] = React.useState<User | null>(null);
   const [authResolved, setAuthResolved] = React.useState(false);
   const [authSkeletonVariant, setAuthSkeletonVariant] =
@@ -586,8 +621,11 @@ export default function Navbar({
           </Box>
 
           <Button
+            ref={menuButtonRef}
             onClick={toggleDrawer}
             aria-label={open ? "ปิดเมนู" : "เปิดเมนู"}
+            aria-controls="customer-mobile-menu"
+            aria-expanded={open}
             disableElevation
             className="h-11! w-11! min-w-0! rounded-[14px]! p-0!"
             sx={{
@@ -608,41 +646,43 @@ export default function Navbar({
         </Toolbar>
       </Container>
 
-      <Drawer
-        anchor="top"
-        open={open}
-        onClose={closeDrawer}
-        transitionDuration={{ enter: 420, exit: 320 }}
-        ModalProps={{
-          keepMounted: true,
-          disableAutoFocus: true,
-          disableEnforceFocus: true,
-          disableRestoreFocus: true,
-          disableScrollLock: true,
-        }}
-        sx={{
-          zIndex: (theme) => theme.zIndex.modal + 10,
-          "@media (min-width: 801px)": {
-            display: "none",
-          },
-        }}
-        PaperProps={{
-          sx: {
-            width: "100vw",
-            maxWidth: "100vw",
+      {open ? (
+        <Box
+          id="customer-mobile-menu"
+          sx={{
+            position: "fixed",
+            left: 0,
+            right: 0,
             top: "52px",
+            zIndex: (theme) => theme.zIndex.modal + 10,
             height: "calc(100dvh - 52px)",
             maxHeight: "calc(100dvh - 52px)",
             overflow: "hidden",
             backgroundColor: "var(--rf-apple-surface-soft)",
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-          },
-        }}
-      >
-        <Box className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-(--rf-apple-surface-soft) text-(--rf-apple-ink)">
+            animation:
+              "rentflowMobileMenuIn .32s cubic-bezier(0.22, 1, 0.36, 1)",
+            "@keyframes rentflowMobileMenuIn": {
+              from: {
+                opacity: 0,
+                transform: "translateY(-10px)",
+              },
+              to: {
+                opacity: 1,
+                transform: "translateY(0)",
+              },
+            },
+            "@media (min-width: 801px)": {
+              display: "none",
+            },
+          }}
+        >
+        <Box
+          className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-(--rf-apple-surface-soft) text-(--rf-apple-ink)"
+          sx={{ overscrollBehavior: "contain" }}
+        >
           <List
             className="flex-1 overflow-y-auto px-4! py-4! md:px-5! md:py-5!"
+            sx={{ overscrollBehavior: "contain" }}
           >
             {navItems.map((n) => {
               const active = isActive(n.href);
@@ -756,7 +796,8 @@ export default function Navbar({
             )}
           </Box>
         </Box>
-      </Drawer>
+        </Box>
+      ) : null}
     </AppBar>
   );
 }

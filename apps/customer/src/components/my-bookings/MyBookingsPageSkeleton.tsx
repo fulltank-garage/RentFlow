@@ -61,64 +61,93 @@ function FiltersSkeleton() {
 
 function BookingItemSkeleton() {
   return (
-    <Box className="apple-card apple-card-no-hover p-4">
-      <Box className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <Box className="min-w-0 flex-1 space-y-2.5">
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: "72%",
-              height: 22,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: "46%",
-              height: 16,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: "44%",
-              height: 16,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
+    <Box className="apple-card apple-card-no-hover p-4 sm:p-5">
+      <Box className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <Box className="min-w-0 flex-1">
+          <Box className="min-w-0 lg:flex lg:items-baseline lg:gap-2">
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: 124,
+                height: 24,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                mt: { xs: 0.25, lg: 0 },
+                width: { xs: "72%", sm: "64%", md: "72%", lg: 245 },
+                height: 28,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+          </Box>
+
+          <Box className="mt-2 flex flex-col gap-2">
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: { xs: "72%", sm: "58%", md: "72%", lg: 220 },
+                height: 20,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: { xs: "88%", sm: "64%", md: "88%", lg: 245 },
+                height: 18,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: { xs: "88%", sm: "64%", md: "88%", lg: 245 },
+                height: 18,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+          </Box>
         </Box>
 
-        <Box className="flex flex-col gap-2 md:items-end">
-          <Box className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4! md:justify-end md:gap-2">
+        <Box className="flex w-full flex-col gap-2 lg:w-auto lg:items-stretch">
+          <Box className="flex w-full flex-col items-stretch gap-2 lg:flex-row lg:flex-nowrap lg:justify-end">
             <Skeleton
               variant="rounded"
               animation="wave"
-              sx={{ width: 168, height: 40, borderRadius: "999px" }}
+              sx={{
+                width: { xs: "100%", lg: 132 },
+                height: 44,
+                borderRadius: "999px",
+              }}
             />
             <Skeleton
               variant="rounded"
               animation="wave"
-              sx={{ width: 132, height: 44, borderRadius: "999px" }}
-            />
-            <Skeleton
-              variant="rounded"
-              animation="wave"
-              sx={{ width: 176, height: 44, borderRadius: "999px" }}
+              sx={{
+                width: { xs: "100%", lg: 118 },
+                height: 44,
+                borderRadius: "999px",
+              }}
             />
           </Box>
 
           <Skeleton
             variant="rounded"
             animation="wave"
-            sx={{ width: "100%", maxWidth: 184, height: 44, borderRadius: "999px" }}
+            sx={{ width: "100%", height: 44, borderRadius: "999px" }}
           />
         </Box>
       </Box>
@@ -137,7 +166,7 @@ export default function MyBookingsPageSkeleton() {
 
           <Divider className="my-5! border-black/10!" />
 
-          <Box className="space-y-4">
+          <Box className="grid gap-4 md:grid-cols-2 lg:block lg:space-y-4">
             {Array.from({ length: 5 }).map((_, index) => (
               <BookingItemSkeleton key={`my-booking-skeleton-${index}`} />
             ))}

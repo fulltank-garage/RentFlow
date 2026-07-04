@@ -7,7 +7,6 @@ import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
 import { clearCachedSessionUser } from "@/src/services/auth/auth.service";
 import { bookingApi } from "@/src/services/booking/booking.service";
-import { getCarById } from "@/src/services/cars/cars.service";
 import { usersApi } from "@/src/services/users/users.service";
 
 export type BookingStatus =
@@ -91,9 +90,6 @@ export default function useMyBookingDetailPage() {
 
         const bookingRes = await bookingApi.getBookingById(id, { tenantSlug });
         const booking = bookingRes.data;
-        const car = await getCarById(booking.carId, { tenantSlug }).catch(
-          () => null
-        );
 
         if (cancelled) return;
 
@@ -101,8 +97,8 @@ export default function useMyBookingDetailPage() {
           id: booking.bookingCode,
           bookingRef: booking.id,
           carId: booking.carId,
-          carName: booking.carName || car?.name || booking.carId,
-          shopName: booking.shopName || car?.shopName,
+          carName: booking.carName || booking.carId,
+          shopName: booking.shopName,
           pickupDate: booking.pickupDate,
           returnDate: booking.returnDate,
           totalPrice: booking.totalAmount,

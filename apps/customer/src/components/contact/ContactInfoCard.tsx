@@ -48,7 +48,7 @@ export default function ContactInfoCard({
                 label={branch.isActive ? "พร้อมให้บริการ" : "ปิดให้บริการ"}
                 className={`absolute right-4 top-4! z-1 h-6! rounded-full! px-0.5! text-[11px]! font-bold! shadow-none! [&_.MuiChip-label]:px-2! ${
                   branch.isActive
-                    ? "border-0! bg-green-500! text-(--primary-navy)!"
+                    ? "border-0! bg-green-500! text-(--white)!"
                     : "border-0! bg-rose-500! text-(--primary-navy)!"
                 }`}
               />

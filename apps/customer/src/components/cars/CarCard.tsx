@@ -19,9 +19,10 @@ import { getRentFlowCarStorefrontHref } from "@/src/lib/tenant";
 type Props = {
     car: Car;
     showShop?: boolean;
+    priority?: boolean;
 };
 
-export default function CarCard({ car, showShop = false }: Props) {
+export default function CarCard({ car, showShop = false, priority = false }: Props) {
   const tenantQuery = car.domainSlug
     ? `?tenant=${encodeURIComponent(car.domainSlug)}`
     : "";
@@ -52,7 +53,8 @@ export default function CarCard({ car, showShop = false }: Props) {
           component="img"
           src={car.imageUrl || car.image || "/RentFlowCar.png"}
           alt={car.name}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
           decoding="async"
           className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
         />

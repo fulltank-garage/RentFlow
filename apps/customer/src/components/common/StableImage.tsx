@@ -56,6 +56,7 @@ export default function StableImage({
         alt={alt}
         fill
         priority={priority}
+        loading={priority ? "eager" : "lazy"}
         unoptimized={isRentFlowCarApiImage(src)}
         sizes={sizes}
         className={`transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"} ${imageClassName}`}

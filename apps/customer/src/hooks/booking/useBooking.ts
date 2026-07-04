@@ -174,6 +174,7 @@ export default function useBooking() {
   const [addonReloadTick, setAddonReloadTick] = React.useState(0);
   const [ready, setReady] = React.useState(false);
   const [checkingAuth, setCheckingAuth] = React.useState(true);
+  const [carModeResolved, setCarModeResolved] = React.useState(false);
   const [pricing, setPricing] = React.useState<{
     discountPct: number;
     subTotal: number;
@@ -296,7 +297,11 @@ export default function useBooking() {
     if (isDateAvailable === false) return false;
     return true;
   }, [car?.isAvailable, isDateAvailable]);
-  const bookingMode = car?.bookingMode === "payment" ? "payment" : "chat";
+  const bookingMode: "payment" | "chat" | null = carModeResolved
+    ? car?.bookingMode === "payment"
+      ? "payment"
+      : "chat"
+    : null;
   const chatThresholdTHB = Math.max(car?.chatThresholdTHB ?? 0, 0);
   const forceChatBooking = bookingMode === "chat";
   const hasChatChannel = Boolean(
@@ -336,6 +341,7 @@ export default function useBooking() {
     let cancelled = false;
 
     async function loadInitialData() {
+      setCarModeResolved(false);
       const tasks = await Promise.allSettled([
         carId
           ? getCarById(carId, {
@@ -353,6 +359,7 @@ export default function useBooking() {
       if (carResult.status === "fulfilled") {
         setCar(carResult.value);
       }
+      setCarModeResolved(true);
 
       if (profileResult.status === "fulfilled") {
         const user = profileResult.value.data;
@@ -954,6 +961,7 @@ export default function useBooking() {
     setError,
     loading,
     ready: ready && !checkingAuth,
+    bookingMode,
     fieldSX,
     startDT,
     endDT,

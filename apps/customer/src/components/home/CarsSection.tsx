@@ -154,7 +154,7 @@ export default function CarsSection({
             <CarRecommendationSkeletonCard key={`home-car-skeleton-${index}`} />
           ))
         ) : cars.length ? (
-          cars.map((c) => (
+          cars.map((c, index) => (
             <Card
               key={c.id}
               elevation={0}
@@ -166,7 +166,8 @@ export default function CarsSection({
                   component="img"
                   src={c.imageUrl || c.image || "/RentFlowCar.png"}
                   alt={c.name}
-                  loading="lazy"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
                   decoding="async"
                   className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                 />

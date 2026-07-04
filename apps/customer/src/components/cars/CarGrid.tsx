@@ -112,8 +112,8 @@ export default function CarGrid({
 
     return (
         <Box className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {cars.map((car) => (
-                <CarCard key={car.id} car={car} showShop={showShop} />
+            {cars.map((car, index) => (
+                <CarCard key={car.id} car={car} showShop={showShop} priority={index === 0} />
             ))}
         </Box>
     );
