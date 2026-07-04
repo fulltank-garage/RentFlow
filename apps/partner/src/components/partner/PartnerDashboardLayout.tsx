@@ -1,15 +1,10 @@
 "use client";
 
 import * as React from "react";
-import dynamic from "next/dynamic";
 import { Box, Container } from "@mui/material";
 import PartnerSidebar from "./PartnerSidebar";
 import PartnerTopbar from "./PartnerTopbar";
 import PartnerBrowserIdentity from "./PartnerBrowserIdentity";
-
-const FloatingAiLauncher = dynamic(() => import("./FloatingAiLauncher"), {
-  ssr: false,
-});
 
 type Props = {
   children: React.ReactNode;
@@ -49,8 +44,6 @@ export default function PartnerDashboardLayout({
           {children}
         </Container>
       </Box>
-
-      <FloatingAiLauncher />
     </Box>
   );
 }

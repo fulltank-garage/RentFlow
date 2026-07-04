@@ -33,6 +33,11 @@ export type PartnerStoreProfile = {
     promoImageUrl?: string;
     promoImageUrls?: string[];
     contactPhone?: string;
+    promptPayId?: string;
+    promptPayType?: string;
+    bankName?: string;
+    bankAccountName?: string;
+    bankAccountNumber?: string;
     facebookPageUrl?: string;
     lineOaQrCodeUrl?: string;
     createdAt: string;
@@ -106,6 +111,11 @@ export function writeStoreProfile(input: {
     promoImageUrl?: string | null;
     promoImageUrls?: string[] | null;
     contactPhone?: string;
+    promptPayId?: string;
+    promptPayType?: string;
+    bankName?: string;
+    bankAccountName?: string;
+    bankAccountNumber?: string;
     facebookPageUrl?: string;
     lineOaQrCodeUrl?: string | null;
     createdAt?: string;
@@ -142,6 +152,26 @@ export function writeStoreProfile(input: {
             input.contactPhone === undefined
                 ? existing?.contactPhone
                 : input.contactPhone.trim(),
+        promptPayId:
+            input.promptPayId === undefined
+                ? existing?.promptPayId
+                : input.promptPayId.replace(/\D/g, ""),
+        promptPayType:
+            input.promptPayType === undefined
+                ? existing?.promptPayType
+                : input.promptPayType.trim(),
+        bankName:
+            input.bankName === undefined
+                ? existing?.bankName
+                : input.bankName.trim(),
+        bankAccountName:
+            input.bankAccountName === undefined
+                ? existing?.bankAccountName
+                : input.bankAccountName.trim(),
+        bankAccountNumber:
+            input.bankAccountNumber === undefined
+                ? existing?.bankAccountNumber
+                : input.bankAccountNumber.replace(/\D/g, ""),
         facebookPageUrl:
             input.facebookPageUrl === undefined
                 ? existing?.facebookPageUrl

@@ -8,8 +8,8 @@ import {
     Card,
     CardContent,
     CircularProgress,
-    Divider,
     InputAdornment,
+    MenuItem,
     Snackbar,
     Stack,
     TextField,
@@ -29,29 +29,26 @@ import { tenantService } from "@/src/services/tenant/tenant.service";
 
 export default function StoreSetupPage() {
     const maxPromoImages = 8;
-    const setupSteps = [
-        {
-            title: "ข้อมูลร้าน",
-            desc: "ชื่อร้านและโดเมนที่ลูกค้าจะเห็น",
-        },
-        {
-            title: "รูปหน้าร้าน",
-            desc: "โลโก้และรูปโปรโมชันสำหรับหน้าแรก",
-        },
-        {
-            title: "ช่องทางติดต่อ",
-            desc: "เบอร์โทร Facebook และ QR LINE OA",
-        },
-        {
-            title: "ตรวจสอบ",
-            desc: "เช็กลิงก์และพรีวิวก่อนบันทึก",
-        },
+    const bankOptions = [
+        "ธนาคารกสิกรไทย",
+        "ธนาคารไทยพาณิชย์",
+        "ธนาคารกรุงเทพ",
+        "ธนาคารกรุงไทย",
+        "ธนาคารกรุงศรีอยุธยา",
+        "ธนาคารทหารไทยธนชาต",
+        "ธนาคารออมสิน",
+        "ธนาคารอาคารสงเคราะห์",
     ];
     const [shopName, setShopName] = React.useState("");
     const [domainSlug, setDomainSlug] = React.useState("");
     const [logoUrl, setLogoUrl] = React.useState("");
     const [promoImageUrls, setPromoImageUrls] = React.useState<string[]>([]);
     const [contactPhone, setContactPhone] = React.useState("");
+    const [promptPayId, setPromptPayId] = React.useState("");
+    const [promptPayType, setPromptPayType] = React.useState("phone");
+    const [bankName, setBankName] = React.useState("");
+    const [bankAccountName, setBankAccountName] = React.useState("");
+    const [bankAccountNumber, setBankAccountNumber] = React.useState("");
     const [facebookPageUrl, setFacebookPageUrl] = React.useState("");
     const [lineOaQrCodeUrl, setLineOaQrCodeUrl] = React.useState("");
     const [logoFile, setLogoFile] = React.useState<File | null>(null);
@@ -83,6 +80,11 @@ export default function StoreSetupPage() {
             setLogoUrl(profile.logoUrl || "");
             setPromoImageUrls(profile.promoImageUrls?.length ? profile.promoImageUrls : profile.promoImageUrl ? [profile.promoImageUrl] : []);
             setContactPhone(profile.contactPhone || "");
+            setPromptPayId(profile.promptPayId || "");
+            setPromptPayType(profile.promptPayType || "phone");
+            setBankName(profile.bankName || "");
+            setBankAccountName(profile.bankAccountName || "");
+            setBankAccountNumber(profile.bankAccountNumber || "");
             setFacebookPageUrl(profile.facebookPageUrl || "");
             setLineOaQrCodeUrl(profile.lineOaQrCodeUrl || "");
         }
@@ -103,6 +105,11 @@ export default function StoreSetupPage() {
                     promoImageUrl: tenant.promoImageUrl || profile?.promoImageUrl,
                     promoImageUrls: tenant.promoImageUrls?.length ? tenant.promoImageUrls : profile?.promoImageUrls,
                     contactPhone: tenant.contactPhone || profile?.contactPhone || "",
+                    promptPayId: tenant.promptPayId || profile?.promptPayId || "",
+                    promptPayType: tenant.promptPayType || profile?.promptPayType || "phone",
+                    bankName: tenant.bankName || profile?.bankName || "",
+                    bankAccountName: tenant.bankAccountName || profile?.bankAccountName || "",
+                    bankAccountNumber: tenant.bankAccountNumber || profile?.bankAccountNumber || "",
                     facebookPageUrl: tenant.facebookPageUrl || profile?.facebookPageUrl || "",
                     lineOaQrCodeUrl: tenant.lineOaQrCodeUrl || profile?.lineOaQrCodeUrl || null,
                     createdAt: tenant.createdAt,
@@ -123,6 +130,11 @@ export default function StoreSetupPage() {
                               : []
                 );
                 setContactPhone(tenant.contactPhone || profile?.contactPhone || "");
+                setPromptPayId(tenant.promptPayId || profile?.promptPayId || "");
+                setPromptPayType(tenant.promptPayType || profile?.promptPayType || "phone");
+                setBankName(tenant.bankName || profile?.bankName || "");
+                setBankAccountName(tenant.bankAccountName || profile?.bankAccountName || "");
+                setBankAccountNumber(tenant.bankAccountNumber || profile?.bankAccountNumber || "");
                 setFacebookPageUrl(tenant.facebookPageUrl || profile?.facebookPageUrl || "");
                 setLineOaQrCodeUrl(tenant.lineOaQrCodeUrl || profile?.lineOaQrCodeUrl || "");
                 setLogoFile(null);
@@ -340,6 +352,11 @@ export default function StoreSetupPage() {
                 shopName,
                 domainSlug: normalizedSlug,
                 contactPhone: contactPhone.trim(),
+                promptPayId: promptPayId.replace(/\D/g, ""),
+                promptPayType,
+                bankName: bankName.trim(),
+                bankAccountName: bankAccountName.trim(),
+                bankAccountNumber: bankAccountNumber.replace(/\D/g, ""),
                 facebookPageUrl: facebookPageUrl.trim(),
                 ...(logoChanged || hasInlineLogo
                     ? {
@@ -383,6 +400,11 @@ export default function StoreSetupPage() {
                 promoImageUrl: nextPromoImageUrls[0] || null,
                 promoImageUrls: nextPromoImageUrls,
                 contactPhone: tenant.contactPhone || contactPhone.trim(),
+                promptPayId: tenant.promptPayId || promptPayId.replace(/\D/g, ""),
+                promptPayType: tenant.promptPayType || promptPayType,
+                bankName: tenant.bankName || bankName.trim(),
+                bankAccountName: tenant.bankAccountName || bankAccountName.trim(),
+                bankAccountNumber: tenant.bankAccountNumber || bankAccountNumber.replace(/\D/g, ""),
                 facebookPageUrl: tenant.facebookPageUrl || facebookPageUrl.trim(),
                 lineOaQrCodeUrl: nextLineOaQrCodeUrl || null,
                 createdAt: tenant.createdAt,
@@ -391,6 +413,11 @@ export default function StoreSetupPage() {
             setLogoUrl(nextLogoUrl);
             setPromoImageUrls(nextPromoImageUrls);
             setContactPhone(tenant.contactPhone || contactPhone.trim());
+            setPromptPayId(tenant.promptPayId || promptPayId.replace(/\D/g, ""));
+            setPromptPayType(tenant.promptPayType || promptPayType);
+            setBankName(tenant.bankName || bankName.trim());
+            setBankAccountName(tenant.bankAccountName || bankAccountName.trim());
+            setBankAccountNumber(tenant.bankAccountNumber || bankAccountNumber.replace(/\D/g, ""));
             setFacebookPageUrl(tenant.facebookPageUrl || facebookPageUrl.trim());
             setLineOaQrCodeUrl(nextLineOaQrCodeUrl);
             setLogoFile(null);
@@ -424,26 +451,7 @@ export default function StoreSetupPage() {
                 </Typography>
             </Box>
 
-            <Box className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {setupSteps.map((step, index) => (
-                    <Box
-                        key={step.title}
-                        className="rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_18px_45px_rgba(15,23,42,0.06)]"
-                    >
-                        <Box className="mb-4 inline-flex h-9 min-w-9 items-center justify-center rounded-full bg-[var(--rf-partner-chip)] px-3 text-sm font-black text-slate-700">
-                            {index + 1}
-                        </Box>
-                        <Typography className="text-[1rem] font-black tracking-[-0.035em] text-slate-950">
-                            {step.title}
-                        </Typography>
-                        <Typography className="mt-1 text-[0.88rem] leading-6 text-slate-500">
-                            {step.desc}
-                        </Typography>
-                    </Box>
-                ))}
-            </Box>
-
-            <Box className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+            <Box className="grid gap-5">
                 <Card elevation={0} className="partner-card rounded-[34px]!">
                     <CardContent className="p-5! md:p-7!">
                         <Box
@@ -650,6 +658,91 @@ export default function StoreSetupPage() {
                                     helperText="เช่น 0812345678 หรือ 02-123-4567"
                                 />
 
+                                <Box className="grid gap-3 rounded-[26px] border border-slate-200 bg-slate-50 p-4">
+                                    <Box className="grid gap-1">
+                                        <Typography className="text-[1rem] font-bold tracking-[-0.03em] text-slate-950 md:text-[1.06rem]">
+                                            รับชำระเงินด้วยพร้อมเพย์
+                                        </Typography>
+                                        <Typography className="text-[0.92rem] leading-7 text-slate-500 md:text-[0.97rem]">
+                                            ใช้สำหรับสร้าง QR ล็อกยอดให้ลูกค้าชำระเงินเข้าร้านนี้โดยตรง
+                                        </Typography>
+                                    </Box>
+                                    <Box className="grid gap-3 md:grid-cols-[180px_minmax(0,1fr)]">
+                                        <TextField
+                                            select
+                                            label="ประเภทพร้อมเพย์"
+                                            value={promptPayType}
+                                            onChange={(event) => setPromptPayType(event.target.value)}
+                                            fullWidth
+                                        >
+                                            <MenuItem value="phone">เบอร์มือถือ</MenuItem>
+                                            <MenuItem value="national_id">เลขบัตรประชาชน</MenuItem>
+                                            <MenuItem value="tax_id">เลขผู้เสียภาษี</MenuItem>
+                                            <MenuItem value="e_wallet">e-Wallet</MenuItem>
+                                        </TextField>
+                                        <TextField
+                                            label="เบอร์/เลขพร้อมเพย์ของร้าน"
+                                            value={promptPayId}
+                                            onChange={(event) => setPromptPayId(event.target.value.replace(/\D/g, ""))}
+                                            fullWidth
+                                            inputProps={{ inputMode: "numeric" }}
+                                            helperText={
+                                                promptPayType === "phone"
+                                                    ? "เช่น 0812345678"
+                                                    : promptPayType === "e_wallet"
+                                                      ? "กรอกเลข e-Wallet 15 หลัก"
+                                                      : "กรอกเลข 13 หลัก"
+                                            }
+                                        />
+                                    </Box>
+                                </Box>
+
+                                <Box className="grid gap-3 rounded-[26px] border border-slate-200 bg-slate-50 p-4">
+                                    <Box className="grid gap-1">
+                                        <Typography className="text-[1rem] font-bold tracking-[-0.03em] text-slate-950 md:text-[1.06rem]">
+                                            บัญชีธนาคารสำหรับรับโอน
+                                        </Typography>
+                                        <Typography className="text-[0.92rem] leading-7 text-slate-500 md:text-[0.97rem]">
+                                            แสดงในหน้าชำระเงินให้ลูกค้าคัดลอกเลขบัญชีและแนบสลิปหลังโอน
+                                        </Typography>
+                                    </Box>
+                                    <Box className="grid gap-3 md:grid-cols-3">
+                                        <TextField
+                                            select
+                                            label="ธนาคาร"
+                                            value={bankName}
+                                            onChange={(event) => setBankName(event.target.value)}
+                                            fullWidth
+                                            helperText="เช่น ธนาคารกสิกรไทย"
+                                        >
+                                            {bankOptions.map((option) => (
+                                                <MenuItem key={option} value={option}>
+                                                    {option}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                        <TextField
+                                            label="ชื่อบัญชี"
+                                            value={bankAccountName}
+                                            onChange={(event) => setBankAccountName(event.target.value)}
+                                            fullWidth
+                                            placeholder="บริษัท สยามเรนท์อะคาร์ จำกัด"
+                                            InputLabelProps={{ shrink: true }}
+                                            helperText="เช่น บริษัท เรนท์โฟลว์ จำกัด"
+                                        />
+                                        <TextField
+                                            label="เลขบัญชี"
+                                            value={bankAccountNumber}
+                                            onChange={(event) => setBankAccountNumber(event.target.value.replace(/\D/g, ""))}
+                                            fullWidth
+                                            placeholder="1234567890"
+                                            InputLabelProps={{ shrink: true }}
+                                            inputProps={{ inputMode: "numeric" }}
+                                            helperText="กรอกเฉพาะตัวเลข"
+                                        />
+                                    </Box>
+                                </Box>
+
                                 <TextField
                                     label="ลิงก์เพจ Facebook"
                                     value={facebookPageUrl}
@@ -756,137 +849,6 @@ export default function StoreSetupPage() {
                     </CardContent>
                 </Card>
 
-                <Box className="grid gap-5">
-                    <Card elevation={0} className="partner-card rounded-[34px]!">
-                        <CardContent className="p-5! md:p-7!">
-                            <Box className="grid gap-2">
-                                <Typography className="partner-section-title text-slate-950">
-                                    พรีวิวหน้าร้าน
-                                </Typography>
-                                <Typography className="partner-section-subtitle">
-                                    ตัวอย่างการแสดงผลเบื้องต้นก่อนบันทึกจริง
-                                </Typography>
-                            </Box>
-
-                            <Box className="mt-5 rounded-[32px] border border-slate-200 bg-slate-50 p-4 md:p-5">
-                                <Stack spacing={3}>
-                                    <Stack
-                                        direction="row"
-                                        spacing={2}
-                                        className="items-center"
-                                    >
-                                        <Box className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-[22px] bg-[var(--rf-partner-blue-deep)] text-xl font-black tracking-[-0.04em] text-white">
-                                            {logoUrl ? (
-                                                <Box
-                                                    component="img"
-                                                    src={logoUrl}
-                                                    alt="โลโก้ร้าน"
-                                                    className="h-full w-full object-cover"
-                                                />
-                                            ) : (
-                                                shopName.trim().charAt(0) || "ร"
-                                            )}
-                                        </Box>
-                                        <Box className="min-w-0">
-                                            <Typography className="text-[1.15rem] font-black tracking-[-0.04em] text-slate-950 md:text-[1.35rem]">
-                                                {shopName.trim() || "ชื่อร้านของคุณ"}
-                                            </Typography>
-                                            <Typography className="mt-1 break-all text-[0.92rem] leading-6 text-slate-500 md:text-[0.96rem]">
-                                                https://{storefrontDomain}
-                                            </Typography>
-                                        </Box>
-                                    </Stack>
-
-                                    <Divider />
-
-                                    <Box className="grid gap-3 rounded-[24px] bg-white p-4">
-                                        <Typography className="text-[0.98rem] font-bold tracking-[-0.03em] text-slate-950">
-                                            Footer หน้าร้าน
-                                        </Typography>
-                                        <Typography className="text-[0.92rem] leading-7 text-slate-500">
-                                            โทร: {contactPhone.trim() || "ยังไม่ได้ตั้งค่าเบอร์โทร"}
-                                        </Typography>
-                                        <Typography className="break-all text-[0.92rem] leading-7 text-slate-500">
-                                            Facebook: {facebookPageUrl.trim() || "ยังไม่ได้ตั้งค่าเพจ"}
-                                        </Typography>
-                                        {lineOaQrCodeUrl ? (
-                                            <Box className="flex items-center gap-3">
-                                                <Box
-                                                    component="img"
-                                                    src={lineOaQrCodeUrl}
-                                                    alt="QR Code LINE OA"
-                                                    className="h-16 w-16 rounded-2xl bg-white object-contain"
-                                                />
-                                                <Typography className="text-[0.92rem] font-semibold text-slate-600">
-                                                    พร้อมแสดง QR Code LINE OA
-                                                </Typography>
-                                            </Box>
-                                        ) : null}
-                                    </Box>
-
-                                    <Box className="grid gap-3">
-                                        {[
-                                            "ชื่อร้านจะแสดงบนหน้าร้านและโปรไฟล์ร้าน",
-                                            "โดเมนร้านจะเป็นลิงก์หลักที่ลูกค้าใช้เข้าชมรถ",
-                                            "คุณสามารถกลับมาแก้ไขข้อมูลส่วนนี้ได้ภายหลัง",
-                                        ].map((item) => (
-                                            <Box
-                                                key={item}
-                                                className="rounded-[24px] border border-slate-200 bg-white px-4 py-4"
-                                            >
-                                                <Typography className="text-[0.95rem] font-semibold leading-7 tracking-[-0.02em] text-slate-700">
-                                                    {item}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Box>
-                                </Stack>
-                            </Box>
-                        </CardContent>
-                    </Card>
-
-                    <Card elevation={0} className="partner-card rounded-[34px]!">
-                        <CardContent className="p-5! md:p-7!">
-                            <Box className="grid gap-2">
-                                <Typography className="partner-section-title text-slate-950">
-                                    ก่อนกดบันทึก
-                                </Typography>
-                                <Typography className="partner-section-subtitle">
-                                    ตรวจสอบข้อมูลให้เรียบร้อยเพื่อให้ลูกค้าเห็นร้านของคุณถูกต้อง
-                                </Typography>
-                            </Box>
-
-                            <Stack spacing={2.5} className="mt-5">
-                                <Box className="rounded-[26px] border border-slate-200 bg-slate-50 px-4 py-4">
-                                    <Typography className="text-[0.98rem] font-bold tracking-[-0.03em] text-slate-950">
-                                        ชื่อร้าน
-                                    </Typography>
-                                    <Typography className="mt-1 text-[0.92rem] leading-7 text-slate-500">
-                                        ควรเป็นชื่อที่ลูกค้าจำได้ง่ายและตรงกับแบรนด์ของร้าน
-                                    </Typography>
-                                </Box>
-
-                                <Box className="rounded-[26px] border border-slate-200 bg-slate-50 px-4 py-4">
-                                    <Typography className="text-[0.98rem] font-bold tracking-[-0.03em] text-slate-950">
-                                        ชื่อโดเมน
-                                    </Typography>
-                                    <Typography className="mt-1 text-[0.92rem] leading-7 text-slate-500">
-                                        ใช้ตัวอักษรภาษาอังกฤษ ตัวเลข หรือขีดกลางเท่านั้น
-                                    </Typography>
-                                </Box>
-
-                                <Box className="rounded-[26px] border border-slate-200 bg-slate-50 px-4 py-4">
-                                    <Typography className="text-[0.98rem] font-bold tracking-[-0.03em] text-slate-950">
-                                        โลโก้ร้าน
-                                    </Typography>
-                                    <Typography className="mt-1 text-[0.92rem] leading-7 text-slate-500">
-                                        ถ้ายังไม่มีโลโก้ ระบบจะใช้ตัวอักษรแรกของชื่อร้านแสดงแทนชั่วคราว
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                        </CardContent>
-                    </Card>
-                </Box>
             </Box>
 
             <Snackbar

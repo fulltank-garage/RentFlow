@@ -18,6 +18,11 @@ type SaveMyTenantInput = {
   promoImageFile?: File | null;
   promoImageFiles?: File[];
   lineOaQrCodeFile?: File | null;
+  promptPayId?: string;
+  promptPayType?: string;
+  bankName?: string;
+  bankAccountName?: string;
+  bankAccountNumber?: string;
   clearPromoImages?: boolean;
 };
 
@@ -67,6 +72,11 @@ async function saveTenantAsJson(input: SaveMyTenantInput) {
       shopName: input.shopName,
       domainSlug: input.domainSlug,
       contactPhone: input.contactPhone ?? "",
+      promptPayId: input.promptPayId ?? "",
+      promptPayType: input.promptPayType ?? "",
+      bankName: input.bankName ?? "",
+      bankAccountName: input.bankAccountName ?? "",
+      bankAccountNumber: input.bankAccountNumber ?? "",
       facebookPageUrl: input.facebookPageUrl ?? "",
       ...(input.logoUrl !== undefined ? { logoUrl: input.logoUrl } : {}),
       ...(input.promoImageUrl !== undefined
@@ -124,6 +134,11 @@ export const tenantService = {
       formData.append("shopName", input.shopName);
       formData.append("domainSlug", input.domainSlug);
       formData.append("contactPhone", input.contactPhone ?? "");
+      formData.append("promptPayId", input.promptPayId ?? "");
+      formData.append("promptPayType", input.promptPayType ?? "");
+      formData.append("bankName", input.bankName ?? "");
+      formData.append("bankAccountName", input.bankAccountName ?? "");
+      formData.append("bankAccountNumber", input.bankAccountNumber ?? "");
       formData.append("facebookPageUrl", input.facebookPageUrl ?? "");
 
       if (input.logoFile) {
