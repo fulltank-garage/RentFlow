@@ -91,8 +91,9 @@ export default function Login() {
     <Box
       className="relative grid min-h-screen place-items-center overflow-hidden bg-[var(--rf-admin-bg)] px-4 py-8 md:px-6"
       sx={{
+        backgroundColor: "color-mix(in srgb, var(--off-white) 92%, var(--primary-green) 8%)",
         backgroundImage:
-          "linear-gradient(90deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.86) 46%, rgba(255,255,255,0.62) 100%), url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=2200&q=85')",
+          "url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=2200&q=85')",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
