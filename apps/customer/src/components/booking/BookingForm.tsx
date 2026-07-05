@@ -248,6 +248,10 @@ export default function BookingForm({
           spacing={1.5}
           className="items-stretch sm:items-center sm:justify-end"
         >
+          <Typography className="text-sm font-bold text-(--rf-apple-ink) sm:pl-1">
+            * เลือกข้อมูลให้ถูกต้องก่อนดำเนินการต่อ
+          </Typography>
+
           <Button
             type="submit"
             variant="contained"
@@ -279,9 +283,6 @@ export default function BookingForm({
                   : "จองและไปชำระเงินทันที"}
           </Button>
 
-          <Typography className="text-xs text-slate-500 sm:pl-1">
-            * เลือกข้อมูลให้ถูกต้องก่อนดำเนินการต่อ
-          </Typography>
         </Stack>
       </Box>
 

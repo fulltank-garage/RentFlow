@@ -294,6 +294,10 @@ export default function BookingSummaryCard({
               </Box>
             ) : null}
 
+            <Typography className="text-sm font-bold text-(--rf-apple-ink)">
+              * เลือกข้อมูลให้ถูกต้องก่อนดำเนินการต่อ
+            </Typography>
+
             <Button
               type="submit"
               form={formId}
@@ -326,9 +330,6 @@ export default function BookingSummaryCard({
                     : "จองและไปชำระเงินทันที"}
             </Button>
 
-            <Typography className="text-xs text-slate-500">
-              * เลือกข้อมูลให้ถูกต้องก่อนดำเนินการต่อ
-            </Typography>
           </Box>
         ) : null}
       </CardContent>
