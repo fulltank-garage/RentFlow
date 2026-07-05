@@ -314,11 +314,11 @@ export default function useBooking() {
 
   const availabilityMessage = React.useMemo(() => {
     if (car && car.isAvailable === false) {
-      return "รถคันนี้มีการจองแล้ว ไม่สามารถกดจองได้ในตอนนี้";
+      return "รถรุ่นนี้ยังไม่พร้อมให้จองในตอนนี้";
     }
 
     if (isDateAvailable === false) {
-      return "รถคันนี้ถูกจองแล้วในช่วงวันที่คุณเลือก กรุณาเปลี่ยนวันรับหรือคืนรถ";
+      return "รถรุ่นนี้ถูกจองครบในช่วงวันที่คุณเลือก กรุณาเปลี่ยนวันรับหรือคืนรถ";
     }
 
     return null;
@@ -755,7 +755,7 @@ export default function useBooking() {
       }
 
       if (!car.isAvailable || isDateAvailable === false) {
-        setError("รถคันนี้มีการจองแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
+        setError("รถรุ่นนี้ถูกจองครบแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
         return;
       }
 
@@ -817,7 +817,7 @@ export default function useBooking() {
           if (pendingChatWindow) {
             pendingChatWindow.close();
           }
-          setError("รถคันนี้มีการจองแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
+          setError("รถรุ่นนี้ถูกจองครบแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
           return;
         }
 

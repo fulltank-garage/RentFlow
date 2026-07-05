@@ -288,7 +288,7 @@ export default function BookingForm({
 
       {carExists && !carAvailable ? (
         <Alert severity="info">
-          รถคันนี้มีการจองแล้ว ไม่สามารถดำเนินการจองซ้ำได้ในตอนนี้
+          รถรุ่นนี้ถูกจองครบแล้ว ไม่สามารถดำเนินการจองเพิ่มได้ในตอนนี้
         </Alert>
       ) : null}
 

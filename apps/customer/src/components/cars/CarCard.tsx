@@ -69,7 +69,7 @@ export default function CarCard({ car, showShop = false, priority = false }: Pro
         {isBooked ? (
           <Box className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/55 to-transparent px-5 py-4">
             <Typography className="text-sm font-semibold text-white">
-              รถคันนี้{unavailableLabel} ยังไม่สามารถกดจองได้ในตอนนี้
+              รถรุ่นนี้{unavailableLabel} ยังไม่สามารถกดจองได้ในตอนนี้
             </Typography>
           </Box>
         ) : null}

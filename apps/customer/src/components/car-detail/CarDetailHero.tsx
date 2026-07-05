@@ -43,7 +43,7 @@ export default function CarDetailHero({ image, name, isAvailable = true, status 
             </Box>
             <Box className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent px-6 py-5">
               <Typography className="text-base font-semibold text-white">
-                รถคันนี้{unavailableLabel} ยังไม่สามารถกดจองได้ในตอนนี้
+                รถรุ่นนี้{unavailableLabel} ยังไม่สามารถกดจองได้ในตอนนี้
               </Typography>
             </Box>
           </>

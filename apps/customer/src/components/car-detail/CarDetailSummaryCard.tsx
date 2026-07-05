@@ -142,7 +142,7 @@ export default function CarDetailSummaryCard({ detail }: Props) {
 
         {isUnavailable ? (
           <Typography className="mt-3 text-sm font-medium text-(--rf-apple-muted)">
-            รถคันนี้{unavailableLabel} กรุณาเลือกรถคันอื่นหรือกลับมาตรวจสอบอีกครั้งภายหลัง
+            รถรุ่นนี้{unavailableLabel} กรุณาเลือกรถรุ่นอื่นหรือกลับมาตรวจสอบอีกครั้งภายหลัง
           </Typography>
         ) : null}
       </CardContent>

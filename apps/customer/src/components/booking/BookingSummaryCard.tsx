@@ -48,7 +48,7 @@ export function BookingMobileCarCard({ car }: { car?: Car | null }) {
     >
       <CardContent className="p-4!">
         <Typography className="apple-card-title font-semibold text-slate-900">
-          จองรถคันนี้
+          จองรถรุ่นนี้
         </Typography>
 
         <Divider className="my-4! border-black/10!" />

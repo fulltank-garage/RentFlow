@@ -15,6 +15,10 @@ type Props = {
   waitForTenant?: boolean;
 };
 
+function isAwaitingCustomerPayment(booking: Booking) {
+  return booking.status === "pending" || booking.status === "confirmed";
+}
+
 export default function PendingBookingReminder({
   tenantSlug,
   waitForTenant = false,
@@ -47,7 +51,7 @@ export default function PendingBookingReminder({
 
         const nextPending =
           res.data
-            .filter((booking) => booking.status === "pending")
+            .filter(isAwaitingCustomerPayment)
             .sort(
               (a, b) =>
                 new Date(b.updatedAt || b.createdAt).getTime() -
