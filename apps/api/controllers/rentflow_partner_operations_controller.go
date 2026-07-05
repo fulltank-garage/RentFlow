@@ -333,6 +333,7 @@ func rentFlowPartnerUpdatePayment(c *gin.Context, status, action string) {
 		updates["status"] = status
 		updates["verified_by"] = user.ID
 		updates["verified_at"] = &now
+		updates["processed_at"] = &now
 	case "payment.refund":
 		updates["refund_status"] = "refunded"
 		updates["refund_amount"] = payload.RefundAmount
@@ -347,6 +348,17 @@ func rentFlowPartnerUpdatePayment(c *gin.Context, status, action string) {
 	if err := config.DB.Model(&models.RentFlowCarPayment{}).Where("tenant_id = ? AND id = ?", tenant.ID, payment.ID).Updates(updates).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดตการชำระเงินได้")
 		return
+	}
+	if action == "payment.verify" {
+		if err := config.DB.Model(&models.RentFlowCarBooking{}).
+			Where("tenant_id = ? AND id = ? AND status NOT IN ?", tenant.ID, payment.BookingID, []string{"cancelled", "completed"}).
+			Updates(map[string]interface{}{
+				"status":     "paid",
+				"updated_at": now,
+			}).Error; err != nil {
+			rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดตสถานะการจองหลังตรวจสอบชำระเงินได้")
+			return
+		}
 	}
 	rentFlowAudit(c, tenant.ID, action, "payment", payment.ID, strings.TrimSpace(payload.Note))
 	if updatedPayment, err := rentFlowPaymentByID(tenant.ID, payment.ID); err == nil {

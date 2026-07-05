@@ -207,7 +207,7 @@ func RentFlowCarGetCars(c *gin.Context) {
 			"seats":               car.Seats,
 			"transmission":        car.Transmission,
 			"fuel":                car.Fuel,
-			"grade":               rentFlowCarGrade(car.ID),
+			"grade":               rentFlowCarGrade(car),
 			"pricePerDay":         car.PricePerDay,
 			"unitCount":           availability.UnitCount,
 			"reservedUnits":       availability.ReservedUnits,
@@ -758,13 +758,17 @@ func rentFlowBaseCarAvailability(car models.RentFlowCarCar) rentFlowCarAvailabil
 }
 
 func rentFlowCarAvailability(tenantID string, car models.RentFlowCarCar, pickupDate, returnDate time.Time) (rentFlowCarAvailabilitySnapshot, error) {
+	return rentFlowCarAvailabilityWithDB(config.DB, tenantID, car, pickupDate, returnDate)
+}
+
+func rentFlowCarAvailabilityWithDB(db *gorm.DB, tenantID string, car models.RentFlowCarCar, pickupDate, returnDate time.Time) (rentFlowCarAvailabilitySnapshot, error) {
 	base := rentFlowBaseCarAvailability(car)
 	if !base.Available {
 		return base, nil
 	}
 
 	var reservedCount int64
-	err := config.DB.Model(&models.RentFlowCarBooking{}).
+	err := db.Model(&models.RentFlowCarBooking{}).
 		Where("tenant_id = ? AND car_id = ?", tenantID, car.ID).
 		Where("status IN ?", rentFlowReservationBlockingStatuses()).
 		Where("pickup_date < ? AND return_date > ?", returnDate, pickupDate).
@@ -774,7 +778,7 @@ func rentFlowCarAvailability(tenantID string, car models.RentFlowCarCar, pickupD
 	}
 
 	var blocks []models.RentFlowCarAvailabilityBlock
-	err = config.DB.
+	err = db.
 		Where("tenant_id = ? AND (car_id = ? OR car_id = '')", tenantID, car.ID).
 		Find(&blocks).Error
 	if err != nil {
@@ -825,6 +829,12 @@ func rentFlowCarIsAvailable(tenantID, carID string, pickupDate, returnDate time.
 }
 
 func rentFlowUnavailableDates(tenantID, carID string) ([]string, error) {
+	var car models.RentFlowCarCar
+	if err := config.DB.Where("tenant_id = ? AND id = ?", tenantID, carID).First(&car).Error; err != nil {
+		return nil, err
+	}
+	unitCount := rentFlowCarUnitCount(car)
+
 	var bookings []models.RentFlowCarBooking
 	if err := config.DB.
 		Where("tenant_id = ? AND car_id = ?", tenantID, carID).
@@ -833,9 +843,24 @@ func rentFlowUnavailableDates(tenantID, carID string) ([]string, error) {
 		return nil, err
 	}
 
-	var days []string
+	bookingDayCounts := map[string]int{}
+	fullDays := []string{}
+	seenFullDays := map[string]struct{}{}
+	addFullDay := func(day string) {
+		if _, exists := seenFullDays[day]; exists {
+			return
+		}
+		seenFullDays[day] = struct{}{}
+		fullDays = append(fullDays, day)
+	}
+
 	for _, booking := range bookings {
-		days = append(days, services.ExpandDateRange(booking.PickupDate, booking.ReturnDate)...)
+		for _, day := range services.ExpandDateRange(booking.PickupDate, booking.ReturnDate) {
+			bookingDayCounts[day]++
+			if bookingDayCounts[day] >= unitCount {
+				addFullDay(day)
+			}
+		}
 	}
 
 	var blocks []models.RentFlowCarAvailabilityBlock
@@ -845,27 +870,44 @@ func rentFlowUnavailableDates(tenantID, carID string) ([]string, error) {
 		return nil, err
 	}
 	for _, block := range blocks {
-		days = append(days, services.ExpandDateRange(block.StartDate, block.EndDate)...)
+		for _, day := range services.ExpandDateRange(block.StartDate, block.EndDate) {
+			addFullDay(day)
+		}
 	}
-	return services.UniqueSortedStrings(days), nil
+	return services.UniqueSortedStrings(fullDays), nil
 }
 
 func rentFlowReservationBlockingStatuses() []string {
 	return []string{"pending", "confirmed", "paid", "active", "review"}
 }
 
-func rentFlowCarGrade(carID string) int {
-	switch carID {
-	case "bmw-x3-m50", "bmw-i7-xdrive60-m-sport":
+func rentFlowCarGrade(car models.RentFlowCarCar) int {
+	score := 0
+	if car.PricePerDay >= 2500 {
+		score += 2
+	} else if car.PricePerDay >= 1600 {
+		score++
+	}
+	switch strings.ToLower(strings.TrimSpace(car.Type)) {
+	case "suv", "van", "luxury", "premium":
+		score++
+	}
+	if car.Seats >= 7 {
+		score++
+	}
+	switch strings.ToLower(strings.TrimSpace(car.Fuel)) {
+	case "ev", "hybrid":
+		score++
+	}
+	switch {
+	case score >= 4:
 		return 1
-	case "bmw-i5-edrive40-m-sport":
+	case score >= 3:
 		return 2
-	case "bmw-320d-m-sport", "bmw-i5-m60-xdrive":
+	case score >= 1:
 		return 3
-	case "bmw-330e-m-sport":
-		return 4
 	default:
-		return 3
+		return 4
 	}
 }
 

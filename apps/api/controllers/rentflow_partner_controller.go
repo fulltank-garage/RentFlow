@@ -600,7 +600,15 @@ func rentFlowBuildPartnerCarFromPayload(c *gin.Context, tenantID, carID string, 
 
 	locationID := strings.TrimSpace(payload.LocationID)
 	if locationID == "" {
-		locationID = "default"
+		rentFlowError(c, http.StatusBadRequest, "กรุณาเลือกสาขาของรถ")
+		return models.RentFlowCarCar{}, false
+	}
+	var branch models.RentFlowCarBranch
+	if err := config.DB.
+		Where("tenant_id = ? AND location_id = ? AND is_active = ?", tenantID, locationID, true).
+		First(&branch).Error; err != nil {
+		rentFlowError(c, http.StatusBadRequest, "ไม่พบสาขาที่เลือกสำหรับรถคันนี้")
+		return models.RentFlowCarCar{}, false
 	}
 
 	return models.RentFlowCarCar{

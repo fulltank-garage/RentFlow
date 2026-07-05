@@ -18,8 +18,6 @@ import (
 	"rentflow-api/services"
 )
 
-const rentFlowDefaultTenantID = "tenant_fulltank"
-
 var (
 	rentFlowDomainSlugPattern = regexp.MustCompile(`^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$`)
 	rentFlowReservedSlugs     = map[string]struct{}{
@@ -699,8 +697,12 @@ func rentFlowCurrentUserTenant(c *gin.Context) (*models.RentFlowCarTenant, error
 }
 
 func rentFlowDefaultTenant() (*models.RentFlowCarTenant, error) {
+	defaultTenantID := strings.TrimSpace(os.Getenv("RENTFLOW_DEFAULT_TENANT_ID"))
+	if defaultTenantID == "" {
+		return nil, gorm.ErrRecordNotFound
+	}
 	var tenant models.RentFlowCarTenant
-	if err := config.DB.Where("id = ?", rentFlowDefaultTenantID).First(&tenant).Error; err != nil {
+	if err := config.DB.Where("id = ?", defaultTenantID).First(&tenant).Error; err != nil {
 		return nil, err
 	}
 	return &tenant, nil

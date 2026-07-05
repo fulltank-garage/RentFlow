@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"rentflow-api/config"
 	"rentflow-api/middleware"
 	"rentflow-api/models"
@@ -103,7 +105,7 @@ func RentFlowCarCreateBooking(c *gin.Context) {
 		return
 	}
 	if !available {
-		rentFlowError(c, http.StatusConflict, "รถคันนี้ถูกจองในช่วงเวลาที่เลือกแล้ว")
+		rentFlowError(c, http.StatusConflict, "รถรุ่นนี้ถูกจองครบในช่วงวันที่เลือกแล้ว")
 		return
 	}
 
@@ -114,9 +116,6 @@ func RentFlowCarCreateBooking(c *gin.Context) {
 	}
 	if customerEmail == "" {
 		customerEmail = strings.TrimSpace(strings.ToLower(user.Email))
-	}
-	if customerEmail == "" {
-		customerEmail = "no-email@rentflow.local"
 	}
 
 	totalDays, subtotal, extraCharge, discount, totalAmount := services.ComputeBookingPrice(
@@ -156,7 +155,29 @@ func RentFlowCarCreateBooking(c *gin.Context) {
 		UserEmail:      user.Email,
 	}
 
-	if err := config.DB.Create(&booking).Error; err != nil {
+	carUnavailableErr := errors.New("rentflow car units unavailable")
+	if err := config.DB.Transaction(func(tx *gorm.DB) error {
+		var lockedCar models.RentFlowCarCar
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+			Where("tenant_id = ? AND id = ?", tenant.ID, car.ID).
+			First(&lockedCar).Error; err != nil {
+			return err
+		}
+
+		availability, err := rentFlowCarAvailabilityWithDB(tx, tenant.ID, lockedCar, pickupDate, returnDate)
+		if err != nil {
+			return err
+		}
+		if !availability.Available {
+			return carUnavailableErr
+		}
+
+		return tx.Create(&booking).Error
+	}); err != nil {
+		if errors.Is(err, carUnavailableErr) {
+			rentFlowError(c, http.StatusConflict, "รถรุ่นนี้ถูกจองครบในช่วงวันที่เลือกแล้ว")
+			return
+		}
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถสร้างรายการจองได้")
 		return
 	}
@@ -236,12 +257,9 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 	}
 
 	var payload struct {
-		BookingID  string  `json:"bookingId"`
-		Method     string  `json:"method"`
-		SlipImage  *string `json:"slipImage"`
-		CardHolder string  `json:"cardHolder"`
-		CardNumber string  `json:"cardNumber"`
-		CardExpiry string  `json:"cardExpiry"`
+		BookingID string  `json:"bookingId"`
+		Method    string  `json:"method"`
+		SlipImage *string `json:"slipImage"`
 	}
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลการชำระเงินไม่ถูกต้อง")
@@ -258,18 +276,22 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 		return
 	}
 
-	method := rentFlowNormalizePaymentMethod(payload.Method)
+	rawMethod := strings.TrimSpace(payload.Method)
+	method := rentFlowNormalizePaymentMethod(rawMethod)
 	if method == "" {
-		method = "promptpay"
-	}
-	if method == "card" {
-		if !rentFlowValidateInternalCard(payload.CardNumber, payload.CardExpiry) {
-			rentFlowError(c, http.StatusBadRequest, "ข้อมูลบัตรไม่ถูกต้อง")
+		if rawMethod != "" {
+			rentFlowError(c, http.StatusBadRequest, "unsupported payment method")
 			return
 		}
+		method = "promptpay"
 	}
 	if method == "promptpay" && !rentFlowValidPromptPayID(tenant.PromptPayType, tenant.PromptPayID) {
 		rentFlowError(c, http.StatusBadRequest, "ร้านยังไม่ได้ตั้งค่าพร้อมเพย์สำหรับรับชำระเงิน")
+		return
+	}
+
+	if method == "bank_transfer" && (strings.TrimSpace(tenant.BankName) == "" || strings.TrimSpace(tenant.BankAccountName) == "" || strings.TrimSpace(tenant.BankAccountNumber) == "") {
+		rentFlowError(c, http.StatusBadRequest, "tenant bank account is not configured")
 		return
 	}
 
@@ -283,24 +305,17 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 		return
 	}
 
-	now := time.Now()
 	payment := models.RentFlowCarPayment{
 		ID:               services.NewID("pay"),
 		TenantID:         tenant.ID,
 		BookingID:        booking.ID,
 		Method:           method,
-		Status:           "paid",
+		Status:           "pending_verification",
 		Amount:           booking.TotalAmount,
-		TransactionID:    services.NewID("txn_int"),
-		Processor:        "internal",
-		ProcessedAt:      &now,
+		Processor:        "manual",
 		SlipMimeType:     slipMimeType,
 		SlipBlob:         slipBlob,
 		SettlementPeriod: time.Now().Format("2006-01"),
-	}
-	if method == "card" {
-		payment.CardHolder = strings.TrimSpace(payload.CardHolder)
-		payment.CardLast4 = rentFlowCardLast4(payload.CardNumber)
 	}
 
 	if err := config.DB.Create(&payment).Error; err != nil {
@@ -311,15 +326,15 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 	if err := config.DB.Model(&models.RentFlowCarBooking{}).
 		Where("id = ?", booking.ID).
 		Updates(map[string]interface{}{
-			"status":     "paid",
+			"status":     "review",
 			"updated_at": time.Now(),
 		}).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดตสถานะการจองได้")
 		return
 	}
 
-	rentFlowCreateNotification(tenant.ID, booking.UserID, booking.CustomerEmail, "ชำระเงินสำเร็จ", "การจอง "+booking.BookingCode+" ชำระเงินเรียบร้อยแล้ว")
-	booking.Status = "paid"
+	rentFlowCreateNotification(tenant.ID, booking.UserID, booking.CustomerEmail, "ส่งหลักฐานชำระเงินแล้ว", "การจอง "+booking.BookingCode+" อยู่ระหว่างรอร้านตรวจสอบการชำระเงิน")
+	booking.Status = "review"
 	rentFlowPublishPaymentRealtime(services.RentFlowCarRealtimeEventPaymentCreated, payment)
 	rentFlowPublishBookingRealtime(services.RentFlowCarRealtimeEventBookingUpdated, booking)
 	rentFlowSuccess(c, http.StatusCreated, "สร้างรายการชำระเงินสำเร็จ", rentFlowPaymentResponse(payment))
@@ -817,27 +832,13 @@ func rentFlowPaymentResponse(payment models.RentFlowCarPayment) gin.H {
 
 func rentFlowNormalizePaymentMethod(value string) string {
 	switch strings.TrimSpace(strings.ToLower(value)) {
-	case "card", "promptpay", "cash":
+	case "promptpay":
 		return strings.TrimSpace(strings.ToLower(value))
 	case "transfer", "bank-transfer", "bank_transfer":
 		return "bank_transfer"
 	default:
 		return ""
 	}
-}
-
-func rentFlowValidateInternalCard(number, expiry string) bool {
-	digits := rentFlowDigitsOnly(number)
-	expiry = strings.TrimSpace(expiry)
-	return len(digits) >= 12 && len(digits) <= 19 && len(expiry) >= 4
-}
-
-func rentFlowCardLast4(number string) string {
-	digits := rentFlowDigitsOnly(number)
-	if len(digits) <= 4 {
-		return digits
-	}
-	return digits[len(digits)-4:]
 }
 
 func rentFlowDigitsOnly(value string) string {

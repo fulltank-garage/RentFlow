@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -866,11 +867,7 @@ func rentFlowNormalizePlatformInvoiceStatus(status string) string {
 
 func rentFlowPlatformEnsureInvoices(tenants []rentFlowPlatformTenantItem) ([]models.RentFlowCarPlatformInvoice, error) {
 	period := time.Now().Format("2006-01")
-	planPrices := map[string]int64{
-		"starter":    0,
-		"growth":     990,
-		"enterprise": 2990,
-	}
+	planPrices := rentFlowPlatformPlanPrices()
 	for _, tenant := range tenants {
 		amount := planPrices[rentFlowNormalizePlatformPartnerPlan(tenant.Plan)]
 		var existing models.RentFlowCarPlatformInvoice
@@ -1020,6 +1017,26 @@ func rentFlowPlatformHosts() gin.H {
 		"wildcardStorefront": "*." + rootDomain,
 		"cnameTarget":        target,
 	}
+}
+
+func rentFlowPlatformPlanPrices() map[string]int64 {
+	return map[string]int64{
+		"starter":    rentFlowPlatformPlanPrice("RENTFLOW_PLAN_PRICE_STARTER", 0),
+		"growth":     rentFlowPlatformPlanPrice("RENTFLOW_PLAN_PRICE_GROWTH", 990),
+		"enterprise": rentFlowPlatformPlanPrice("RENTFLOW_PLAN_PRICE_ENTERPRISE", 2990),
+	}
+}
+
+func rentFlowPlatformPlanPrice(envKey string, fallback int64) int64 {
+	value := strings.TrimSpace(os.Getenv(envKey))
+	if value == "" {
+		return fallback
+	}
+	amount, err := strconv.ParseInt(value, 10, 64)
+	if err != nil || amount < 0 {
+		return fallback
+	}
+	return amount
 }
 
 func rentFlowPlatformTenantItems() ([]rentFlowPlatformTenantItem, error) {
