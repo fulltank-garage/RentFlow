@@ -211,9 +211,27 @@ export default function PartnerCarsPage() {
     });
   }, [cars, q, status]);
 
+  const activeBranches = React.useMemo(
+    () => branches.filter((branch) => branch.isActive),
+    [branches]
+  );
+
   function openCreateDrawer() {
+    const defaultBranch = activeBranches[0];
+    if (!defaultBranch) {
+      setSnack({
+        open: true,
+        message: "กรุณาเพิ่มหรือเปิดใช้งานสาขาก่อนเพิ่มรถ",
+        severity: "error",
+      });
+      return;
+    }
+
     setSelectedCar(null);
-    setForm(emptyForm);
+    setForm({
+      ...emptyForm,
+      locationId: defaultBranch.locationId || defaultBranch.id,
+    });
     setImageFiles([]);
     setDrawerOpen(true);
   }
@@ -239,11 +257,24 @@ export default function PartnerCarsPage() {
       return;
     }
 
+    if (!form.locationId?.trim()) {
+      setSnack({
+        open: true,
+        message: "กรุณาเลือกสาขาหลักของรถก่อนบันทึก",
+        severity: "error",
+      });
+      return;
+    }
+
     try {
       setSaving(true);
+      const payload = {
+        ...form,
+        locationId: form.locationId.trim(),
+      };
       const savedCar = selectedCar
-        ? await carsService.updateCar(selectedCar.id, form)
-        : await carsService.createCar(form);
+        ? await carsService.updateCar(selectedCar.id, payload)
+        : await carsService.createCar(payload);
 
       if (imageFiles.length > 0) {
         await carsService.uploadCarImages(savedCar.id, imageFiles, {
@@ -541,9 +572,8 @@ export default function PartnerCarsPage() {
                 </TextField>
               </Stack>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <TextField select label="สาขาหลัก" value={form.locationId || ""} onChange={(e) => updateForm("locationId", e.target.value)} fullWidth>
-                  <MenuItem value="">ไม่ระบุ</MenuItem>
-                  {branches.map((branch) => (
+                <TextField select label="สาขาหลัก" value={form.locationId || ""} onChange={(e) => updateForm("locationId", e.target.value)} fullWidth required helperText={activeBranches.length === 0 ? "กรุณาเพิ่มหรือเปิดใช้งานสาขาก่อนบันทึกรถ" : "เลือกสาขาที่รถคันนี้ให้บริการ"}>
+                  {activeBranches.map((branch) => (
                     <MenuItem key={branch.id} value={branch.locationId || branch.id}>
                       {branch.name}
                     </MenuItem>

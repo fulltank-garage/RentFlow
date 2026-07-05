@@ -85,6 +85,7 @@ function statusLabel(status?: string) {
     pending: "รอดำเนินการ",
     confirmed: "ยืนยันแล้ว",
     paid: "ชำระแล้ว",
+    pending_verification: "รอตรวจสอบการชำระเงิน",
     completed: "เสร็จสิ้น",
     cancelled: "ยกเลิก",
     failed: "ไม่สำเร็จ",
@@ -135,11 +136,9 @@ const PARTNER_PERMISSION_OPTIONS = [
 
 function paymentMethodLabel(method?: string) {
   const labels: Record<string, string> = {
-    cash: "เงินสด",
     bank_transfer: "โอนผ่านธนาคาร",
     promptpay: "พร้อมเพย์",
     prompt_pay: "พร้อมเพย์",
-    credit_card: "บัตรเครดิต",
     slip: "แนบสลิป",
   };
   return labels[method || ""] || method || "-";
@@ -228,7 +227,15 @@ function statusChipClass(status?: string) {
     return "partner-chip partner-chip-rose";
   }
   if (
-    ["pending", "waiting", "draft", "pending_payout", "new"].includes(normalized) ||
+    [
+      "pending",
+      "pending_verification",
+      "review",
+      "waiting",
+      "draft",
+      "pending_payout",
+      "new",
+    ].includes(normalized) ||
     ["รอดำเนินการ", "รอตอบกลับ", "แบบร่าง", "รอปิดยอด", "ใหม่"].includes(status || "")
   ) {
     return "partner-chip partner-chip-orange";
@@ -540,7 +547,9 @@ type PartnerPaymentFilter =
   | "failed";
 
 function paymentNeedsReview(payment: PartnerPayment) {
-  return payment.status !== "paid" || !payment.verifiedAt;
+  return ["pending", "pending_verification", "review"].includes(
+    payment.status
+  );
 }
 
 function matchesPaymentFilter(
@@ -643,28 +652,61 @@ export function PartnerPaymentsPage({
           <CardContent className="p-0!">
             {filteredItems.length === 0 ? <EmptyState label="ยังไม่มีรายการชำระเงินในสถานะนี้" /> : filteredItems.map((payment, index) => (
               <Box key={payment.id}>
-                <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="items-start justify-between p-4">
-                  <Box>
-                    <Typography className="font-black text-slate-950">{payment.bookingCode || payment.bookingId} • {payment.customerName || "-"}</Typography>
-                    <Typography className="text-sm text-slate-600">
-                      {paymentMethodLabel(payment.method)} • {payment.transactionId || "-"}
-                    </Typography>
-                    <Typography className="mt-1 font-bold text-slate-900">{formatTHB(payment.amount)}</Typography>
-                    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" className="mt-2">
-                      <Chip
-                        label={`ชำระเงิน: ${statusLabel(payment.status)}`}
-                        className={statusChipClass(payment.status)}
-                      />
-                      <Chip
-                        label={`ปิดยอด: ${statusLabel(payment.payoutStatus || "pending_payout")}`}
-                        className={statusChipClass(payment.payoutStatus || "pending_payout")}
-                      />
-                      <Chip
-                        label={`คืนเงิน: ${statusLabel(payment.refundStatus || "none")}`}
-                        className={statusChipClass(payment.refundStatus || "none")}
-                      />
-                    </Stack>
-                  </Box>
+                <Stack direction={{ xs: "column", lg: "row" }} spacing={2} className="items-start justify-between p-4">
+                  <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="min-w-0 flex-1">
+                    <Box className="grid h-44 w-full shrink-0 place-items-center overflow-hidden rounded-[24px] border border-slate-200 bg-slate-50 md:w-52">
+                      {payment.slipUrl ? (
+                        <Box
+                          component="img"
+                          src={payment.slipUrl}
+                          alt={`สลิปชำระเงิน ${payment.bookingCode || payment.bookingId}`}
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <Box className="px-4 text-center">
+                          <Typography className="text-sm font-black text-slate-500">
+                            ยังไม่มีสลิป
+                          </Typography>
+                          <Typography className="mt-1 text-xs text-slate-400">
+                            รอลูกค้าแนบหลักฐานการโอน
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
+                    <Box className="min-w-0">
+                      <Typography className="font-black text-slate-950">{payment.bookingCode || payment.bookingId} • {payment.customerName || "-"}</Typography>
+                      <Typography className="text-sm text-slate-600">
+                        {paymentMethodLabel(payment.method)} • {payment.transactionId || "-"}
+                      </Typography>
+                      <Typography className="mt-1 font-bold text-slate-900">{formatTHB(payment.amount)}</Typography>
+                      <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" className="mt-2">
+                        <Chip
+                          label={`ชำระเงิน: ${statusLabel(payment.status)}`}
+                          className={statusChipClass(payment.status)}
+                        />
+                        <Chip
+                          label={`ปิดยอด: ${statusLabel(payment.payoutStatus || "pending_payout")}`}
+                          className={statusChipClass(payment.payoutStatus || "pending_payout")}
+                        />
+                        <Chip
+                          label={`คืนเงิน: ${statusLabel(payment.refundStatus || "none")}`}
+                          className={statusChipClass(payment.refundStatus || "none")}
+                        />
+                      </Stack>
+                      {payment.slipUrl ? (
+                        <Button
+                          component="a"
+                          href={payment.slipUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          variant="text"
+                          className="mt-2 rounded-full! px-0!"
+                        >
+                          เปิดสลิปเต็ม
+                        </Button>
+                      ) : null}
+                    </Box>
+                  </Stack>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1} className="w-full md:w-auto">
                     <Button
                       variant="outlined"

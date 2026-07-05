@@ -17,7 +17,7 @@ export type PartnerCar = {
   reservedUnits?: number;
   availableUnits?: number;
   description?: string;
-  locationId?: string;
+  locationId: string;
   status: PartnerCarStatus;
   availabilityStatus?: PartnerCarAvailabilityStatus;
   isAvailable: boolean;
@@ -40,6 +40,6 @@ export type PartnerCarPayload = {
   pricePerDay: number;
   unitCount: number;
   description?: string;
-  locationId?: string;
+  locationId: string;
   status: PartnerCarStatus;
 };
