@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "scripts:help": "node scripts/print-root-scripts-help.mjs",
-    "install": "npm ci --include-workspace-root",
-    "install:dev": "npm install --include-workspace-root",
+    "setup": "npm ci --include-workspace-root --cache .npm-cache --prefer-offline --no-audit --no-fund",
+    "setup:dev": "npm install --include-workspace-root --cache .npm-cache --prefer-offline --no-audit --no-fund",
     "dev": "docker compose up -d",
     "db": "docker compose up -d postgres redis ollama",
     "api": "docker compose up -d postgres redis ollama api",
@@ -38,8 +38,8 @@
   },
   "scriptDescriptions": {
     "scripts:help": "แสดงคำอธิบายภาษาไทยของ script ทั้งหมดใน root package.json",
-    "install": "ติดตั้ง dependency ทั้ง repo จาก root ด้วย package-lock.json กลาง ใช้คำสั่งนี้เป็นหลัก",
-    "install:dev": "ติดตั้งหรืออัปเดต dependency ทั้ง repo สำหรับงานพัฒนา",
+    "setup": "ติดตั้ง dependency ทั้ง repo จาก root ด้วย package-lock.json กลาง ใช้คำสั่งนี้เป็นหลัก",
+    "setup:dev": "ติดตั้งหรืออัปเดต dependency ทั้ง repo สำหรับงานพัฒนา",
     "dev": "รันระบบทั้งหมดด้วย Docker Compose แบบ background ใช้คำสั่งนี้เมื่อต้องการเปิดทั้งโปรเจกต์",
     "db": "เปิดเฉพาะฐานข้อมูลและ service พื้นฐาน ได้แก่ postgres, redis และ ollama",
     "api": "เปิด postgres, redis, ollama และ API ผ่าน Docker Compose",

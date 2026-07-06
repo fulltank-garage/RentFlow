@@ -5,7 +5,7 @@ const descriptions = packageJson.scriptDescriptions ?? {};
 const groups = [
   {
     title: "เริ่มต้น",
-    names: ["scripts:help", "install", "install:dev"],
+    names: ["scripts:help", "setup", "setup:dev"],
   },
   {
     title: "รันระบบด้วย Docker",

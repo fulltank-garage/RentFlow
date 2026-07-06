@@ -1,12 +1,16 @@
 DEV_SERVICES := postgres redis ollama
 
-.PHONY: install install-dev dev db api customer admin partner api-local api-watch build lint test check logs ps stop
+.PHONY: setup setup-dev install install-dev dev db api customer admin partner api-local api-watch build lint test check logs ps stop
 
-install:
+setup:
 	npm ci --include-workspace-root
 
-install-dev:
+setup-dev:
 	npm install --include-workspace-root
+
+install: setup
+
+install-dev: setup-dev
 
 dev:
 	docker compose up -d
