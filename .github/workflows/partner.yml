@@ -4,25 +4,28 @@ on:
   push:
     paths:
       - "apps/partner/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/partner.yml"
   pull_request:
     paths:
       - "apps/partner/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/partner.yml"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/partner
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: apps/partner/package-lock.json
-      - run: npm ci --workspaces=false
-      - run: npm run lint
-      - run: npm run build
+          cache-dependency-path: package-lock.json
+      - run: npm ci --include-workspace-root
+      - run: npm run lint:partner
+      - run: npm run build:partner
