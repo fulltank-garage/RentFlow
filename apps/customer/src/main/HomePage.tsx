@@ -227,7 +227,7 @@ export default function HomePage({
     return cars.slice(0, 6);
   }, [cars]);
   const recommendedShops = React.useMemo(() => {
-    return buildShopSummariesFromTenants(marketplaceTenants, cars).slice(0, 12);
+    return buildShopSummariesFromTenants(marketplaceTenants, cars);
   }, [cars, marketplaceTenants]);
   const heroImages = React.useMemo(() => {
     if (siteMode === "storefront") {
@@ -358,7 +358,11 @@ export default function HomePage({
         <>
           <ShopRecommendationsSection
             shops={recommendedShops}
+            title="ร้านเช่ารถที่ร่วมให้บริการกับเรา"
+            subtitle="เลือกดูร้านทั้งหมด หรือดูรถจากทุกร้านในหน้าเดียวได้ทันที"
+            variant="overview"
             limit={12}
+            carsTotal={cars.length}
             dataError={marketplaceTenantsError}
             supportingError={carsError}
             hasAvailableCars={cars.length > 0}

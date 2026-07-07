@@ -2,6 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import DirectionsCarFilledRoundedIcon from "@mui/icons-material/DirectionsCarFilledRounded";
+import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import {
   Box,
   Button,
@@ -27,6 +30,8 @@ type Props = {
   limit?: number;
   showDivider?: boolean;
   layout?: "section" | "page";
+  variant?: "recommendations" | "overview";
+  carsTotal?: number;
   dataError?: string | null;
   supportingError?: string | null;
   hasAvailableCars?: boolean;
@@ -171,6 +176,144 @@ function ShopRecommendationSkeletonCard() {
   );
 }
 
+function MarketplaceOverviewSkeletonCard() {
+  return (
+    <Card
+      elevation={0}
+      sx={{ boxShadow: "none" }}
+      className="apple-card apple-card-no-hover overflow-hidden p-5! sm:p-6!"
+    >
+      <Box className="flex h-full min-h-56 flex-col justify-between gap-6">
+        <Box className="flex items-start justify-between gap-4">
+          <Box className="space-y-3">
+            <Skeleton
+              variant="rounded"
+              animation="wave"
+              sx={{ width: 108, height: 30, borderRadius: "999px" }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{ width: 122, height: 52, borderRadius: "12px", transform: "none" }}
+            />
+          </Box>
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            sx={{ width: 56, height: 56, borderRadius: "18px" }}
+          />
+        </Box>
+        <Box className="space-y-2">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{ width: "86%", height: 20, borderRadius: "8px", transform: "none" }}
+          />
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{ width: "68%", height: 20, borderRadius: "8px", transform: "none" }}
+          />
+        </Box>
+        <Skeleton
+          variant="rounded"
+          animation="wave"
+          sx={{ width: "100%", height: 44, borderRadius: "999px" }}
+        />
+      </Box>
+    </Card>
+  );
+}
+
+function MarketplaceOverviewCard({
+  label,
+  value,
+  description,
+  href,
+  actionLabel,
+  icon,
+  tone,
+  helper,
+}: {
+  label: string;
+  value: string;
+  description: string;
+  href: string;
+  actionLabel: string;
+  icon: React.ReactNode;
+  tone: "shop" | "car";
+  helper: string;
+}) {
+  const isShopTone = tone === "shop";
+
+  return (
+    <Card
+      elevation={0}
+      sx={{ boxShadow: "none" }}
+      className="apple-card group overflow-hidden p-5! transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 sm:p-6!"
+    >
+      <Box className="relative flex h-full min-h-56 flex-col justify-between gap-6">
+        <Box className="relative">
+          <Box className="flex items-start justify-between gap-4">
+            <Box>
+              <Typography
+                className="w-min whitespace-nowrap rounded-full px-3 py-1 text-sm font-bold"
+                sx={{
+                  backgroundColor: isShopTone
+                    ? "color-mix(in srgb, var(--rf-apple-blue) 12%, white)"
+                    : "color-mix(in srgb, var(--secondary-navy) 9%, white)",
+                  color: isShopTone
+                    ? "var(--rf-apple-blue)"
+                    : "var(--secondary-navy)",
+                }}
+              >
+                {label}
+              </Typography>
+              <Typography className="apple-heading mt-4 text-4xl font-black tracking-[-0.04em] text-(--rf-apple-ink) md:text-5xl">
+                {value}
+              </Typography>
+            </Box>
+
+            <Box
+              className="grid h-14 w-14 shrink-0 place-items-center rounded-[18px] [&_.MuiSvgIcon-root]:text-3xl"
+              sx={{
+                backgroundColor: isShopTone
+                  ? "color-mix(in srgb, var(--rf-apple-blue) 14%, white)"
+                  : "color-mix(in srgb, var(--secondary-navy) 10%, white)",
+                color: isShopTone
+                  ? "var(--rf-apple-blue)"
+                  : "var(--secondary-navy)",
+              }}
+            >
+              {icon}
+            </Box>
+          </Box>
+
+          <Typography className="mt-4 max-w-xl text-base leading-relaxed text-(--rf-apple-muted)">
+            {description}
+          </Typography>
+
+          <Typography className="mt-4 rounded-[18px] bg-(--rf-apple-surface-soft) px-4 py-3 text-sm font-semibold leading-relaxed text-(--rf-apple-ink)">
+            {helper}
+          </Typography>
+        </Box>
+
+        <Button
+          component={Link}
+          href={href}
+          variant="contained"
+          fullWidth
+          endIcon={<ArrowForwardRoundedIcon fontSize="small" />}
+          className="rounded-full! font-semibold!"
+          sx={{ minHeight: 46 }}
+        >
+          {actionLabel}
+        </Button>
+      </Box>
+    </Card>
+  );
+}
+
 export default function ShopRecommendationsSection({
   shops,
   title = "ร้านแนะนำ",
@@ -178,6 +321,8 @@ export default function ShopRecommendationsSection({
   limit,
   showDivider = true,
   layout = "section",
+  variant = "recommendations",
+  carsTotal = 0,
   dataError,
   supportingError,
   hasAvailableCars = false,
@@ -188,6 +333,7 @@ export default function ShopRecommendationsSection({
   const shopCardRefs = React.useRef<Array<HTMLDivElement | null>>([]);
   const [activeShopIndex, setActiveShopIndex] = React.useState(0);
   const isPageLayout = layout === "page";
+  const isOverviewVariant = variant === "overview";
   const visibleShops = React.useMemo(
     () => {
       const readyShops = shops.filter((shop) => shop.carCount > 0);
@@ -200,6 +346,7 @@ export default function ShopRecommendationsSection({
     [isPageLayout, limit, shops]
   );
   const isShowingSkeleton = loading && !visibleShops.length;
+  const shopsTotal = visibleShops.length;
   const [failedLogoIds, setFailedLogoIds] = React.useState<Set<string>>(
     () => new Set()
   );
@@ -260,19 +407,78 @@ export default function ShopRecommendationsSection({
           </Typography>
         </Box>
 
-        <Chip
-          size="small"
-          label={`${visibleShops.length} ${isPageLayout ? "รายการ" : "ร้าน"}`}
-          variant={isPageLayout ? "outlined" : "filled"}
-          className="apple-pill w-min! text-(--rf-apple-muted)!"
-          sx={{
-            "& .MuiChip-label": {
-              display: "flex",
-              alignItems: "center",
-            },
-          }}
-        />
+        {isOverviewVariant ? null : (
+          <Chip
+            size="small"
+            label={`${visibleShops.length} ${isPageLayout ? "รายการ" : "ร้าน"}`}
+            variant={isPageLayout ? "outlined" : "filled"}
+            className="apple-pill w-min! text-(--rf-apple-muted)!"
+            sx={{
+              "& .MuiChip-label": {
+                display: "flex",
+                alignItems: "center",
+              },
+            }}
+          />
+        )}
       </Box>
+
+      {isOverviewVariant ? (
+        <>
+          <Box className="mt-10 grid gap-4 md:grid-cols-2">
+            {dataError ? (
+              <DataLoadErrorCard
+                title="โหลดข้อมูลร้านไม่ได้"
+                message={dataError}
+                className="md:col-span-2"
+              />
+            ) : isShowingSkeleton ? (
+              Array.from({ length: 2 }).map((_, index) => (
+                <MarketplaceOverviewSkeletonCard
+                  key={`marketplace-overview-skeleton-${index}`}
+                />
+              ))
+            ) : (
+              <>
+                <MarketplaceOverviewCard
+                  label="ร้านทั้งหมด"
+                  value={`${shopsTotal} ร้าน`}
+                  description="รวมร้านเช่ารถที่พร้อมให้บริการบน RentFlowCar เลือกร้านที่ต้องการแล้วดูรถของร้านนั้นได้ทันที"
+                  href="/shops"
+                  actionLabel="ดูร้านทั้งหมด"
+                  icon={<StorefrontRoundedIcon />}
+                  tone="shop"
+                  helper="เหมาะสำหรับคนที่อยากเลือกจากร้าน สาขา หรือแบรนด์ที่คุ้นเคยก่อนดูรถ"
+                />
+                <MarketplaceOverviewCard
+                  label="รถทั้งหมด"
+                  value={`${carsTotal} คัน`}
+                  description="ดูรถเช่าจากทุกร้านในที่เดียว พร้อมกรองสาขา วันรับ-คืนรถ ประเภทรถ และเรียงราคาที่เหมาะกับคุณ"
+                  href="/cars"
+                  actionLabel="ดูรถทั้งหมด"
+                  icon={<DirectionsCarFilledRoundedIcon />}
+                  tone="car"
+                  helper="เหมาะสำหรับคนที่อยากเทียบรถ ราคา และเงื่อนไขจากทุกร้านในหน้าเดียว"
+                />
+              </>
+            )}
+          </Box>
+
+          {supportingError && !dataError ? (
+            <Box className="mt-4">
+              <DataLoadErrorCard
+                title="โหลดข้อมูลรถบางส่วนไม่ได้"
+                message={supportingError}
+                helperText="ยังเปิดดูร้านได้ แต่จำนวนรถทั้งหมดอาจยังไม่ครบถ้วน"
+                compact
+              />
+            </Box>
+          ) : null}
+
+          {showDivider ? <Divider className="mt-14! border-black/10!" /> : null}
+        </>
+      ) : (
+        <>
 
       <Box
         ref={shelfRef}
@@ -456,6 +662,8 @@ export default function ShopRecommendationsSection({
       ) : null}
 
       {showDivider ? <Divider className="mt-14! border-black/10!" /> : null}
+        </>
+      )}
     </Container>
   );
 }
