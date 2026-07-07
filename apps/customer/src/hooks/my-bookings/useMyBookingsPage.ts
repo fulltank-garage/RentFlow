@@ -6,6 +6,7 @@ import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowC
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
 import { buildPendingBookingPaymentHref } from "@/src/lib/pending-booking-payment";
+import { getRentFlowCarTenantSlug } from "@/src/lib/tenant";
 import { clearCachedSessionUser } from "@/src/services/auth/auth.service";
 import { bookingApi } from "@/src/services/booking/booking.service";
 import type { BookingAddon as BookingAddonItem } from "@/src/services/booking/booking.types";
@@ -18,6 +19,7 @@ export type BookingStatus =
   | "paid"
   | "active"
   | "review"
+  | "chat"
   | "completed"
   | "cancelled";
 
@@ -31,6 +33,7 @@ export type Booking = {
   returnDate: string;
   totalPrice: number;
   status: BookingStatus;
+  bookingMode?: "payment" | "chat" | string;
   pickupLocation?: string;
   returnLocation?: string;
   pickupLocationValue?: string;
@@ -49,7 +52,7 @@ export default function useMyBookingsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const ready = usePageReady();
-  const tenantSlug = searchParams.get("tenant") || undefined;
+  const tenantSlug = searchParams.get("tenant") || getRentFlowCarTenantSlug() || undefined;
 
   const [isCheckingAuth, setIsCheckingAuth] = React.useState(true);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -102,6 +105,8 @@ export default function useMyBookingsPage() {
               car?.domainSlug || booking.domainSlug || tenantSlug;
             const carName = booking.carName || car?.name || booking.carId;
             const shopName = car?.shopName || booking.shopName;
+            const bookingMode = booking.bookingMode || car?.bookingMode;
+            const isPaymentBooking = bookingMode === "payment";
 
             return {
               id: booking.bookingCode,
@@ -113,6 +118,7 @@ export default function useMyBookingsPage() {
               returnDate: booking.returnDate,
               totalPrice: booking.totalAmount,
               status: booking.status,
+              bookingMode,
               pickupLocation: booking.pickupLocation,
               returnLocation: booking.returnLocation,
               pickupLocationValue: booking.pickupLocationValue,
@@ -124,7 +130,7 @@ export default function useMyBookingsPage() {
               note: booking.note,
               addons: booking.addons,
               paymentHref:
-                booking.status === "pending"
+                isPaymentBooking && booking.status === "pending"
                   ? buildPendingBookingPaymentHref({
                       ...booking,
                       carName,

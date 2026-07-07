@@ -9,6 +9,7 @@ import { buildPendingBookingPaymentHref } from "@/src/lib/pending-booking-paymen
 import { getCachedSessionUser } from "@/src/services/auth/auth.service";
 import { bookingApi } from "@/src/services/booking/booking.service";
 import type { Booking } from "@/src/services/booking/booking.types";
+import { paymentsApi } from "@/src/services/payments/payments.service";
 
 type Props = {
   tenantSlug?: string;
@@ -16,7 +17,18 @@ type Props = {
 };
 
 function isAwaitingCustomerPayment(booking: Booking) {
-  return booking.status === "pending" || booking.status === "confirmed";
+  return (
+    booking.bookingMode === "payment" &&
+    (booking.status === "pending" || booking.status === "confirmed")
+  );
+}
+
+function bookingLookupId(booking: Booking) {
+  return booking.bookingCode || booking.id;
+}
+
+function hasSubmittedPaymentStatus(status?: string) {
+  return status === "pending_verification" || status === "paid";
 }
 
 export default function PendingBookingReminder({
@@ -31,6 +43,14 @@ export default function PendingBookingReminder({
 
   React.useEffect(() => {
     let cancelled = false;
+    const isHiddenRoute =
+      pathname === "/payment" || pathname === "/booking/success";
+
+    if (isHiddenRoute) {
+      setPendingBooking(null);
+      setPaymentHref("");
+      return;
+    }
 
     if (waitForTenant && !tenantSlug) {
       setPendingBooking(null);
@@ -44,19 +64,38 @@ export default function PendingBookingReminder({
       return;
     }
 
-    bookingApi
-      .getMyBookings({ tenantSlug })
-      .then((res) => {
+    async function loadPendingBooking() {
+      try {
+        const res = await bookingApi.getMyBookings({ tenantSlug });
         if (cancelled) return;
 
-        const nextPending =
-          res.data
-            .filter(isAwaitingCustomerPayment)
-            .sort(
-              (a, b) =>
-                new Date(b.updatedAt || b.createdAt).getTime() -
-                new Date(a.updatedAt || a.createdAt).getTime()
-            )[0] || null;
+        const pendingCandidates = res.data
+          .filter(isAwaitingCustomerPayment)
+          .sort(
+            (a, b) =>
+              new Date(b.updatedAt || b.createdAt).getTime() -
+              new Date(a.updatedAt || a.createdAt).getTime()
+          );
+
+        let nextPending: Booking | null = null;
+        for (const booking of pendingCandidates) {
+          try {
+            const payment = await paymentsApi.getPaymentByBookingId(
+              bookingLookupId(booking),
+              { tenantSlug: tenantSlug || booking.domainSlug }
+            );
+            if (hasSubmittedPaymentStatus(payment.data.status)) {
+              continue;
+            }
+          } catch {
+            // No payment exists yet or it cannot be checked, so keep this as payable.
+          }
+
+          nextPending = booking;
+          break;
+        }
+
+        if (cancelled) return;
 
         setPendingBooking(nextPending);
         setPaymentHref(
@@ -67,17 +106,19 @@ export default function PendingBookingReminder({
               })
             : ""
         );
-      })
-      .catch(() => {
+      } catch {
         if (cancelled) return;
         setPendingBooking(null);
         setPaymentHref("");
-      });
+      }
+    }
+
+    loadPendingBooking();
 
     return () => {
       cancelled = true;
     };
-  }, [tenantSlug, waitForTenant]);
+  }, [pathname, tenantSlug, waitForTenant]);
 
   if (
     pathname === "/payment" ||

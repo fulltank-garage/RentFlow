@@ -4,7 +4,11 @@ function trimTrailingSlash(value: string) {
 
 export function getRentFlowCarApiBaseUrl() {
   return trimTrailingSlash(
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+    (typeof window === "undefined"
+      ? process.env.RENTFLOW_API_INTERNAL_URL
+      : undefined) ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      "http://localhost:8080"
   );
 }
 

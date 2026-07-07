@@ -13,7 +13,6 @@ export type TenantProfile = {
   bankAccountName?: string;
   bankAccountNumber?: string;
   facebookPageUrl?: string;
-  lineOaQrCodeUrl?: string;
   status?: string;
   bookingMode?: "payment" | "chat" | string;
   chatThresholdTHB?: number;

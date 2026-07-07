@@ -80,6 +80,7 @@ export default function usePaymentPage() {
   const shopName = params.get("shopName") || "";
   const customerName = params.get("customerName") || "";
   const customerPhone = params.get("customerPhone") || "";
+  const bookingCreatedAt = params.get("bookingCreatedAt") || "";
   const subtotal = Number(params.get("subtotal") || "0") || 0;
   const discount = Number(params.get("discount") || "0") || 0;
   const extraCharge = Number(params.get("extraCharge") || "0") || 0;
@@ -299,6 +300,9 @@ export default function usePaymentPage() {
         nextParams.set("carName", car?.name || carName);
         nextParams.set("customerName", fullName.trim());
         nextParams.set("customerPhone", phone.trim());
+        if (bookingCreatedAt) {
+          nextParams.set("bookingCreatedAt", bookingCreatedAt);
+        }
         nextParams.set("pickupDate", pickupTime ? `${pickupDate} ${pickupTime}` : pickupDate);
         nextParams.set("returnDate", returnTime ? `${returnDate} ${returnTime}` : returnDate);
         nextParams.set("pickupPoint", pickupPoint);
@@ -327,6 +331,7 @@ export default function usePaymentPage() {
     amount,
     bookingId,
     bookingRef,
+    bookingCreatedAt,
     canPay,
     car?.name,
     car?.shopName,

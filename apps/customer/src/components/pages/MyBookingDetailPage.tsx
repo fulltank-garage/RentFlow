@@ -24,15 +24,28 @@ import useMyBookingDetailPage from "@/src/hooks/my-bookings/useMyBookingDetailPa
 export default function MyBookingDetailPage() {
   const booking = useMyBookingDetailPage();
   const local = booking.local;
+  const isChatBooking = local?.status === "chat";
   const receiptHref = React.useMemo(() => {
     if (!local) return "/booking/success";
 
     const params = new URLSearchParams();
-    params.set("bookingId", local.bookingRef || local.id);
+    params.set("bookingId", local.id);
+    if (local.bookingRef) {
+      params.set("bookingRef", local.bookingRef);
+    }
     params.set("amount", String(local.totalPrice || 0));
     params.set("carName", local.carName);
     params.set("customerName", local.customerName || "");
     params.set("customerPhone", local.phone || "");
+    if (local.createdAt) {
+      params.set("bookingCreatedAt", local.createdAt);
+    }
+    params.set(
+      "documentType",
+      ["paid", "active", "completed"].includes(local.status)
+        ? "receipt"
+        : "payment_proof"
+    );
     params.set("pickupDate", local.pickupDate);
     params.set("returnDate", local.returnDate);
     params.set("pickupPoint", local.pickupLocation || "");
@@ -273,9 +286,13 @@ export default function MyBookingDetailPage() {
                     fullWidth
                     variant="contained"
                     className="rounded-full! bg-slate-900! hover:bg-slate-800!"
-                    disabled={local.status === "pending" || local.status === "cancelled"}
+                    disabled={local.status === "pending" || local.status === "cancelled" || isChatBooking}
                   >
-                    ดูใบยืนยันการจอง
+                    {isChatBooking
+                      ? "จองผ่านแชท"
+                      : ["paid", "active", "completed"].includes(local.status)
+                      ? "ดูใบเสร็จการชำระเงิน"
+                      : "ดูเอกสารยืนยันการส่งหลักฐาน"}
                   </Button>
 
                   <Button

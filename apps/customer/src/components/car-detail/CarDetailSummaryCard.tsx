@@ -34,13 +34,15 @@ type Props = {
 
 export default function CarDetailSummaryCard({ detail }: Props) {
   const router = useRouter();
+  const isPaymentBooking = detail.bookingMode === "payment";
   const availableUnits =
     typeof detail.availableUnits === "number"
       ? detail.availableUnits
       : detail.isAvailable
         ? Math.max(detail.unitCount || 1, 1)
         : 0;
-  const isUnavailable = !detail.isAvailable || availableUnits <= 0;
+  const isUnavailable =
+    !detail.isAvailable || (isPaymentBooking && availableUnits <= 0);
   const unavailableLabel =
     detail.status === "rented" ? "ถูกเช่าแล้ว" : "ถูกจองแล้ว";
 
@@ -86,7 +88,7 @@ export default function CarDetailSummaryCard({ detail }: Props) {
               / วัน
             </Typography>
           </Box>
-          {(detail.unitCount || 0) > 0 ? (
+          {isPaymentBooking && (detail.unitCount || 0) > 0 ? (
             <Box className="mt-3 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-(--rf-apple-muted)">
               <Typography component="span" className="text-sm font-bold">
                 เหลือให้จอง

@@ -51,12 +51,17 @@ type Props = {
   showChatBooking: boolean;
   forceChatBooking: boolean;
   hasChatChannel: boolean;
+  chatContactPhone?: string;
   carAvailable: boolean;
   checkingAvailability: boolean;
   availabilityMessage: string | null;
   canSubmit: boolean;
   loading: boolean;
   carExists: boolean;
+  chatCopyNotice?: string | null;
+  lastChatMessage?: string;
+  onCopyChatMessage?: () => void;
+  onOpenChat?: () => void;
 };
 
 export default function BookingForm({
@@ -98,13 +103,35 @@ export default function BookingForm({
   showChatBooking,
   forceChatBooking,
   hasChatChannel,
+  chatContactPhone,
   carAvailable,
   checkingAvailability,
   availabilityMessage,
   canSubmit,
   loading,
   carExists,
+  chatCopyNotice,
+  lastChatMessage,
+  onCopyChatMessage,
+  onOpenChat,
 }: Props) {
+  const missingRequiredChatChannel = forceChatBooking && !hasChatChannel;
+  const chatDetailRows = (lastChatMessage || "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const separatorIndex = line.indexOf(":");
+      if (separatorIndex === -1) {
+        return { label: "", value: line };
+      }
+
+      return {
+        label: line.slice(0, separatorIndex).trim(),
+        value: line.slice(separatorIndex + 1).trim(),
+      };
+    });
+
   return (
     <Box id={formId} component="form" onSubmit={onSubmit} className="grid gap-4">
       <Box className="grid gap-4 sm:grid-cols-2">
@@ -185,6 +212,115 @@ export default function BookingForm({
         <Alert severity="warning">{availabilityMessage}</Alert>
       ) : null}
 
+      {missingRequiredChatChannel ? (
+        <Alert severity="warning" className="mt-1">
+          {chatContactPhone ? (
+            <>
+              ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page สำหรับเปิด Messenger กรุณาโทรติดต่อร้านที่{" "}
+              <Box component="a" href={`tel:${chatContactPhone}`} className="font-bold underline">
+                {chatContactPhone}
+              </Box>
+            </>
+          ) : (
+            "ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page จึงยังไม่สามารถจองผ่านแชทได้"
+          )}
+        </Alert>
+      ) : null}
+
+      {chatCopyNotice ? (
+        <Alert
+          severity="success"
+          className="mt-1"
+          sx={{
+            alignItems: "flex-start",
+            overflowX: "hidden",
+            "& .MuiAlert-message": {
+              flex: "1 1 auto",
+              maxWidth: "100%",
+              minWidth: 0,
+              overflowX: "hidden",
+              width: "auto",
+            },
+          }}
+        >
+          <Box className="grid min-w-0 max-w-full gap-3 overflow-hidden">
+            <Typography className="text-sm font-bold text-(--rf-apple-ink)">
+              ส่งรายละเอียดให้ร้านใน Messenger
+            </Typography>
+            <Typography className="text-xs font-semibold text-emerald-700">
+              {chatCopyNotice}
+            </Typography>
+            {chatDetailRows.length ? (
+              <Box className="grid min-w-0 max-w-full gap-2 overflow-hidden rounded-2xl bg-white/80 p-3 sm:p-4">
+                {chatDetailRows.map((row, index) =>
+                  row.label ? (
+                    <Box
+                      key={`${row.label}-${index}`}
+                      className="grid min-w-0 max-w-full gap-1 border-b border-black/5 pb-2 last:border-b-0 last:pb-0 sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-3"
+                    >
+                      <Typography className="min-w-0 text-xs font-bold text-(--rf-apple-muted)">
+                        {row.label}
+                      </Typography>
+                      <Typography className="min-w-0 overflow-hidden text-sm font-semibold break-words text-(--rf-apple-ink)">
+                        {row.value || "-"}
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Typography
+                      key={`chat-detail-${index}`}
+                      className="min-w-0 rounded-xl bg-(--rf-apple-surface-soft) px-3 py-2 text-sm font-bold break-words text-(--rf-apple-ink)"
+                    >
+                      {row.value}
+                    </Typography>
+                  )
+                )}
+              </Box>
+            ) : null}
+            <Box className="flex min-w-0 max-w-full flex-col gap-3 overflow-hidden sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+              {onCopyChatMessage ? (
+                <Button
+                  variant="outlined"
+                  onClick={onCopyChatMessage}
+                  className="min-w-0! rounded-xl! px-6! py-3! font-semibold! sm:max-w-full!"
+                  sx={{
+                    textTransform: "none",
+                    borderColor: "var(--rf-apple-border-strong)",
+                    color: "var(--rf-apple-ink)",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "var(--rf-apple-border-strong)",
+                      backgroundColor: "var(--rf-apple-surface-soft)",
+                      boxShadow: "none",
+                    },
+                  }}
+                >
+                  คัดลอกอีกครั้ง
+                </Button>
+              ) : null}
+              {onOpenChat ? (
+                <Button
+                  variant="contained"
+                  onClick={onOpenChat}
+                  className="min-w-0! rounded-xl! px-6! py-3! font-semibold! sm:max-w-full!"
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#059669",
+                    boxShadow: "none",
+                    "&:hover": {
+                      backgroundColor: "#047857",
+                      boxShadow: "none",
+                    },
+                  }}
+                >
+                  เปิด Messenger
+                </Button>
+              ) : null}
+            </Box>
+          </Box>
+        </Alert>
+      ) : null}
+
+      {!chatCopyNotice ? (
       <Box className="mt-6 hidden space-y-4 sm:block">
         {showChatBooking ? (
           <Box
@@ -237,7 +373,16 @@ export default function BookingForm({
             </Box>
             {!hasChatChannel ? (
               <Typography className="mt-3 text-xs text-amber-800">
-                ร้านนี้ยังไม่ได้ตั้งค่าปุ่มเปิดแชท ลูกค้ายังส่งคำขอจองให้ร้านติดต่อกลับได้
+                {chatContactPhone ? (
+                  <>
+                    ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page สำหรับเปิด Messenger กรุณาโทรติดต่อร้านที่{" "}
+                    <Box component="a" href={`tel:${chatContactPhone}`} className="font-bold underline">
+                      {chatContactPhone}
+                    </Box>
+                  </>
+                ) : (
+                  "ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page จึงยังไม่สามารถจองผ่านแชทได้"
+                )}
               </Typography>
             ) : null}
           </Box>
@@ -255,7 +400,13 @@ export default function BookingForm({
           <Button
             type="submit"
             variant="contained"
-            disabled={!canSubmit || loading || checkingAvailability || !carAvailable}
+            disabled={
+              !canSubmit ||
+              loading ||
+              checkingAvailability ||
+              !carAvailable ||
+              (forceChatBooking && !hasChatChannel)
+            }
             className="rounded-xl! px-6! py-3! font-semibold! sm:min-w-[260px]"
             sx={{
               textTransform: "none",
@@ -285,6 +436,7 @@ export default function BookingForm({
 
         </Stack>
       </Box>
+      ) : null}
 
       {carExists && !carAvailable ? (
         <Alert severity="info">

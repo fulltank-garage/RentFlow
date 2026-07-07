@@ -53,9 +53,8 @@ export function buildChatMessage(params: BuildChatMessageParams) {
   ].filter(Boolean).join("\n");
 }
 
-export function buildChatHref(baseUrl: string, message: string) {
+export function buildChatHref(baseUrl: string) {
   const trimmedBaseUrl = baseUrl.trim();
-  const encoded = encodeURIComponent(message);
   if (!trimmedBaseUrl) return "";
 
   if (/m\.me|messenger\.com/i.test(trimmedBaseUrl)) {
@@ -63,13 +62,21 @@ export function buildChatHref(baseUrl: string, message: string) {
     return `${trimmedBaseUrl}${separator}ref=rentflow_booking`;
   }
 
-  if (/line\.me|lin\.ee/i.test(trimmedBaseUrl)) {
-    const separator = trimmedBaseUrl.includes("?") ? "&" : "?";
-    return `${trimmedBaseUrl}${separator}text=${encoded}`;
+  try {
+    const parsed = new URL(
+      /^https?:\/\//i.test(trimmedBaseUrl)
+        ? trimmedBaseUrl
+        : `https://${trimmedBaseUrl}`
+    );
+    const host = parsed.hostname.replace(/^www\./i, "").toLowerCase();
+    const pageSlug = parsed.pathname.split("/").filter(Boolean)[0] || "";
+    if ((host === "facebook.com" || host === "fb.com") && pageSlug && pageSlug !== "profile.php") {
+      return `https://m.me/${encodeURIComponent(pageSlug)}?ref=rentflow_booking`;
+    }
+    return parsed.toString();
+  } catch {
+    return trimmedBaseUrl;
   }
-
-  const separator = trimmedBaseUrl.includes("?") ? "&" : "?";
-  return `${trimmedBaseUrl}${separator}text=${encoded}`;
 }
 
 export async function copyChatMessage(message: string) {

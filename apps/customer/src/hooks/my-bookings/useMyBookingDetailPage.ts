@@ -6,6 +6,7 @@ import { useRentFlowCarRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowC
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
 import { clearCachedSessionUser } from "@/src/services/auth/auth.service";
+import { getRentFlowCarTenantSlug } from "@/src/lib/tenant";
 import { bookingApi } from "@/src/services/booking/booking.service";
 import { usersApi } from "@/src/services/users/users.service";
 
@@ -15,6 +16,7 @@ export type BookingStatus =
   | "paid"
   | "active"
   | "review"
+  | "chat"
   | "completed"
   | "cancelled";
 
@@ -33,6 +35,7 @@ export type Booking = {
   customerName?: string;
   phone?: string;
   notes?: string;
+  createdAt?: string;
   subtotal: number;
   extraCharge: number;
   discount: number;
@@ -45,7 +48,7 @@ export default function useMyBookingDetailPage() {
   const ready = usePageReady();
 
   const id = typeof params?.id === "string" ? params.id : "";
-  const tenantSlug = searchParams.get("tenant") || undefined;
+  const tenantSlug = searchParams.get("tenant") || getRentFlowCarTenantSlug() || undefined;
   const [isCheckingAuth, setIsCheckingAuth] = React.useState(true);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [openCancel, setOpenCancel] = React.useState(false);
@@ -108,6 +111,7 @@ export default function useMyBookingDetailPage() {
           customerName: booking.customerName,
           phone: booking.customerPhone,
           notes: booking.note,
+          createdAt: booking.createdAt,
           subtotal: booking.subtotal,
           extraCharge: booking.extraCharge,
           discount: booking.discount,

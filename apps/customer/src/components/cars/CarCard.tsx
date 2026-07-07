@@ -33,13 +33,15 @@ export default function CarCard({ car, showShop = false, priority = false }: Pro
   const shopHref = car.domainSlug
     ? getRentFlowCarStorefrontHref(car.domainSlug)
     : "";
+  const isPaymentBooking = car.bookingMode === "payment";
   const availableUnits =
     typeof car.availableUnits === "number"
       ? car.availableUnits
       : car.isAvailable
         ? Math.max(car.unitCount || 1, 1)
         : 0;
-  const isBooked = car.isAvailable === false || availableUnits <= 0;
+  const isBooked =
+    car.isAvailable === false || (isPaymentBooking && availableUnits <= 0);
   const unavailableLabel = car.status === "rented" ? "ถูกเช่าแล้ว" : "ถูกจองแล้ว";
 
   return (
@@ -118,7 +120,7 @@ export default function CarCard({ car, showShop = false, priority = false }: Pro
               /วัน
             </Typography>
           </Box>
-          {(car.unitCount || 0) > 0 ? (
+          {isPaymentBooking && (car.unitCount || 0) > 0 ? (
             <Box className="mt-2 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-(--rf-apple-muted)">
               <Typography component="span" className="text-sm font-bold">
                 เหลือให้จอง

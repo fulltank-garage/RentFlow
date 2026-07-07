@@ -3,9 +3,21 @@ import type { Metadata } from "next";
 import BookingSuccessPage from "@/src/components/pages/BookingSuccessPage";
 import BookingSuccessPageSkeleton from "@/src/components/booking/BookingSuccessPageSkeleton";
 import { buildRentFlowCarNoIndexMetadata } from "@/src/lib/seo";
+import {
+  getInitialRentFlowCarTenantProfile,
+  getRentFlowCarRequestHost,
+} from "@/src/lib/server-tenant";
 
-export const metadata: Metadata =
-  buildRentFlowCarNoIndexMetadata("จองรถสำเร็จ");
+export async function generateMetadata(): Promise<Metadata> {
+  const host = await getRentFlowCarRequestHost();
+  const tenant = await getInitialRentFlowCarTenantProfile(host);
+  return buildRentFlowCarNoIndexMetadata({
+    host,
+    tenant,
+    pathname: "/booking/success",
+    title: "จองรถสำเร็จ",
+  });
+}
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -27,6 +39,8 @@ async function BookingSuccessPageContent({
   const carName = readParam(params.carName, "");
   const customerName = readParam(params.customerName, "");
   const customerPhone = readParam(params.customerPhone, "");
+  const bookingCreatedAt = readParam(params.bookingCreatedAt, "");
+  const documentType = readParam(params.documentType, "payment_proof");
   const pickupDate = readParam(params.pickupDate, "");
   const returnDate = readParam(params.returnDate, "");
   const pickupPoint = readParam(params.pickupPoint, "");
@@ -42,6 +56,8 @@ async function BookingSuccessPageContent({
       carName={carName || undefined}
       customerName={customerName || undefined}
       customerPhone={customerPhone || undefined}
+      bookingCreatedAt={bookingCreatedAt || undefined}
+      documentType={documentType === "receipt" ? "receipt" : "payment_proof"}
       pickupDate={pickupDate || undefined}
       returnDate={returnDate || undefined}
       pickupPoint={pickupPoint || undefined}

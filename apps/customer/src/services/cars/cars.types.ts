@@ -1,7 +1,4 @@
-import type {
-  LineOfficialAccountSummary,
-  TenantSummary,
-} from "../types/types";
+import type { TenantSummary } from "../types/types";
 
 export type CarType = "Economy" | "Sedan" | "SUV" | "Van";
 export type Transmission = "Auto" | "Manual";
@@ -32,7 +29,6 @@ export type Car = TenantSummary & {
   availableUnits?: number;
   createdAt: string;
   updatedAt: string;
-  lineOfficialAccount?: LineOfficialAccountSummary;
 };
 
 export type CarsQuery = {

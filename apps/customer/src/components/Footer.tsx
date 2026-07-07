@@ -21,7 +21,6 @@ const CONTACT = {
 
 const SOCIAL = {
   facebook: "https://facebook.com",
-  line: "https://line.me/R/ti/p/@rentflowcar",
 };
 
 type FooterProps = {
@@ -131,9 +130,6 @@ export default function Footer({
     siteMode === "storefront"
       ? tenantProfile?.facebookPageUrl || ""
       : SOCIAL.facebook;
-  const lineOaQrCodeUrl =
-    siteMode === "storefront" ? tenantProfile?.lineOaQrCodeUrl || "" : "";
-  const lineUrl = SOCIAL.line;
   const telHref = contactPhone.replace(/[^\d+]/g, "");
   const navItems = React.useMemo(
     () =>
@@ -238,28 +234,6 @@ export default function Footer({
                 </a>
               ) : null}
 
-              {lineUrl ? (
-                <a
-                  href={lineUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="apple-body-sm inline-flex w-fit items-center gap-2 text-(--rf-apple-muted) hover:text-(--rf-apple-ink) focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-                >
-                  <FooterLinkIcon src="/line.svg" alt="LINE" />
-                  <span>LINE</span>
-                </a>
-              ) : null}
-
-              {lineOaQrCodeUrl ? (
-                <>
-                  <Box
-                    component="img"
-                    src={lineOaQrCodeUrl}
-                    alt={`QR Code LINE OA ${brandName}`}
-                    className="mt-1.5 h-44 w-44 object-contain sm:h-48 sm:w-48 md:h-52 md:w-52"
-                  />
-                </>
-              ) : null}
             </Stack>
           </Box>
         </Box>

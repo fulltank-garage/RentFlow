@@ -70,6 +70,7 @@ export default function BookingPage() {
               loading={booking.loading}
               checkingAvailability={booking.checkingAvailability}
               carAvailable={booking.carAvailable}
+              chatFlowCompleted={Boolean(booking.chatCopyNotice)}
             />
 
             <Card
@@ -126,12 +127,17 @@ export default function BookingPage() {
                   showChatBooking={booking.showChatBooking}
                   forceChatBooking={booking.forceChatBooking}
                   hasChatChannel={booking.hasChatChannel}
+                  chatContactPhone={booking.car?.contactPhone}
                   carAvailable={booking.carAvailable}
                   checkingAvailability={booking.checkingAvailability}
                   availabilityMessage={booking.availabilityMessage}
                   canSubmit={booking.canSubmit}
                   loading={booking.loading}
                   carExists={!!booking.car}
+                  chatCopyNotice={booking.chatCopyNotice}
+                  lastChatMessage={booking.lastChatMessage}
+                  onCopyChatMessage={booking.copyLatestChatMessage}
+                  onOpenChat={booking.chatHref ? booking.openChatChannel : undefined}
                 />
               </CardContent>
             </Card>

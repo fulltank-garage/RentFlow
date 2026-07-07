@@ -17,7 +17,6 @@ function normalizeTenantProfile(tenant: TenantProfile): TenantProfile {
     logoUrl: resolveRentFlowCarAssetUrl(tenant.logoUrl),
     promoImageUrl,
     promoImageUrls,
-    lineOaQrCodeUrl: resolveRentFlowCarAssetUrl(tenant.lineOaQrCodeUrl),
   };
 }
 

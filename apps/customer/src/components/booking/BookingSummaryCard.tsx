@@ -33,6 +33,7 @@ type Props = {
   loading?: boolean;
   checkingAvailability?: boolean;
   carAvailable?: boolean;
+  chatFlowCompleted?: boolean;
 };
 
 export function BookingMobileCarCard({ car }: { car?: Car | null }) {
@@ -94,8 +95,14 @@ export default function BookingSummaryCard({
   loading = false,
   checkingAvailability = false,
   carAvailable = true,
+  chatFlowCompleted = false,
 }: Props) {
-  const submitDisabled = !canSubmit || loading || checkingAvailability || !carAvailable;
+  const submitDisabled =
+    !canSubmit ||
+    loading ||
+    checkingAvailability ||
+    !carAvailable ||
+    (forceChatBooking && !hasChatChannel);
 
   return (
     <Card
@@ -239,7 +246,7 @@ export default function BookingSummaryCard({
           </Box>
         )}
 
-        {car ? (
+        {car && !chatFlowCompleted ? (
           <Box className="mt-4 space-y-3 sm:hidden">
             {showChatBooking ? (
               <Box
@@ -288,7 +295,16 @@ export default function BookingSummaryCard({
                 </Button>
                 {!hasChatChannel ? (
                   <Typography className="mt-3 text-xs text-amber-800">
-                    ร้านนี้ยังไม่ได้ตั้งค่าปุ่มเปิดแชท ลูกค้ายังส่งคำขอจองให้ร้านติดต่อกลับได้
+                    {car.contactPhone ? (
+                      <>
+                        ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page สำหรับเปิด Messenger กรุณาโทรติดต่อร้านที่{" "}
+                        <Link href={`tel:${car.contactPhone}`} className="font-bold underline">
+                          {car.contactPhone}
+                        </Link>
+                      </>
+                    ) : (
+                      "ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page จึงยังไม่สามารถจองผ่านแชทได้"
+                    )}
                   </Typography>
                 ) : null}
               </Box>

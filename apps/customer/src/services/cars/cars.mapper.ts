@@ -41,12 +41,13 @@ export function normalizeCar(
     shopName: raw.shopName,
     domainSlug: raw.domainSlug,
     publicDomain: raw.publicDomain,
+    facebookPageUrl: raw.facebookPageUrl,
+    contactPhone: raw.contactPhone,
     logoUrl: resolveRentFlowCarAssetUrl(raw.logoUrl),
     promoImageUrl: resolveRentFlowCarAssetUrl(raw.promoImageUrl),
     promoImageUrls: raw.promoImageUrls?.map(resolveRentFlowCarAssetUrl).filter(Boolean),
     bookingMode: raw.bookingMode,
     chatThresholdTHB: raw.chatThresholdTHB,
-    lineOfficialAccount: raw.lineOfficialAccount,
   };
 }
 

@@ -4,11 +4,12 @@ import * as React from "react";
 import { Box, Button, Chip, Typography } from "@mui/material";
 import { formatTHB } from "@/src/constants/money";
 import { formatBookingDateTime } from "@/src/lib/booking-datetime";
-import { readClientCookie, writeClientCookie } from "@/src/lib/client-cookie";
 
 type Props = {
   bookingId: string;
   amount: number;
+  bookingCreatedAt?: string;
+  documentType?: "payment_proof" | "receipt";
   customerName?: string;
   customerPhone?: string;
   carName?: string;
@@ -232,6 +233,8 @@ function ReceiptPreviewSection({
 export default function BookingReceiptCard({
   bookingId,
   amount,
+  bookingCreatedAt,
+  documentType = "payment_proof",
   customerName,
   customerPhone,
   carName,
@@ -245,13 +248,20 @@ export default function BookingReceiptCard({
   const [downloadStatus, setDownloadStatus] = React.useState<DownloadStatus>("idle");
   const autoDownloadStartedRef = React.useRef(false);
 
+  const issuedAt = React.useMemo(() => {
+    if (!bookingCreatedAt) return new Date();
+
+    const parsed = new Date(bookingCreatedAt);
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  }, [bookingCreatedAt]);
+
   const issuedDate = React.useMemo(
     () =>
       new Intl.DateTimeFormat("th-TH", {
         dateStyle: "long",
         timeStyle: "short",
-      }).format(new Date()),
-    []
+      }).format(issuedAt),
+    [issuedAt]
   );
 
   const issuedDateShort = React.useMemo(
@@ -262,13 +272,22 @@ export default function BookingReceiptCard({
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      }).format(new Date()),
-    []
+      }).format(issuedAt),
+    [issuedAt]
   );
 
   const bookingReference = bookingId || "BK-XXXX";
-  const filename = `receipt-${bookingReference}.png`;
-  const autoDownloadKey = `rentflow-auto-receipt-${bookingReference}`;
+  const isReceiptDocument = documentType === "receipt";
+  const documentTitle = isReceiptDocument
+    ? "ใบเสร็จการชำระเงิน"
+    : "เอกสารยืนยันการส่งหลักฐานชำระเงิน";
+  const documentSubtitle = isReceiptDocument
+    ? "เอกสารยืนยันการชำระเงินเรียบร้อย"
+    : "เอกสารนี้ยืนยันว่าระบบได้รับหลักฐานชำระเงินแล้ว และอยู่ระหว่างรอตรวจสอบ";
+  const documentBadge = isReceiptDocument ? "ชำระแล้ว" : "รอตรวจสอบ";
+  const documentDateLabel = isReceiptDocument ? "วันที่ออกใบเสร็จ" : "วันที่ส่งหลักฐาน";
+  const documentFilenamePrefix = isReceiptDocument ? "receipt" : "payment-proof";
+  const filename = `${documentFilenamePrefix}-${bookingReference}.png`;
 
   const customerFields = React.useMemo<PreviewField[]>(
     () => [
@@ -370,7 +389,7 @@ export default function BookingReceiptCard({
     ctx.font = `800 64px ${fontFamily}`;
     const titleLines = wrapCanvasText(
       ctx,
-      "ใบเสร็จการจอง",
+      documentTitle,
       headerContentWidth
     );
     titleLines.forEach((line, index) => {
@@ -381,7 +400,7 @@ export default function BookingReceiptCard({
     ctx.fillStyle = "rgba(255,255,255,0.76)";
     const subtitleLines = wrapCanvasText(
       ctx,
-      shopName ? `ร้าน ${shopName}` : "เอกสารยืนยันการชำระเงินเรียบร้อย",
+      shopName ? `ร้าน ${shopName}` : documentSubtitle,
       headerContentWidth
     );
     subtitleLines.forEach((line, index) => {
@@ -393,7 +412,7 @@ export default function BookingReceiptCard({
     ctx.fill();
     ctx.fillStyle = "#ffffff";
     ctx.font = `800 26px ${fontFamily}`;
-    ctx.fillText("ชำระแล้ว", headerRightX + 48, 197);
+    ctx.fillText(documentBadge, headerRightX + (isReceiptDocument ? 48 : 34), 197);
 
     ctx.fillStyle = "rgba(255,255,255,0.64)";
     ctx.font = `700 18px ${fontFamily}`;
@@ -442,7 +461,7 @@ export default function BookingReceiptCard({
       x: innerX,
       y: cursorY,
       width: sectionWidth,
-      label: "วันที่ออกใบเสร็จ",
+      label: documentDateLabel,
       value: issuedDate,
       fontFamily,
       background: "#f8fafc",
@@ -569,7 +588,9 @@ export default function BookingReceiptCard({
     ctx.fillStyle = "#64748b";
     ctx.font = `500 19px ${fontFamily}`;
     ctx.fillText(
-      "ไฟล์นี้ถูกสร้างอัตโนมัติหลังการจองสำเร็จ เพื่อใช้เก็บอ้างอิงรายการเบื้องต้น",
+      isReceiptDocument
+        ? "ไฟล์นี้ถูกสร้างหลังร้านยืนยันการชำระเงิน เพื่อใช้เก็บอ้างอิงรายการ"
+        : "ไฟล์นี้ถูกสร้างหลังส่งหลักฐานชำระเงิน เพื่อใช้เก็บอ้างอิงระหว่างรอตรวจสอบ",
       innerX + 30,
       cursorY + 62
     );
@@ -581,8 +602,13 @@ export default function BookingReceiptCard({
     carName,
     customerName,
     customerPhone,
+    documentBadge,
+    documentDateLabel,
+    documentSubtitle,
+    documentTitle,
     issuedDate,
     issuedDateShort,
+    isReceiptDocument,
     pickupDate,
     pickupPoint,
     returnDate,
@@ -627,40 +653,28 @@ export default function BookingReceiptCard({
 
     autoDownloadStartedRef.current = true;
 
-    const downloaded = readClientCookie(autoDownloadKey);
-    if (downloaded) {
-      setDownloadStatus("auto");
-      return;
-    }
-
     const timer = window.setTimeout(async () => {
-      const success = await handleDownload("auto");
-      if (success) {
-        writeClientCookie(autoDownloadKey, new Date().toISOString(), {
-          maxAge: 60 * 60 * 24,
-          sameSite: "Strict",
-        });
-      }
+      await handleDownload("auto");
     }, 520);
 
     return () => window.clearTimeout(timer);
-  }, [autoDownloadKey, handleDownload]);
+  }, [handleDownload]);
 
   const helperText =
     downloadStatus === "error"
-      ? "ไม่สามารถสร้างไฟล์ใบเสร็จได้ในครั้งนี้ ลองกดดาวน์โหลดอีกครั้งได้เลย"
+      ? "ไม่สามารถสร้างไฟล์เอกสารได้ในครั้งนี้ ลองกดดาวน์โหลดอีกครั้งได้เลย"
       : downloadStatus === "auto"
-        ? "ระบบดาวน์โหลดใบเสร็จให้อัตโนมัติแล้ว หากยังไม่ได้รับไฟล์สามารถกดดาวน์โหลดอีกครั้งได้"
+        ? "ระบบดาวน์โหลดเอกสารให้อัตโนมัติแล้ว หากยังไม่ได้รับไฟล์สามารถกดดาวน์โหลดอีกครั้งได้"
         : downloadStatus === "manual"
-          ? "ดาวน์โหลดใบเสร็จเรียบร้อยแล้ว สามารถเก็บไฟล์ไว้ใช้อ้างอิงได้ทันที"
-          : "เมื่อเข้าหน้านี้ ระบบจะสร้างไฟล์ใบเสร็จให้โดยอัตโนมัติ และยังสามารถกดดาวน์โหลดซ้ำได้ทุกเมื่อ";
+          ? "ดาวน์โหลดเอกสารเรียบร้อยแล้ว สามารถเก็บไฟล์ไว้ใช้อ้างอิงได้ทันที"
+          : "เมื่อเข้าหน้านี้ ระบบจะสร้างไฟล์เอกสารให้โดยอัตโนมัติ และยังสามารถกดดาวน์โหลดซ้ำได้ทุกเมื่อ";
 
   return (
     <Box className="apple-card apple-card-no-hover mt-8 w-full p-5 md:p-6">
       <Box className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <Box className="min-w-0">
           <Typography className="text-lg font-bold tracking-[-0.03em] text-(--rf-apple-ink)">
-            ใบเสร็จการจอง
+            {documentTitle}
           </Typography>
           <Typography className="mt-1 text-sm text-(--rf-apple-muted)">
             ระบบจะดาวน์โหลดไฟล์ให้ทันทีหลังเข้าหน้านี้ และสามารถโหลดซ้ำได้ตลอดเวลา
@@ -674,10 +688,10 @@ export default function BookingReceiptCard({
           className="rounded-full! px-5! font-semibold!"
         >
           {downloading
-            ? "กำลังสร้างใบเสร็จ..."
+            ? "กำลังสร้างเอกสาร..."
             : downloadStatus === "auto" || downloadStatus === "manual"
               ? "ดาวน์โหลดอีกครั้ง"
-              : "ดาวน์โหลดใบเสร็จ"}
+              : "ดาวน์โหลดเอกสาร"}
         </Button>
       </Box>
 
@@ -697,21 +711,21 @@ export default function BookingReceiptCard({
                 RENTFLOW
               </Typography>
               <Typography className="mt-3 text-4xl font-black tracking-[-0.05em] md:text-5xl">
-                ใบเสร็จการจอง
+                {documentTitle}
               </Typography>
               <Typography className="mt-3 text-base text-white/75 md:text-lg">
-                {shopName ? `ร้าน ${shopName}` : "เอกสารยืนยันการชำระเงินเรียบร้อย"}
+                {shopName ? `ร้าน ${shopName}` : documentSubtitle}
               </Typography>
             </Box>
 
             <Box className="flex flex-col items-start gap-3 md:items-end">
               <Chip
-                label="ชำระแล้ว"
+                label={documentBadge}
                 className="w-fit bg-emerald-500! font-bold! text-white!"
               />
               <Box className="rounded-[22px] border border-white/14 bg-white/10 px-4 py-3 backdrop-blur-sm">
                 <Typography className="text-xs font-bold uppercase tracking-[0.14em] text-white/60">
-                  วันที่ออกใบเสร็จ
+                  {documentDateLabel}
                 </Typography>
                 <Typography className="mt-2 text-base font-bold text-white">
                   {issuedDate}
@@ -750,9 +764,9 @@ export default function BookingReceiptCard({
               หมายเหตุ
             </Typography>
             <Typography className="mt-3 text-sm leading-7 text-(--rf-apple-muted)">
-              ใบเสร็จนี้ถูกสร้างให้อัตโนมัติหลังการจองสำเร็จ
-              เพื่อใช้เก็บอ้างอิงรายการเบื้องต้น หากต้องการดาวน์โหลดใหม่
-              สามารถกดปุ่มด้านบนได้ตลอดเวลา
+              {isReceiptDocument
+                ? "ใบเสร็จนี้ถูกสร้างหลังร้านยืนยันการชำระเงินแล้ว เพื่อใช้เก็บอ้างอิงรายการ หากต้องการดาวน์โหลดใหม่ สามารถกดปุ่มด้านบนได้ตลอดเวลา"
+                : "เอกสารนี้ยืนยันว่าคุณส่งหลักฐานชำระเงินแล้ว และรายการอยู่ระหว่างรอร้านตรวจสอบ หากต้องการดาวน์โหลดใหม่ สามารถกดปุ่มด้านบนได้ตลอดเวลา"}
             </Typography>
           </Box>
         </Box>

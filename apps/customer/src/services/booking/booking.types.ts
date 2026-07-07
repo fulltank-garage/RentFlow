@@ -7,6 +7,7 @@ export type BookingStatus =
   | "paid"
   | "active"
   | "review"
+  | "chat"
   | "completed"
   | "cancelled";
 
@@ -20,6 +21,7 @@ export type Booking = TenantSummary & {
   carId: string;
   carName?: string;
   status: BookingStatus;
+  bookingMode?: "payment" | "chat" | string;
   pickupDate: string;
   returnDate: string;
   pickupLocation: string;

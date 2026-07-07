@@ -31,6 +31,10 @@ export const BOOKING_STATUS_CHIP_MAP: Record<BookingStatus, StatusChipConfig> = 
     label: "รอตรวจสอบ",
     className: `${baseClassName} bg-orange-600! text-white!`,
   },
+  chat: {
+    label: "จองผ่านแชท",
+    className: `${baseClassName} bg-(--rf-apple-ink)! text-white!`,
+  },
   completed: {
     label: "เสร็จสิ้น",
     className: `${baseClassName} bg-slate-800! text-white!`,

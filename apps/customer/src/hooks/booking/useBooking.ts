@@ -172,6 +172,8 @@ export default function useBooking() {
   );
 
   const [error, setError] = React.useState<string | null>(null);
+  const [chatCopyNotice, setChatCopyNotice] = React.useState<string | null>(null);
+  const [lastChatMessage, setLastChatMessage] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [carReloadTick, setCarReloadTick] = React.useState(0);
   const [branchReloadTick, setBranchReloadTick] = React.useState(0);
@@ -295,34 +297,33 @@ export default function useBooking() {
     null
   );
   const [unavailableDates, setUnavailableDates] = React.useState<string[]>([]);
-
-  const isCarAvailable = React.useMemo(() => {
-    if (!car?.isAvailable) return false;
-    if (isDateAvailable === false) return false;
-    return true;
-  }, [car?.isAvailable, isDateAvailable]);
   const bookingMode: "payment" | "chat" | null = carModeResolved
     ? car?.bookingMode === "payment"
       ? "payment"
       : "chat"
     : null;
-  const chatThresholdTHB = Math.max(car?.chatThresholdTHB ?? 0, 0);
   const forceChatBooking = bookingMode === "chat";
-  const hasChatChannel = Boolean(
-    car?.lineOfficialAccount?.chatUrl || car?.lineOfficialAccount?.shareUrl
-  );
+
+  const isCarAvailable = React.useMemo(() => {
+    if (!car?.isAvailable) return false;
+    if (!forceChatBooking && isDateAvailable === false) return false;
+    return true;
+  }, [car?.isAvailable, forceChatBooking, isDateAvailable]);
+  const chatThresholdTHB = Math.max(car?.chatThresholdTHB ?? 0, 0);
+  const facebookPageUrl = car?.facebookPageUrl || "";
+  const hasChatChannel = Boolean(facebookPageUrl);
 
   const availabilityMessage = React.useMemo(() => {
     if (car && car.isAvailable === false) {
       return "รถรุ่นนี้ยังไม่พร้อมให้จองในตอนนี้";
     }
 
-    if (isDateAvailable === false) {
+    if (!forceChatBooking && isDateAvailable === false) {
       return "รถรุ่นนี้ถูกจองครบในช่วงวันที่คุณเลือก กรุณาเปลี่ยนวันรับหรือคืนรถ";
     }
 
     return null;
-  }, [car, isDateAvailable]);
+  }, [car, forceChatBooking, isDateAvailable]);
 
   const { locationOk, canSubmit } = useBookingValidation({
     carExists: !!car,
@@ -574,7 +575,7 @@ export default function useBooking() {
     let cancelled = false;
 
     async function loadUnavailableDates() {
-      if (!car?.id) {
+      if (!car?.id || forceChatBooking) {
         setUnavailableDates([]);
         return;
       }
@@ -599,13 +600,13 @@ export default function useBooking() {
     return () => {
       cancelled = true;
     };
-  }, [car?.id, carReloadTick, effectiveTenantSlug]);
+  }, [car?.id, carReloadTick, effectiveTenantSlug, forceChatBooking]);
 
   React.useEffect(() => {
     let cancelled = false;
 
     async function checkAvailability() {
-      if (!car?.id) {
+      if (!car?.id || forceChatBooking) {
         setIsDateAvailable(null);
         setIsCheckingAvailability(false);
         return;
@@ -657,6 +658,7 @@ export default function useBooking() {
     car?.id,
     car?.isAvailable,
     effectiveTenantSlug,
+    forceChatBooking,
     pickupDate,
     returnDate,
     timeInvalid,
@@ -705,10 +707,25 @@ export default function useBooking() {
   ]);
 
   const chatHref = React.useMemo(() => {
-    const channelUrl = car?.lineOfficialAccount?.chatUrl || car?.lineOfficialAccount?.shareUrl;
-    if (!channelUrl) return "";
-    return buildChatHref(channelUrl, chatMessage);
-  }, [car?.lineOfficialAccount?.chatUrl, car?.lineOfficialAccount?.shareUrl, chatMessage]);
+    if (!facebookPageUrl) return "";
+    return buildChatHref(facebookPageUrl);
+  }, [facebookPageUrl]);
+
+  const copyLatestChatMessage = React.useCallback(async () => {
+    const message = lastChatMessage || chatMessage;
+    const copied = await copyChatMessage(message);
+    setChatCopyNotice(
+      copied
+        ? "คัดลอกข้อความรายละเอียดการจองแล้ว"
+        : "คัดลอกอัตโนมัติไม่สำเร็จ กรุณากดคัดลอกอีกครั้ง"
+    );
+    return copied;
+  }, [chatMessage, lastChatMessage]);
+
+  const openChatChannel = React.useCallback(() => {
+    if (!chatHref || typeof window === "undefined") return;
+    window.open(chatHref, "_blank", "noopener,noreferrer");
+  }, [chatHref]);
 
   const handleAddonChange = React.useCallback(
     (addonId: string, checked: boolean) => {
@@ -730,8 +747,22 @@ export default function useBooking() {
       e.preventDefault();
       setError(null);
 
+      if (forceChatBooking && lastChatMessage) {
+        await copyLatestChatMessage();
+        return;
+      }
+
       if (!car) {
         setError("ไม่พบรถที่เลือก กรุณากลับไปเลือกใหม่");
+        return;
+      }
+
+      if (forceChatBooking && !hasChatChannel) {
+        setError(
+          car.contactPhone
+            ? `ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page สำหรับเปิด Messenger กรุณาโทรติดต่อร้านที่ ${car.contactPhone}`
+            : "ร้านนี้ยังไม่ได้ตั้งค่า URL Facebook Page จึงยังไม่สามารถจองผ่านแชทได้"
+        );
         return;
       }
 
@@ -754,7 +785,7 @@ export default function useBooking() {
         return;
       }
 
-      if (!car.isAvailable || isDateAvailable === false) {
+      if (!car.isAvailable || (!forceChatBooking && isDateAvailable === false)) {
         setError("รถรุ่นนี้ถูกจองครบแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
         return;
       }
@@ -762,13 +793,6 @@ export default function useBooking() {
       if (!canSubmit) return;
 
       setLoading(true);
-      const pendingChatWindow =
-        forceChatBooking && typeof window !== "undefined" && hasChatChannel
-          ? window.open("about:blank", "_blank")
-          : null;
-      if (pendingChatWindow) {
-        pendingChatWindow.opener = null;
-      }
 
       try {
         if (!forceChatBooking) {
@@ -802,23 +826,22 @@ export default function useBooking() {
           }
         }
 
-        const availabilityRes = await availabilityApi.check(
-          {
-            carId: car.id,
-            pickupDate: combineDateAndTime(pickupDate, pickupTime),
-            returnDate: combineDateAndTime(returnDate, returnTime),
-          },
-          {
-            tenantSlug: effectiveTenantSlug,
-          }
-        );
+        if (!forceChatBooking) {
+          const availabilityRes = await availabilityApi.check(
+            {
+              carId: car.id,
+              pickupDate: combineDateAndTime(pickupDate, pickupTime),
+              returnDate: combineDateAndTime(returnDate, returnTime),
+            },
+            {
+              tenantSlug: effectiveTenantSlug,
+            }
+          );
 
         if (!availabilityRes.data?.available) {
-          if (pendingChatWindow) {
-            pendingChatWindow.close();
-          }
           setError("รถรุ่นนี้ถูกจองครบแล้ว กรุณาเลือกรถหรือช่วงวันใหม่");
-          return;
+            return;
+          }
         }
 
         const res = await bookingApi.createBooking({
@@ -885,29 +908,18 @@ export default function useBooking() {
           `&subtotal=${encodeURIComponent(String(booking.subtotal))}` +
           `&discount=${encodeURIComponent(String(booking.discount))}` +
           `&extraCharge=${encodeURIComponent(String(booking.extraCharge))}` +
+          `&bookingCreatedAt=${encodeURIComponent(booking.createdAt || "")}` +
           (car.shopName ? `&shopName=${encodeURIComponent(car.shopName)}` : "") +
           (effectiveTenantSlug ? `&tenant=${encodeURIComponent(effectiveTenantSlug)}` : "") +
           `&addons=${encodeURIComponent(JSON.stringify(selectedAddonIds))}`;
 
         if (forceChatBooking) {
-          await copyChatMessage(bookingChatMessage);
-          const channelUrl =
-            car.lineOfficialAccount?.chatUrl || car.lineOfficialAccount?.shareUrl || "";
-          const nextChatHref = buildChatHref(channelUrl, bookingChatMessage);
-          if (nextChatHref) {
-            if (pendingChatWindow) {
-              pendingChatWindow.location.href = nextChatHref;
-            } else if (typeof window !== "undefined") {
-              window.open(nextChatHref, "_blank", "noopener,noreferrer");
-            }
-          } else if (pendingChatWindow) {
-            pendingChatWindow.close();
-          }
-
-          navigateBookingFlow(
-            router,
-            `/booking/success?${commonQuery}&bookingMode=chat`,
-            "replace"
+          setLastChatMessage(bookingChatMessage);
+          const copied = await copyChatMessage(bookingChatMessage);
+          setChatCopyNotice(
+            copied
+              ? "คัดลอกข้อความรายละเอียดการจองแล้ว"
+              : "คัดลอกอัตโนมัติไม่สำเร็จ กรุณากดคัดลอกอีกครั้ง"
           );
           return;
         }
@@ -918,9 +930,6 @@ export default function useBooking() {
           "replace"
         );
       } catch (err: unknown) {
-        if (pendingChatWindow) {
-          pendingChatWindow.close();
-        }
         setError(getErrorMessage(err, "ไม่สามารถสร้างรายการจองได้"));
       } finally {
         setLoading(false);
@@ -951,6 +960,9 @@ export default function useBooking() {
       finalReturnPoint,
       forceChatBooking,
       hasChatChannel,
+      facebookPageUrl,
+      lastChatMessage,
+      copyLatestChatMessage,
       router,
     ]
   );
@@ -1016,6 +1028,10 @@ export default function useBooking() {
     forceChatBooking,
     hasChatChannel,
     chatHref,
+    chatCopyNotice,
+    lastChatMessage,
+    copyLatestChatMessage,
+    openChatChannel,
     onSubmit,
   };
 }

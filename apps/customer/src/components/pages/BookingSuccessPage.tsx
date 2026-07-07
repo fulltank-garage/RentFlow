@@ -16,6 +16,8 @@ export default function BookingSuccessPage({
   carName,
   customerName,
   customerPhone,
+  bookingCreatedAt,
+  documentType = "payment_proof",
   pickupDate,
   returnDate,
   pickupPoint,
@@ -29,6 +31,8 @@ export default function BookingSuccessPage({
   carName?: string;
   customerName?: string;
   customerPhone?: string;
+  bookingCreatedAt?: string;
+  documentType?: "payment_proof" | "receipt";
   pickupDate?: string;
   returnDate?: string;
   pickupPoint?: string;
@@ -134,6 +138,8 @@ export default function BookingSuccessPage({
               carName={carName}
               customerName={customerName}
               customerPhone={customerPhone}
+              bookingCreatedAt={bookingCreatedAt}
+              documentType={documentType}
               pickupDate={pickupDate}
               returnDate={returnDate}
               pickupPoint={pickupPoint}

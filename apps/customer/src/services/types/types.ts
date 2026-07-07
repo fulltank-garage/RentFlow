@@ -19,20 +19,13 @@ export type TenantSummary = {
   shopName?: string;
   domainSlug?: string;
   publicDomain?: string;
+  facebookPageUrl?: string;
+  contactPhone?: string;
   logoUrl?: string;
   promoImageUrl?: string;
   promoImageUrls?: string[];
   bookingMode?: "payment" | "chat" | string;
   chatThresholdTHB?: number;
-};
-
-export type LineOfficialAccountSummary = {
-  displayName?: string;
-  basicId?: string;
-  pictureUrl?: string;
-  chatUrl?: string;
-  shareUrl?: string;
-  isConnected?: boolean;
 };
 
 export type RentFlowCarRequestOptions = {

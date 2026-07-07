@@ -74,6 +74,7 @@ export default function MyBookingsFilters({
         >
           <MenuItem value="all">ทั้งหมด</MenuItem>
           <MenuItem value="pending">รอดำเนินการ</MenuItem>
+          <MenuItem value="chat">จองผ่านแชท</MenuItem>
           <MenuItem value="confirmed">ยืนยันแล้ว</MenuItem>
           <MenuItem value="paid">ชำระแล้ว</MenuItem>
           <MenuItem value="completed">เสร็จสิ้น</MenuItem>

@@ -142,6 +142,33 @@ function SummaryRowSkeleton({
   );
 }
 
+function MobileSummaryActionsSkeleton() {
+  return (
+    <Box className="mt-4 space-y-3 sm:hidden">
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          width: 220,
+          maxWidth: "100%",
+          height: 18,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
+      <Skeleton
+        variant="rounded"
+        animation="wave"
+        sx={{
+          width: "100%",
+          height: 48,
+          borderRadius: "14px",
+        }}
+      />
+    </Box>
+  );
+}
+
 function SummarySkeleton() {
   return (
     <Card
@@ -190,6 +217,8 @@ function SummarySkeleton() {
             <SummaryRowSkeleton leftWidth={52} rightWidth={104} />
           </Box>
         </Box>
+
+        <MobileSummaryActionsSkeleton />
       </CardContent>
     </Card>
   );
@@ -295,65 +324,6 @@ function CheckboxRowSkeleton() {
             height: 20,
             borderRadius: "8px",
             transform: "none",
-            flexShrink: 0,
-          }}
-        />
-      </Box>
-    </Box>
-  );
-}
-
-function ChatSuggestSkeleton() {
-  return (
-    <Box
-      className="rounded-2xl border border-amber-200 bg-amber-50 p-4"
-      sx={{
-        backgroundImage:
-          "radial-gradient(520px 160px at 18% 0%, rgba(251,191,36,0.22), transparent 60%)",
-      }}
-    >
-      <Box className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Box className="min-w-0 flex-1 space-y-2.5">
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: 220,
-              height: 20,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: { xs: "100%", sm: 290 },
-              maxWidth: "100%",
-              height: 16,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: 224,
-              height: 14,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-        </Box>
-
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            width: { xs: "100%", sm: 220 },
-            height: 44,
-            borderRadius: "14px",
             flexShrink: 0,
           }}
         />
@@ -504,20 +474,8 @@ function FormSkeleton() {
             </Box>
           </Box>
 
-          <ChatSuggestSkeleton />
-
-          <Box className="mt-6 space-y-4">
+          <Box className="mt-6 hidden space-y-4 sm:block">
             <Box className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-              <Skeleton
-                variant="rounded"
-                animation="wave"
-                sx={{
-                  width: 240,
-                  maxWidth: "100%",
-                  height: 48,
-                  borderRadius: "14px",
-                }}
-              />
               <Skeleton
                 variant="text"
                 animation="wave"
@@ -526,6 +484,16 @@ function FormSkeleton() {
                   height: 16,
                   borderRadius: "8px",
                   transform: "none",
+                }}
+              />
+              <Skeleton
+                variant="rounded"
+                animation="wave"
+                sx={{
+                  width: 260,
+                  maxWidth: "100%",
+                  height: 48,
+                  borderRadius: "14px",
                 }}
               />
             </Box>

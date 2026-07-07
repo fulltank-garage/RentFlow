@@ -15,6 +15,7 @@ type SeoTenant = {
   contactPhone?: string;
   publicDomain?: string;
   domainSlug?: string;
+  updatedAt?: string;
 };
 
 type SeoCar = {
@@ -95,6 +96,27 @@ function absoluteUrl(pathOrUrl: string, origin: string) {
   }
 }
 
+function buildTenantIconPath(tenant?: SeoTenant | null) {
+  const params = new URLSearchParams();
+  const tenantKey = tenant?.domainSlug || tenant?.shopName || "";
+  const versionKey = tenant?.updatedAt || tenant?.logoUrl || "";
+
+  if (tenantKey) params.set("tenant", tenantKey);
+  if (versionKey) params.set("v", versionKey);
+
+  const query = params.toString();
+  return query ? `/tenant-icon?${query}` : "/tenant-icon";
+}
+
+function buildRentFlowCarIcons(tenant?: SeoTenant | null): Metadata["icons"] {
+  const iconPath = buildTenantIconPath(tenant);
+  return {
+    icon: iconPath,
+    shortcut: iconPath,
+    apple: iconPath,
+  };
+}
+
 export function getRentFlowCarCanonicalUrl({
   host,
   pathname,
@@ -168,11 +190,7 @@ export function buildRentFlowCarMetadata({
         "max-video-preview": -1,
       },
     },
-    icons: {
-      icon: "/tenant-icon",
-      shortcut: "/tenant-icon",
-      apple: "/tenant-icon",
-    },
+    icons: buildRentFlowCarIcons(tenant),
   };
 }
 
@@ -241,6 +259,7 @@ export function buildRentFlowCarPageMetadata({
       description: pageDescription,
       images: [imageUrl],
     },
+    icons: buildRentFlowCarIcons(tenant),
   };
 }
 
@@ -272,13 +291,38 @@ export function buildRentFlowCarClassMetadata({
   });
 }
 
-export function buildRentFlowCarNoIndexMetadata(title: string): Metadata {
+export function buildRentFlowCarNoIndexMetadata(
+  input:
+    | string
+    | (RentFlowCarSeoInput & {
+        title: string;
+      })
+): Metadata {
+  const title = typeof input === "string" ? input : input.title;
+  const host = typeof input === "string" ? undefined : input.host;
+  const pathname = typeof input === "string" ? undefined : input.pathname;
+  const tenant = typeof input === "string" ? null : input.tenant;
+  const origin = getRentFlowCarOrigin(host);
+  const tenantName = tenant?.shopName?.trim();
+  const fullTitle = tenantName
+    ? `${tenantName} - ${title}`
+    : `${DEFAULT_BRAND_NAME} - ${title}`;
+
   return {
-    title: `${DEFAULT_BRAND_NAME} - ${title}`,
+    metadataBase: new URL(origin),
+    title: fullTitle,
+    ...(pathname
+      ? {
+          alternates: {
+            canonical: getRentFlowCarCanonicalUrl({ host, pathname }),
+          },
+        }
+      : {}),
     robots: {
       index: false,
       follow: false,
     },
+    icons: buildRentFlowCarIcons(tenant),
   };
 }
 

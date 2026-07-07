@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -20,6 +19,7 @@ import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
 import PasswordVisibilityAdornment from "@/src/components/common/PasswordVisibilityAdornment";
+import TenantBrandLogo from "@/src/components/common/TenantBrandLogo";
 import ForgotPasswordCardSkeleton from "@/src/components/auth/ForgotPasswordCardSkeleton";
 import { getErrorMessage } from "@/src/lib/api-error";
 import usePageReady from "@/src/hooks/usePageReady";
@@ -128,15 +128,7 @@ export default function ForgotPasswordPage() {
           <CardContent className="p-5! sm:p-6! md:p-8!">
             <Stack className="mb-6 items-center text-center">
               <Box className="mb-4 flex items-center justify-center">
-                <Box className="relative h-16 w-48 sm:w-56">
-                  <Image
-                    src="/RentFlowCar.png"
-                    alt="RentFlowCar Logo"
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-                </Box>
+                <TenantBrandLogo priority />
               </Box>
             </Stack>
 
