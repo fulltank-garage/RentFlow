@@ -5,12 +5,16 @@ services:
     command: sh -c "npm ci --include-workspace-root && npm --workspace rentflow-web-app run dev -- --hostname 0.0.0.0 --port 3000"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080
+      RENTFLOW_API_INTERNAL_URL: http://api:8080
       NEXT_PUBLIC_RENTFLOW_ROOT_DOMAIN: rentflowcar.xyz
     ports:
       - "3000:3000"
     volumes:
       - ./:/repo
       - customer_root_node_modules:/repo/node_modules
+      - customer_customer_node_modules:/repo/apps/customer/node_modules
+      - customer_admin_node_modules:/repo/apps/admin/node_modules
+      - customer_partner_node_modules:/repo/apps/partner/node_modules
     depends_on:
       - api
 
@@ -20,11 +24,15 @@ services:
     command: sh -c "npm ci --include-workspace-root && npm --workspace rentflow-admin-dashboard run dev -- --hostname 0.0.0.0 --port 3001"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080
+      RENTFLOW_API_INTERNAL_URL: http://api:8080
     ports:
       - "3001:3001"
     volumes:
       - ./:/repo
       - admin_root_node_modules:/repo/node_modules
+      - admin_customer_node_modules:/repo/apps/customer/node_modules
+      - admin_admin_node_modules:/repo/apps/admin/node_modules
+      - admin_partner_node_modules:/repo/apps/partner/node_modules
     depends_on:
       - api
 
@@ -34,6 +42,7 @@ services:
     command: sh -c "npm ci --include-workspace-root && npm --workspace rentflow-partner-dashboard run dev -- --hostname 0.0.0.0 --port 3002"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080
+      RENTFLOW_API_INTERNAL_URL: http://api:8080
       NEXT_PUBLIC_STOREFRONT_PORT: "3000"
       NEXT_PUBLIC_RENTFLOW_ROOT_DOMAIN: rentflowcar.xyz
     ports:
@@ -41,6 +50,9 @@ services:
     volumes:
       - ./:/repo
       - partner_root_node_modules:/repo/node_modules
+      - partner_customer_node_modules:/repo/apps/customer/node_modules
+      - partner_admin_node_modules:/repo/apps/admin/node_modules
+      - partner_partner_node_modules:/repo/apps/partner/node_modules
     depends_on:
       - api
 
@@ -134,8 +146,17 @@ services:
 
 volumes:
   customer_root_node_modules:
+  customer_customer_node_modules:
+  customer_admin_node_modules:
+  customer_partner_node_modules:
   admin_root_node_modules:
+  admin_customer_node_modules:
+  admin_admin_node_modules:
+  admin_partner_node_modules:
   partner_root_node_modules:
+  partner_customer_node_modules:
+  partner_admin_node_modules:
+  partner_partner_node_modules:
   postgres_data:
   redis_data:
   ollama_data:
