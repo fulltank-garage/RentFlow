@@ -2,13 +2,13 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -o ./tmp/rentflow-api ."
-entrypoint = ["./tmp/rentflow-api"]
+cmd = "go build -o ./tmp/rentflow-api.exe ."
+entrypoint = ["./tmp/rentflow-api.exe"]
 delay = 1000
 exclude_dir = ["tmp", "vendor", ".git"]
 exclude_file = []
 exclude_regex = ["_test.go"]
-follow_symlink = true
+follow_symlink = false
 include_ext = ["go", "env"]
 kill_delay = "500ms"
 log = "air-build.log"

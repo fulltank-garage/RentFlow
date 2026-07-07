@@ -563,12 +563,6 @@ func RentFlowCarAdminGetSecurity(c *gin.Context) {
 		return
 	}
 
-	var lineChannels []models.RentFlowCarLineChannel
-	if err := config.DB.Where("status = ?", "connected").Find(&lineChannels).Error; err != nil {
-		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูล LINE OA ได้")
-		return
-	}
-
 	var customDomains []models.RentFlowCarCustomDomain
 	if err := config.DB.Find(&customDomains).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงข้อมูลโดเมนได้")
@@ -576,21 +570,6 @@ func RentFlowCarAdminGetSecurity(c *gin.Context) {
 	}
 
 	policies := []gin.H{
-		{
-			"title":  "ผู้ดูแลระบบกลาง",
-			"detail": "ใช้บัญชีผู้ดูแลระบบกลางเพียงบัญชีเดียวในการควบคุม tenant และสถานะระบบ",
-			"status": map[bool]string{true: "configured", false: "missing"}[services.RentFlowCarPlatformAdminConfigured()],
-		},
-		{
-			"title":  "แยกข้อมูลตามร้าน",
-			"detail": "รถ การจอง การชำระเงิน รีวิว และ LINE OA ถูกแยกตาม tenant ทั้งหมด",
-			"status": "active",
-		},
-		{
-			"title":  "ข้อความของแต่ละร้าน",
-			"detail": "ร้านที่เชื่อม LINE OA จะรับข้อความผ่าน webhook ของตัวเองและจัดการแยกตามร้าน",
-			"status": map[bool]string{true: "active", false: "pending"}[len(lineChannels) > 0],
-		},
 	}
 
 	var sessionAudits []models.RentFlowCarSessionAudit
@@ -604,7 +583,6 @@ func RentFlowCarAdminGetSecurity(c *gin.Context) {
 			"platformAdminConfigured": services.RentFlowCarPlatformAdminConfigured(),
 			"tenantOwners":            len(tenantItems),
 			"tenantMembers":           len(members),
-			"connectedLineChannels":   len(lineChannels),
 			"verifiedCustomDomains":   rentFlowCountCustomDomainStatus(customDomains, "verified"),
 			"suspendedTenants":        rentFlowPlatformCountTenantsByStatus(tenantItems, "suspended"),
 		},

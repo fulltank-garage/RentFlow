@@ -55,9 +55,6 @@ type RentFlowCarTenant struct {
 	BankAccountName    string         `gorm:"size:150" json:"bankAccountName,omitempty"`
 	BankAccountNumber  string         `gorm:"size:40" json:"bankAccountNumber,omitempty"`
 	FacebookPageURL    string         `gorm:"size:500" json:"facebookPageUrl,omitempty"`
-	LineOAQRCodeURL    string         `gorm:"-" json:"lineOaQrCodeUrl,omitempty"`
-	LineOAQRMimeType   string         `gorm:"size:80" json:"-"`
-	LineOAQRBlob       []byte         `gorm:"type:bytea" json:"-"`
 	Status             string         `gorm:"size:30;index;not null;default:active" json:"status"`
 	BookingMode        string         `gorm:"size:30;not null;default:chat" json:"bookingMode"`
 	ChatThresholdTHB   int64          `gorm:"not null;default:0" json:"chatThresholdTHB"`
@@ -177,6 +174,7 @@ type RentFlowCarBooking struct {
 	UserEmail      string         `gorm:"size:150;index" json:"-"`
 	CarID          string         `gorm:"size:80;index;not null" json:"carId"`
 	Status         string         `gorm:"size:20;index;not null" json:"status"`
+	BookingMode    string         `gorm:"size:30;index" json:"bookingMode"`
 	PickupDate     time.Time      `gorm:"type:timestamp;not null" json:"pickupDate"`
 	ReturnDate     time.Time      `gorm:"type:timestamp;not null" json:"returnDate"`
 	PickupLocation string         `gorm:"size:255;not null" json:"pickupLocation"`
@@ -414,31 +412,6 @@ type RentFlowCarLead struct {
 
 func (RentFlowCarLead) TableName() string {
 	return "rentflow_leads"
-}
-
-type RentFlowCarLineChannel struct {
-	ID                    string         `gorm:"primaryKey;size:50" json:"id"`
-	TenantID              string         `gorm:"size:50;uniqueIndex;not null" json:"tenantId"`
-	ChannelID             string         `gorm:"size:120;not null" json:"channelId"`
-	ChannelSecret         string         `gorm:"type:text;not null" json:"-"`
-	AccessToken           string         `gorm:"type:text;not null" json:"-"`
-	DisplayName           string         `gorm:"size:180" json:"displayName,omitempty"`
-	BasicID               string         `gorm:"size:120" json:"basicId,omitempty"`
-	BotUserID             string         `gorm:"size:120" json:"botUserId,omitempty"`
-	PictureURL            string         `gorm:"size:500" json:"pictureUrl,omitempty"`
-	WebhookURL            string         `gorm:"size:500" json:"webhookUrl,omitempty"`
-	Status                string         `gorm:"size:30;index;not null;default:draft" json:"status"`
-	LastVerifiedAt        *time.Time     `json:"lastVerifiedAt,omitempty"`
-	LastWebhookTestAt     *time.Time     `json:"lastWebhookTestAt,omitempty"`
-	LastWebhookTestStatus string         `gorm:"size:30" json:"lastWebhookTestStatus,omitempty"`
-	LastError             string         `gorm:"type:text" json:"lastError,omitempty"`
-	CreatedAt             time.Time      `json:"createdAt"`
-	UpdatedAt             time.Time      `json:"updatedAt"`
-	DeletedAt             gorm.DeletedAt `gorm:"index" json:"-"`
-}
-
-func (RentFlowCarLineChannel) TableName() string {
-	return "rentflow_line_channels"
 }
 
 type RentFlowCarSupportTicket struct {

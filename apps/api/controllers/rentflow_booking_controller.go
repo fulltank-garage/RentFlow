@@ -99,14 +99,17 @@ func RentFlowCarCreateBooking(c *gin.Context) {
 		return
 	}
 
-	available, err := rentFlowCarIsAvailable(tenant.ID, car.ID, pickupDate, returnDate)
-	if err != nil {
-		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถตรวจสอบคิวรถได้")
-		return
-	}
-	if !available {
-		rentFlowError(c, http.StatusConflict, "รถรุ่นนี้ถูกจองครบในช่วงวันที่เลือกแล้ว")
-		return
+	bookingMode := rentFlowNormalizeBookingMode(tenant.BookingMode)
+	if bookingMode == "payment" {
+		available, err := rentFlowCarIsAvailable(tenant.ID, car.ID, pickupDate, returnDate)
+		if err != nil {
+			rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถตรวจสอบคิวรถได้")
+			return
+		}
+		if !available {
+			rentFlowError(c, http.StatusConflict, "รถรุ่นนี้ถูกจองครบในช่วงวันที่เลือกแล้ว")
+			return
+		}
 	}
 
 	customerEmail := strings.TrimSpace(strings.ToLower(payload.CustomerEmail))
@@ -128,12 +131,18 @@ func RentFlowCarCreateBooking(c *gin.Context) {
 	_, addonsJSON, addonsTotal := rentFlowBookingAddonsSummary(tenant.ID, payload.Addons, totalDays)
 	totalAmount += addonsTotal
 
+	bookingStatus := "pending"
+	if bookingMode == "chat" {
+		bookingStatus = "chat"
+	}
+
 	booking := models.RentFlowCarBooking{
 		ID:             services.NewID("bok"),
 		TenantID:       tenant.ID,
 		BookingCode:    services.NewBookingCode(),
 		CarID:          car.ID,
-		Status:         "pending",
+		Status:         bookingStatus,
+		BookingMode:    bookingMode,
 		PickupDate:     pickupDate,
 		ReturnDate:     returnDate,
 		PickupLocation: strings.TrimSpace(payload.PickupLocation),
@@ -164,12 +173,14 @@ func RentFlowCarCreateBooking(c *gin.Context) {
 			return err
 		}
 
-		availability, err := rentFlowCarAvailabilityWithDB(tx, tenant.ID, lockedCar, pickupDate, returnDate)
-		if err != nil {
-			return err
-		}
-		if !availability.Available {
-			return carUnavailableErr
+		if bookingMode == "payment" {
+			availability, err := rentFlowCarAvailabilityWithDB(tx, tenant.ID, lockedCar, pickupDate, returnDate)
+			if err != nil {
+				return err
+			}
+			if !availability.Available {
+				return carUnavailableErr
+			}
 		}
 
 		return tx.Create(&booking).Error
@@ -199,8 +210,14 @@ func RentFlowCarGetMyBookings(c *gin.Context) {
 	}
 
 	var bookings []models.RentFlowCarBooking
-	if err := config.DB.
-		Where("user_id = ? OR customer_email = ?", user.ID, user.Email).
+	query := config.DB.Where("user_id = ? OR customer_email = ?", user.ID, user.Email)
+	if tenant, scoped, ok := rentFlowBookingTenantScope(c); !ok {
+		return
+	} else if scoped {
+		query = query.Where("tenant_id = ?", tenant.ID)
+	}
+
+	if err := query.
 		Order("created_at DESC").
 		Find(&bookings).Error; err != nil {
 		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถดึงรายการจองได้")
@@ -276,6 +293,11 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 		return
 	}
 
+	if rentFlowIsChatBooking(booking) {
+		rentFlowError(c, http.StatusConflict, "รายการนี้เป็นการจองผ่านแชท ไม่ต้องชำระเงินผ่านระบบ")
+		return
+	}
+
 	rawMethod := strings.TrimSpace(payload.Method)
 	method := rentFlowNormalizePaymentMethod(rawMethod)
 	if method == "" {
@@ -305,39 +327,110 @@ func RentFlowCarCreatePayment(c *gin.Context) {
 		return
 	}
 
-	payment := models.RentFlowCarPayment{
-		ID:               services.NewID("pay"),
-		TenantID:         tenant.ID,
-		BookingID:        booking.ID,
-		Method:           method,
-		Status:           "pending_verification",
-		Amount:           booking.TotalAmount,
-		Processor:        "manual",
-		SlipMimeType:     slipMimeType,
-		SlipBlob:         slipBlob,
-		SettlementPeriod: time.Now().Format("2006-01"),
-	}
+	var payment models.RentFlowCarPayment
+	paymentStatusCode := http.StatusCreated
+	paymentMessage := "ส่งหลักฐานชำระเงินสำเร็จ"
+	paymentEvent := services.RentFlowCarRealtimeEventPaymentCreated
+	errPaymentAlreadyVerified := errors.New("payment already verified")
+	errBookingCannotAcceptPayment := errors.New("booking cannot accept payment")
+	now := time.Now()
 
-	if err := config.DB.Create(&payment).Error; err != nil {
-		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถสร้างรายการชำระเงินได้")
-		return
-	}
+	if err := config.DB.Transaction(func(tx *gorm.DB) error {
+		var lockedBooking models.RentFlowCarBooking
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+			Where("tenant_id = ? AND id = ?", tenant.ID, booking.ID).
+			First(&lockedBooking).Error; err != nil {
+			return err
+		}
+		if rentFlowIsChatBooking(lockedBooking) {
+			return errBookingCannotAcceptPayment
+		}
+		if lockedBooking.Status == "cancelled" || lockedBooking.Status == "completed" {
+			return errBookingCannotAcceptPayment
+		}
 
-	if err := config.DB.Model(&models.RentFlowCarBooking{}).
-		Where("id = ?", booking.ID).
-		Updates(map[string]interface{}{
-			"status":     "review",
-			"updated_at": time.Now(),
-		}).Error; err != nil {
-		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถอัปเดตสถานะการจองได้")
+		var existingPayment models.RentFlowCarPayment
+		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+			Where("tenant_id = ? AND booking_id = ? AND status IN ?", tenant.ID, lockedBooking.ID, []string{"pending", "pending_verification", "paid"}).
+			Order("created_at DESC").
+			First(&existingPayment).Error
+
+		if err == nil {
+			if existingPayment.Status == "paid" {
+				return errPaymentAlreadyVerified
+			}
+
+			updates := map[string]interface{}{
+				"method":            method,
+				"status":            "pending_verification",
+				"amount":            lockedBooking.TotalAmount,
+				"processor":         "manual",
+				"slip_mime_type":    slipMimeType,
+				"slip_blob":         slipBlob,
+				"settlement_period": now.Format("2006-01"),
+				"updated_at":        now,
+			}
+			if err := tx.Model(&models.RentFlowCarPayment{}).
+				Where("tenant_id = ? AND id = ?", tenant.ID, existingPayment.ID).
+				Updates(updates).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("tenant_id = ? AND id = ?", tenant.ID, existingPayment.ID).First(&payment).Error; err != nil {
+				return err
+			}
+			paymentStatusCode = http.StatusOK
+			paymentMessage = "อัปเดตหลักฐานชำระเงินสำเร็จ"
+			paymentEvent = services.RentFlowCarRealtimeEventPaymentUpdated
+		} else if errors.Is(err, gorm.ErrRecordNotFound) {
+			payment = models.RentFlowCarPayment{
+				ID:               services.NewID("pay"),
+				TenantID:         tenant.ID,
+				BookingID:        lockedBooking.ID,
+				Method:           method,
+				Status:           "pending_verification",
+				Amount:           lockedBooking.TotalAmount,
+				Processor:        "manual",
+				SlipMimeType:     slipMimeType,
+				SlipBlob:         slipBlob,
+				SettlementPeriod: now.Format("2006-01"),
+			}
+			if err := tx.Create(&payment).Error; err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+
+		if err := tx.Model(&models.RentFlowCarBooking{}).
+			Where("tenant_id = ? AND id = ? AND status NOT IN ?", tenant.ID, lockedBooking.ID, []string{"cancelled", "completed"}).
+			Updates(map[string]interface{}{
+				"status":     "review",
+				"updated_at": now,
+			}).Error; err != nil {
+			return err
+		}
+
+		booking = lockedBooking
+		booking.Status = "review"
+		booking.UpdatedAt = now
+		return nil
+	}); err != nil {
+		if errors.Is(err, errPaymentAlreadyVerified) {
+			rentFlowError(c, http.StatusConflict, "รายการนี้ยืนยันการชำระเงินแล้ว ไม่สามารถส่งหลักฐานซ้ำได้")
+			return
+		}
+		if errors.Is(err, errBookingCannotAcceptPayment) {
+			rentFlowError(c, http.StatusConflict, "รายการจองนี้ไม่สามารถส่งหลักฐานชำระเงินเพิ่มได้")
+			return
+		}
+		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถบันทึกหลักฐานชำระเงินได้")
 		return
 	}
 
 	rentFlowCreateNotification(tenant.ID, booking.UserID, booking.CustomerEmail, "ส่งหลักฐานชำระเงินแล้ว", "การจอง "+booking.BookingCode+" อยู่ระหว่างรอร้านตรวจสอบการชำระเงิน")
-	booking.Status = "review"
-	rentFlowPublishPaymentRealtime(services.RentFlowCarRealtimeEventPaymentCreated, payment)
+	rentFlowPublishPaymentRealtime(paymentEvent, payment)
 	rentFlowPublishBookingRealtime(services.RentFlowCarRealtimeEventBookingUpdated, booking)
-	rentFlowSuccess(c, http.StatusCreated, "สร้างรายการชำระเงินสำเร็จ", rentFlowPaymentResponse(payment))
+	rentFlowSuccess(c, paymentStatusCode, paymentMessage, rentFlowPaymentResponse(payment))
 }
 
 func RentFlowCarGetPaymentByBookingID(c *gin.Context) {
@@ -346,8 +439,18 @@ func RentFlowCarGetPaymentByBookingID(c *gin.Context) {
 		return
 	}
 
+	var booking models.RentFlowCarBooking
+	if err := config.DB.Where("tenant_id = ? AND (id = ? OR booking_code = ?)", tenant.ID, c.Param("bookingId"), c.Param("bookingId")).First(&booking).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			rentFlowError(c, http.StatusNotFound, "ไม่พบรายการจองที่ต้องการ")
+			return
+		}
+		rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถค้นหารายการจองได้")
+		return
+	}
+
 	var payment models.RentFlowCarPayment
-	if err := config.DB.Where("tenant_id = ? AND booking_id = ?", tenant.ID, c.Param("bookingId")).Order("created_at DESC").First(&payment).Error; err != nil {
+	if err := config.DB.Where("tenant_id = ? AND booking_id = ?", tenant.ID, booking.ID).Order("created_at DESC").First(&payment).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			rentFlowError(c, http.StatusNotFound, "ยังไม่มีข้อมูลการชำระเงินสำหรับการจองนี้")
 			return
@@ -646,10 +749,19 @@ func rentFlowLoadOwnedBooking(c *gin.Context, bookingID string) (*models.RentFlo
 		return nil, false
 	}
 
+	tenant, scoped, ok := rentFlowBookingTenantScope(c)
+	if !ok {
+		return nil, false
+	}
+
 	var booking models.RentFlowCarBooking
-	if err := config.DB.
-		Where("(id = ? OR booking_code = ?) AND (user_id = ? OR customer_email = ?)", bookingID, bookingID, user.ID, user.Email).
-		First(&booking).Error; err != nil {
+	query := config.DB.
+		Where("(id = ? OR booking_code = ?) AND (user_id = ? OR customer_email = ?)", bookingID, bookingID, user.ID, user.Email)
+	if scoped {
+		query = query.Where("tenant_id = ?", tenant.ID)
+	}
+
+	if err := query.First(&booking).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			rentFlowError(c, http.StatusNotFound, "ไม่พบรายการจองที่ต้องการ")
 			return nil, false
@@ -659,6 +771,37 @@ func rentFlowLoadOwnedBooking(c *gin.Context, bookingID string) (*models.RentFlo
 	}
 
 	return &booking, true
+}
+
+func rentFlowBookingTenantScope(c *gin.Context) (*models.RentFlowCarTenant, bool, bool) {
+	if rentFlowIsMarketplaceRequest(c) {
+		return nil, false, true
+	}
+
+	identity := strings.TrimSpace(c.Query("tenant"))
+	if identity == "" {
+		identity = strings.TrimSpace(c.Query("host"))
+	}
+	if identity == "" {
+		identity = strings.TrimSpace(c.GetHeader("X-RentFlowCar-Tenant"))
+	}
+	if identity == "" {
+		identity = strings.TrimSpace(c.GetHeader("X-RentFlowCar-Host"))
+	}
+	if identity == "" || (rentFlowNormalizeTenantHost(identity) == "" && rentFlowSlugFromTenantIdentity(identity) == "") {
+		return nil, false, true
+	}
+
+	tenant, err := rentFlowTenantFromRequest(c, false)
+	if err == nil {
+		return tenant, true, true
+	}
+	if err == gorm.ErrRecordNotFound {
+		rentFlowError(c, http.StatusNotFound, "เนเธกเนเธเธเธฃเนเธฒเธเธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ")
+		return nil, false, false
+	}
+	rentFlowError(c, http.StatusInternalServerError, "เนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธ•เธฃเธงเธเธชเธญเธเธฃเนเธฒเธเนเธ”เน")
+	return nil, false, false
 }
 
 func rentFlowBookingResponses(bookings []models.RentFlowCarBooking) []gin.H {
@@ -743,6 +886,21 @@ func rentFlowBookingResponse(booking models.RentFlowCarBooking) gin.H {
 	return rentFlowBookingResponses([]models.RentFlowCarBooking{booking})[0]
 }
 
+func rentFlowStoredBookingMode(mode string) string {
+	switch strings.TrimSpace(strings.ToLower(mode)) {
+	case "payment", "system", "system_payment":
+		return "payment"
+	case "chat":
+		return "chat"
+	default:
+		return ""
+	}
+}
+
+func rentFlowIsChatBooking(booking models.RentFlowCarBooking) bool {
+	return booking.Status == "chat"
+}
+
 func rentFlowBookingResponseWithMaps(booking models.RentFlowCarBooking, carMap map[string]models.RentFlowCarCar, tenantMap map[string]models.RentFlowCarTenant, branchNameMap map[string]string) gin.H {
 	car := carMap[booking.CarID]
 	tenant := tenantMap[booking.TenantID]
@@ -752,6 +910,12 @@ func rentFlowBookingResponseWithMaps(booking models.RentFlowCarBooking, carMap m
 	if carName == "" {
 		carName = booking.CarID
 	}
+	bookingStatus := booking.Status
+	bookingMode := "payment"
+	if bookingStatus == "chat" {
+		bookingStatus = "chat"
+		bookingMode = "chat"
+	}
 
 	return gin.H{
 		"id":                  booking.ID,
@@ -760,7 +924,8 @@ func rentFlowBookingResponseWithMaps(booking models.RentFlowCarBooking, carMap m
 		"userId":              booking.UserID,
 		"carId":               booking.CarID,
 		"carName":             carName,
-		"status":              booking.Status,
+		"status":              bookingStatus,
+		"bookingMode":         bookingMode,
 		"pickupDate":          booking.PickupDate,
 		"returnDate":          booking.ReturnDate,
 		"pickupLocation":      pickupLocation,

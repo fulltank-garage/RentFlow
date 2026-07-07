@@ -100,7 +100,6 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 		LogoURL           *string   `json:"logoUrl"`
 		PromoImageURL     *string   `json:"promoImageUrl"`
 		PromoImageURLs    *[]string `json:"promoImageUrls"`
-		LineOAQRCodeURL   *string   `json:"lineOaQrCodeUrl"`
 		ClearPromoImages  bool      `json:"clearPromoImages"`
 	}
 
@@ -108,13 +107,10 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 	var logoMimeType string
 	var promoImageBlob []byte
 	var promoImageMimeType string
-	var lineOAQRBlob []byte
-	var lineOAQRMimeType string
 	var promoImages []rentFlowUploadedPromoImage
 	logoProvided := false
 	promoImageProvided := false
 	promoImagesProvided := false
-	lineOAQRProvided := false
 	clearPromoImages := false
 
 	contentType := strings.ToLower(c.GetHeader("Content-Type"))
@@ -207,27 +203,6 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 			promoImageBlob = promoImages[0].Blob
 			promoImageMimeType = promoImages[0].MimeType
 		}
-		if value, exists := c.GetPostForm("lineOaQrCodeUrl"); exists {
-			payload.LineOAQRCodeURL = &value
-			lineOAQRProvided = true
-			var err error
-			lineOAQRBlob, lineOAQRMimeType, err = rentFlowImageBlobFromSource(&value)
-			if err != nil {
-				rentFlowError(c, http.StatusBadRequest, "QR Code LINE OA ไม่ถูกต้อง")
-				return
-			}
-		}
-		if fileHeader, err := c.FormFile("lineOaQrCode"); err == nil {
-			lineOAQRProvided = true
-			lineOAQRBlob, lineOAQRMimeType, err = rentFlowImageBlobFromUpload(fileHeader)
-			if err != nil {
-				rentFlowError(c, http.StatusBadRequest, err.Error())
-				return
-			}
-		} else if !errors.Is(err, http.ErrMissingFile) {
-			rentFlowError(c, http.StatusBadRequest, "QR Code LINE OA ไม่ถูกต้อง")
-			return
-		}
 	} else if err := c.ShouldBindJSON(&payload); err != nil {
 		rentFlowError(c, http.StatusBadRequest, "ข้อมูลร้านไม่ถูกต้อง")
 		return
@@ -276,12 +251,6 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 		promoImageBlob, promoImageMimeType, err = rentFlowImageBlobFromSource(payload.PromoImageURL)
 		if err != nil {
 			rentFlowError(c, http.StatusBadRequest, "รูปโปรโมชันไม่ถูกต้อง")
-			return
-		}
-		lineOAQRProvided = payload.LineOAQRCodeURL != nil
-		lineOAQRBlob, lineOAQRMimeType, err = rentFlowImageBlobFromSource(payload.LineOAQRCodeURL)
-		if err != nil {
-			rentFlowError(c, http.StatusBadRequest, "QR Code LINE OA ไม่ถูกต้อง")
 			return
 		}
 		if payload.PromoImageURLs != nil {
@@ -358,8 +327,6 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 			BankAccountName:    bankAccountName,
 			BankAccountNumber:  bankAccountNumber,
 			FacebookPageURL:    facebookPageURL,
-			LineOAQRMimeType:   lineOAQRMimeType,
-			LineOAQRBlob:       lineOAQRBlob,
 			Status:             "active",
 			BookingMode:        "chat",
 			ChatThresholdTHB:   chatThresholdTHB,
@@ -424,11 +391,6 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 		updates["promo_image_mime_type"] = ""
 		updates["promo_image_blob"] = []byte{}
 	}
-	if lineOAQRProvided {
-		updates["line_oaqr_mime_type"] = lineOAQRMimeType
-		updates["line_oaqr_blob"] = lineOAQRBlob
-	}
-
 	if err := config.DB.Model(&models.RentFlowCarTenant{}).
 		Where("id = ?", existing.ID).
 		Select(rentFlowUpdateColumns(updates)).
@@ -468,10 +430,6 @@ func RentFlowCarUpsertMyTenant(c *gin.Context) {
 	} else if clearPromoImages {
 		existing.PromoImageMimeType = ""
 		existing.PromoImageBlob = nil
-	}
-	if lineOAQRProvided {
-		existing.LineOAQRMimeType = lineOAQRMimeType
-		existing.LineOAQRBlob = lineOAQRBlob
 	}
 	if promoImagesProvided {
 		if err := rentFlowReplaceTenantPromoImages(existing.ID, promoImages); err != nil {
@@ -929,16 +887,12 @@ func rentFlowPublicTenantResponse(tenant models.RentFlowCarTenant) gin.H {
 		"bankAccountName":   tenant.BankAccountName,
 		"bankAccountNumber": tenant.BankAccountNumber,
 		"facebookPageUrl":   tenant.FacebookPageURL,
-		"lineOaQrCodeUrl":   rentFlowTenantLineOAQRCodeURL(tenant),
 		"status":            tenant.Status,
 		"bookingMode":       rentFlowNormalizeBookingMode(tenant.BookingMode),
 		"chatThresholdTHB":  tenant.ChatThresholdTHB,
 		"plan":              tenant.Plan,
 		"createdAt":         tenant.CreatedAt,
 		"updatedAt":         tenant.UpdatedAt,
-	}
-	if lineSummary := rentFlowPublicLineSummary(tenant.ID); lineSummary != nil {
-		response["lineOfficialAccount"] = lineSummary
 	}
 	return response
 }
@@ -991,27 +945,6 @@ func RentFlowCarGetTenantPromoImage(c *gin.Context) {
 	rentFlowSendImageBlob(c, tenant.PromoImageMimeType, tenant.PromoImageBlob)
 }
 
-func RentFlowCarGetTenantLineOAQRCode(c *gin.Context) {
-	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
-	if slug == "" {
-		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
-		return
-	}
-
-	var tenant models.RentFlowCarTenant
-	if err := config.DB.Where("status = ? AND domain_slug = ?", "active", slug).First(&tenant).Error; err != nil {
-		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
-		return
-	}
-
-	if len(tenant.LineOAQRBlob) == 0 || strings.TrimSpace(tenant.LineOAQRMimeType) == "" {
-		rentFlowError(c, http.StatusNotFound, "ไม่พบ QR Code LINE OA")
-		return
-	}
-
-	rentFlowSendImageBlob(c, tenant.LineOAQRMimeType, tenant.LineOAQRBlob)
-}
-
 func RentFlowCarGetTenantPromoImageByID(c *gin.Context) {
 	slug := rentFlowNormalizeDomainSlug(c.Param("tenantSlug"))
 	imageID := strings.TrimSpace(c.Param("imageId"))
@@ -1038,29 +971,4 @@ func RentFlowCarGetTenantPromoImageByID(c *gin.Context) {
 	}
 
 	rentFlowSendImageBlob(c, image.MimeType, image.Blob)
-}
-
-func rentFlowPublicLineSummary(tenantID string) gin.H {
-	channel, err := rentFlowLineChannelByTenant(tenantID)
-	if err != nil || channel == nil {
-		return nil
-	}
-
-	basicID := strings.TrimSpace(channel.BasicID)
-	encodedID := url.PathEscape(basicID)
-	chatURL := ""
-	shareURL := ""
-	if basicID != "" {
-		chatURL = "https://line.me/R/oaMessage/" + encodedID + "/"
-		shareURL = "https://line.me/R/ti/p/" + encodedID
-	}
-
-	return gin.H{
-		"displayName": channel.DisplayName,
-		"basicId":     basicID,
-		"pictureUrl":  channel.PictureURL,
-		"chatUrl":     chatURL,
-		"shareUrl":    shareURL,
-		"isConnected": channel.Status == "connected",
-	}
 }

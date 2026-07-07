@@ -495,7 +495,7 @@ func rentFlowPartnerPermissionForRequest(c *gin.Context) string {
 		return "leads." + action
 	case strings.Contains(path, "/partner/members"):
 		return "members." + action
-	case strings.Contains(path, "/partner/domains"), strings.Contains(path, "/partner/messaging/line"):
+	case strings.Contains(path, "/partner/domains"):
 		return "settings." + action
 	case strings.Contains(path, "/partner/support"):
 		return "support." + action
@@ -776,13 +776,17 @@ func rentFlowBuildPartnerDashboard(tenant *models.RentFlowCarTenant, cars []mode
 		totalRevenue += payment.Amount
 	}
 
-	statusCounts := map[string]int{"pending": 0, "confirmed": 0, "paid": 0, "completed": 0, "cancelled": 0}
+	statusCounts := map[string]int{"pending": 0, "confirmed": 0, "paid": 0, "completed": 0, "cancelled": 0, "chat": 0}
 	todayPickups := 0
 	todayReturns := 0
 	now := time.Now()
 	today := now.Format("2006-01-02")
 	for _, booking := range bookings {
-		statusCounts[booking.Status]++
+		bookingStatus := booking.Status
+		if rentFlowIsChatBooking(booking) {
+			bookingStatus = "chat"
+		}
+		statusCounts[bookingStatus]++
 		if booking.PickupDate.Format("2006-01-02") == today {
 			todayPickups++
 		}
@@ -831,6 +835,10 @@ func rentFlowBuildPartnerDashboard(tenant *models.RentFlowCarTenant, cars []mode
 		if len(recentBookings) >= 6 {
 			break
 		}
+		bookingStatus := booking.Status
+		if rentFlowIsChatBooking(booking) {
+			bookingStatus = "chat"
+		}
 		recentBookings = append(recentBookings, gin.H{
 			"id":           booking.ID,
 			"bookingCode":  booking.BookingCode,
@@ -839,7 +847,7 @@ func rentFlowBuildPartnerDashboard(tenant *models.RentFlowCarTenant, cars []mode
 			"customerName": booking.CustomerName,
 			"pickupDate":   booking.PickupDate,
 			"returnDate":   booking.ReturnDate,
-			"status":       booking.Status,
+			"status":       bookingStatus,
 			"totalAmount":  booking.TotalAmount,
 			"revenue":      revenueByBookingID[booking.ID],
 			"createdAt":    booking.CreatedAt,

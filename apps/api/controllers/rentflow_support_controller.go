@@ -14,12 +14,6 @@ import (
 	"rentflow-api/services"
 )
 
-type rentFlowLineUserProfile struct {
-	UserID      string `json:"userId"`
-	DisplayName string `json:"displayName"`
-	PictureURL  string `json:"pictureUrl"`
-}
-
 func RentFlowCarPartnerGetSupport(c *gin.Context) {
 	tenant, ok := rentFlowRequireOwnerTenant(c)
 	if !ok {
@@ -130,46 +124,6 @@ func RentFlowCarPartnerCreateSupportMessage(c *gin.Context) {
 	if payload.IsInternal {
 		messageFrom = "system"
 	}
-
-	if !payload.IsInternal && ticket.Channel == "line" && strings.TrimSpace(ticket.ExternalThreadID) != "" {
-		channel, err := rentFlowLineChannelByTenant(tenant.ID)
-		if err != nil {
-			rentFlowError(c, http.StatusInternalServerError, "ไม่สามารถตรวจสอบ LINE OA ของร้านได้")
-			return
-		}
-		if channel == nil || strings.TrimSpace(channel.AccessToken) == "" {
-			rentFlowError(c, http.StatusBadRequest, "ร้านนี้ยังไม่ได้เชื่อม LINE OA สำหรับส่งข้อความตอบกลับ")
-			return
-		}
-
-		if err := rentFlowLinePushTextMessage(channel.AccessToken, ticket.ExternalThreadID, messageText); err != nil {
-			messageStatus = "failed"
-			_ = config.DB.Create(&models.RentFlowCarMessageLog{
-				ID:           services.NewID("msg"),
-				TenantID:     tenant.ID,
-				Channel:      "line",
-				Recipient:    ticket.ExternalThreadID,
-				Subject:      "support.reply",
-				Body:         messageText,
-				Status:       "failed",
-				ErrorMessage: err.Error(),
-			}).Error
-			rentFlowError(c, http.StatusBadRequest, "ส่งข้อความผ่าน LINE ไม่สำเร็จ: "+err.Error())
-			return
-		}
-
-		messageStatus = "sent"
-		_ = config.DB.Create(&models.RentFlowCarMessageLog{
-			ID:        services.NewID("msg"),
-			TenantID:  tenant.ID,
-			Channel:   "line",
-			Recipient: ticket.ExternalThreadID,
-			Subject:   "support.reply",
-			Body:      messageText,
-			Status:    "sent",
-		}).Error
-	}
-
 	message := models.RentFlowCarSupportMessage{
 		ID:         services.NewID("supmsg"),
 		TenantID:   tenant.ID,
@@ -361,107 +315,3 @@ func rentFlowNormalizeSupportPriority(value string) string {
 	}
 }
 
-func rentFlowSupportIngestLineEvent(tenant *models.RentFlowCarTenant, channel *models.RentFlowCarLineChannel, event rentFlowLineWebhookEvent) {
-	threadID := strings.TrimSpace(rentFlowLineEventRecipient(event))
-	if threadID == "" || threadID == "unknown" {
-		return
-	}
-
-	providerRef := strings.TrimSpace(event.WebhookEventID)
-	if providerRef != "" {
-		var existingMessage models.RentFlowCarSupportMessage
-		if err := config.DB.Where("tenant_id = ? AND provider_ref = ?", tenant.ID, providerRef).First(&existingMessage).Error; err == nil {
-			return
-		}
-	}
-
-	customerName := "ลูกค้า LINE"
-	if strings.TrimSpace(event.Source.UserID) != "" && strings.TrimSpace(channel.AccessToken) != "" {
-		if profile, err := rentFlowLineGetUserProfile(channel.AccessToken, event.Source.UserID); err == nil && strings.TrimSpace(profile.DisplayName) != "" {
-			customerName = strings.TrimSpace(profile.DisplayName)
-		}
-	}
-	if threadID != "" && customerName == "ลูกค้า LINE" {
-		customerName = "ลูกค้า " + threadID
-	}
-
-	subject := strings.TrimSpace(rentFlowLineEventSummary(event))
-	if len([]rune(subject)) > 120 {
-		subject = string([]rune(subject)[:120])
-	}
-	if subject == "" {
-		subject = "ข้อความจากลูกค้า"
-	}
-
-	now := time.Now()
-	var ticket models.RentFlowCarSupportTicket
-	err := config.DB.Where("tenant_id = ? AND channel = ? AND external_thread_id = ?", tenant.ID, "line", threadID).First(&ticket).Error
-	switch {
-	case errors.Is(err, gorm.ErrRecordNotFound):
-		ticket = models.RentFlowCarSupportTicket{
-			ID:               services.NewID("supt"),
-			TenantID:         tenant.ID,
-			Channel:          "line",
-			ExternalThreadID: threadID,
-			Subject:          subject,
-			CustomerName:     customerName,
-			Status:           "new",
-			Priority:         "normal",
-			LastMessage:      subject,
-			LastMessageAt:    &now,
-		}
-		_ = config.DB.Create(&ticket).Error
-	case err == nil:
-		updates := map[string]interface{}{
-			"subject":         subject,
-			"customer_name":   customerName,
-			"last_message":    subject,
-			"last_message_at": &now,
-			"updated_at":      now,
-		}
-		if ticket.Status == "resolved" || ticket.Status == "closed" {
-			updates["status"] = "open"
-		}
-		_ = config.DB.Model(&models.RentFlowCarSupportTicket{}).
-			Where("tenant_id = ? AND id = ?", tenant.ID, ticket.ID).
-			Updates(updates).Error
-		ticket.Subject = subject
-		ticket.CustomerName = customerName
-		ticket.LastMessage = subject
-		ticket.LastMessageAt = &now
-	default:
-		return
-	}
-
-	_ = config.DB.Create(&models.RentFlowCarSupportMessage{
-		ID:          services.NewID("supmsg"),
-		TenantID:    tenant.ID,
-		TicketID:    ticket.ID,
-		FromType:    "customer",
-		Message:     subject,
-		IsInternal:  false,
-		Status:      "received",
-		ProviderRef: providerRef,
-	}).Error
-	rentFlowPublishSupportRealtime(tenant.ID, ticket.ID, services.RentFlowCarRealtimeEventSupportChanged)
-}
-
-func rentFlowLineGetUserProfile(accessToken, userID string) (*rentFlowLineUserProfile, error) {
-	var response rentFlowLineUserProfile
-	if err := rentFlowLineRequest(http.MethodGet, "/v2/bot/profile/"+userID, accessToken, nil, &response); err != nil {
-		return nil, err
-	}
-	return &response, nil
-}
-
-func rentFlowLinePushTextMessage(accessToken, to, message string) error {
-	return rentFlowLineRequest(http.MethodPost, "/v2/bot/message/push", accessToken, gin.H{
-		"to": strings.TrimSpace(to),
-		"messages": []gin.H{
-			{
-				"type": "text",
-				"text": strings.TrimSpace(message),
-			},
-		},
-	}, nil)
-}

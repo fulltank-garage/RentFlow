@@ -55,7 +55,6 @@ func ConnectDatabase() {
 		&models.RentFlowCarPromotion{},
 		&models.RentFlowCarAddon{},
 		&models.RentFlowCarLead{},
-		&models.RentFlowCarLineChannel{},
 		&models.RentFlowCarSupportTicket{},
 		&models.RentFlowCarSupportMessage{},
 		&models.RentFlowCarBookingOperation{},
@@ -68,6 +67,7 @@ func ConnectDatabase() {
 
 	ensureRentFlowTenantPromptPayColumns(db)
 	ensureRentFlowTenantBankAccountColumns(db)
+	ensureRentFlowBookingModeData(db)
 }
 
 func ensureRentFlowTenantPromptPayColumns(db *gorm.DB) {
@@ -98,5 +98,17 @@ func ensureRentFlowTenantBankAccountColumns(db *gorm.DB) {
 		if err := db.Migrator().AddColumn(&models.RentFlowCarTenant{}, "BankAccountNumber"); err != nil {
 			log.Println("ไม่สามารถเพิ่มคอลัมน์ bank_account_number:", err)
 		}
+	}
+}
+
+func ensureRentFlowBookingModeData(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.RentFlowCarBooking{}, "booking_mode") {
+		return
+	}
+
+	if err := db.Model(&models.RentFlowCarBooking{}).
+		Where("status <> ? AND booking_mode = ?", "chat", "chat").
+		Update("booking_mode", "payment").Error; err != nil {
+		log.Println("ไม่สามารถปรับข้อมูล booking_mode ของรายการจองเดิม:", err)
 	}
 }

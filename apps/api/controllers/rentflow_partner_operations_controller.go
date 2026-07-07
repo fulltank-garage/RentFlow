@@ -72,6 +72,11 @@ func RentFlowCarPartnerUpdateBookingStatus(c *gin.Context) {
 		return
 	}
 
+	if rentFlowIsChatBooking(booking) && status != "chat" {
+		rentFlowError(c, http.StatusConflict, "รายการนี้เป็นการจองผ่านแชท ไม่ต้องเปลี่ยนสถานะ")
+		return
+	}
+
 	updates := map[string]interface{}{"status": status, "updated_at": time.Now()}
 	if strings.TrimSpace(payload.Note) != "" {
 		updates["note"] = strings.TrimSpace(payload.Note)
@@ -178,6 +183,9 @@ func RentFlowCarPartnerCreateBookingOperation(c *gin.Context) {
 	nextStatus := rentFlowNormalizeBookingStatus(payload.NextStatus)
 	if nextStatus == "" {
 		nextStatus = rentFlowBookingStatusForOperation(operationType, booking.Status)
+	}
+	if rentFlowIsChatBooking(booking) {
+		nextStatus = ""
 	}
 
 	carStatusChanged := false
@@ -800,7 +808,7 @@ func rentFlowPaymentByID(tenantID, paymentID string) (models.RentFlowCarPayment,
 
 func rentFlowNormalizeBookingStatus(status string) string {
 	switch strings.TrimSpace(strings.ToLower(status)) {
-	case "pending", "confirmed", "paid", "active", "completed", "cancelled", "review":
+	case "pending", "confirmed", "paid", "active", "completed", "cancelled", "review", "chat":
 		return strings.TrimSpace(strings.ToLower(status))
 	default:
 		return ""
@@ -902,13 +910,20 @@ func rentFlowPartnerBookingsByID(tenantID string) map[string]models.RentFlowCarB
 }
 
 func rentFlowPartnerBookingResponse(booking models.RentFlowCarBooking, carName string) gin.H {
+	bookingStatus := booking.Status
+	bookingMode := "payment"
+	if bookingStatus == "chat" {
+		bookingStatus = "chat"
+		bookingMode = "chat"
+	}
 	return gin.H{
 		"id":             booking.ID,
 		"tenantId":       booking.TenantID,
 		"bookingCode":    booking.BookingCode,
 		"carId":          booking.CarID,
 		"carName":        carName,
-		"status":         booking.Status,
+		"status":         bookingStatus,
+		"bookingMode":    bookingMode,
 		"pickupDate":     booking.PickupDate,
 		"returnDate":     booking.ReturnDate,
 		"pickupLocation": booking.PickupLocation,
