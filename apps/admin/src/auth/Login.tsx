@@ -42,13 +42,50 @@ const loginFieldSX = {
   },
 };
 
+function readInputValue(ref: React.RefObject<HTMLInputElement | null>) {
+  return ref.current?.value || "";
+}
+
 export default function Login() {
   const router = useRouter();
+  const usernameInputRef = React.useRef<HTMLInputElement | null>(null);
+  const passwordInputRef = React.useRef<HTMLInputElement | null>(null);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [usernameFocused, setUsernameFocused] = React.useState(false);
+  const [passwordFocused, setPasswordFocused] = React.useState(false);
+  const [usernameAutofilled, setUsernameAutofilled] = React.useState(false);
+  const [passwordAutofilled, setPasswordAutofilled] = React.useState(false);
   const [showPw, setShowPw] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  const syncAutofilledCredentials = React.useCallback(() => {
+    const nextUsername = readInputValue(usernameInputRef);
+    const nextPassword = readInputValue(passwordInputRef);
+
+    if (!username && nextUsername) {
+      setUsername(nextUsername);
+    }
+    if (!password && nextPassword) {
+      setPassword(nextPassword);
+    }
+
+    setUsernameAutofilled(Boolean(nextUsername));
+    setPasswordAutofilled(Boolean(nextPassword));
+  }, [password, username]);
+
+  React.useEffect(() => {
+    const frame = window.requestAnimationFrame(syncAutofilledCredentials);
+    const timers = [120, 600, 1200].map((delay) =>
+      window.setTimeout(syncAutofilledCredentials, delay)
+    );
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, [syncAutofilledCredentials]);
 
   const usernameOk = username.length === 0 ? true : username.trim().length >= 3;
   const pwOk = password.length === 0 ? true : password.length >= 6;
@@ -175,8 +212,20 @@ export default function Login() {
             <Box component="form" onSubmit={handleSubmit} className="grid gap-4">
               <TextField
                 label="ชื่อผู้ใช้"
+                inputRef={usernameInputRef}
+                InputLabelProps={{
+                  shrink: usernameFocused || Boolean(username) || usernameAutofilled,
+                }}
                 value={username}
-                onChange={(event) => setUsername(event.target.value)}
+                onChange={(event) => {
+                  setUsername(event.target.value);
+                  setUsernameAutofilled(Boolean(event.target.value));
+                }}
+                onFocus={() => setUsernameFocused(true)}
+                onBlur={() => {
+                  setUsernameFocused(false);
+                  syncAutofilledCredentials();
+                }}
                 autoComplete="username"
                 fullWidth
                 sx={loginFieldSX}
@@ -186,9 +235,21 @@ export default function Login() {
 
               <TextField
                 label="รหัสผ่าน"
+                inputRef={passwordInputRef}
+                InputLabelProps={{
+                  shrink: passwordFocused || Boolean(password) || passwordAutofilled,
+                }}
                 type={showPw ? "text" : "password"}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  setPasswordAutofilled(Boolean(event.target.value));
+                }}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => {
+                  setPasswordFocused(false);
+                  syncAutofilledCredentials();
+                }}
                 autoComplete="current-password"
                 fullWidth
                 sx={loginFieldSX}

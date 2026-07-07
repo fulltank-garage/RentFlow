@@ -177,7 +177,6 @@ export default function SecurityPage() {
               ["ผู้ดูแลระบบกลาง", security.summary.platformAdminConfigured ? "พร้อม" : "ยังไม่พร้อม"],
               ["เจ้าของร้าน", security.summary.tenantOwners],
               ["สมาชิกในร้าน", security.summary.tenantMembers],
-              ["LINE OA", security.summary.connectedLineChannels],
               ["โดเมนยืนยันแล้ว", security.summary.verifiedCustomDomains],
               ["ร้านถูกระงับ", security.summary.suspendedTenants],
             ].map(([label, value]) => (

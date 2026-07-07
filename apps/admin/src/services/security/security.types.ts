@@ -3,7 +3,6 @@ export type PlatformSecurity = {
     platformAdminConfigured: boolean;
     tenantOwners: number;
     tenantMembers: number;
-    connectedLineChannels: number;
     verifiedCustomDomains: number;
     suspendedTenants: number;
   };
