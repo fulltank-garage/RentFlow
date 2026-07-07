@@ -4,6 +4,7 @@ export type PartnerBooking = {
   carId: string;
   carName?: string;
   status: string;
+  bookingMode?: "payment" | "chat" | string;
   pickupDate: string;
   returnDate: string;
   pickupLocation: string;

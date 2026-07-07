@@ -12,7 +12,6 @@ import DirectionsCarFilledRoundedIcon from "@mui/icons-material/DirectionsCarFil
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
 import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
-import HomeWorkRoundedIcon from "@mui/icons-material/HomeWorkRounded";
 import InsertChartRoundedIcon from "@mui/icons-material/InsertChartRounded";
 import InventoryRoundedIcon from "@mui/icons-material/InventoryRounded";
 import LineAxisRoundedIcon from "@mui/icons-material/LineAxisRounded";
@@ -67,7 +66,6 @@ const MENU_ICON: Record<PartnerNavIcon, SvgIconComponent> = {
   promotions: ConfirmationNumberRoundedIcon,
   addons: AddBoxRoundedIcon,
   reports: InsertChartRoundedIcon,
-  line: HomeWorkRoundedIcon,
   ai: AutoAwesomeRoundedIcon,
   support: HelpRoundedIcon,
 };

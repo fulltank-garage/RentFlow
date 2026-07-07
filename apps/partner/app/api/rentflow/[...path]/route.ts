@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const SESSION_COOKIE = "rentflow_partner_session";
 
 function apiBaseUrl() {
-  return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(
+  return (process.env.RENTFLOW_API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(
     /\/$/,
     ""
   );

@@ -14,7 +14,6 @@ export type PartnerTenant = {
   bankAccountName?: string;
   bankAccountNumber?: string;
   facebookPageUrl?: string;
-  lineOaQrCodeUrl?: string;
   status: string;
   plan: string;
   createdAt?: string;

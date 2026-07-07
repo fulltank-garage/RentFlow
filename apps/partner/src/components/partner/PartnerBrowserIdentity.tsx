@@ -108,7 +108,6 @@ export default function PartnerBrowserIdentity() {
             promoImageUrls: tenant.promoImageUrls || [],
             contactPhone: tenant.contactPhone || "",
             facebookPageUrl: tenant.facebookPageUrl || "",
-            lineOaQrCodeUrl: tenant.lineOaQrCodeUrl || null,
             createdAt: tenant.createdAt,
             updatedAt: tenant.updatedAt,
           });

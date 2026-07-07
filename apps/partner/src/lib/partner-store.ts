@@ -39,7 +39,6 @@ export type PartnerStoreProfile = {
     bankAccountName?: string;
     bankAccountNumber?: string;
     facebookPageUrl?: string;
-    lineOaQrCodeUrl?: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -92,7 +91,6 @@ export function readStoreProfile() {
             promoImageUrls: (parsed.promoImageUrls || [])
                 .map((url) => resolvePartnerAssetUrl(url))
                 .filter(Boolean) as string[],
-            lineOaQrCodeUrl: resolvePartnerAssetUrl(parsed.lineOaQrCodeUrl),
         };
     } catch {
         return null;
@@ -117,7 +115,6 @@ export function writeStoreProfile(input: {
     bankAccountName?: string;
     bankAccountNumber?: string;
     facebookPageUrl?: string;
-    lineOaQrCodeUrl?: string | null;
     createdAt?: string;
     updatedAt?: string;
 }) {
@@ -176,11 +173,6 @@ export function writeStoreProfile(input: {
             input.facebookPageUrl === undefined
                 ? existing?.facebookPageUrl
                 : input.facebookPageUrl.trim(),
-        lineOaQrCodeUrl: resolvePartnerAssetUrl(
-            input.lineOaQrCodeUrl === undefined
-                ? existing?.lineOaQrCodeUrl
-                : input.lineOaQrCodeUrl || undefined
-        ),
         createdAt: input.createdAt ?? existing?.createdAt ?? now,
         updatedAt: input.updatedAt ?? now,
     };

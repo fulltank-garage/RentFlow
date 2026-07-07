@@ -18,7 +18,6 @@ export type PartnerNavIcon =
   | "promotions"
   | "addons"
   | "reports"
-  | "line"
   | "ai"
   | "support";
 
@@ -43,7 +42,6 @@ export const PARTNER_NAV: PartnerNavItem[] = [
   { label: "คูปองส่วนลด", href: "/partner/promotions", group: "Analytics", icon: "promotions" },
   { label: "บริการเสริม", href: "/partner/addons", group: "Analytics", icon: "addons" },
   { label: "สรุปรายงาน", href: "/partner/reports", group: "Analytics", icon: "reports" },
-  { label: "เชื่อมต่อ LINE", href: "/partner/line", group: "Settings", icon: "line" },
   { label: "ผู้ช่วย AI", href: "/partner/ai", group: "Settings", icon: "ai", badge: "ใหม่" },
   { label: "ช่วยเหลือ", href: "/partner/support", group: "Settings", icon: "support" },
 ];

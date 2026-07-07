@@ -44,14 +44,51 @@ const loginFieldSX = {
   },
 };
 
+function readInputValue(ref: React.RefObject<HTMLInputElement | null>) {
+  return ref.current?.value || "";
+}
+
 export default function Login() {
   const router = useRouter();
 
+  const usernameInputRef = React.useRef<HTMLInputElement | null>(null);
+  const passwordInputRef = React.useRef<HTMLInputElement | null>(null);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [usernameFocused, setUsernameFocused] = React.useState(false);
+  const [passwordFocused, setPasswordFocused] = React.useState(false);
+  const [usernameAutofilled, setUsernameAutofilled] = React.useState(false);
+  const [passwordAutofilled, setPasswordAutofilled] = React.useState(false);
   const [showPw, setShowPw] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  const syncAutofilledCredentials = React.useCallback(() => {
+    const nextUsername = readInputValue(usernameInputRef);
+    const nextPassword = readInputValue(passwordInputRef);
+
+    if (!username && nextUsername) {
+      setUsername(nextUsername);
+    }
+    if (!password && nextPassword) {
+      setPassword(nextPassword);
+    }
+
+    setUsernameAutofilled(Boolean(nextUsername));
+    setPasswordAutofilled(Boolean(nextPassword));
+  }, [password, username]);
+
+  React.useEffect(() => {
+    const frame = window.requestAnimationFrame(syncAutofilledCredentials);
+    const timers = [120, 600, 1200].map((delay) =>
+      window.setTimeout(syncAutofilledCredentials, delay)
+    );
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, [syncAutofilledCredentials]);
 
   const usernameOk = username.length === 0 ? true : username.trim().length >= 3;
   const pwOk = password.length === 0 ? true : password.length >= 6;
@@ -117,7 +154,7 @@ export default function Login() {
 
   return (
     <Box
-      className="relative grid min-h-screen place-items-center overflow-hidden bg-[var(--rf-partner-bg)] px-4 py-8 md:px-6"
+      className="relative grid min-h-screen place-items-center overflow-hidden bg-(--rf-partner-bg) px-4 py-8 md:px-6"
       sx={{
         backgroundColor: "var(--rf-partner-bg)",
         backgroundImage:
@@ -188,7 +225,7 @@ export default function Login() {
 
             <Divider className="border-white/70!" />
 
-            <Box className="min-h-[54px]">
+            <Box className="min-h-13.5">
               {error ? (
                 <Alert
                   severity="error"
@@ -203,8 +240,20 @@ export default function Login() {
             <Box component="form" onSubmit={handleSubmit} className="grid gap-4">
               <TextField
                 label="ชื่อผู้ใช้"
+                inputRef={usernameInputRef}
+                InputLabelProps={{
+                  shrink: usernameFocused || Boolean(username) || usernameAutofilled,
+                }}
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setUsernameAutofilled(Boolean(e.target.value));
+                }}
+                onFocus={() => setUsernameFocused(true)}
+                onBlur={() => {
+                  setUsernameFocused(false);
+                  syncAutofilledCredentials();
+                }}
                 fullWidth
                 sx={loginFieldSX}
                 autoComplete="username"
@@ -214,9 +263,21 @@ export default function Login() {
 
               <TextField
                 label="รหัสผ่าน"
+                inputRef={passwordInputRef}
+                InputLabelProps={{
+                  shrink: passwordFocused || Boolean(password) || passwordAutofilled,
+                }}
                 type={showPw ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setPasswordAutofilled(Boolean(e.target.value));
+                }}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => {
+                  setPasswordFocused(false);
+                  syncAutofilledCredentials();
+                }}
                 fullWidth
                 sx={loginFieldSX}
                 autoComplete="current-password"

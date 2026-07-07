@@ -73,6 +73,7 @@ function bookingStatusLabel(status: string) {
     paid: "ชำระแล้ว",
     active: "กำลังเช่า",
     review: "รอตรวจสอบ",
+    chat: "จองผ่านแชท",
     completed: "เสร็จสิ้น",
     cancelled: "ยกเลิก",
   };
@@ -86,6 +87,7 @@ function statusLabel(status?: string) {
     confirmed: "ยืนยันแล้ว",
     paid: "ชำระแล้ว",
     pending_verification: "รอตรวจสอบการชำระเงิน",
+    chat: "จองผ่านแชท",
     completed: "เสร็จสิ้น",
     cancelled: "ยกเลิก",
     failed: "ไม่สำเร็จ",
@@ -235,6 +237,7 @@ function statusChipClass(status?: string) {
       "draft",
       "pending_payout",
       "new",
+      "chat",
     ].includes(normalized) ||
     ["รอดำเนินการ", "รอตอบกลับ", "แบบร่าง", "รอปิดยอด", "ใหม่"].includes(status || "")
   ) {
@@ -413,6 +416,7 @@ export function PartnerBookingsPage() {
           <TextField select size="small" label="สถานะ" value={status} onChange={(e) => setStatus(e.target.value)} className="w-full md:w-48">
             <MenuItem value="all">ทั้งหมด</MenuItem>
             <MenuItem value="pending">รอดำเนินการ</MenuItem>
+            <MenuItem value="chat">จองผ่านแชท</MenuItem>
             <MenuItem value="confirmed">ยืนยันแล้ว</MenuItem>
             <MenuItem value="paid">ชำระแล้ว</MenuItem>
             <MenuItem value="active">กำลังเช่า</MenuItem>
@@ -425,7 +429,9 @@ export function PartnerBookingsPage() {
       {loading ? <LoadingCard /> : (
         <Card elevation={0} className="partner-card rounded-[30px]!">
           <CardContent className="p-0!">
-            {items.length === 0 ? <EmptyState label="ยังไม่มีการจอง" /> : items.map((booking, index) => (
+            {items.length === 0 ? <EmptyState label="ยังไม่มีการจอง" /> : items.map((booking, index) => {
+              const isChatBooking = booking.status === "chat";
+              return (
               <Box key={booking.id}>
                 <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="items-start justify-between p-4">
                   <Box>
@@ -439,6 +445,7 @@ export function PartnerBookingsPage() {
                       label={bookingStatusLabel(booking.status)}
                       className={statusChipClass(booking.status)}
                     />
+                    {!isChatBooking ? (
                     <TextField select size="small" label="เปลี่ยนสถานะ" defaultValue={booking.status} onChange={(e) => updateStatus(booking, e.target.value)} className="w-full sm:w-44">
                       <MenuItem value="pending">รอดำเนินการ</MenuItem>
                       <MenuItem value="confirmed">ยืนยันแล้ว</MenuItem>
@@ -448,8 +455,10 @@ export function PartnerBookingsPage() {
                       <MenuItem value="completed">เสร็จสิ้น</MenuItem>
                       <MenuItem value="cancelled">ยกเลิก</MenuItem>
                     </TextField>
+                    ) : null}
                   </Stack>
                 </Stack>
+                {!isChatBooking ? (
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1} className="px-4 pb-4">
                   <Button variant="outlined" onClick={() => openOperation(booking, "inspection")} className="rounded-full!">
                     ตรวจรถ
@@ -464,9 +473,11 @@ export function PartnerBookingsPage() {
                     บันทึกความเสียหาย
                   </Button>
                 </Stack>
+                ) : null}
                 {index < items.length - 1 ? <Divider /> : null}
               </Box>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       )}
