@@ -3,8 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
-import DirectionsCarFilledRoundedIcon from "@mui/icons-material/DirectionsCarFilledRounded";
-import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import {
   Box,
   Button,
@@ -184,6 +182,11 @@ function MarketplaceOverviewSkeletonCard() {
       className="apple-card apple-card-no-hover overflow-hidden p-5! sm:p-6!"
     >
       <Box className="flex h-full min-h-56 flex-col justify-between gap-6">
+        <Skeleton
+          variant="rounded"
+          animation="wave"
+          sx={{ width: "100%", height: 180, borderRadius: "24px" }}
+        />
         <Box className="flex items-start justify-between gap-4">
           <Box className="space-y-3">
             <Skeleton
@@ -231,69 +234,51 @@ function MarketplaceOverviewCard({
   description,
   href,
   actionLabel,
-  icon,
-  tone,
   helper,
+  imageSrc,
+  imageAlt,
 }: {
   label: string;
   value: string;
   description: string;
   href: string;
   actionLabel: string;
-  icon: React.ReactNode;
-  tone: "shop" | "car";
   helper: string;
+  imageSrc: string;
+  imageAlt: string;
 }) {
-  const isShopTone = tone === "shop";
-
   return (
     <Card
       elevation={0}
       sx={{ boxShadow: "none" }}
       className="apple-card group overflow-hidden p-5! transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 sm:p-6!"
     >
-      <Box className="relative flex h-full min-h-56 flex-col justify-between gap-6">
-        <Box className="relative">
-          <Box className="flex items-start justify-between gap-4">
+      <Box className="relative flex h-full min-h-56 flex-col justify-between gap-7">
+        <Box className="relative aspect-square w-full overflow-hidden rounded-[24px] bg-(--rf-apple-surface-soft)">
+          <Box
+            component="img"
+            src={imageSrc}
+            alt={imageAlt}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
+          />
+        </Box>
+
+        <Box className="relative grid gap-5">
+          <Box>
             <Box>
-              <Typography
-                className="w-min whitespace-nowrap rounded-full px-3 py-1 text-sm font-bold"
-                sx={{
-                  backgroundColor: isShopTone
-                    ? "color-mix(in srgb, var(--rf-apple-blue) 12%, white)"
-                    : "color-mix(in srgb, var(--secondary-navy) 9%, white)",
-                  color: isShopTone
-                    ? "var(--rf-apple-blue)"
-                    : "var(--secondary-navy)",
-                }}
-              >
-                {label}
-              </Typography>
-              <Typography className="apple-heading mt-4 text-4xl font-black tracking-[-0.04em] text-(--rf-apple-ink) md:text-5xl">
+              <Typography className="apple-heading text-4xl font-black tracking-[-0.04em] text-(--rf-apple-ink) md:text-5xl">
                 {value}
               </Typography>
             </Box>
-
-            <Box
-              className="grid h-14 w-14 shrink-0 place-items-center rounded-[18px] [&_.MuiSvgIcon-root]:text-3xl"
-              sx={{
-                backgroundColor: isShopTone
-                  ? "color-mix(in srgb, var(--rf-apple-blue) 14%, white)"
-                  : "color-mix(in srgb, var(--secondary-navy) 10%, white)",
-                color: isShopTone
-                  ? "var(--rf-apple-blue)"
-                  : "var(--secondary-navy)",
-              }}
-            >
-              {icon}
-            </Box>
           </Box>
 
-          <Typography className="mt-4 max-w-xl text-base leading-relaxed text-(--rf-apple-muted)">
+          <Typography className="max-w-xl text-base leading-7 text-(--rf-apple-muted)">
             {description}
           </Typography>
 
-          <Typography className="mt-4 rounded-[18px] bg-(--rf-apple-surface-soft) px-4 py-3 text-sm font-semibold leading-relaxed text-(--rf-apple-ink)">
+          <Typography className="rounded-[18px] bg-(--rf-apple-surface-soft) px-4 py-3 text-sm font-semibold leading-6 text-(--rf-apple-ink)">
             {helper}
           </Typography>
         </Box>
@@ -446,9 +431,9 @@ export default function ShopRecommendationsSection({
                   description="รวมร้านเช่ารถที่พร้อมให้บริการบน RentFlowCar เลือกร้านที่ต้องการแล้วดูรถของร้านนั้นได้ทันที"
                   href="/shops"
                   actionLabel="ดูร้านทั้งหมด"
-                  icon={<StorefrontRoundedIcon />}
-                  tone="shop"
                   helper="เหมาะสำหรับคนที่อยากเลือกจากร้าน สาขา หรือแบรนด์ที่คุ้นเคยก่อนดูรถ"
+                  imageSrc="/marketplace/all-shops-overview.png"
+                  imageAlt="อาคารร้านเช่ารถที่ร่วมให้บริการกับ RentFlowCar"
                 />
                 <MarketplaceOverviewCard
                   label="รถทั้งหมด"
@@ -456,9 +441,9 @@ export default function ShopRecommendationsSection({
                   description="ดูรถเช่าจากทุกร้านในที่เดียว พร้อมกรองสาขา วันรับ-คืนรถ ประเภทรถ และเรียงราคาที่เหมาะกับคุณ"
                   href="/cars"
                   actionLabel="ดูรถทั้งหมด"
-                  icon={<DirectionsCarFilledRoundedIcon />}
-                  tone="car"
                   helper="เหมาะสำหรับคนที่อยากเทียบรถ ราคา และเงื่อนไขจากทุกร้านในหน้าเดียว"
+                  imageSrc="/marketplace/all-cars-overview.png"
+                  imageAlt="รถเช่าหลายคันจากร้านที่ร่วมให้บริการกับ RentFlowCar"
                 />
               </>
             )}

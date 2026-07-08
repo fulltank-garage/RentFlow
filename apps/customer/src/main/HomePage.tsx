@@ -11,6 +11,7 @@ import BenefitsCTASection from "@/src/components/home/BenefitsCTASection";
 import ReviewsSection from "@/src/components/home/ReviewsSection";
 import StorefrontBlocksSection from "@/src/components/home/StorefrontBlocksSection";
 import type { BuilderImagePayload } from "@/src/components/home/StorefrontBlocksSection";
+import PartnerInviteSection from "@/src/components/home/PartnerInviteSection";
 import ShopRecommendationsSection from "@/src/components/shops/ShopRecommendationsSection";
 import { formatTHB } from "@/src/constants/money";
 import { useCatalogDirectory } from "@/src/hooks/catalog/useCatalogDirectory";
@@ -368,6 +369,7 @@ export default function HomePage({
             hasAvailableCars={cars.length > 0}
             loading={marketplaceTenantsLoading || loading}
           />
+          <PartnerInviteSection />
         </>
       ) : (
         <>
